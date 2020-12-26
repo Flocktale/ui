@@ -1,0 +1,36 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'serializers.dart';
+
+// **************************************************************************
+// BuiltValueGenerator
+// **************************************************************************
+
+Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(BuiltAllClubsList.serializer)
+      ..add(BuiltClub.serializer)
+      ..add(BuiltFollow.serializer)
+      ..add(BuiltProfileImage.serializer)
+      ..add(BuiltSearchClubs.serializer)
+      ..add(BuiltSearchUsers.serializer)
+      ..add(BuiltUser.serializer)
+      ..add(CategoryClubsList.serializer)
+      ..add(SummaryUser.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(BuiltClub)]),
+          () => new ListBuilder<BuiltClub>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(BuiltClub)]),
+          () => new ListBuilder<BuiltClub>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(CategoryClubsList)]),
+          () => new ListBuilder<CategoryClubsList>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => new ListBuilder<String>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(SummaryUser)]),
+          () => new ListBuilder<SummaryUser>()))
+    .build();
+
+// ignore_for_file: always_put_control_body_on_new_line,always_specify_types,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new
