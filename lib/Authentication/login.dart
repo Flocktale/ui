@@ -21,28 +21,41 @@ class _LoginState extends State<Login> {
   bool _askConfirmCode = false;
 
   _logInUser() async {
+    // print("11111111111111111");
+      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Loading()));
     List<String> codes = [
       'NotAuthorizedException', //incorrect username or password
       'UserNotConfirmedException', // User is not confirmed
     ];
+    if(_emailController.text.isEmpty || _passwordController.text.isEmpty){
+      Navigator.pop(context);
+      return;
+    }
+      // print(_emailController.);
 
     final userId = await startSession(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim());
 
     if (userId == codes[0]) {
+        Navigator.of(context).pop();
       Fluttertoast.showToast(
           msg: 'Incorrect Username or Password', gravity: ToastGravity.TOP);
       return;
     } else if (userId == codes[1]) {
+      Navigator.of(context).pop();
+
       setState(() {
         _askConfirmCode = true;
       });
+
       return;
     }
 
+
     final service = Provider.of<UserDatabaseApiService>(context,listen: false);
     final user = (await service.getUser(userId)).body;
+      Navigator.of(context).pop();
 
     if (user == null)
       Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -164,9 +177,11 @@ class _LoginState extends State<Login> {
                     shadowColor: Colors.amberAccent,
                     color: Colors.amber,
                     elevation: 7.0,
-                    child: GestureDetector(
-                      onTap: () {
-                        _logInUser();
+                    child: InkWell(
+                      onTap: ()  {
+                        // Navigator.of(context).pushNamed(Loading);
+                         _logInUser();
+
                       },
                       child: Center(
                         child: Text(
@@ -242,3 +257,13 @@ class _LoginState extends State<Login> {
     );
   }
 }
+
+class Loading extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+    body: Center(child: CircularProgressIndicator(),),
+  );
+  }
+}
+  
