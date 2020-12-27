@@ -52,7 +52,6 @@ class _LoginState extends State<Login> {
       return;
     }
 
-
     final service = Provider.of<UserDatabaseApiService>(context,listen: false);
     final user = (await service.getUser(userId)).body;
       Navigator.of(context).pop();
