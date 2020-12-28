@@ -41,8 +41,10 @@ class _ProfilePageState extends State<ProfilePage> {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     print(cuser.userId+'=='+widget.userId);
     if (widget.userId == null || cuser.userId == widget.userId) {
-      _isMe = true;
-      _user = cuser;
+      setState(() {
+        _isMe = true;
+        _user = cuser;
+      });
       await checkIsFollowing();
       if (_user.followerCount != null) followersCount = _user.followerCount;
       if (_user.followingCount != null) followingCount = _user.followingCount;
@@ -69,13 +71,11 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     print(_user.followerCount);
   }
-  fetchImage() async {
+  String getImageUrl() {
     final requestUrl = (_user == null || _user.avatar == null)
-        ? 'https://mootclub-user-profile-bucket.s3.amazonaws.com/9207567d-e46f-4d49-a16f-c06a5cb6da54'
+        ? 'https://mootclub-public.s3.amazonaws.com/userAvatar/${widget.userId}'
         : _user.avatar;
-    final res = await http.get(requestUrl);
-    image = Image.memory(base64Decode(res.body));
-    return image;
+    return requestUrl;
   }
 
  /* @override
@@ -132,10 +132,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                   color: Colors.red[300],
                                 ),
                               ),
-                              SizedBox(height: size.height / 100,),
+                              SizedBox(height: size.height / 130,),
                               Text(
                                 //'Music Composer',
-                                _user.username,
+                               '@${ _user.username}',
                                 style: TextStyle(
                                     fontSize: size.width / 26,
                                     color: Colors.grey[400]
@@ -325,7 +325,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                               SizedBox(height: size.height / 50,),
-                              Carousel(),
+                              Carousel(userId: widget.userId),
                             ],
                           )
 
@@ -337,17 +337,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       left: ((size.width / 2) - (size.width / 9)),
                       child: CircleAvatar(
                           backgroundColor: Colors.white,
-                          child: FutureBuilder(
-                            future: fetchImage(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Icon(Icons.timelapse);
-                              }
-                              if(image!=null)
-                                return image;
-                              return Container();
-                            },
-                          ),
+                          backgroundImage: NetworkImage(getImageUrl()),
                           //backgroundImage: AssetImage('assets/images/Default-female.png'),
                           radius: size.height / 18),
                     )

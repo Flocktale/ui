@@ -1,3 +1,4 @@
+import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/services/chopper/user_database_api_service.dart';
@@ -18,52 +19,59 @@ class _CarouselState extends State<Carousel> {
 
   _fetchAllClubs()async{
     final service = Provider.of<UserDatabaseApiService>(context,listen: false);
- //   Clubs = (await service.getMyHistoryClubs(widget.userId)).body.clubs;//THIS IS RETURNING NULL
+    Clubs = (await service.getMyHistoryClubs(widget.userId)).body.clubs;
+    print("============LENGTH= ${Clubs.length}");
+
+    //THIS IS RETURNING NULL
  //   setState(() {});
-  }
-  @override
-  void initState()
-  {
-    _fetchAllClubs();
-    super.initState();
   }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Container(
-      margin: EdgeInsets.only(left: size.width/50, right: size.width/50),
-      height: 250,
-      child: ListView.builder(
-        itemCount: myClubs.length,
-        scrollDirection: Axis.horizontal,
-       // children: <Widget>[
-        itemBuilder: (context,index) {
-          return Container(
-            width: 200.0,
-            child: Card(
-              elevation: 10,
-              shadowColor: Carousel.shadow.withOpacity(0.2),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: () {},
-                child: Wrap(
-                  children: <Widget>[
-                    Image.asset('assets/images/${myClubs[index]}', height: 130,
-                      width: 200,
-                      fit: BoxFit.cover,),
-                    ListTile(
-                      title: Text('Rock-101',style: TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),),
-                      subtitle: Text(
-                          'This is the description of the club.',style: TextStyle(fontFamily: 'Lato',)),
+    return FutureBuilder(
+      future: _fetchAllClubs(),
+      builder:(context,snapshot){
+        if (Clubs == null ||
+            snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child:CircularProgressIndicator());
+        }
+        return Container(
+        margin: EdgeInsets.only(left: size.width/50, right: size.width/50),
+        height: 250,
+        child: ListView.builder(
+          itemCount: Clubs.length,
+          scrollDirection: Axis.horizontal,
+         // children: <Widget>[
+          itemBuilder: (context,index) {
+            return Container(
+              width: 200.0,
+              child: Card(
+                elevation: 10,
+                shadowColor: Carousel.shadow.withOpacity(0.2),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () {},
+                  child: Wrap(
+                    children: <Widget>[
+                      Image.network(Clubs[index].clubAvatar, height: 130,
+                        width: 200,
+                        fit: BoxFit.cover,),
+                      ListTile(
+                        title: Text(Clubs[index].clubName,style: TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),),
+                        subtitle: Text(
+                          Clubs[index].description!=null?
+                          Clubs[index].description:
+                            '',style: TextStyle(fontFamily: 'Lato',)),
 
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        ),
+      );}
     );
   }
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/pages/LandingPage.dart';
 import 'package:mootclub_app/pages/NewClub.dart';
 import 'package:mootclub_app/pages/ProfilePage.dart';
 import 'package:mootclub_app/pages/SearchPage.dart';
+import 'package:mootclub_app/providers/userData.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,9 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   PageController _pageController = PageController();
-  List<Widget> _screens = [
-    LandingPage(),NewClub(),SearchPage(),ProfilePage(userId:SharedPrefKeys.USERID)
-  ];
+
   int selectedIndex = 0;
   void _onPageChanged(int index){
     setState(() {
@@ -26,6 +27,10 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
+    final cuser = Provider.of<UserData>(context,listen: false).user;
+    List<Widget> _screens = [
+      LandingPage(),NewClub(),SearchPage(),ProfilePage(userId:cuser.userId)
+    ];
     return Scaffold(
       body: PageView(
         controller: _pageController,
