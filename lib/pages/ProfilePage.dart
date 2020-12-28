@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../AppBarWidget.dart';
 import '../Carousel.dart';
 import 'package:http/http.dart' as http;
+import 'package:built_collection/built_collection.dart';
 class ProfilePage extends StatefulWidget {
   final String userId;
   ProfilePage({this.userId});
@@ -24,7 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isFollowing = false;
   int followersCount = 0;
   int followingCount = 0;
-
+  BuiltList<BuiltClub> Clubs;
   checkIsFollowing() async {
     if (_isMe == false) {
       BuiltUser user = Provider
@@ -71,6 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     print(_user.followerCount);
   }
+
   String getImageUrl() {
     final requestUrl = (_user == null || _user.avatar == null)
         ? 'https://mootclub-public.s3.amazonaws.com/userAvatar/${widget.userId}'
@@ -78,12 +80,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return requestUrl;
   }
 
- /* @override
-  void initState(){
-    fetchUser();
-    setState(() {
-    });
-  }*/
+  _fetchAllClubs()async{
+    final service = Provider.of<UserDatabaseApiService>(context,listen: false);
+    Clubs = (await service.getMyHistoryClubs(widget.userId)).body.clubs;
+  //  print("============LENGTH= ${Clubs.length}");
+
+    //THIS IS RETURNING NULL
+    //   setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -325,7 +330,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                               SizedBox(height: size.height / 50,),
-                              Carousel(userId: widget.userId),
+                              FutureBuilder(
+                                  future:_fetchAllClubs(),
+                                  builder: (context,snapshot){
+                                    if (Clubs == null || snapshot.connectionState == ConnectionState.waiting) {
+                                      return Center(child:CircularProgressIndicator());
+                                    }
+                                    return Carousel(Clubs: Clubs);
+                                  })
+
                             ],
                           )
 
