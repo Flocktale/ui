@@ -5,6 +5,8 @@ import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:provider/provider.dart';
 import 'package:mootclub_app/services/chopper/user_database_api_service.dart';
 class NewClub extends StatefulWidget {
+  final String userId;
+  NewClub({this.userId});
   @override
   _NewClubState createState() => _NewClubState();
 }
@@ -15,7 +17,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin{
   String description;
   String category;
   List categoryList = [
-    'Music', 'Sports', 'Social', 'Others',
+    'Entrepreneurship', 'Education', 'Comedy', 'Travel', 'Society', 'Health', 'Finance', 'Sports', 'Other'
   ];
 
 
@@ -38,12 +40,10 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin{
     final newClub = BuiltClub((b) => b
       ..clubName = name
       ..description = description
-   /*   ..isLive = 1
-      ..userId = '1'
-      ..username = 'Caroline'
-      ..likes = 0*/);
+      ..category =  category
+   );
 
-    final resp = await service.createNewClub(newClub,SharedPrefKeys.USERID);
+    final resp = await service.createNewClub(newClub,widget.userId);
     print(resp);
     Fluttertoast.showToast(msg: 'club entry is created');
   }

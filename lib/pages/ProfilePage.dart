@@ -120,9 +120,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(45.0),
-                                topRight: Radius.circular(45.0)),
+//                            borderRadius: BorderRadius.only(
+//                                topLeft: Radius.circular(45.0),
+//                                topRight: Radius.circular(45.0)),
+                           borderRadius: BorderRadius.vertical(top: Radius.elliptical(size.width/2, size.height/20))
 
                           ),
                           child: Column(

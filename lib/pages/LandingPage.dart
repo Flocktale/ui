@@ -29,6 +29,10 @@ class _LandingPageState extends State<LandingPage> with AutomaticKeepAliveClient
           child: FutureBuilder(
             future: _fetchAllClubs(),
             builder: (context,snapshot){
+              if (Clubs == null ||
+                  snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child:CircularProgressIndicator());
+              }
             return ListView.builder(
                 itemCount: Category.length,
                 itemBuilder: (context,index){
@@ -38,7 +42,7 @@ class _LandingPageState extends State<LandingPage> with AutomaticKeepAliveClient
                       SizedBox(height: size.height/30),
                       Text(Clubs[index].category,style: TextStyle(
                         fontFamily: 'Lato',
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         fontSize: size.width/10,
                       ),
                       ),

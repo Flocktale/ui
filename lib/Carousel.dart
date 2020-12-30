@@ -1,6 +1,7 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/pages/ClubPage.dart';
 import 'package:mootclub_app/services/chopper/user_database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
@@ -15,6 +16,7 @@ class Carousel extends StatefulWidget {
 
 class _CarouselState extends State<Carousel> {
   List<String> myClubs= ['Card1.jpg','Card2.jpg','Card3.jpg','Card4.jpg'];
+  PageController _pageController = PageController();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -34,7 +36,11 @@ class _CarouselState extends State<Carousel> {
               shadowColor: Carousel.shadow.withOpacity(0.2),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => ClubPage(Clubs: widget.Clubs,index: index,)
+                  ));
+                },
                 child: Wrap(
                   children: <Widget>[
                     Image.network(widget.Clubs[index].clubAvatar, height: 130,
