@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
+import 'package:mootclub_app/pages/FollowersPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/user_database_api_service.dart';
 import 'package:provider/provider.dart';
@@ -238,68 +239,89 @@ class _ProfilePageState extends State<ProfilePage> {
                                     .spaceEvenly,
                                 //crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-                                  Column(
-                                    children: <Widget>[
-                                      Text(
-                                          _user.friendsCount.toString()!='null'?_user.friendsCount.toString():'0',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[600],
-                                            fontSize: size.width / 20,
-                                          )
-                                      ),
-                                      Text(
-                                        'Friends',
-                                        style: TextStyle(
-                                          color: Colors.red[300],
-                                          fontSize: size.width / 26,
+                                  InkWell(
+                                    onTap: (){
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (_) => FollowersPage(initpos: 0 ,user: _user)
+                                      ));
+                                    },
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text(
+                                            _user.friendsCount.toString()!='null'?_user.friendsCount.toString():'0',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[600],
+                                              fontSize: size.width / 20,
+                                            )
                                         ),
-                                      )
-                                    ],
+                                        Text(
+                                          'Friends',
+                                          style: TextStyle(
+                                            color: Colors.red[300],
+                                            fontSize: size.width / 26,
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                   VerticalDivider(
                                     color: Colors.grey[400],
                                   ),
-                                  Column(
-                                    children: <Widget>[
-                                      Text(
-                                          _user.followerCount.toString()!='null'?_user.followerCount.toString():'0',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[600],
-                                            fontSize: size.width / 20,
-                                          )
-                                      ),
-                                      Text(
-                                        'Followers',
-                                        style: TextStyle(
-                                          color: Colors.red[300],
-                                          fontSize: size.width / 26,
+                                  InkWell(
+                                    onTap: (){
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (_) => FollowersPage(initpos: 1 ,user: _user)
+                                      ));
+                                    },
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text(
+                                            _user.followerCount.toString()!='null'?_user.followerCount.toString():'0',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[600],
+                                              fontSize: size.width / 20,
+                                            )
                                         ),
-                                      )
-                                    ],
+                                        Text(
+                                          'Followers',
+                                          style: TextStyle(
+                                            color: Colors.red[300],
+                                            fontSize: size.width / 26,
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                   VerticalDivider(
                                     color: Colors.grey[400],
                                   ),
-                                  Column(
-                                    children: <Widget>[
-                                      Text(
-                                          _user.followingCount.toString()!='null'?_user.followingCount.toString():'0',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[600],
-                                            fontSize: size.width / 20,
-                                          )
-                                      ),
-                                      Text(
-                                        'Following',
-                                        style: TextStyle(
-                                          color: Colors.red[300],
-                                          fontSize: size.width / 26,
+                                  InkWell(
+                                    onTap: (){
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (_) => FollowersPage(initpos: 2 ,user: _user)
+                                      ));
+                                    },
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text(
+                                            _user.followingCount.toString()!='null'?_user.followingCount.toString():'0',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[600],
+                                              fontSize: size.width / 20,
+                                            )
                                         ),
-                                      )
-                                    ],
+                                        Text(
+                                          'Following',
+                                          style: TextStyle(
+                                            color: Colors.red[300],
+                                            fontSize: size.width / 26,
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),

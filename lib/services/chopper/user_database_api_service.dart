@@ -117,6 +117,7 @@ abstract class UserDatabaseApiService extends ChopperService {
     @Query() String clubName,
   );
 
+
   @Get(path: '/clubs/{clubId}')
   Future<Response<BuiltClub>> getClubByClubId(
     @Path() String clubId,
