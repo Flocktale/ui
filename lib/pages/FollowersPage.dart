@@ -15,7 +15,7 @@ class FollowersPage extends StatefulWidget {
 class _FollowersPageState extends State<FollowersPage> {
   @override
   List<String> tabs = ['Friends','Followers','Following'];
-  Widget searchBar(int index){
+  Widget searchBar(String hint){
     return Container(
       height: 40,
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -23,7 +23,7 @@ class _FollowersPageState extends State<FollowersPage> {
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.search, color: Colors.black,),
           fillColor: Colors.grey[200],
-          hintText: 'Search ${tabs[index]}',
+          hintText: 'Search ${hint}',
           filled: true,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
@@ -41,7 +41,7 @@ class _FollowersPageState extends State<FollowersPage> {
     return Column(
       children: <Widget>[
         SizedBox(height: 30,),
-        searchBar(index),
+        searchBar(tabs[index]),
         SizedBox(height: 40,),
         Text(
           'All ${tabs[index]}',
