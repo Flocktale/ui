@@ -7,6 +7,20 @@ import 'package:mootclub_app/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
 
+abstract class BuiltProfile
+    implements Built<BuiltProfile, BuiltProfileBuilder> {
+  BuiltUser get user;
+
+  @nullable
+  BuiltMap get relationIndexObj;
+
+  BuiltProfile._();
+
+  factory BuiltProfile([updates(BuiltProfileBuilder b)]) = _$BuiltProfile;
+
+  static Serializer<BuiltProfile> get serializer => _$builtProfileSerializer;
+}
+
 abstract class BuiltUser implements Built<BuiltUser, BuiltUserBuilder> {
   @nullable
   String get userId;
@@ -59,7 +73,6 @@ abstract class BuiltUser implements Built<BuiltUser, BuiltUserBuilder> {
   @nullable
   bool get policyAccepted;
 
-
   @nullable
   int get clubsCreated;
 
@@ -68,13 +81,12 @@ abstract class BuiltUser implements Built<BuiltUser, BuiltUserBuilder> {
 
   @nullable
   int get kickedOutCount;
-  
+
   @nullable
   int get clubsJoinRequests;
-  
+
   @nullable
   int get clubsAttended;
-  
 
   BuiltUser._();
 
@@ -131,13 +143,13 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   @nullable
   int get timeWindow;
 
-  @nullable 
+  @nullable
   String get category;
 
-  @nullable 
+  @nullable
   int get createdOn;
 
-  @nullable 
+  @nullable
   int get modifiedOn;
 
   @nullable
@@ -149,7 +161,7 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   @nullable
   String get description;
 
-  @nullable 
+  @nullable
   bool get isLocal;
 
   @nullable
@@ -161,7 +173,6 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   @nullable
   BuiltList<String> get tags;
 
-
   BuiltClub._();
 
   factory BuiltClub([updates(BuiltClubBuilder b)]) = _$BuiltClub;
@@ -169,10 +180,7 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   static Serializer<BuiltClub> get serializer => _$builtClubSerializer;
 }
 
-
-
 abstract class SummaryUser implements Built<SummaryUser, SummaryUserBuilder> {
-
   @nullable
   String get userId;
 
@@ -184,16 +192,16 @@ abstract class SummaryUser implements Built<SummaryUser, SummaryUserBuilder> {
 
   @nullable
   String get avatar;
-  
+
   SummaryUser._();
 
   factory SummaryUser([updates(SummaryUserBuilder b)]) = _$SummaryUser;
   static Serializer<SummaryUser> get serializer => _$summaryUserSerializer;
 }
 
-abstract class BuiltSearchUsers implements Built<BuiltSearchUsers, BuiltSearchUsersBuilder> {
+abstract class BuiltSearchUsers
+    implements Built<BuiltSearchUsers, BuiltSearchUsersBuilder> {
   // fields go here
-
 
   @nullable
   BuiltList<SummaryUser> get users;
@@ -201,45 +209,48 @@ abstract class BuiltSearchUsers implements Built<BuiltSearchUsers, BuiltSearchUs
   String get lastevaluatedkey;
   BuiltSearchUsers._();
 
-  factory BuiltSearchUsers([updates(BuiltSearchUsersBuilder b)]) = _$BuiltSearchUsers;
-  static Serializer<BuiltSearchUsers> get serializer => _$builtSearchUsersSerializer; 
-
+  factory BuiltSearchUsers([updates(BuiltSearchUsersBuilder b)]) =
+      _$BuiltSearchUsers;
+  static Serializer<BuiltSearchUsers> get serializer =>
+      _$builtSearchUsersSerializer;
 }
 
-
-abstract class BuiltSearchClubs implements Built<BuiltSearchClubs, BuiltSearchClubsBuilder> {
+abstract class BuiltSearchClubs
+    implements Built<BuiltSearchClubs, BuiltSearchClubsBuilder> {
   // fields go here
   @nullable
   BuiltList<BuiltClub> get clubs;
   @nullable
   String get lastevaluatedkey;
 
-
   BuiltSearchClubs._();
 
-  factory BuiltSearchClubs([updates(BuiltSearchClubsBuilder b)]) = _$BuiltSearchClubs;
+  factory BuiltSearchClubs([updates(BuiltSearchClubsBuilder b)]) =
+      _$BuiltSearchClubs;
 
-  
-  static Serializer<BuiltSearchClubs> get serializer => _$builtSearchClubsSerializer;
+  static Serializer<BuiltSearchClubs> get serializer =>
+      _$builtSearchClubsSerializer;
 }
 
-
-abstract class CategoryClubsList implements Built<CategoryClubsList, CategoryClubsListBuilder> {
+abstract class CategoryClubsList
+    implements Built<CategoryClubsList, CategoryClubsListBuilder> {
   // fields go here
- @nullable
+  @nullable
   String get category;
 
   @nullable
   BuiltList<BuiltClub> get clubs;
   CategoryClubsList._();
 
-  factory CategoryClubsList([updates(CategoryClubsListBuilder b)]) = _$CategoryClubsList;
+  factory CategoryClubsList([updates(CategoryClubsListBuilder b)]) =
+      _$CategoryClubsList;
 
- 
-  static Serializer<CategoryClubsList> get serializer => _$categoryClubsListSerializer;
+  static Serializer<CategoryClubsList> get serializer =>
+      _$categoryClubsListSerializer;
 }
 
-abstract class BuiltAllClubsList implements Built<BuiltAllClubsList, BuiltAllClubsListBuilder> {
+abstract class BuiltAllClubsList
+    implements Built<BuiltAllClubsList, BuiltAllClubsListBuilder> {
   // fields go here
 
   @nullable
@@ -247,9 +258,9 @@ abstract class BuiltAllClubsList implements Built<BuiltAllClubsList, BuiltAllClu
 
   BuiltAllClubsList._();
 
-  factory BuiltAllClubsList([updates(BuiltAllClubsListBuilder b)]) = _$BuiltAllClubsList;
+  factory BuiltAllClubsList([updates(BuiltAllClubsListBuilder b)]) =
+      _$BuiltAllClubsList;
 
- 
-
-  static Serializer<BuiltAllClubsList> get serializer => _$builtAllClubsListSerializer;
+  static Serializer<BuiltAllClubsList> get serializer =>
+      _$builtAllClubsListSerializer;
 }

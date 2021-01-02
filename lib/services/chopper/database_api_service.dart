@@ -5,14 +5,14 @@ import '../../Models/built_post.dart';
 import 'built_value_converter.dart';
 import 'package:built_collection/built_collection.dart';
 
-part 'user_database_api_service.chopper.dart';
+part 'database_api_service.chopper.dart';
 
 // command for build runner - flutter packages pub run build_runner watch --delete-conflicting-outputs --use-polling-watcher
 
 @ChopperApi(baseUrl: '')
-abstract class UserDatabaseApiService extends ChopperService {
+abstract class DatabaseApiService extends ChopperService {
   @Get(path: '/users/{userId}')
-  Future<Response<BuiltUser>> getUser(@Path('userId') String userId);
+  Future<Response<BuiltProfile>> getUserProfile(@Path('userId') String userId);
 
   @Get(path: '/users')
   Future<Response<BuiltList<BuiltUser>>> getAllUsers();
@@ -88,10 +88,9 @@ abstract class UserDatabaseApiService extends ChopperService {
   // ---------------------------------------------------------------------
   //                           Club APIs
   //----------------------------------------------------------------------
-  
+
   @Get(path: '/clubs')
   Future<Response<BuiltAllClubsList>> getAllClubs();
-
 
   // ClubName and ClubCategory is required
   @Post(path: '/clubs/create/')
@@ -117,13 +116,12 @@ abstract class UserDatabaseApiService extends ChopperService {
     @Query() String clubName,
   );
 
-
   @Get(path: '/clubs/{clubId}')
   Future<Response<BuiltClub>> getClubByClubId(
     @Path() String clubId,
   );
 
-  @Post(path: 'clubs/{clubId}/avatar/') 
+  @Post(path: 'clubs/{clubId}/avatar/')
   @Multipart()
   Future<Response> updateClubAvatar(
     @Path('clubId') String clubId,
@@ -131,10 +129,7 @@ abstract class UserDatabaseApiService extends ChopperService {
   );
 
   @Post(path: '/clubs/{clubId}/enter/')
-  Future<Response> enterClub(
-    @Path() String clubId,
-    @Query() String userId
-  );
+  Future<Response> enterClub(@Path() String clubId, @Query() String userId);
 
   //TODO
   // @Post(path: '/clubs/{clubId}/reaction/')
@@ -143,10 +138,8 @@ abstract class UserDatabaseApiService extends ChopperService {
   //   @Query() String userId
   // );
 
-  
   //TODO
   // Get reactions
-
 
   @Post(path: '/clubs/{clubId}/reports/')
   Future<Response> reportUser(
@@ -155,15 +148,11 @@ abstract class UserDatabaseApiService extends ChopperService {
     @Path() String clubId,
   );
 
-  
-
-
-
-  static UserDatabaseApiService create() {
+  static DatabaseApiService create() {
     final client = ChopperClient(
       baseUrl: 'https://863u7os9ui.execute-api.us-east-1.amazonaws.com/Prod',
       services: [
-        _$UserDatabaseApiService(),
+        _$DatabaseApiService(),
       ],
       converter: BuiltValueConverter(),
       interceptors: [
@@ -171,6 +160,6 @@ abstract class UserDatabaseApiService extends ChopperService {
       ],
     );
 
-    return _$UserDatabaseApiService(client);
+    return _$DatabaseApiService(client);
   }
 }

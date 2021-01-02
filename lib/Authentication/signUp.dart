@@ -4,7 +4,7 @@ import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/pages/HomePage.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/services/chopper/user_database_api_service.dart';
+import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,7 +41,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     _changeLoading();
 
-    final service = Provider.of<UserDatabaseApiService>(context);
+    final service = Provider.of<DatabaseApiService>(context);
 
     final newUser = BuiltUser((b) => b
       ..userId = widget.userId
@@ -71,98 +71,99 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return _loading
         ? Center(child: CircularProgressIndicator())
         : Scaffold(
-            body:  Column(
+            body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                 Container(
-                child: Stack(
+                  child: Stack(
                     children: <Widget>[
-                    Container(
-                    padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
-                    child: Text(
-                  'Signup',
-                  style:
-                  TextStyle(fontSize: 80.0, fontWeight: FontWeight.bold),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
+                        child: Text(
+                          'Signup',
+                          style: TextStyle(
+                              fontSize: 80.0, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(260.0, 125.0, 0.0, 0.0),
+                        child: Text(
+                          '.',
+                          style: TextStyle(
+                              fontSize: 80.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(260.0, 125.0, 0.0, 0.0),
-                child: Text(
-                '.',
-                style: TextStyle(
-                fontSize: 80.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.amber
-                ),
-              ),
-             )
-           ],
-              ),
-              ),
-              Container(
-              padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-              child: Column(
-              children: <Widget>[
-              Form(
-              key: _formKey,
-              child: Column(
-              children: <Widget>[
-              TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-              labelText: 'NAME',
-              labelStyle: TextStyle(
-              fontFamily: 'Lato',
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[400]),
-              focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.amber))),
-              validator: (val) {
-              if (val.isEmpty) return 'Please fill this field';
-              return null;
-              },
-              ),
-              SizedBox(height: 10.0),
-              TextFormField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-              labelText: 'NICK NAME ',
-              labelStyle: TextStyle(
-              fontFamily: 'Lato',
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[400]),
-              focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.amber))),
-              validator: (val) {
-              if (val.isEmpty) return 'Please fill this field';
-              return null;
-              },
-          ),
-                SizedBox(height: 50),
                 Container(
-                height: 40.0,
-                child: Material(
-                borderRadius: BorderRadius.circular(20.0),
-                shadowColor: Colors.amberAccent,
-                color: Colors.amber,
-                elevation: 7.0,
-                child: GestureDetector(
-                onTap: _signUpWithBackend,
-                child: Center(
-                child: Text(
-                'SUBMIT',
-                style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Lato'),
-                ),
-                ),
-                ),
-                )),
-                  ],
-                ),
-              ),
-           ]),
-          )]));
+                  padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
+                  child: Column(children: <Widget>[
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                                labelText: 'NAME',
+                                labelStyle: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[400]),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.amber))),
+                            validator: (val) {
+                              if (val.isEmpty) return 'Please fill this field';
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 10.0),
+                          TextFormField(
+                            controller: _usernameController,
+                            decoration: InputDecoration(
+                                labelText: 'NICK NAME ',
+                                labelStyle: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[400]),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.amber))),
+                            validator: (val) {
+                              if (val.isEmpty) return 'Please fill this field';
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 50),
+                          Container(
+                              height: 40.0,
+                              child: Material(
+                                borderRadius: BorderRadius.circular(20.0),
+                                shadowColor: Colors.amberAccent,
+                                color: Colors.amber,
+                                elevation: 7.0,
+                                child: GestureDetector(
+                                  onTap: _signUpWithBackend,
+                                  child: Center(
+                                    child: Text(
+                                      'SUBMIT',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Lato'),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ]),
+                )
+              ]));
   }
 }

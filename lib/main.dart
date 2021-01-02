@@ -5,8 +5,7 @@ import 'Authentication/login.dart';
 import 'providers/userData.dart';
 import 'package:logging/logging.dart';
 import 'route_generator.dart';
-import 'services/chopper/club_database_api_service.dart';
-import 'services/chopper/user_database_api_service.dart';
+import 'services/chopper/database_api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,26 +24,19 @@ void _setupLogging() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    
     return MultiProvider(
       providers: [
         Provider(
-          create: (_) => UserDatabaseApiService.create(),
-          dispose: (context, UserDatabaseApiService service) =>
+          create: (_) => DatabaseApiService.create(),
+          dispose: (context, DatabaseApiService service) =>
               service.client.dispose(),
         ),
 
-        Provider(
-          create: (_) => ClubDatabaseApiService.create(),
-          dispose: (context, ClubDatabaseApiService service) =>
-              service.client.dispose(),
-        ),
-
-//since we are using UserDatabaseApiService in another provider, it should be defined after that.
+//since we are using DatabaseApiService in another provider, it should be defined after that.
 
         ChangeNotifierProvider<UserData>(
           create: (ctx) =>
-              UserData(Provider.of<UserDatabaseApiService>(ctx, listen: false)),
+              UserData(Provider.of<DatabaseApiService>(ctx, listen: false)),
         ),
       ],
       child: Consumer<UserData>(
@@ -62,7 +54,9 @@ class MyApp extends StatelessWidget {
                       child: Text('Loading ...'),
                     ),
                   )
-                : userData.isAuth == false ? Login() : HomePage(),
+                : userData.isAuth == false
+                    ? Login()
+                    : HomePage(),
             routes: {}),
       ),
     );

@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_database_api_service.dart';
+part of 'database_api_service.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
 // ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations
-class _$UserDatabaseApiService extends UserDatabaseApiService {
-  _$UserDatabaseApiService([ChopperClient client]) {
+class _$DatabaseApiService extends DatabaseApiService {
+  _$DatabaseApiService([ChopperClient client]) {
     if (client == null) return;
     this.client = client;
   }
 
   @override
-  final definitionType = UserDatabaseApiService;
+  final definitionType = DatabaseApiService;
 
   @override
-  Future<Response<BuiltUser>> getUser(String userId) {
+  Future<Response<BuiltProfile>> getUserProfile(String userId) {
     final $url = '/users/$userId';
     final $request = Request('GET', $url, client.baseUrl);
-    return client.send<BuiltUser, BuiltUser>($request);
+    return client.send<BuiltProfile, BuiltProfile>($request);
   }
 
   @override

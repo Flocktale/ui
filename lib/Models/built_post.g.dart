@@ -6,6 +6,8 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<BuiltProfile> _$builtProfileSerializer =
+    new _$BuiltProfileSerializer();
 Serializer<BuiltUser> _$builtUserSerializer = new _$BuiltUserSerializer();
 Serializer<BuiltProfileImage> _$builtProfileImageSerializer =
     new _$BuiltProfileImageSerializer();
@@ -20,6 +22,55 @@ Serializer<CategoryClubsList> _$categoryClubsListSerializer =
     new _$CategoryClubsListSerializer();
 Serializer<BuiltAllClubsList> _$builtAllClubsListSerializer =
     new _$BuiltAllClubsListSerializer();
+
+class _$BuiltProfileSerializer implements StructuredSerializer<BuiltProfile> {
+  @override
+  final Iterable<Type> types = const [BuiltProfile, _$BuiltProfile];
+  @override
+  final String wireName = 'BuiltProfile';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, BuiltProfile object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'user',
+      serializers.serialize(object.user,
+          specifiedType: const FullType(BuiltUser)),
+    ];
+    if (object.relationIndexObj != null) {
+      result
+        ..add('relationIndexObj')
+        ..add(serializers.serialize(object.relationIndexObj,
+            specifiedType: const FullType(BuiltMap)));
+    }
+    return result;
+  }
+
+  @override
+  BuiltProfile deserialize(Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltProfileBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'user':
+          result.user.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltUser)) as BuiltUser);
+          break;
+        case 'relationIndexObj':
+          result.relationIndexObj = serializers.deserialize(value,
+              specifiedType: const FullType(BuiltMap)) as BuiltMap;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$BuiltUserSerializer implements StructuredSerializer<BuiltUser> {
   @override
@@ -862,6 +913,110 @@ class _$BuiltAllClubsListSerializer
     }
 
     return result.build();
+  }
+}
+
+class _$BuiltProfile extends BuiltProfile {
+  @override
+  final BuiltUser user;
+  @override
+  final BuiltMap relationIndexObj;
+
+  factory _$BuiltProfile([void Function(BuiltProfileBuilder) updates]) =>
+      (new BuiltProfileBuilder()..update(updates)).build();
+
+  _$BuiltProfile._({this.user, this.relationIndexObj}) : super._() {
+    if (user == null) {
+      throw new BuiltValueNullFieldError('BuiltProfile', 'user');
+    }
+  }
+
+  @override
+  BuiltProfile rebuild(void Function(BuiltProfileBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltProfileBuilder toBuilder() => new BuiltProfileBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltProfile &&
+        user == other.user &&
+        relationIndexObj == other.relationIndexObj;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, user.hashCode), relationIndexObj.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltProfile')
+          ..add('user', user)
+          ..add('relationIndexObj', relationIndexObj))
+        .toString();
+  }
+}
+
+class BuiltProfileBuilder
+    implements Builder<BuiltProfile, BuiltProfileBuilder> {
+  _$BuiltProfile _$v;
+
+  BuiltUserBuilder _user;
+  BuiltUserBuilder get user => _$this._user ??= new BuiltUserBuilder();
+  set user(BuiltUserBuilder user) => _$this._user = user;
+
+  BuiltMap _relationIndexObj;
+  BuiltMap get relationIndexObj => _$this._relationIndexObj;
+  set relationIndexObj(BuiltMap relationIndexObj) =>
+      _$this._relationIndexObj = relationIndexObj;
+
+  BuiltProfileBuilder();
+
+  BuiltProfileBuilder get _$this {
+    if (_$v != null) {
+      _user = _$v.user?.toBuilder();
+      _relationIndexObj = _$v.relationIndexObj;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltProfile other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltProfile;
+  }
+
+  @override
+  void update(void Function(BuiltProfileBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltProfile build() {
+    _$BuiltProfile _$result;
+    try {
+      _$result = _$v ??
+          new _$BuiltProfile._(
+              user: user.build(), relationIndexObj: relationIndexObj);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'user';
+        user.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuiltProfile', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
   }
 }
 

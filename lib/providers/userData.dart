@@ -1,14 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
-import 'package:mootclub_app/services/chopper/user_database_api_service.dart';
+import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData with ChangeNotifier {
   BuiltUser _builtUser = BuiltUser();
 
-  final UserDatabaseApiService _postApiService;
+  final DatabaseApiService _postApiService;
 
 // true when necessary actions are loaded (during startup of app)
   bool _loaded = false;
@@ -21,7 +20,6 @@ class UserData with ChangeNotifier {
   }
 
   _initiate() async {
-
     final _prefs = await SharedPreferences.getInstance();
     final userId = _prefs.containsKey(SharedPrefKeys.USERID)
         ? _prefs.getString(SharedPrefKeys.USERID)
@@ -30,9 +28,9 @@ class UserData with ChangeNotifier {
       // if we have userId, it means user never logged out from current UserID.
       _isAuth = true;
 
-      final response = await _postApiService.getUser(userId);
+      final response = await _postApiService.getUserProfile(userId);
       if (response != null && response.body != null) {
-        _builtUser = response.body;
+        _builtUser = response.body.user;
 
         print(
             '-------------------------builtuser loaded --------------------------------');

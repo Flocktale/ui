@@ -6,7 +6,7 @@ import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/services/chopper/user_database_api_service.dart';
+import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mootclub_app/providers/userData.dart';
 
@@ -22,23 +22,24 @@ class _LoginState extends State<Login> {
 
   _logInUser() async {
     // print("11111111111111111");
-      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Loading()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (BuildContext context) => Loading()));
     List<String> codes = [
       'NotAuthorizedException', //incorrect username or password
       'UserNotConfirmedException', // User is not confirmed
     ];
-    if(_emailController.text.isEmpty || _passwordController.text.isEmpty){
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       Navigator.pop(context);
       return;
     }
-      // print(_emailController.);
+    // print(_emailController.);
 
     final userId = await startSession(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim());
 
     if (userId == codes[0]) {
-        Navigator.of(context).pop();
+      Navigator.of(context).pop();
       Fluttertoast.showToast(
           msg: 'Incorrect Username or Password', gravity: ToastGravity.TOP);
       return;
@@ -52,9 +53,9 @@ class _LoginState extends State<Login> {
       return;
     }
 
-    final service = Provider.of<UserDatabaseApiService>(context,listen: false);
-    final user = (await service.getUser(userId)).body;
-      Navigator.of(context).pop();
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final user = (await service.getUserProfile(userId))?.body?.user;
+    Navigator.of(context).pop();
 
     if (user == null)
       Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -70,6 +71,7 @@ class _LoginState extends State<Login> {
 
     }
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -86,10 +88,9 @@ class _LoginState extends State<Login> {
                   child: Text(
                     'Hello',
                     style: TextStyle(
-                      fontFamily: 'Lato',
-                      fontSize: 80.0,
-                      fontWeight: FontWeight.bold
-                    ),
+                        fontFamily: 'Lato',
+                        fontSize: 80.0,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 Container(
@@ -99,8 +100,7 @@ class _LoginState extends State<Login> {
                     style: TextStyle(
                         fontFamily: 'Lato',
                         fontSize: 80.0,
-                        fontWeight: FontWeight.bold
-                    ),
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 Container(
@@ -111,32 +111,30 @@ class _LoginState extends State<Login> {
                         fontFamily: 'Lato',
                         fontSize: 80.0,
                         fontWeight: FontWeight.bold,
-                      color: Colors.amber
-                    ),
+                        color: Colors.amber),
                   ),
                 )
               ],
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top:35.0,left: 20.0,right: 20.0),
+            padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
             child: Column(
               children: <Widget>[
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'EMAIL',
-                    labelStyle: TextStyle(
-                      fontFamily: 'Lato',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[400]
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.amber)
-                    )
-                  ),
+                      labelText: 'EMAIL',
+                      labelStyle: TextStyle(
+                          fontFamily: 'Lato',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[400]),
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber))),
                 ),
-                SizedBox(height: 20.0,),
+                SizedBox(
+                  height: 20.0,
+                ),
                 TextField(
                   controller: _passwordController,
                   decoration: InputDecoration(
@@ -144,18 +142,17 @@ class _LoginState extends State<Login> {
                       labelStyle: TextStyle(
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[400]
-                      ),
+                          color: Colors.grey[400]),
                       focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.amber)
-                      )
-                  ),
+                          borderSide: BorderSide(color: Colors.amber))),
                   obscureText: true,
                 ),
-                SizedBox(height: 5.0,),
+                SizedBox(
+                  height: 5.0,
+                ),
                 Container(
                   alignment: Alignment(1.0, 0.0),
-                  padding: EdgeInsets.only(top:15.0,left:20.0),
+                  padding: EdgeInsets.only(top: 15.0, left: 20.0),
                   child: InkWell(
                     child: Text(
                       'Forgot Password',
@@ -177,10 +174,9 @@ class _LoginState extends State<Login> {
                     color: Colors.amber,
                     elevation: 7.0,
                     child: InkWell(
-                      onTap: ()  {
+                      onTap: () {
                         // Navigator.of(context).pushNamed(Loading);
-                         _logInUser();
-
+                        _logInUser();
                       },
                       child: Center(
                         child: Text(
@@ -210,8 +206,8 @@ class _LoginState extends State<Login> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Center(
-                          child:
-                          ImageIcon(AssetImage('assets/images/facebook.png')),
+                          child: ImageIcon(
+                              AssetImage('assets/images/facebook.png')),
                         ),
                         SizedBox(width: 10.0),
                         Center(
@@ -261,8 +257,9 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    body: Center(child: CircularProgressIndicator(),),
-  );
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }
-  
