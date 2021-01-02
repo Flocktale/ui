@@ -54,7 +54,8 @@ class _ProfilePageState extends State<ProfilePage> {
     } else
       _isMe = false;
     final service = Provider.of<UserDatabaseApiService>(context);
-    _user = cuser;
+   // _user = cuser;
+    _user = (await service.getUser(widget.userId)).body;
     if (_user.userId == null) {
       _user = null;
       Fluttertoast.showToast(
@@ -132,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               SizedBox(height: size.height / 20),
                               Text(
                                 //  'Caroline Steele',
-                                _user.name,
+                                _user.name!=null?_user.name:_user.username,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: size.width / 20,
@@ -154,7 +155,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     right: size.width / 20),
                                 child: Text(
                                   //'Hi my name is Carol and I am a music composer. Music is the greatest passion of my life',
-                                  _user.bio,
+                                  _user.bio!=null?
+                                  _user.bio:'',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: size.width / 26,
@@ -356,10 +358,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               FutureBuilder(
                                   future:_fetchAllClubs(),
                                   builder: (context,snapshot){
-                                    if (Clubs == null || snapshot.connectionState == ConnectionState.waiting) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
                                       return Center(child:CircularProgressIndicator());
                                     }
-                                    return Carousel(Clubs: Clubs);
+                                    return Clubs!=null?Carousel(Clubs: Clubs):Container();
                                   })
 
                             ],
