@@ -25,6 +25,8 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isMe;
   Image image;
   bool isFollowing = false;
+  bool sentFollowRequest = false;
+  bool sentFriendRequest = false;
   int followersCount = 0;
   int followingCount = 0;
   BuiltList<BuiltClub> Clubs;
@@ -88,6 +90,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
     //THIS IS RETURNING NULL
     //   setState(() {});
+  }
+
+  sendFollow()async{
+    BuiltUser cuser = Provider.of<UserData>(context,listen: false).user;
+    final service = Provider.of<DatabaseApiService>(context,listen: false);
+    final resp = (await service.follow(cuser.userId, widget.userId));
+    Fluttertoast.showToast(msg: 'Follow Request Sent');
+  }
+
+  sendFreindRequest()async{
+    BuiltUser cuser = Provider.of<UserData>(context,listen: false).user;
+    final service = Provider.of<DatabaseApiService>(context,listen: false);
+    final resp = (await service.sendFriendRequest(cuser.userId, widget.userId));
+    Fluttertoast.showToast(msg: 'Friend Request Sent');
   }
 
   @override
@@ -176,12 +192,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ButtonTheme(
                                         minWidth: size.width / 3.5,
                                         child: RaisedButton(
-                                          onPressed: () {},
-                                          color: Colors.red[600],
-                                          child: Text('FOLLOW',
+                                          onPressed: () async{
+                                            if(!sentFollowRequest)
+                                            {await sendFollow();
+                                            setState(() {
+                                              sentFollowRequest = !sentFollowRequest;
+                                            });}
+                                          },
+                                          color: !sentFollowRequest?Colors.red[600]:Colors.white,
+                                          child: Text(!sentFollowRequest?'Follow':'Sent follow request',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                                color: !sentFollowRequest?Colors.white:Colors.grey[700],
                                               )),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
@@ -195,12 +217,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ButtonTheme(
                                         minWidth: size.width / 3.5,
                                         child: RaisedButton(
-                                          onPressed: () {},
+                                          onPressed: () async{
+                                            if(!sentFriendRequest)
+                                              {
+                                                await sendFreindRequest();
+                                                setState(() {
+                                                  sentFriendRequest = !sentFriendRequest;
+                                                });
+                                              }
+                                          },
                                           color: Colors.white,
-                                          child: Text('ADD FRIEND',
+                                          child: Text(!sentFriendRequest?'Add friend':'Sent Friend Request',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.red[600],
+                                                color: !sentFriendRequest?Colors.red[600]:Colors.grey[700],
                                               )),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
