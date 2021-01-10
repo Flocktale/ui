@@ -60,10 +60,12 @@ class _CarouselState extends State<Carousel> {
                       subtitle: Text(
                           widget.Clubs[index].description != null
                               ? widget.Clubs[index].description
-                              : '',
+                              : 'There is no description for this club.',
                           style: TextStyle(
                             fontFamily: 'Lato',
-                          )),
+                          )
+                      ),
+
                     ),
                   ],
                 ),

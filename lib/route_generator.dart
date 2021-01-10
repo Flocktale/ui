@@ -4,6 +4,7 @@ import 'package:mootclub_app/main.dart';
 import 'package:mootclub_app/pages/HomePage.dart';
 import 'package:mootclub_app/Authentication/login.dart';
 import 'package:mootclub_app/Authentication/register.dart';
+import 'package:mootclub_app/pages/NotificationPage.dart';
 
 
 class RouteGenerator{
@@ -19,6 +20,8 @@ class RouteGenerator{
         return MaterialPageRoute(builder: (_) => Register());
       case '/signup':
         return MaterialPageRoute(builder: (_) => SignUpScreen());
+      case '/notificationPage':
+        return MaterialPageRoute(builder: (_) => NotificationPage());
       default:
         return _errorRoute();
     }

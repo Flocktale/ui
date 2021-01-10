@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/pages/HomePage.dart';
 import 'package:provider/provider.dart';
@@ -51,8 +52,21 @@ class MyApp extends StatelessWidget {
             home: userData.loaded == false
                 ? Scaffold(
                     body: Center(
-                      child: Text('Loading ...'),
+                      child: SizedBox(
+                         // width: 250.0,
+                          child: TextLiquidFill(
+                            text: 'MOOTCLUB',
+                            waveColor: Colors.blueAccent,
+                            boxBackgroundColor: Colors.redAccent,
+                            textStyle: TextStyle(
+                              fontSize: 40.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            boxHeight: 300.0,
+                          ),
+                        ),
                     ),
+
                   )
                 : userData.isAuth == false
                     ? Login()

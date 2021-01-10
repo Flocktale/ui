@@ -4,23 +4,24 @@ class AppBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Positioned(
-      top: 10,
-      left: size.width/50,
-      right: size.width/50,
-      child: Row(
+    return  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Icon(Icons.arrow_back),
+          IconButton(icon: Icon(Icons.camera_alt_outlined), onPressed: null),
           Text(
-            'PROFILE',
+            'MOOTCLUB',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               letterSpacing: 2.0,
             ),),
-          Icon(Icons.settings)
+          IconButton(
+              icon: Icon(Icons.notifications_none_outlined),
+            onPressed: (){
+                Navigator.of(context).pushNamed('/notificationPage');
+            },
+          ),
+
         ],
-      ),
-    );
+      );
   }
 }
