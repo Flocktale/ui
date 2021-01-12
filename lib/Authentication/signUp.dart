@@ -139,26 +139,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             },
                           ),
                           SizedBox(height: 50),
-                          Container(
-                              height: 40.0,
-                              child: Material(
-                                borderRadius: BorderRadius.circular(20.0),
-                                shadowColor: Colors.amberAccent,
-                                color: Colors.amber,
-                                elevation: 7.0,
-                                child: GestureDetector(
-                                  onTap: _signUpWithBackend,
-                                  child: Center(
-                                    child: Text(
-                                      'SUBMIT',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Lato'),
+                          InkWell(
+                            onTap: _signUpWithBackend,
+                            child: Container(
+                                height: 40.0,
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  shadowColor: Colors.amberAccent,
+                                  color: Colors.amber,
+                                  elevation: 7.0,
+                                    child: Center(
+                                      child: Text(
+                                        'SUBMIT',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Lato'),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              )),
+
+                                )),
+                          ),
                         ],
                       ),
                     ),

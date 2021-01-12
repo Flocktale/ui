@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mootclub_app/Authentication/OtpScreen.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/pages/FollowersPage.dart';
@@ -259,7 +260,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   : ButtonTheme(
                                       minWidth: size.width / 1.5,
                                       child: RaisedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                         // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
+                                        },
                                         color: Colors.white,
                                         child: Text('EDIT PROFILE',
                                             style: TextStyle(

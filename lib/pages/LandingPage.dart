@@ -59,7 +59,7 @@ class _LandingPageState extends State<LandingPage>
                 width: 250.0,
                 child: TypewriterAnimatedTextKit(
                   isRepeatingAnimation: false,
-                  speed: const Duration(milliseconds: 100),
+                  speed: const Duration(milliseconds: 125),
                   onTap: () {
                     print("Tap Event");
                   },
@@ -81,7 +81,8 @@ class _LandingPageState extends State<LandingPage>
                     builder: (context, snapshot) {
                       if (Clubs == null ||
                           snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                      //  return Center(child: CircularProgressIndicator());
+                        return Container();
                       }
                       return ListView.builder(
                           itemCount: Category.length,

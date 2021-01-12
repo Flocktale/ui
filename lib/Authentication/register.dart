@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mootclub_app/Authentication/OtpScreen.dart';
 import 'package:mootclub_app/Authentication/signUp.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
@@ -59,8 +60,9 @@ class _RegisterState extends State<Register> {
     Size size = MediaQuery.of(context).size;
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
-        body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-            Widget>[
+        body: !_askConfirmCode?
+        Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Container(
             child: Stack(
               children: <Widget>[
@@ -85,8 +87,7 @@ class _RegisterState extends State<Register> {
               ],
             ),
           ),
-          !_askConfirmCode
-              ? Container(
+          Container(
                   padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
                   child: Column(
                     children: <Widget>[
@@ -158,35 +159,38 @@ class _RegisterState extends State<Register> {
                         ),
                       ),
                       SizedBox(height: 50.0),
-                      Container(
-                          height: 40.0,
-                          child: Material(
-                            borderRadius: BorderRadius.circular(20.0),
-                            shadowColor: Colors.amberAccent,
-                            color: Colors.amber,
-                            elevation: 7.0,
-                            child: GestureDetector(
-                              onTap: () async {
-                                if (_formKey.currentState.validate()) {
-                                  _formKey.currentState.save();
-                                  if (_register)
-                                    await _registerUser();
-                                  else
-                                    Fluttertoast.showToast(
-                                        msg: 'User already registered.');
-                                }
-                              },
-                              child: Center(
-                                child: Text(
-                                  'SIGNUP',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Lato'),
+                      InkWell(
+                        onTap: () async {
+                          if (_formKey.currentState.validate()) {
+                            _formKey.currentState.save();
+                            if (_register)
+                              await _registerUser();
+                            else
+                              Fluttertoast.showToast(
+                                  msg: 'User already registered.');
+                          }
+                        },
+                        child: Container(
+                            height: 40.0,
+                            child: Material(
+                              borderRadius: BorderRadius.circular(20.0),
+                              shadowColor: Colors.amberAccent,
+                              color: Colors.amber,
+                              elevation: 7.0,
+
+
+                                child: Center(
+                                  child: Text(
+                                    'SIGNUP',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Lato'),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          )),
+
+                            )),
+                      ),
                       SizedBox(height: 20.0),
                       Container(
                         height: 40.0,
@@ -214,90 +218,8 @@ class _RegisterState extends State<Register> {
                       ),
                     ],
                   ))
-              : Container(
-                  padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-                  child: Column(
-                    children: <Widget>[
-                      Text('Enter the OTP'),
-                      SizedBox(height: size.height / 50),
-                      OTPTextField(
-                        length: 6,
-                        fieldStyle: FieldStyle.underline,
-                        style: TextStyle(
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.bold,
-                        ),
-                        onCompleted: (pin) {
-                          setState(() {
-                            _confirmCodeController = pin;
-                          });
-                        },
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
-                      Container(
-                        alignment: Alignment(1.0, 0.0),
-                        padding: EdgeInsets.only(top: 15.0, left: 20.0),
-                        child: InkWell(
-                          onTap: () async {
-                            await reSendConfirmationCode(
-                                _emailController.text.trim());
-                          },
-                          child: Text(
-                            'Resend OTP',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontWeight: FontWeight.bold,
-                              color: Colors.amber,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 50.0),
-                      Container(
-                          height: 40.0,
-                          child: Material(
-                            borderRadius: BorderRadius.circular(20.0),
-                            shadowColor: Colors.amberAccent,
-                            color: Colors.amber,
-                            elevation: 7.0,
-                            child: GestureDetector(
-                              onTap: () async {
-                                final bool res = await confirmUserCognito(
-                                    email: _emailController.text.trim(),
-                                    code: _confirmCodeController.trim());
-
-                                if (res == true) {
-                                  final userId = await startSession(
-                                      email: _emailController.text.trim(),
-                                      password:
-                                          _passwordController.text.trim());
-                                  if (userId != null) {
-                                    Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                            builder: (_) => SignUpScreen(
-                                                userId: userId,
-                                                email: _emailController.text
-                                                    .trim())));
-                                  }
-                                }
-                              },
-                              child: Center(
-                                child: Text(
-                                  'SUBMIT',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Lato'),
-                                ),
-                              ),
-                            ),
-                          )),
-                    ],
-                  ),
-                ),
-        ]));
+        ])
+            : OtpScreen(emailController: _emailController.text,passwordController: _passwordController.text,),
+    );
   }
 }

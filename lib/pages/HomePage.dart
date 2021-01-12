@@ -44,22 +44,22 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home,color: selectedIndex==0?Colors.amber:Colors.grey,),
-            title: Text('Home',style: TextStyle(color: selectedIndex==0?Colors.amber:Colors.grey,)),
+            title: Text('Home',style: TextStyle(color: selectedIndex==0?Colors.amber:Colors.grey,fontFamily: 'Lato')),
             //backgroundColor: Colors.amber,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add,color: selectedIndex==1?Colors.amber:Colors.grey,),
-            title: Text('New Club',style: TextStyle(color: selectedIndex==1?Colors.amber:Colors.grey,)),
+            title: Text('New Club',style: TextStyle(color: selectedIndex==1?Colors.amber:Colors.grey,fontFamily: 'Lato')),
          //   backgroundColor: Colors.amber,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search,color: selectedIndex==2?Colors.amber:Colors.grey,),
-            title: Text('Search',style: TextStyle(color: selectedIndex==2?Colors.amber:Colors.grey,)),
+            title: Text('Search',style: TextStyle(color: selectedIndex==2?Colors.amber:Colors.grey,fontFamily: 'Lato')),
         //    backgroundColor: Colors.amber,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person,color: selectedIndex==3?Colors.amber:Colors.grey,),
-            title: Text('Profile',style: TextStyle(color: selectedIndex==3?Colors.amber:Colors.grey,)),
+            title: Text('Profile',style: TextStyle(color: selectedIndex==3?Colors.amber:Colors.grey,fontFamily: 'Lato')),
          //   backgroundColor: Colors.amber,
           ),
         ],
