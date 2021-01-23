@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final cuser = Provider.of<UserData>(context,listen: false).user;
     List<Widget> _screens = [
-      LandingPage(),NewClub(),SearchPage(user: cuser,),ProfilePage(userId:cuser.userId)
+      LandingPage(),NewClub(userId: cuser.userId,),SearchPage(user: cuser,),ProfilePage(userId:cuser.userId)
     ];
     return Scaffold(
       body: PageView(

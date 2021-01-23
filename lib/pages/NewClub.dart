@@ -4,7 +4,7 @@ import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:provider/provider.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
-
+import 'ImagePage.dart';
 class NewClub extends StatefulWidget {
   final String userId;
   NewClub({this.userId});
@@ -51,7 +51,8 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       ..category = category);
 
     final resp = await service.createNewClub(newClub, widget.userId);
-    print(resp);
+    print('========='+resp.body);
+    print(resp.error);
     Fluttertoast.showToast(msg: 'club entry is created');
   }
 
@@ -159,32 +160,72 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                       height: size.height / 50,
                     ),
                     _buildCategory(),
-                    ButtonTheme(
-                      minWidth: size.width / 3.5,
-                      child: RaisedButton(
-                        onPressed: () {
-                          if (!_formKey.currentState.validate()) {
-                            return;
-                          } else {
-                            _formKey.currentState.save();
-                            print(name);
-                            print(description);
-                            print(category);
-                            _createClub();
-                          }
-                        },
-                        color: Colors.red[600],
-                        child: Text('Submit',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Lato',
-                            )),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          //side: BorderSide(color: Colors.red[600]),
+                    SizedBox(
+                      height: size.height / 50,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ButtonTheme(
+                          minWidth: size.width / 3.5,
+                          child: RaisedButton(
+                            onPressed: () {
+                              if (!_formKey.currentState.validate()) {
+                                return;
+                              } else {
+                                _formKey.currentState.save();
+                                Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ImagePage(name: name,description: description, category: category, userId: widget.userId,)));
+                              }
+                            },
+                            color: Colors.white,
+                            child: Text('Select an image',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w200,
+                                  fontFamily: 'Lato',
+                                )),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              //side: BorderSide(color: Colors.red[600]),
+                            ),
+                          ),
                         ),
-                      ),
+                        Text(
+                            "OR",
+                          style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        ButtonTheme(
+                          minWidth: size.width / 3.5,
+                          child: RaisedButton(
+                            onPressed: () {
+                              if (!_formKey.currentState.validate()) {
+                                return;
+                              } else {
+                                _formKey.currentState.save();
+                                print(name);
+                                print(description);
+                                print(category);
+//                                Navigator.of(context).pushNamed('/imagePage');
+                                _createClub();
+                              }
+                            },
+                            color: Colors.red[600],
+                            child: Text('Skip and Submit',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Lato',
+                                )),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              //side: BorderSide(color: Colors.red[600]),
+                            ),
+                          ),
+                        ),
+                      ],
                     )
                   ],
                 ))
