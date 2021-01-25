@@ -17,6 +17,11 @@ part 'serializers.g.dart';
   BuiltSearchClubs,
   CategoryClubsList,
   BuiltAllClubsList,
+  ReactionUser,
+  BuiltReaction,
+  ReportSummary,
+  JoinRequests,
+  BuiltActiveJoinRequests,
 ])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

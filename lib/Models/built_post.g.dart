@@ -22,6 +22,16 @@ Serializer<CategoryClubsList> _$categoryClubsListSerializer =
     new _$CategoryClubsListSerializer();
 Serializer<BuiltAllClubsList> _$builtAllClubsListSerializer =
     new _$BuiltAllClubsListSerializer();
+Serializer<ReactionUser> _$reactionUserSerializer =
+    new _$ReactionUserSerializer();
+Serializer<BuiltReaction> _$builtReactionSerializer =
+    new _$BuiltReactionSerializer();
+Serializer<ReportSummary> _$reportSummarySerializer =
+    new _$ReportSummarySerializer();
+Serializer<JoinRequests> _$joinRequestsSerializer =
+    new _$JoinRequestsSerializer();
+Serializer<BuiltActiveJoinRequests> _$builtActiveJoinRequestsSerializer =
+    new _$BuiltActiveJoinRequestsSerializer();
 
 class _$BuiltProfileSerializer implements StructuredSerializer<BuiltProfile> {
   @override
@@ -907,6 +917,257 @@ class _$BuiltAllClubsListSerializer
           result.categoryClubs.replace(serializers.deserialize(value,
                   specifiedType: const FullType(
                       BuiltList, const [const FullType(CategoryClubsList)]))
+              as BuiltList<Object>);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$ReactionUserSerializer implements StructuredSerializer<ReactionUser> {
+  @override
+  final Iterable<Type> types = const [ReactionUser, _$ReactionUser];
+  @override
+  final String wireName = 'ReactionUser';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, ReactionUser object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'user',
+      serializers.serialize(object.user,
+          specifiedType: const FullType(SummaryUser)),
+      'timestamp',
+      serializers.serialize(object.timestamp,
+          specifiedType: const FullType(int)),
+      'indexValue',
+      serializers.serialize(object.indexValue,
+          specifiedType: const FullType(int)),
+    ];
+
+    return result;
+  }
+
+  @override
+  ReactionUser deserialize(Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new ReactionUserBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'user':
+          result.user.replace(serializers.deserialize(value,
+              specifiedType: const FullType(SummaryUser)) as SummaryUser);
+          break;
+        case 'timestamp':
+          result.timestamp = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'indexValue':
+          result.indexValue = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$BuiltReactionSerializer implements StructuredSerializer<BuiltReaction> {
+  @override
+  final Iterable<Type> types = const [BuiltReaction, _$BuiltReaction];
+  @override
+  final String wireName = 'BuiltReaction';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, BuiltReaction object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'reactions',
+      serializers.serialize(object.reactions,
+          specifiedType:
+              const FullType(BuiltList, const [const FullType(ReactionUser)])),
+    ];
+    if (object.lastevaluatedkey != null) {
+      result
+        ..add('lastevaluatedkey')
+        ..add(serializers.serialize(object.lastevaluatedkey,
+            specifiedType: const FullType(String)));
+    }
+    return result;
+  }
+
+  @override
+  BuiltReaction deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltReactionBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'reactions':
+          result.reactions.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(ReactionUser)]))
+              as BuiltList<Object>);
+          break;
+        case 'lastevaluatedkey':
+          result.lastevaluatedkey = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$ReportSummarySerializer implements StructuredSerializer<ReportSummary> {
+  @override
+  final Iterable<Type> types = const [ReportSummary, _$ReportSummary];
+  @override
+  final String wireName = 'ReportSummary';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, ReportSummary object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'body',
+      serializers.serialize(object.body, specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  ReportSummary deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new ReportSummaryBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'body':
+          result.body = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$JoinRequestsSerializer implements StructuredSerializer<JoinRequests> {
+  @override
+  final Iterable<Type> types = const [JoinRequests, _$JoinRequests];
+  @override
+  final String wireName = 'JoinRequests';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, JoinRequests object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'joinRequestAttempts',
+      serializers.serialize(object.joinRequestAttempts,
+          specifiedType: const FullType(int)),
+      'timestamp',
+      serializers.serialize(object.timestamp,
+          specifiedType: const FullType(int)),
+      'audience',
+      serializers.serialize(object.audience,
+          specifiedType: const FullType(SummaryUser)),
+    ];
+
+    return result;
+  }
+
+  @override
+  JoinRequests deserialize(Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new JoinRequestsBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'joinRequestAttempts':
+          result.joinRequestAttempts = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'timestamp':
+          result.timestamp = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'audience':
+          result.audience.replace(serializers.deserialize(value,
+              specifiedType: const FullType(SummaryUser)) as SummaryUser);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$BuiltActiveJoinRequestsSerializer
+    implements StructuredSerializer<BuiltActiveJoinRequests> {
+  @override
+  final Iterable<Type> types = const [
+    BuiltActiveJoinRequests,
+    _$BuiltActiveJoinRequests
+  ];
+  @override
+  final String wireName = 'BuiltActiveJoinRequests';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, BuiltActiveJoinRequests object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.activeJoinRequestUsers != null) {
+      result
+        ..add('activeJoinRequestUsers')
+        ..add(serializers.serialize(object.activeJoinRequestUsers,
+            specifiedType: const FullType(
+                BuiltList, const [const FullType(JoinRequests)])));
+    }
+    return result;
+  }
+
+  @override
+  BuiltActiveJoinRequests deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltActiveJoinRequestsBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'activeJoinRequestUsers':
+          result.activeJoinRequestUsers.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(JoinRequests)]))
               as BuiltList<Object>);
           break;
       }
@@ -2351,6 +2612,530 @@ class BuiltAllClubsListBuilder
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuiltAllClubsList', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$ReactionUser extends ReactionUser {
+  @override
+  final SummaryUser user;
+  @override
+  final int timestamp;
+  @override
+  final int indexValue;
+
+  factory _$ReactionUser([void Function(ReactionUserBuilder) updates]) =>
+      (new ReactionUserBuilder()..update(updates)).build();
+
+  _$ReactionUser._({this.user, this.timestamp, this.indexValue}) : super._() {
+    if (user == null) {
+      throw new BuiltValueNullFieldError('ReactionUser', 'user');
+    }
+    if (timestamp == null) {
+      throw new BuiltValueNullFieldError('ReactionUser', 'timestamp');
+    }
+    if (indexValue == null) {
+      throw new BuiltValueNullFieldError('ReactionUser', 'indexValue');
+    }
+  }
+
+  @override
+  ReactionUser rebuild(void Function(ReactionUserBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ReactionUserBuilder toBuilder() => new ReactionUserBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is ReactionUser &&
+        user == other.user &&
+        timestamp == other.timestamp &&
+        indexValue == other.indexValue;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc($jc(0, user.hashCode), timestamp.hashCode), indexValue.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('ReactionUser')
+          ..add('user', user)
+          ..add('timestamp', timestamp)
+          ..add('indexValue', indexValue))
+        .toString();
+  }
+}
+
+class ReactionUserBuilder
+    implements Builder<ReactionUser, ReactionUserBuilder> {
+  _$ReactionUser _$v;
+
+  SummaryUserBuilder _user;
+  SummaryUserBuilder get user => _$this._user ??= new SummaryUserBuilder();
+  set user(SummaryUserBuilder user) => _$this._user = user;
+
+  int _timestamp;
+  int get timestamp => _$this._timestamp;
+  set timestamp(int timestamp) => _$this._timestamp = timestamp;
+
+  int _indexValue;
+  int get indexValue => _$this._indexValue;
+  set indexValue(int indexValue) => _$this._indexValue = indexValue;
+
+  ReactionUserBuilder();
+
+  ReactionUserBuilder get _$this {
+    if (_$v != null) {
+      _user = _$v.user?.toBuilder();
+      _timestamp = _$v.timestamp;
+      _indexValue = _$v.indexValue;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(ReactionUser other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$ReactionUser;
+  }
+
+  @override
+  void update(void Function(ReactionUserBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$ReactionUser build() {
+    _$ReactionUser _$result;
+    try {
+      _$result = _$v ??
+          new _$ReactionUser._(
+              user: user.build(), timestamp: timestamp, indexValue: indexValue);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'user';
+        user.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'ReactionUser', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$BuiltReaction extends BuiltReaction {
+  @override
+  final BuiltList<ReactionUser> reactions;
+  @override
+  final String lastevaluatedkey;
+
+  factory _$BuiltReaction([void Function(BuiltReactionBuilder) updates]) =>
+      (new BuiltReactionBuilder()..update(updates)).build();
+
+  _$BuiltReaction._({this.reactions, this.lastevaluatedkey}) : super._() {
+    if (reactions == null) {
+      throw new BuiltValueNullFieldError('BuiltReaction', 'reactions');
+    }
+  }
+
+  @override
+  BuiltReaction rebuild(void Function(BuiltReactionBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltReactionBuilder toBuilder() => new BuiltReactionBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltReaction &&
+        reactions == other.reactions &&
+        lastevaluatedkey == other.lastevaluatedkey;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, reactions.hashCode), lastevaluatedkey.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltReaction')
+          ..add('reactions', reactions)
+          ..add('lastevaluatedkey', lastevaluatedkey))
+        .toString();
+  }
+}
+
+class BuiltReactionBuilder
+    implements Builder<BuiltReaction, BuiltReactionBuilder> {
+  _$BuiltReaction _$v;
+
+  ListBuilder<ReactionUser> _reactions;
+  ListBuilder<ReactionUser> get reactions =>
+      _$this._reactions ??= new ListBuilder<ReactionUser>();
+  set reactions(ListBuilder<ReactionUser> reactions) =>
+      _$this._reactions = reactions;
+
+  String _lastevaluatedkey;
+  String get lastevaluatedkey => _$this._lastevaluatedkey;
+  set lastevaluatedkey(String lastevaluatedkey) =>
+      _$this._lastevaluatedkey = lastevaluatedkey;
+
+  BuiltReactionBuilder();
+
+  BuiltReactionBuilder get _$this {
+    if (_$v != null) {
+      _reactions = _$v.reactions?.toBuilder();
+      _lastevaluatedkey = _$v.lastevaluatedkey;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltReaction other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltReaction;
+  }
+
+  @override
+  void update(void Function(BuiltReactionBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltReaction build() {
+    _$BuiltReaction _$result;
+    try {
+      _$result = _$v ??
+          new _$BuiltReaction._(
+              reactions: reactions.build(), lastevaluatedkey: lastevaluatedkey);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'reactions';
+        reactions.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuiltReaction', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$ReportSummary extends ReportSummary {
+  @override
+  final String body;
+
+  factory _$ReportSummary([void Function(ReportSummaryBuilder) updates]) =>
+      (new ReportSummaryBuilder()..update(updates)).build();
+
+  _$ReportSummary._({this.body}) : super._() {
+    if (body == null) {
+      throw new BuiltValueNullFieldError('ReportSummary', 'body');
+    }
+  }
+
+  @override
+  ReportSummary rebuild(void Function(ReportSummaryBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ReportSummaryBuilder toBuilder() => new ReportSummaryBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is ReportSummary && body == other.body;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(0, body.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('ReportSummary')..add('body', body))
+        .toString();
+  }
+}
+
+class ReportSummaryBuilder
+    implements Builder<ReportSummary, ReportSummaryBuilder> {
+  _$ReportSummary _$v;
+
+  String _body;
+  String get body => _$this._body;
+  set body(String body) => _$this._body = body;
+
+  ReportSummaryBuilder();
+
+  ReportSummaryBuilder get _$this {
+    if (_$v != null) {
+      _body = _$v.body;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(ReportSummary other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$ReportSummary;
+  }
+
+  @override
+  void update(void Function(ReportSummaryBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$ReportSummary build() {
+    final _$result = _$v ?? new _$ReportSummary._(body: body);
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$JoinRequests extends JoinRequests {
+  @override
+  final int joinRequestAttempts;
+  @override
+  final int timestamp;
+  @override
+  final SummaryUser audience;
+
+  factory _$JoinRequests([void Function(JoinRequestsBuilder) updates]) =>
+      (new JoinRequestsBuilder()..update(updates)).build();
+
+  _$JoinRequests._({this.joinRequestAttempts, this.timestamp, this.audience})
+      : super._() {
+    if (joinRequestAttempts == null) {
+      throw new BuiltValueNullFieldError('JoinRequests', 'joinRequestAttempts');
+    }
+    if (timestamp == null) {
+      throw new BuiltValueNullFieldError('JoinRequests', 'timestamp');
+    }
+    if (audience == null) {
+      throw new BuiltValueNullFieldError('JoinRequests', 'audience');
+    }
+  }
+
+  @override
+  JoinRequests rebuild(void Function(JoinRequestsBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  JoinRequestsBuilder toBuilder() => new JoinRequestsBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is JoinRequests &&
+        joinRequestAttempts == other.joinRequestAttempts &&
+        timestamp == other.timestamp &&
+        audience == other.audience;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc($jc(0, joinRequestAttempts.hashCode), timestamp.hashCode),
+        audience.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('JoinRequests')
+          ..add('joinRequestAttempts', joinRequestAttempts)
+          ..add('timestamp', timestamp)
+          ..add('audience', audience))
+        .toString();
+  }
+}
+
+class JoinRequestsBuilder
+    implements Builder<JoinRequests, JoinRequestsBuilder> {
+  _$JoinRequests _$v;
+
+  int _joinRequestAttempts;
+  int get joinRequestAttempts => _$this._joinRequestAttempts;
+  set joinRequestAttempts(int joinRequestAttempts) =>
+      _$this._joinRequestAttempts = joinRequestAttempts;
+
+  int _timestamp;
+  int get timestamp => _$this._timestamp;
+  set timestamp(int timestamp) => _$this._timestamp = timestamp;
+
+  SummaryUserBuilder _audience;
+  SummaryUserBuilder get audience =>
+      _$this._audience ??= new SummaryUserBuilder();
+  set audience(SummaryUserBuilder audience) => _$this._audience = audience;
+
+  JoinRequestsBuilder();
+
+  JoinRequestsBuilder get _$this {
+    if (_$v != null) {
+      _joinRequestAttempts = _$v.joinRequestAttempts;
+      _timestamp = _$v.timestamp;
+      _audience = _$v.audience?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(JoinRequests other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$JoinRequests;
+  }
+
+  @override
+  void update(void Function(JoinRequestsBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$JoinRequests build() {
+    _$JoinRequests _$result;
+    try {
+      _$result = _$v ??
+          new _$JoinRequests._(
+              joinRequestAttempts: joinRequestAttempts,
+              timestamp: timestamp,
+              audience: audience.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'audience';
+        audience.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'JoinRequests', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$BuiltActiveJoinRequests extends BuiltActiveJoinRequests {
+  @override
+  final BuiltList<JoinRequests> activeJoinRequestUsers;
+
+  factory _$BuiltActiveJoinRequests(
+          [void Function(BuiltActiveJoinRequestsBuilder) updates]) =>
+      (new BuiltActiveJoinRequestsBuilder()..update(updates)).build();
+
+  _$BuiltActiveJoinRequests._({this.activeJoinRequestUsers}) : super._();
+
+  @override
+  BuiltActiveJoinRequests rebuild(
+          void Function(BuiltActiveJoinRequestsBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltActiveJoinRequestsBuilder toBuilder() =>
+      new BuiltActiveJoinRequestsBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltActiveJoinRequests &&
+        activeJoinRequestUsers == other.activeJoinRequestUsers;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(0, activeJoinRequestUsers.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltActiveJoinRequests')
+          ..add('activeJoinRequestUsers', activeJoinRequestUsers))
+        .toString();
+  }
+}
+
+class BuiltActiveJoinRequestsBuilder
+    implements
+        Builder<BuiltActiveJoinRequests, BuiltActiveJoinRequestsBuilder> {
+  _$BuiltActiveJoinRequests _$v;
+
+  ListBuilder<JoinRequests> _activeJoinRequestUsers;
+  ListBuilder<JoinRequests> get activeJoinRequestUsers =>
+      _$this._activeJoinRequestUsers ??= new ListBuilder<JoinRequests>();
+  set activeJoinRequestUsers(
+          ListBuilder<JoinRequests> activeJoinRequestUsers) =>
+      _$this._activeJoinRequestUsers = activeJoinRequestUsers;
+
+  BuiltActiveJoinRequestsBuilder();
+
+  BuiltActiveJoinRequestsBuilder get _$this {
+    if (_$v != null) {
+      _activeJoinRequestUsers = _$v.activeJoinRequestUsers?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltActiveJoinRequests other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltActiveJoinRequests;
+  }
+
+  @override
+  void update(void Function(BuiltActiveJoinRequestsBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltActiveJoinRequests build() {
+    _$BuiltActiveJoinRequests _$result;
+    try {
+      _$result = _$v ??
+          new _$BuiltActiveJoinRequests._(
+              activeJoinRequestUsers: _activeJoinRequestUsers?.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'activeJoinRequestUsers';
+        _activeJoinRequestUsers?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuiltActiveJoinRequests', _$failedField, e.toString());
       }
       rethrow;
     }

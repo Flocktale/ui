@@ -93,16 +93,16 @@ class _ProfilePageState extends State<ProfilePage> {
     //   setState(() {});
   }
 
-  sendFollow()async{
-    BuiltUser cuser = Provider.of<UserData>(context,listen: false).user;
-    final service = Provider.of<DatabaseApiService>(context,listen: false);
+  sendFollow() async {
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
     final resp = (await service.follow(cuser.userId, widget.userId));
     Fluttertoast.showToast(msg: 'Follow Request Sent');
   }
 
-  sendFreindRequest()async{
-    BuiltUser cuser = Provider.of<UserData>(context,listen: false).user;
-    final service = Provider.of<DatabaseApiService>(context,listen: false);
+  sendFreindRequest() async {
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
     final resp = (await service.sendFriendRequest(cuser.userId, widget.userId));
     Fluttertoast.showToast(msg: 'Friend Request Sent');
   }
@@ -111,6 +111,50 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     print('isme=${_isMe}');
+    const userId = '9a6a6a6d-7b11-4d40-9ce9-c292b9f451b';
+    const clubId = 'MYg7GShERndmORpluy7GK';
+    // Getting Reactions
+    // Provider.of<DatabaseApiService>(context,listen: false).getReaction('MYg7GShERndmORpluy7GK').then((value){
+    //   print(value.body);
+    // });
+
+    //Sending Reactions
+    //  Provider.of<DatabaseApiService>(context,listen: false).postReaction('MYg7GShERndmORpluy7GK','9a6a6a6d-7b11-4d40-9ce9-c292b9f451b7',1).then((value){
+
+    //   print(value.statusCode);
+    //   print(value.body);
+    //   print(value.error);
+    // });
+
+    //Reporting club
+    // var a = ReportSummary((r)=>r
+    // ..body = "AA");
+
+    // Provider.of<DatabaseApiService>(context, listen: false).reportClub(
+    //     '9a6a6a6d-7b11-4d40-9ce9-c292b9f451b7',
+    //     a,
+    //     'MYg7GShERndmORpluy7GK').then((value)  {
+    //       print(value.statusCode);
+    //       print(value.body);
+    //       print(value.error);
+    //     });
+
+    //Getting Join Request
+    // Provider.of<DatabaseApiService>(context, listen: false)
+    //     .getActiveJoinRequests('MYg7GShERndmORpluy7GK', null).then((value) {
+
+    //         print(value.statusCode);
+    //         print(value.body);
+    //         print(value.error);
+    //     });
+    Provider.of<DatabaseApiService>(context, listen: false)
+        .sendJoinRequest(userId, clubId)
+        .then((value) {
+      print(value.statusCode);
+      print(value.body);
+      print(value.error);
+    });
+
     return Scaffold(
         backgroundColor: Colors.amber,
         body: FutureBuilder(
@@ -127,14 +171,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
-                          end:
-                          Alignment(0.8, 0.5), // 10% of the width, so there are ten blinds.
+                          end: Alignment(0.8,
+                              0.5), // 10% of the width, so there are ten blinds.
                           colors: [
                             const Color(0xfffac043),
                             const Color(0xffd61a09)
-                          //  const Color(0xffd90000)
+                            //  const Color(0xffd90000)
                           ], // red to yellow
-                          tileMode: TileMode.repeated, // repeats the gradient over the canvas
+                          tileMode: TileMode
+                              .repeated, // repeats the gradient over the canvas
                         ),
                       ),
                     ),
@@ -162,7 +207,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               SizedBox(height: size.height / 20),
                               Text(
                                 //  'Caroline Steele',
-                                _user.name != null ? _user.name : _user.username,
+                                _user.name != null
+                                    ? _user.name
+                                    : _user.username,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: size.width / 20,
@@ -206,18 +253,27 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ButtonTheme(
                                           minWidth: size.width / 3.5,
                                           child: RaisedButton(
-                                            onPressed: () async{
-                                              if(!sentFollowRequest)
-                                              {await sendFollow();
-                                              setState(() {
-                                                sentFollowRequest = !sentFollowRequest;
-                                              });}
+                                            onPressed: () async {
+                                              if (!sentFollowRequest) {
+                                                await sendFollow();
+                                                setState(() {
+                                                  sentFollowRequest =
+                                                      !sentFollowRequest;
+                                                });
+                                              }
                                             },
-                                            color: !sentFollowRequest?Colors.red[600]:Colors.white,
-                                            child: Text(!sentFollowRequest?'Follow':'Sent follow request',
+                                            color: !sentFollowRequest
+                                                ? Colors.red[600]
+                                                : Colors.white,
+                                            child: Text(
+                                                !sentFollowRequest
+                                                    ? 'Follow'
+                                                    : 'Sent follow request',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: !sentFollowRequest?Colors.white:Colors.grey[700],
+                                                  color: !sentFollowRequest
+                                                      ? Colors.white
+                                                      : Colors.grey[700],
                                                 )),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -231,20 +287,25 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ButtonTheme(
                                           minWidth: size.width / 3.5,
                                           child: RaisedButton(
-                                            onPressed: () async{
-                                              if(!sentFriendRequest)
-                                                {
-                                                  await sendFreindRequest();
-                                                  setState(() {
-                                                    sentFriendRequest = !sentFriendRequest;
-                                                  });
-                                                }
+                                            onPressed: () async {
+                                              if (!sentFriendRequest) {
+                                                await sendFreindRequest();
+                                                setState(() {
+                                                  sentFriendRequest =
+                                                      !sentFriendRequest;
+                                                });
+                                              }
                                             },
                                             color: Colors.white,
-                                            child: Text(!sentFriendRequest?'Add friend':'Sent Friend Request',
+                                            child: Text(
+                                                !sentFriendRequest
+                                                    ? 'Add friend'
+                                                    : 'Sent Friend Request',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: !sentFriendRequest?Colors.red[600]:Colors.grey[700],
+                                                  color: !sentFriendRequest
+                                                      ? Colors.red[600]
+                                                      : Colors.grey[700],
                                                 )),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -261,7 +322,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       minWidth: size.width / 1.5,
                                       child: RaisedButton(
                                         onPressed: () {
-                                         // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
+                                          // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
                                         },
                                         color: Colors.white,
                                         child: Text('EDIT PROFILE',
@@ -272,15 +333,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(18.0),
-                                          side:
-                                              BorderSide(color: Colors.red[600]),
+                                          side: BorderSide(
+                                              color: Colors.red[600]),
                                         ),
                                         elevation: 0.0,
                                       ),
                                     ),
                               SizedBox(height: size.height / 30),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 //crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
                                   InkWell(
@@ -359,7 +421,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                         Text(
                                             _user.followingCount.toString() !=
                                                     'null'
-                                                ? _user.followingCount.toString()
+                                                ? _user.followingCount
+                                                    .toString()
                                                 : '0',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,

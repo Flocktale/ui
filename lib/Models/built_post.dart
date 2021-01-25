@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mootclub_app/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
@@ -263,4 +265,85 @@ abstract class BuiltAllClubsList
 
   static Serializer<BuiltAllClubsList> get serializer =>
       _$builtAllClubsListSerializer;
+}
+
+abstract class ReactionUser
+    implements Built<ReactionUser, ReactionUserBuilder> {
+  // fields go here
+
+  SummaryUser get user;
+  int get timestamp;
+  int get indexValue;
+
+
+  ReactionUser._();
+
+  factory ReactionUser([updates(ReactionUserBuilder b)]) = _$ReactionUser;
+
+ 
+  static Serializer<ReactionUser> get serializer => _$reactionUserSerializer;
+}
+
+abstract class BuiltReaction
+    implements Built<BuiltReaction, BuiltReactionBuilder> {
+  // fields go here
+
+  BuiltList<ReactionUser> get reactions;
+  @nullable
+  String get lastevaluatedkey;
+
+  BuiltReaction._();
+
+  factory BuiltReaction([updates(BuiltReactionBuilder b)]) = _$BuiltReaction;
+  static Serializer<BuiltReaction> get serializer => _$builtReactionSerializer;
+}
+
+
+abstract class ReportSummary implements Built<ReportSummary, ReportSummaryBuilder> {
+  // fields go here
+
+  String get body;
+  ReportSummary._();
+
+  factory ReportSummary([updates(ReportSummaryBuilder b)]) = _$ReportSummary;
+
+ 
+  static Serializer<ReportSummary> get serializer => _$reportSummarySerializer;
+
+}
+
+
+abstract class JoinRequests implements Built<JoinRequests, JoinRequestsBuilder> {
+  // fields go here
+
+  int get joinRequestAttempts;
+  int get timestamp;
+  SummaryUser get audience;
+  // BuiltList<SummaryUser> get audience;
+
+  JoinRequests._();
+
+  factory JoinRequests([updates(JoinRequestsBuilder b)]) = _$JoinRequests;
+
+  
+  static Serializer<JoinRequests> get serializer => _$joinRequestsSerializer;
+}
+
+abstract class BuiltActiveJoinRequests implements Built<BuiltActiveJoinRequests, BuiltActiveJoinRequestsBuilder> {
+  // fields go here
+
+  @nullable
+  BuiltList<JoinRequests> get activeJoinRequestUsers;
+
+  BuiltActiveJoinRequests._();
+
+  factory BuiltActiveJoinRequests([updates(BuiltActiveJoinRequestsBuilder b)]) = _$BuiltActiveJoinRequests;
+
+  String toJson() {
+    return json.encode(serializers.serializeWith(BuiltActiveJoinRequests.serializer, this));
+  }
+
+  
+
+  static Serializer<BuiltActiveJoinRequests> get serializer => _$builtActiveJoinRequestsSerializer;
 }

@@ -7,15 +7,20 @@ part of 'serializers.dart';
 // **************************************************************************
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(BuiltActiveJoinRequests.serializer)
       ..add(BuiltAllClubsList.serializer)
       ..add(BuiltClub.serializer)
       ..add(BuiltFollow.serializer)
       ..add(BuiltProfile.serializer)
       ..add(BuiltProfileImage.serializer)
+      ..add(BuiltReaction.serializer)
       ..add(BuiltSearchClubs.serializer)
       ..add(BuiltSearchUsers.serializer)
       ..add(BuiltUser.serializer)
       ..add(CategoryClubsList.serializer)
+      ..add(JoinRequests.serializer)
+      ..add(ReactionUser.serializer)
+      ..add(ReportSummary.serializer)
       ..add(SummaryUser.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(BuiltClub)]),
@@ -26,6 +31,12 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(CategoryClubsList)]),
           () => new ListBuilder<CategoryClubsList>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(JoinRequests)]),
+          () => new ListBuilder<JoinRequests>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(ReactionUser)]),
+          () => new ListBuilder<ReactionUser>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
           () => new ListBuilder<String>())

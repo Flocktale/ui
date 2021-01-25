@@ -1,3 +1,4 @@
+import 'package:built_value/built_value.dart';
 import 'package:chopper/chopper.dart';
 import 'package:http/http.dart' as http;
 
@@ -131,21 +132,56 @@ abstract class DatabaseApiService extends ChopperService {
   @Post(path: '/clubs/{clubId}/enter/')
   Future<Response> enterClub(@Path() String clubId, @Query() String userId);
 
-  //TODO
-  // @Post(path: '/clubs/{clubId}/reaction/')
-  // Future<Response> reaction(
-  //   @Path() String clubId,
-  //   @Query() String userId
-  // );
+  
 
   //TODO
-  // Get reactions
+
+  @Post(path: '/clubs/{clubId}/reactions/')
+  Future<Response> postReaction(
+    @Path() String clubId,
+    @Query() String audienceId,
+    @Query() int indexValue,
+  );
+
+  @Get(path: '/clubs/{clubId}/reactions/')
+  Future<Response<BuiltReaction>> getReaction(
+    @Path() String clubId,
+  );
+
+
 
   @Post(path: '/clubs/{clubId}/reports/')
-  Future<Response> reportUser(
+  Future<Response> reportClub(
     @Query() String userId,
-    @Body() String body,
+    @Body() ReportSummary report,
     @Path() String clubId,
+  );
+
+  @Post(path: '/clubs/{clubId}/join-request')
+  Future<Response> sendJoinRequest(
+      @Query() String userId,
+      @Path() String clubId,
+  );
+
+
+
+  @Get(path: '/clubs/{clubId}/join-request')
+  Future<Response<BuiltActiveJoinRequests>> getActiveJoinRequests(
+    @Path() String clubId,
+    @Header() String lastevaluatedkey,
+  );
+
+
+  @Post(path: '/clubs/{clubId}/join-request/{resp}')
+  Future<Response> respondToJoinRequest(
+    @Path() String resp, // ["accept" or "cancel"]
+    @Query() String audienceId,
+  );
+
+  @Delete(path: '/clubs/{clubId/join-request/')
+  Future<Response> deleteJoinRequet(
+    @Path() String clubId,
+    @Query() String userId,
   );
 
   static DatabaseApiService create() {

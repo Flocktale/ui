@@ -199,13 +199,68 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> reportUser(
-      String userId, String body, String clubId) {
+  Future<Response<dynamic>> postReaction(
+      String clubId, String audienceId, int indexValue) {
+    final $url = '/clubs/$clubId/reactions/';
+    final $params = <String, dynamic>{
+      'audienceId': audienceId,
+      'indexValue': indexValue
+    };
+    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<BuiltReaction>> getReaction(String clubId) {
+    final $url = '/clubs/$clubId/reactions/';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<BuiltReaction, BuiltReaction>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> reportClub(
+      String userId, ReportSummary report, String clubId) {
     final $url = '/clubs/$clubId/reports/';
     final $params = <String, dynamic>{'userId': userId};
-    final $body = body;
+    final $body = report;
     final $request =
         Request('POST', $url, client.baseUrl, body: $body, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> sendJoinRequest(String userId, String clubId) {
+    final $url = '/clubs/$clubId/join-request';
+    final $params = <String, dynamic>{'userId': userId};
+    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<BuiltActiveJoinRequests>> getActiveJoinRequests(
+      String clubId, String lastevaluatedkey) {
+    final $url = '/clubs/$clubId/join-request';
+    final $headers = {'lastevaluatedkey': lastevaluatedkey};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client
+        .send<BuiltActiveJoinRequests, BuiltActiveJoinRequests>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> respondToJoinRequest(
+      String resp, String audienceId) {
+    final $url = '/clubs/{clubId}/join-request/$resp';
+    final $params = <String, dynamic>{'audienceId': audienceId};
+    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> deleteJoinRequet(String clubId, String userId) {
+    final $url = '/clubs/{clubId/join-request/';
+    final $params = <String, dynamic>{'userId': userId};
+    final $request =
+        Request('DELETE', $url, client.baseUrl, parameters: $params);
     return client.send<dynamic, dynamic>($request);
   }
 }
