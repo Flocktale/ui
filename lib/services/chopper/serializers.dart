@@ -22,6 +22,7 @@ part 'serializers.g.dart';
   ReportSummary,
   JoinRequests,
   BuiltActiveJoinRequests,
+  BuiltUnifiedSearchResults,
 ])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

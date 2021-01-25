@@ -32,6 +32,8 @@ Serializer<JoinRequests> _$joinRequestsSerializer =
     new _$JoinRequestsSerializer();
 Serializer<BuiltActiveJoinRequests> _$builtActiveJoinRequestsSerializer =
     new _$BuiltActiveJoinRequestsSerializer();
+Serializer<BuiltUnifiedSearchResults> _$builtUnifiedSearchResultsSerializer =
+    new _$BuiltUnifiedSearchResultsSerializer();
 
 class _$BuiltProfileSerializer implements StructuredSerializer<BuiltProfile> {
   @override
@@ -1168,6 +1170,69 @@ class _$BuiltActiveJoinRequestsSerializer
           result.activeJoinRequestUsers.replace(serializers.deserialize(value,
                   specifiedType: const FullType(
                       BuiltList, const [const FullType(JoinRequests)]))
+              as BuiltList<Object>);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$BuiltUnifiedSearchResultsSerializer
+    implements StructuredSerializer<BuiltUnifiedSearchResults> {
+  @override
+  final Iterable<Type> types = const [
+    BuiltUnifiedSearchResults,
+    _$BuiltUnifiedSearchResults
+  ];
+  @override
+  final String wireName = 'BuiltUnifiedSearchResults';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, BuiltUnifiedSearchResults object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.users != null) {
+      result
+        ..add('users')
+        ..add(serializers.serialize(object.users,
+            specifiedType: const FullType(
+                BuiltList, const [const FullType(SummaryUser)])));
+    }
+    if (object.clubs != null) {
+      result
+        ..add('clubs')
+        ..add(serializers.serialize(object.clubs,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(BuiltClub)])));
+    }
+    return result;
+  }
+
+  @override
+  BuiltUnifiedSearchResults deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltUnifiedSearchResultsBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'users':
+          result.users.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(SummaryUser)]))
+              as BuiltList<Object>);
+          break;
+        case 'clubs':
+          result.clubs.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(BuiltClub)]))
               as BuiltList<Object>);
           break;
       }
@@ -3136,6 +3201,113 @@ class BuiltActiveJoinRequestsBuilder
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuiltActiveJoinRequests', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$BuiltUnifiedSearchResults extends BuiltUnifiedSearchResults {
+  @override
+  final BuiltList<SummaryUser> users;
+  @override
+  final BuiltList<BuiltClub> clubs;
+
+  factory _$BuiltUnifiedSearchResults(
+          [void Function(BuiltUnifiedSearchResultsBuilder) updates]) =>
+      (new BuiltUnifiedSearchResultsBuilder()..update(updates)).build();
+
+  _$BuiltUnifiedSearchResults._({this.users, this.clubs}) : super._();
+
+  @override
+  BuiltUnifiedSearchResults rebuild(
+          void Function(BuiltUnifiedSearchResultsBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltUnifiedSearchResultsBuilder toBuilder() =>
+      new BuiltUnifiedSearchResultsBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltUnifiedSearchResults &&
+        users == other.users &&
+        clubs == other.clubs;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, users.hashCode), clubs.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltUnifiedSearchResults')
+          ..add('users', users)
+          ..add('clubs', clubs))
+        .toString();
+  }
+}
+
+class BuiltUnifiedSearchResultsBuilder
+    implements
+        Builder<BuiltUnifiedSearchResults, BuiltUnifiedSearchResultsBuilder> {
+  _$BuiltUnifiedSearchResults _$v;
+
+  ListBuilder<SummaryUser> _users;
+  ListBuilder<SummaryUser> get users =>
+      _$this._users ??= new ListBuilder<SummaryUser>();
+  set users(ListBuilder<SummaryUser> users) => _$this._users = users;
+
+  ListBuilder<BuiltClub> _clubs;
+  ListBuilder<BuiltClub> get clubs =>
+      _$this._clubs ??= new ListBuilder<BuiltClub>();
+  set clubs(ListBuilder<BuiltClub> clubs) => _$this._clubs = clubs;
+
+  BuiltUnifiedSearchResultsBuilder();
+
+  BuiltUnifiedSearchResultsBuilder get _$this {
+    if (_$v != null) {
+      _users = _$v.users?.toBuilder();
+      _clubs = _$v.clubs?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltUnifiedSearchResults other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltUnifiedSearchResults;
+  }
+
+  @override
+  void update(void Function(BuiltUnifiedSearchResultsBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltUnifiedSearchResults build() {
+    _$BuiltUnifiedSearchResults _$result;
+    try {
+      _$result = _$v ??
+          new _$BuiltUnifiedSearchResults._(
+              users: _users?.build(), clubs: _clubs?.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'users';
+        _users?.build();
+        _$failedField = 'clubs';
+        _clubs?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuiltUnifiedSearchResults', _$failedField, e.toString());
       }
       rethrow;
     }

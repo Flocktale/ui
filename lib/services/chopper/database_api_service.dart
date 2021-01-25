@@ -172,17 +172,37 @@ abstract class DatabaseApiService extends ChopperService {
   );
 
 
-  @Post(path: '/clubs/{clubId}/join-request/{resp}')
+  @Post(path: '/clubs/{clubId}/join-request/response')
   Future<Response> respondToJoinRequest(
-    @Path() String resp, // ["accept" or "cancel"]
+    @Path() String clubId,
+    @Query() String action, // ["accept" or "cancel"]
     @Query() String audienceId,
   );
 
-  @Delete(path: '/clubs/{clubId/join-request/')
+  @Delete(path: '/clubs/{clubId}/join-request/')
   Future<Response> deleteJoinRequet(
     @Path() String clubId,
     @Query() String userId,
   );
+
+  @Post(path: '/clubs/{clubId}/kick/')
+  Future<Response> kickAudienceId(
+    @Path() String clubId,
+    @Query() String audienceId,
+  );
+
+  @Get(path: '/query/')
+  Future<Response<BuiltUnifiedSearchResults>> unifiedQueryRoutes(
+    @Query() String searchString,
+    @Query() String type, //["unified","clubs","users"]
+    @Header() String lastevaluatedkey,
+  );
+
+
+
+
+
+
 
   static DatabaseApiService create() {
     final client = ChopperClient(

@@ -248,19 +248,45 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<dynamic>> respondToJoinRequest(
-      String resp, String audienceId) {
-    final $url = '/clubs/{clubId}/join-request/$resp';
-    final $params = <String, dynamic>{'audienceId': audienceId};
+      String clubId, String action, String audienceId) {
+    final $url = '/clubs/$clubId/join-request/response';
+    final $params = <String, dynamic>{
+      'action': action,
+      'audienceId': audienceId
+    };
     final $request = Request('POST', $url, client.baseUrl, parameters: $params);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<dynamic>> deleteJoinRequet(String clubId, String userId) {
-    final $url = '/clubs/{clubId/join-request/';
+    final $url = '/clubs/$clubId/join-request/';
     final $params = <String, dynamic>{'userId': userId};
     final $request =
         Request('DELETE', $url, client.baseUrl, parameters: $params);
     return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> kickAudienceId(String clubId, String audienceId) {
+    final $url = '/clubs/$clubId/kick/';
+    final $params = <String, dynamic>{'audienceId': audienceId};
+    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<BuiltUnifiedSearchResults>> unifiedQueryRoutes(
+      String searchString, String type, String lastevaluatedkey) {
+    final $url = '/query/';
+    final $params = <String, dynamic>{
+      'searchString': searchString,
+      'type': type
+    };
+    final $headers = {'lastevaluatedkey': lastevaluatedkey};
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client
+        .send<BuiltUnifiedSearchResults, BuiltUnifiedSearchResults>($request);
   }
 }

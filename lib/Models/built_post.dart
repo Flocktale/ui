@@ -347,3 +347,28 @@ abstract class BuiltActiveJoinRequests implements Built<BuiltActiveJoinRequests,
 
   static Serializer<BuiltActiveJoinRequests> get serializer => _$builtActiveJoinRequestsSerializer;
 }
+
+
+
+abstract class BuiltUnifiedSearchResults implements Built<BuiltUnifiedSearchResults, BuiltUnifiedSearchResultsBuilder> {
+  // fields go here
+
+  @nullable
+  BuiltList<SummaryUser> get users;
+
+  @nullable
+  BuiltList<BuiltClub> get clubs;
+
+  BuiltUnifiedSearchResults._();
+
+  factory BuiltUnifiedSearchResults([updates(BuiltUnifiedSearchResultsBuilder b)]) = _$BuiltUnifiedSearchResults;
+
+  String toJson() {
+    return json.encode(serializers.serializeWith(BuiltUnifiedSearchResults.serializer, this));
+  }
+
+  
+
+  static Serializer<BuiltUnifiedSearchResults> get serializer => _$builtUnifiedSearchResultsSerializer;
+}
+
