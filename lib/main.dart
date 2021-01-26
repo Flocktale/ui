@@ -42,10 +42,10 @@ class MyApp extends StatelessWidget {
         ),
 
         ChangeNotifierProvider<MySocket>(
-        create: (ctx) => MySocket("aksdkkd"),
+          create: (ctx) => MySocket("aksdkkd"),
         ),
         // Provider(
-          // create: (ctx)=> MySocket(Provider.of<UserData>(ctx, listen: false).user.userId),
+        // create: (ctx)=> MySocket(Provider.of<UserData>(ctx, listen: false).user.userId),
         // ),
       ],
       child: Consumer<UserData>(
@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
                   )
                 : userData.isAuth == false
                     ? Login()
-                    : HomePage(),
+                    : Consumer<MySocket>(builder:(ctx,_,__)=>HomePage()),
             routes: {}),
       ),
     );

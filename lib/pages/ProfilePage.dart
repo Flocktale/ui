@@ -107,19 +107,25 @@ class _ProfilePageState extends State<ProfilePage> {
     final resp = (await service.sendFriendRequest(cuser.userId, widget.userId));
     Fluttertoast.showToast(msg: 'Friend Request Sent');
   }
-  checkingResponse(value){
+
+  checkingResponse(value) {
     print(value.statusCode);
     print(value.body);
     print(value.error);
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     print('isme=${_isMe}');
     const userId = '264bf27e-2752-4e49-aba0-ca03b101c104';
     const clubId = 'MYg7GShERndmORpluy7GK';
-    var service = Provider.of<DatabaseApiService>(context,listen:false);
-    Provider.of<MySocket>(context,listen: false).currentStatus();
+
+    // var service = Provider.of<DatabaseApiService>(context,listen:false);
+    // Provider.of<MySocket>(context,listen: false).currentStatus();
+    // for(int i=0;i<100;i++){
+      // print("${_user.userId}  $i");
+    // }
     // Getting Reactions
     // Provider.of<DatabaseApiService>(context,listen: false).getReaction('MYg7GShERndmORpluy7GK').then((value){
     //   print(value.body);
@@ -165,7 +171,6 @@ class _ProfilePageState extends State<ProfilePage> {
     //         print(value.error);
     //     });
 
-
     //sending join request
     // Provider.of<DatabaseApiService>(context, listen: false)
     //     .sendJoinRequest(userId, clubId)
@@ -174,9 +179,6 @@ class _ProfilePageState extends State<ProfilePage> {
     //   print(value.body);
     //   print(value.error);
     // });
-
-
-
 
     // deleting join request
     // service.deleteJoinRequet(clubId, userId).then((value)=>checkingResposne(value));
@@ -196,11 +198,9 @@ class _ProfilePageState extends State<ProfilePage> {
     //searching for clubs
     // service.unifiedQueryRoutes("Ada", "clubs",null).then((value) => checkingResponse(value));
 
-     //searching for users
+    //searching for users
     // service.unifiedQueryRoutes("hola", "users",null).then((value) => checkingResponse(value));
 
-
-    
     return Scaffold(
         backgroundColor: Colors.amber,
         body: FutureBuilder(

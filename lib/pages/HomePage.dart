@@ -6,6 +6,7 @@ import 'package:mootclub_app/pages/NewClub.dart';
 import 'package:mootclub_app/pages/ProfilePage.dart';
 import 'package:mootclub_app/pages/SearchPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
+import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,20 +18,42 @@ class _HomePageState extends State<HomePage> {
   PageController _pageController = PageController();
 
   int selectedIndex = 0;
-  void _onPageChanged(int index){
+  void _onPageChanged(int index) {
     setState(() {
       selectedIndex = index;
     });
   }
-  void _onItemTapped(int selectedIndex){
+
+  void _onItemTapped(int selectedIndex) {
     _pageController.jumpToPage(selectedIndex);
   }
+
+  @override
+  initState() {
+    super.initState();
+    MySocket a = Provider.of<MySocket>(context, listen: false);
+
+    String userId = Provider.of<UserData>(context, listen: false).user.userId;
+    // for(int i=0;i<100;i++){
+    // print("$userId $i");
+    // }
+    if (a.userId != userId) a.update(userId);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final cuser = Provider.of<UserData>(context,listen: false).user;
+    final cuser = Provider.of<UserData>(context, listen: false).user;
     List<Widget> _screens = [
-      LandingPage(),NewClub(userId: cuser.userId,),SearchPage(user: cuser,),ProfilePage(userId:cuser.userId)
+      LandingPage(),
+      NewClub(
+        userId: cuser.userId,
+      ),
+      SearchPage(
+        user: cuser,
+      ),
+      ProfilePage(userId: cuser.userId)
     ];
+
     return Scaffold(
       body: PageView(
         controller: _pageController,
@@ -43,24 +66,48 @@ class _HomePageState extends State<HomePage> {
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home,color: selectedIndex==0?Colors.amber:Colors.grey,),
-            title: Text('Home',style: TextStyle(color: selectedIndex==0?Colors.amber:Colors.grey,fontFamily: 'Lato')),
+            icon: Icon(
+              Icons.home,
+              color: selectedIndex == 0 ? Colors.amber : Colors.grey,
+            ),
+            title: Text('Home',
+                style: TextStyle(
+                    color: selectedIndex == 0 ? Colors.amber : Colors.grey,
+                    fontFamily: 'Lato')),
             //backgroundColor: Colors.amber,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add,color: selectedIndex==1?Colors.amber:Colors.grey,),
-            title: Text('New Club',style: TextStyle(color: selectedIndex==1?Colors.amber:Colors.grey,fontFamily: 'Lato')),
-         //   backgroundColor: Colors.amber,
+            icon: Icon(
+              Icons.add,
+              color: selectedIndex == 1 ? Colors.amber : Colors.grey,
+            ),
+            title: Text('New Club',
+                style: TextStyle(
+                    color: selectedIndex == 1 ? Colors.amber : Colors.grey,
+                    fontFamily: 'Lato')),
+            //   backgroundColor: Colors.amber,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search,color: selectedIndex==2?Colors.amber:Colors.grey,),
-            title: Text('Search',style: TextStyle(color: selectedIndex==2?Colors.amber:Colors.grey,fontFamily: 'Lato')),
-        //    backgroundColor: Colors.amber,
+            icon: Icon(
+              Icons.search,
+              color: selectedIndex == 2 ? Colors.amber : Colors.grey,
+            ),
+            title: Text('Search',
+                style: TextStyle(
+                    color: selectedIndex == 2 ? Colors.amber : Colors.grey,
+                    fontFamily: 'Lato')),
+            //    backgroundColor: Colors.amber,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person,color: selectedIndex==3?Colors.amber:Colors.grey,),
-            title: Text('Profile',style: TextStyle(color: selectedIndex==3?Colors.amber:Colors.grey,fontFamily: 'Lato')),
-         //   backgroundColor: Colors.amber,
+            icon: Icon(
+              Icons.person,
+              color: selectedIndex == 3 ? Colors.amber : Colors.grey,
+            ),
+            title: Text('Profile',
+                style: TextStyle(
+                    color: selectedIndex == 3 ? Colors.amber : Colors.grey,
+                    fontFamily: 'Lato')),
+            //   backgroundColor: Colors.amber,
           ),
         ],
       ),

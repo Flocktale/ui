@@ -67,7 +67,7 @@ class _LoginState extends State<Login> {
       await _prefs.setString(SharedPrefKeys.USERID, userId);
 
       Provider.of<UserData>(context, listen: false).updateUser = user;
-      // Provider.of<MySocket>(context,listen: false).update(userId);
+      Provider.of<MySocket>(context,listen: false).update(userId);
       Navigator.of(context).pushNamed('/');
       // We don't need to push from here as Consumer at root path will automatically change the screen to home screen on listening changes of auth status;
 
