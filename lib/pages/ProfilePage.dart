@@ -7,6 +7,7 @@ import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/pages/FollowersPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
+import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import '../AppBarWidget.dart';
@@ -118,6 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
     const userId = '264bf27e-2752-4e49-aba0-ca03b101c104';
     const clubId = 'MYg7GShERndmORpluy7GK';
     var service = Provider.of<DatabaseApiService>(context,listen:false);
+    Provider.of<MySocket>(context,listen: false).currentStatus();
     // Getting Reactions
     // Provider.of<DatabaseApiService>(context,listen: false).getReaction('MYg7GShERndmORpluy7GK').then((value){
     //   print(value.body);

@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserData with ChangeNotifier {
   BuiltUser _builtUser = BuiltUser();
 
+
   final DatabaseApiService _postApiService;
 
 // true when necessary actions are loaded (during startup of app)

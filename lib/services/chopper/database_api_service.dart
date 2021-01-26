@@ -205,6 +205,7 @@ abstract class DatabaseApiService extends ChopperService {
 
 
   static DatabaseApiService create() {
+    print("------------------initiating database----------------");
     final client = ChopperClient(
       baseUrl: 'https://863u7os9ui.execute-api.us-east-1.amazonaws.com/Prod',
       services: [
