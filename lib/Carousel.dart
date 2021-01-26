@@ -39,8 +39,7 @@ class _CarouselState extends State<Carousel> {
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => ClubPage(
-                            Clubs: widget.Clubs,
-                            index: index,
+                            Club : widget.Clubs[index]
                           )));
                 },
                 child: Wrap(

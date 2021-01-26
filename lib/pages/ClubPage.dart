@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:mootclub_app/pages/ProfilePage.dart';
+import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:like_button/like_button.dart';
 
 class ClubPage extends StatefulWidget {
-  BuiltList<BuiltClub> Clubs;
-  int index;
-  ClubPage({this.Clubs, this.index});
+  // BuiltList<BuiltClub> Clubs;
+  BuiltClub Club;
+  ClubPage({this.Club});
   @override
   _ClubPageState createState() => _ClubPageState();
 }
@@ -18,6 +19,14 @@ class _ClubPageState extends State<ClubPage> {
   final _commentController = TextEditingController();
   String newComment;
   double time = 20;
+  // bool 
+
+  
+  @override
+  void initState() {
+   
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -74,7 +83,7 @@ class _ClubPageState extends State<ClubPage> {
                               ],
                             borderRadius: BorderRadius.all(Radius.circular(5.0))
                           ),
-                          child: Image.network(widget.Clubs[widget.index].clubAvatar,fit: BoxFit.cover,),
+                          child: Image.network(widget.Club.clubAvatar,fit: BoxFit.cover,),
                         ),
                       ),
                     )
@@ -90,7 +99,7 @@ class _ClubPageState extends State<ClubPage> {
                       Column(
                         children: <Widget>[
                           Text(
-                              widget.Clubs[widget.index].clubName,
+                              widget.Club.clubName,
                             style: TextStyle(
                               color: Color(0xFF354075),
                               fontFamily: 'Lato',
@@ -99,7 +108,7 @@ class _ClubPageState extends State<ClubPage> {
                             ),
                           ),
                           Text(
-                            widget.Clubs[widget.index].creator.username,
+                            widget.Club.creator.username,
                             style: TextStyle(
                               color: Colors.grey,
                               fontFamily: 'Lato',
