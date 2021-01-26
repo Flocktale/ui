@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:built_value/built_value.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/ProfilePage.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
+
+import 'ClubPage.dart';
 
 class SearchPage extends StatefulWidget {
   BuiltUser user;
@@ -74,7 +77,7 @@ class _SearchPageState extends State<SearchPage> {
 
 class DataSearch extends SearchDelegate<String> {
   List<BuiltUser> recentSearches;
-  BuiltSearchUsers allSearches;
+  BuiltUnifiedSearchResults allSearches;
   BuildContext context;
   DataSearch({this.recentSearches, this.context});
 
@@ -112,32 +115,51 @@ class DataSearch extends SearchDelegate<String> {
   }
 
   getAllUsers() async {
-    String username = query.toLowerCase();
+    String username = query;
     final service = Provider.of<DatabaseApiService>(context);
-    allSearches = (await service.getUserbyUsername(username)).body;
+    //allSearches = (await service.getUserbyUsername(username)).body;
+    allSearches = (await service.unifiedQueryRoutes(username, "unified", null)).body;
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     // Show when someone searches for something
     return query.isEmpty
-        ? ListView.builder(
-            itemCount: recentSearches.length,
-            itemBuilder: (builder, index) {
-              return ListTile(
-                leading: Image.network(recentSearches[index].avatar),
-                title: Text(
-                  recentSearches[index].name,
-                ),
-                subtitle: Text(recentSearches[index].username),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => ProfilePage(
-                            userId: recentSearches[index].userId,
-                          )));
-                },
-              );
-            })
+        ? Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: size.height/50),
+            Text("Recent Searches",style: TextStyle(
+              fontFamily: 'Lato',
+              fontWeight: FontWeight.bold,
+              fontSize: size.width/20
+            ),),
+            SizedBox(height: size.height/50),
+            Expanded(
+              child: SizedBox(
+                height: 300.0,
+                child: ListView.builder(
+                    itemCount: recentSearches.length,
+                    itemBuilder: (builder, index) {
+                      return ListTile(
+                        leading: Image.network(recentSearches[index].avatar),
+                        title: Text(
+                          recentSearches[index].name,
+                        ),
+                        subtitle: Text(recentSearches[index].username),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => ProfilePage(
+                                    userId: recentSearches[index].userId,
+                                  )));
+                        },
+                      );
+                    }),
+              ),
+            ),
+          ],
+        )
         : FutureBuilder(
             future: getAllUsers(),
             builder: (context, snapshot) {
@@ -145,36 +167,119 @@ class DataSearch extends SearchDelegate<String> {
                   snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               }
-              return ListView.builder(
-                  itemCount: allSearches.users.length,
-                  itemBuilder: (builder, index) {
-                    return ListTile(
-                      leading: allSearches.users[index].avatar != null
-                          ? Image.network(allSearches.users[index].avatar)
-                          : null,
-                      title:
-                          /* RichText(text: TextSpan(
-                      text: allSearches.users[index].name.substring(0,query.length),
-                      style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                      children: [TextSpan(
-                        text: allSearches.users[index].name.substring(query.length),
-                        style: TextStyle(color: Colors.grey)
-                      )]
-                    ),),*/
-                          allSearches.users[index].name != null
-                              ? Text(allSearches.users[index].name)
-                              : null,
-                      subtitle: allSearches.users[index].username != null
-                          ? Text(allSearches.users[index].username)
-                          : null,
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => ProfilePage(
-                                  userId: allSearches.users[index].userId,
-                                )));
-                      },
-                    );
-                  });
+              return Container(
+                margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: size.height/50),
+                    Text("Search Results",
+                    style: TextStyle(
+                      fontFamily: 'Lato',
+                      fontWeight: FontWeight.bold,
+                      fontSize: size.width/20
+                    ),),
+                    SizedBox(height: size.height/50),
+                    Text("Users",
+                    style: TextStyle(
+                      fontFamily: 'Lato',
+                      fontWeight: FontWeight.w500,
+                      fontSize: size.width/20
+                    ),),
+                    //SizedBox(height: size.height/50),
+                    Expanded(
+                      child: SizedBox(
+                        height: 200.0,
+                        child: ListView.builder(
+                            itemCount: allSearches.users!=null?allSearches.users.length:0,
+                            itemBuilder: (builder, index) {
+                              return ListTile(
+                                leading: allSearches.users[index].avatar != null
+                                    ? Image.network(allSearches.users[index].avatar)
+                                    : null,
+                                title:
+                                    /* RichText(text: TextSpan(
+                                text: allSearches.users[index].name.substring(0,query.length),
+                                style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                                children: [TextSpan(
+                                  text: allSearches.users[index].name.substring(query.length),
+                                  style: TextStyle(color: Colors.grey)
+                                )]
+                              ),),*/
+                                    allSearches.users[index].name != null
+                                        ? Text(allSearches.users[index].name)
+                                        : null,
+                                subtitle: allSearches.users[index].username != null
+                                    ? Text(allSearches.users[index].username)
+                                    : null,
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => ProfilePage(
+                                            userId: allSearches.users[index].userId,
+                                          )));
+                                },
+                              );
+                            }),
+                      ),
+                    ),
+                   InkWell(
+                     child: Container(
+                       child: Text("See all users",
+                       style: TextStyle(
+                         fontFamily: 'Lato',
+                         fontWeight: FontWeight.w500,
+                         fontSize: size.width/25
+                       ),)
+                     )
+                   ),
+                    SizedBox(height: size.height/50,),
+                   // SizedBox(height: size.height/30),
+                    Text("Clubs",
+                    style: TextStyle(
+                      fontFamily: 'Lato',
+                        fontWeight: FontWeight.w500,
+                        fontSize: size.width/20
+                    ),),
+                    SizedBox(height: size.height/50),
+                    Expanded(
+                      child: SizedBox(
+                        height: 300.0,
+                        child: ListView.builder(
+                          itemCount: allSearches.clubs.length,
+                          itemBuilder: (builder,index){
+                            return ListTile(
+                              leading: allSearches.clubs[index].clubAvatar !=null
+                                  ? Image.network(allSearches.clubs[index].clubAvatar)
+                                  : null,
+                              title: allSearches.clubs[index].clubAvatar != null
+                                ? Text(allSearches.clubs[index].clubName)
+                                  : null,
+                              subtitle: allSearches.clubs[index].creator != null? Text(allSearches.clubs[index].creator.username): Text("Club"),
+                              onTap: (){
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => ClubPage(
+                                    Club: allSearches.clubs[index],
+                                  )
+                                ));
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                        child: Container(
+                            child: Text("See all clubs",
+                              style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: size.width/25
+                              ),)
+                        )
+                    ),
+                  ],
+                ),
+              );
             },
           );
   }

@@ -116,10 +116,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     print('isme=${_isMe}');
-    const userId = '264bf27e-2752-4e49-aba0-ca03b101c104';
-    const clubId = 'MYg7GShERndmORpluy7GK';
-    var service = Provider.of<DatabaseApiService>(context,listen:false);
-    Provider.of<MySocket>(context,listen: false).currentStatus();
+//    const userId = '264bf27e-2752-4e49-aba0-ca03b101c104';
+//    const clubId = 'MYg7GShERndmORpluy7GK';
+//    var service = Provider.of<DatabaseApiService>(context,listen:false);
+//    Provider.of<MySocket>(context,listen: false).currentStatus();
     // Getting Reactions
     // Provider.of<DatabaseApiService>(context,listen: false).getReaction('MYg7GShERndmORpluy7GK').then((value){
     //   print(value.body);
