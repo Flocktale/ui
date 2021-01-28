@@ -1,6 +1,7 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/pages/Club.dart';
 import 'package:mootclub_app/pages/ClubPage.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
@@ -38,8 +39,8 @@ class _CarouselState extends State<Carousel> {
               child: InkWell(
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => ClubPage(
-                            Club : widget.Clubs[index]
+                      builder: (_) => Club(
+                            club : widget.Clubs[index]
                           )));
                 },
                 child: Wrap(
