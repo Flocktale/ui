@@ -9,6 +9,8 @@ import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import 'ClubJoinRequests.dart';
 class Club extends StatefulWidget {
   BuiltClub club;
   Club({this.club});
@@ -60,13 +62,73 @@ class _ClubState extends State<Club> {
       ),
       body: SafeArea(
         child: SlidingUpPanel(
-          minHeight: size.height/18,
+          minHeight: size.height/15,
           maxHeight: size.height/1.5,
           backdropEnabled: true,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(24),topRight: Radius.circular(24)),
           panel: Container(
-            child: Center(
-              child:Text("Panelists")
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: size.height/30,),
+                Center(
+                  child: Text("Panelists",
+                  style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.bold,
+                    fontSize: size.width/20,
+                    color: Colors.red[300]
+                  )),
+                ),
+                SizedBox(height: size.height/50,),
+                Container(
+                  height: 300,
+                  child: ListView.builder(
+                    itemCount: 3,
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      itemBuilder: (context,index){
+                      return Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                            CircleAvatar(
+                                backgroundColor: Colors.orange.withOpacity(0.3),
+                                radius: 32,
+                                child: Icon(
+                                  Icons.person_outline,
+                                  size: 30,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              CircleAvatar(
+                                backgroundColor: Colors.orange.withOpacity(0.3),
+                                radius: 32,
+                                child: Icon(
+                                  Icons.person_outline,
+                                  size: 30,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              CircleAvatar(
+                                backgroundColor: Colors.orange.withOpacity(0.3),
+                                radius: 32,
+                                child: Icon(
+                                  Icons.person_outline,
+                                  size: 30,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: size.height/50,),
+                        ],
+                      );
+                      }
+                      ),
+                ),
+                //SizedBox(height: size.height/50,),+
+              ],
             )
           ),
           collapsed: Container(
@@ -307,8 +369,13 @@ class _ClubState extends State<Club> {
                                 onPressed: (){
                                   setState(() {
                                   });
+                                  if(isMe && playing)
+                                    {
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ClubJoinRequests(club: widget.club,)));
+                                    }
                                 },
-                                child: Icon(Icons.mic_none_rounded),
+                                child: !isMe?
+                                Icon(Icons.mic_none_rounded):Icon(Icons.person_add),
                                 backgroundColor: !playing?Colors.grey:Colors.amber,
                               ),
                             ),
@@ -377,7 +444,25 @@ class _ClubState extends State<Club> {
                             child: Container(
                                 height: size.height / 2.5,
                                 width: size.width - 30,
-                                color: Colors.white)),
+                                color: Colors.white,
+                              child: ListView.builder(
+                                itemCount: 3,
+                                  itemBuilder: (context,index){
+                                return ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: AssetImage("assets/Card1.jpg"),
+                                  ),
+                                  title: Text("Listener ${index}",
+                                  style: TextStyle(
+                                    fontFamily: "Lato",
+                                  ),),
+                                  subtitle: Text("The quick brown fox jumped over the lazy dog.",
+                                  style: TextStyle(
+                                    fontFamily: "Lato"
+                                  ),),
+                                );
+                              }),
+                            )),
                         Positioned(
                           left: 20,
                           bottom: 30,
