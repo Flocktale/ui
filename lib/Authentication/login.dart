@@ -1,3 +1,4 @@
+import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Authentication/register.dart';
 import 'package:mootclub_app/Authentication/signUp.dart';
@@ -35,27 +36,41 @@ class _LoginState extends State<Login> {
     }
     // print(_emailController.);
 
-    final userId = await startSession(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim());
+    final _email = _emailController.text.trim();
+    final _password = _passwordController.text.trim();
 
-    if (userId == codes[0]) {
-      Navigator.of(context).pop();
-      Fluttertoast.showToast(
-          msg: 'Incorrect Username or Password', gravity: ToastGravity.TOP);
-      return;
-    } else if (userId == codes[1]) {
-      Navigator.of(context).pop();
+    String userId;
 
-      setState(() {
-        _askConfirmCode = true;
-      });
+    final cognitorError = await startSession(
+        email: _email,
+        password: _password,
+        callback: (String id, CognitoUserSession session) {
+          userId = id;
+          Provider.of<UserData>(context, listen: false).cognitoSession =
+              session;
+        });
 
+    if (cognitorError != null) {
+      if (cognitorError == codes[0]) {
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(
+            msg: 'Incorrect Username or Password', gravity: ToastGravity.TOP);
+      } else if (cognitorError == codes[1]) {
+        Navigator.of(context).pop();
+
+        setState(() {
+          _askConfirmCode = true;
+        });
+      }
       return;
     }
 
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final user = (await service.getUserProfile(userId))?.body?.user;
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final user =
+        (await service.getUserProfile(userId, authorization: authToken))
+            ?.body
+            ?.user;
     Navigator.of(context).pop();
 
     if (user == null)
@@ -65,9 +80,11 @@ class _LoginState extends State<Login> {
     else {
       final _prefs = await SharedPreferences.getInstance();
       await _prefs.setString(SharedPrefKeys.USERID, userId);
+      await _prefs.setString(SharedPrefKeys.EMAIL, _email);
+      await _prefs.setString(SharedPrefKeys.PASSWORD, _password);
 
       Provider.of<UserData>(context, listen: false).updateUser = user;
-      Provider.of<MySocket>(context,listen: false).update(userId);
+      Provider.of<MySocket>(context, listen: false).update(userId);
       Navigator.of(context).pushNamed('/');
       // We don't need to push from here as Consumer at root path will automatically change the screen to home screen on listening changes of auth status;
 

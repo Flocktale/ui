@@ -59,35 +59,35 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return new Scaffold(
-        resizeToAvoidBottomPadding: false,
-        body: !_askConfirmCode?
-        Column(
-            crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
-                  child: Text(
-                    'Signup',
-                    style:
-                        TextStyle(fontSize: 80.0, fontWeight: FontWeight.bold),
-                  ),
+      resizeToAvoidBottomPadding: false,
+      body: !_askConfirmCode
+          ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+              Widget>[
+              Container(
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
+                      child: Text(
+                        'Signup',
+                        style: TextStyle(
+                            fontSize: 80.0, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(260.0, 125.0, 0.0, 0.0),
+                      child: Text(
+                        '.',
+                        style: TextStyle(
+                            fontSize: 80.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.amber),
+                      ),
+                    )
+                  ],
                 ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(260.0, 125.0, 0.0, 0.0),
-                  child: Text(
-                    '.',
-                    style: TextStyle(
-                        fontSize: 80.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.amber),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
+              ),
+              Container(
                   padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
                   child: Column(
                     children: <Widget>[
@@ -177,18 +177,15 @@ class _RegisterState extends State<Register> {
                               shadowColor: Colors.amberAccent,
                               color: Colors.amber,
                               elevation: 7.0,
-
-
-                                child: Center(
-                                  child: Text(
-                                    'SIGNUP',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Lato'),
-                                  ),
+                              child: Center(
+                                child: Text(
+                                  'SIGNUP',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Lato'),
                                 ),
-
+                              ),
                             )),
                       ),
                       SizedBox(height: 20.0),
@@ -218,8 +215,11 @@ class _RegisterState extends State<Register> {
                       ),
                     ],
                   ))
-        ])
-            : OtpScreen(emailController: _emailController.text,passwordController: _passwordController.text,),
+            ])
+          : OtpScreen(
+              emailController: _emailController.text,
+              passwordController: _passwordController.text,
+            ),
     );
   }
 }

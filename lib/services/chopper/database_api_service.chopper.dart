@@ -17,230 +17,301 @@ class _$DatabaseApiService extends DatabaseApiService {
   final definitionType = DatabaseApiService;
 
   @override
-  Future<Response<BuiltProfile>> getUserProfile(String userId) {
+  Future<Response<BuiltProfile>> getUserProfile(String userId,
+      {String authorization}) {
     final $url = '/users/$userId';
-    final $request = Request('GET', $url, client.baseUrl);
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltProfile, BuiltProfile>($request);
   }
 
   @override
-  Future<Response<BuiltList<BuiltUser>>> getAllUsers() {
+  Future<Response<BuiltList<BuiltUser>>> getAllUsers({String authorization}) {
     final $url = '/users';
-    final $request = Request('GET', $url, client.baseUrl);
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltList<BuiltUser>, BuiltUser>($request);
   }
 
   @override
-  Future<Response<dynamic>> createNewUser(BuiltUser body) {
+  Future<Response<dynamic>> createNewUser(BuiltUser body,
+      {String authorization}) {
     final $url = '/users/create';
+    final $headers = {'authorization': authorization};
     final $body = body;
-    final $request = Request('POST', $url, client.baseUrl, body: $body);
+    final $request =
+        Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> uploadAvatar(
-      String userId, BuiltProfileImage image) {
+  Future<Response<dynamic>> uploadAvatar(String userId, BuiltProfileImage image,
+      {String authorization}) {
     final $url = '/users/$userId/avatar/';
+    final $headers = {'authorization': authorization};
     final $body = image;
-    final $request = Request('POST', $url, client.baseUrl, body: $body);
+    final $request =
+        Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<dynamic>> uploadProfilePic(
-      String userId, BuiltProfileImage body) {
+      String userId, BuiltProfileImage body,
+      {String authorization}) {
     final $url = '/users/$userId/uploadImage';
+    final $headers = {'authorization': authorization};
     final $body = body;
-    final $request = Request('POST', $url, client.baseUrl, body: $body);
+    final $request =
+        Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> follow(String userId, String foreignUserId) {
+  Future<Response<dynamic>> follow(String userId, String foreignUserId,
+      {String authorization}) {
     final $url = '/users/$userId/relations/add?action=follow';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<dynamic>> sendFriendRequest(
-      String userId, String foreignUserId) {
+      String userId, String foreignUserId,
+      {String authorization}) {
     final $url = '/users/$userId/relations/add?action=send_friend_request';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<dynamic>> acceptFriendRequest(
-      String userId, String foreignUserId) {
+      String userId, String foreignUserId,
+      {String authorization}) {
     final $url = '/users/$userId/relations/add?action=accept_friend_request';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> unfollow(String userId, String foreignUserId) {
+  Future<Response<dynamic>> unfollow(String userId, String foreignUserId,
+      {String authorization}) {
     final $url = '/users/$userId/relations/remove?action=unfollow';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<dynamic>> deleteFriendRequest(
-      String userId, String foreignUserId) {
+      String userId, String foreignUserId,
+      {String authorization}) {
     final $url = '/users/$userId/relations/remove?action=deleteFriendRequest';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> unfriend(String userId, String foreignUserId) {
+  Future<Response<dynamic>> unfriend(String userId, String foreignUserId,
+      {String authorization}) {
     final $url = '/users/$userId/relations/remove?action=unfriend';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<dynamic>> checkFollow(
-      String userId, String username, String followingUsername) {
+      String userId, String username, String followingUsername,
+      {String authorization}) {
     final $url = '/users/$userId/relations/$username/$followingUsername';
-    final $request = Request('GET', $url, client.baseUrl);
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> updateUser(String userId, BuiltUser body) {
+  Future<Response<dynamic>> updateUser(String userId, BuiltUser body,
+      {String authorization}) {
     final $url = '/users/$userId';
+    final $headers = {'authorization': authorization};
     final $body = body;
-    final $request = Request('PATCH', $url, client.baseUrl, body: $body);
+    final $request =
+        Request('PATCH', $url, client.baseUrl, body: $body, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<BuiltSearchUsers>> getUserbyUsername(String username) {
+  Future<Response<BuiltSearchUsers>> getUserbyUsername(String username,
+      {String authorization}) {
     final $url = '/users/query';
     final $params = <String, dynamic>{'username': username};
-    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<BuiltSearchUsers, BuiltSearchUsers>($request);
   }
 
   @override
-  Future<Response<BuiltAllClubsList>> getAllClubs() {
+  Future<Response<BuiltAllClubsList>> getAllClubs({String authorization}) {
     final $url = '/clubs';
-    final $request = Request('GET', $url, client.baseUrl);
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltAllClubsList, BuiltAllClubsList>($request);
   }
 
   @override
-  Future<Response<dynamic>> createNewClub(BuiltClub body, String creatorId) {
+  Future<Response<dynamic>> createNewClub(BuiltClub body, String creatorId,
+      {String authorization}) {
     final $url = '/clubs/create/';
     final $params = <String, dynamic>{'creatorId': creatorId};
+    final $headers = {'authorization': authorization};
     final $body = body;
-    final $request =
-        Request('POST', $url, client.baseUrl, body: $body, parameters: $params);
+    final $request = Request('POST', $url, client.baseUrl,
+        body: $body, parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<BuiltSearchClubs>> getMyOrganizedClubs(String userId,
-      {String lastevaluatedkey}) {
+      {String lastevaluatedkey, String authorization}) {
     final $url = '/myclubs/$userId/organized';
-    final $headers = {'lastevaluatedkey': lastevaluatedkey};
+    final $headers = {
+      'lastevaluatedkey': lastevaluatedkey,
+      'authorization': authorization
+    };
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
   }
 
   @override
   Future<Response<BuiltSearchClubs>> getMyHistoryClubs(String userId,
-      {String lastevaluatedkey}) {
+      {String lastevaluatedkey, String authorization}) {
     final $url = '/myclubs/$userId/history';
-    final $headers = {'lastevaluatedkey': lastevaluatedkey};
+    final $headers = {
+      'lastevaluatedkey': lastevaluatedkey,
+      'authorization': authorization
+    };
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
   }
 
   @override
-  Future<Response<BuiltSearchClubs>> searchClubsByClubName(String clubName) {
+  Future<Response<BuiltSearchClubs>> searchClubsByClubName(String clubName,
+      {String authorization}) {
     final $url = '/clubs/query/';
     final $params = <String, dynamic>{'clubName': clubName};
-    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
   }
 
   @override
-  Future<Response<BuiltClub>> getClubByClubId(String clubId) {
+  Future<Response<BuiltClub>> getClubByClubId(String clubId,
+      {String authorization}) {
     final $url = '/clubs/$clubId';
-    final $request = Request('GET', $url, client.baseUrl);
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltClub, BuiltClub>($request);
   }
 
   @override
   Future<Response<dynamic>> updateClubAvatar(
-      String clubId, BuiltProfileImage image) {
+      String clubId, BuiltProfileImage image,
+      {String authorization}) {
     final $url = 'clubs/$clubId/avatar/';
+    final $headers = {'authorization': authorization};
     final $body = image;
-    final $request = Request('POST', $url, client.baseUrl, body: $body);
+    final $request =
+        Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> enterClub(String clubId, String userId) {
+  Future<Response<dynamic>> enterClub(String clubId, String userId,
+      {String authorization}) {
     final $url = '/clubs/$clubId/enter/';
     final $params = <String, dynamic>{'userId': userId};
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<dynamic>> postReaction(
-      String clubId, String audienceId, int indexValue) {
+      String clubId, String audienceId, int indexValue,
+      {String authorization}) {
     final $url = '/clubs/$clubId/reactions/';
     final $params = <String, dynamic>{
       'audienceId': audienceId,
       'indexValue': indexValue
     };
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<BuiltReaction>> getReaction(String clubId) {
+  Future<Response<BuiltReaction>> getReaction(String clubId,
+      {String authorization}) {
     final $url = '/clubs/$clubId/reactions/';
-    final $request = Request('GET', $url, client.baseUrl);
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltReaction, BuiltReaction>($request);
   }
 
   @override
   Future<Response<dynamic>> reportClub(
-      String userId, ReportSummary report, String clubId) {
+      String userId, ReportSummary report, String clubId,
+      {String authorization}) {
     final $url = '/clubs/$clubId/reports/';
     final $params = <String, dynamic>{'userId': userId};
+    final $headers = {'authorization': authorization};
     final $body = report;
-    final $request =
-        Request('POST', $url, client.baseUrl, body: $body, parameters: $params);
+    final $request = Request('POST', $url, client.baseUrl,
+        body: $body, parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> sendJoinRequest(String userId, String clubId) {
+  Future<Response<dynamic>> sendJoinRequest(String userId, String clubId,
+      {String authorization}) {
     final $url = '/clubs/$clubId/join-request';
     final $params = <String, dynamic>{'userId': userId};
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<BuiltActiveJoinRequests>> getActiveJoinRequests(
-      String clubId, String lastevaluatedkey) {
+      String clubId, String lastevaluatedkey,
+      {String authorization}) {
     final $url = '/clubs/$clubId/join-request';
-    final $headers = {'lastevaluatedkey': lastevaluatedkey};
+    final $headers = {
+      'lastevaluatedkey': lastevaluatedkey,
+      'authorization': authorization
+    };
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client
         .send<BuiltActiveJoinRequests, BuiltActiveJoinRequests>($request);
@@ -248,42 +319,54 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<dynamic>> respondToJoinRequest(
-      String clubId, String action, String audienceId) {
+      String clubId, String action, String audienceId,
+      {String authorization}) {
     final $url = '/clubs/$clubId/join-request/response';
     final $params = <String, dynamic>{
       'action': action,
       'audienceId': audienceId
     };
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> deleteJoinRequet(String clubId, String userId) {
+  Future<Response<dynamic>> deleteJoinRequet(String clubId, String userId,
+      {String authorization}) {
     final $url = '/clubs/$clubId/join-request/';
     final $params = <String, dynamic>{'userId': userId};
-    final $request =
-        Request('DELETE', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('DELETE', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> kickAudienceId(String clubId, String audienceId) {
+  Future<Response<dynamic>> kickAudienceId(String clubId, String audienceId,
+      {String authorization}) {
     final $url = '/clubs/$clubId/kick/';
     final $params = <String, dynamic>{'audienceId': audienceId};
-    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
   Future<Response<BuiltUnifiedSearchResults>> unifiedQueryRoutes(
-      String searchString, String type, String lastevaluatedkey) {
+      String searchString, String type, String lastevaluatedkey,
+      {String authorization}) {
     final $url = '/query/';
     final $params = <String, dynamic>{
       'searchString': searchString,
       'type': type
     };
-    final $headers = {'lastevaluatedkey': lastevaluatedkey};
+    final $headers = {
+      'lastevaluatedkey': lastevaluatedkey,
+      'authorization': authorization
+    };
     final $request = Request('GET', $url, client.baseUrl,
         parameters: $params, headers: $headers);
     return client

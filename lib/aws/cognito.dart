@@ -53,7 +53,10 @@ reSendConfirmationCode(String email) async {
   print('status:$status');
 }
 
-startSession({String email, String password}) async {
+startSession(
+    {String email,
+    String password,
+    Function(String, CognitoUserSession) callback}) async {
   final cognitoUser =
       CognitoUser(email, userPool, storage: CognitoMemoryStorage());
   final authDetails = AuthenticationDetails(
@@ -71,7 +74,7 @@ startSession({String email, String password}) async {
 
     print(cognitoUser.username);
 
-    return cognitoUser.username;
+    callback(cognitoUser.username, session);
   } on CognitoClientException catch (e) {
     Fluttertoast.showToast(msg: e.message, gravity: ToastGravity.CENTER);
 
