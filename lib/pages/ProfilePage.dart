@@ -1,18 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/Authentication/OtpScreen.dart';
 import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/pages/FollowersPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import '../AppBarWidget.dart';
 import '../Carousel.dart';
-import 'package:http/http.dart' as http;
 import 'package:built_collection/built_collection.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -35,9 +29,11 @@ class _ProfilePageState extends State<ProfilePage> {
   checkIsFollowing() async {
     if (_isMe == false) {
       BuiltUser user = Provider.of<UserData>(context, listen: false).user;
+      final authToken = Provider.of<UserData>(context, listen: false).authToken;
       isFollowing =
           (await Provider.of<DatabaseApiService>(context, listen: false)
-                  .checkFollow(user.userId, user.username, _user.username))
+                  .checkFollow(user.userId, user.username, _user.username,
+                      authorization: authToken))
               .body['value'];
     }
   }
@@ -58,7 +54,13 @@ class _ProfilePageState extends State<ProfilePage> {
       _isMe = false;
     final service = Provider.of<DatabaseApiService>(context);
     // _user = cuser;
-    _user = (await service.getUserProfile(widget.userId))?.body?.user;
+
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    _user =
+        (await service.getUserProfile(widget.userId, authorization: authToken))
+            ?.body
+            ?.user;
     if (_user.userId == null) {
       _user = null;
       Fluttertoast.showToast(
@@ -87,7 +89,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _fetchAllClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    Clubs = (await service.getMyHistoryClubs(widget.userId)).body.clubs;
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    Clubs = (await service.getMyHistoryClubs(widget.userId,
+            authorization: authToken))
+        .body
+        .clubs;
     //  print("============LENGTH= ${Clubs.length}");
 
     //THIS IS RETURNING NULL
@@ -97,14 +104,21 @@ class _ProfilePageState extends State<ProfilePage> {
   sendFollow() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final resp = (await service.follow(cuser.userId, widget.userId));
+
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    await service.follow(cuser.userId, widget.userId, authorization: authToken);
     Fluttertoast.showToast(msg: 'Follow Request Sent');
   }
 
   sendFreindRequest() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final resp = (await service.sendFriendRequest(cuser.userId, widget.userId));
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    await service.sendFriendRequest(cuser.userId, widget.userId,
+        authorization: authToken);
+
     Fluttertoast.showToast(msg: 'Friend Request Sent');
   }
 
@@ -117,14 +131,14 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print('isme=${_isMe}');
+    print('isme=$_isMe');
 //    const userId = '264bf27e-2752-4e49-aba0-ca03b101c104';
 //    const clubId = 'MYg7GShERndmORpluy7GK';
 
     // var service = Provider.of<DatabaseApiService>(context,listen:false);
     // Provider.of<MySocket>(context,listen: false).currentStatus();
     // for(int i=0;i<100;i++){
-      // print("${_user.userId}  $i");
+    // print("${_user.userId}  $i");
     // }
     // Getting Reactions
     // Provider.of<DatabaseApiService>(context,listen: false).getReaction('MYg7GShERndmORpluy7GK').then((value){

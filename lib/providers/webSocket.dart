@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:provider/provider.dart';
 import 'package:web_socket_channel/io.dart';
 
 class MySocket with ChangeNotifier {

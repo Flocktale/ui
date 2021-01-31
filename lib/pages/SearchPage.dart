@@ -1,9 +1,7 @@
-import 'dart:convert';
-
-import 'package:built_value/built_value.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/ProfilePage.dart';
+import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +21,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     List<BuiltUser> recentSearches = [widget.user, widget.user, widget.user];
-    List<BuiltUser> allSearches = [widget.user];
+    // List<BuiltUser> allSearches = [widget.user];
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +116,12 @@ class DataSearch extends SearchDelegate<String> {
     String username = query;
     final service = Provider.of<DatabaseApiService>(context);
     //allSearches = (await service.getUserbyUsername(username)).body;
-    allSearches = (await service.unifiedQueryRoutes(username, "unified", null)).body;
+
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    allSearches = (await service.unifiedQueryRoutes(username, "unified", null,
+            authorization: authToken))
+        .body;
   }
 
   @override
@@ -127,39 +130,41 @@ class DataSearch extends SearchDelegate<String> {
     // Show when someone searches for something
     return query.isEmpty
         ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: size.height/50),
-            Text("Recent Searches",style: TextStyle(
-              fontFamily: 'Lato',
-              fontWeight: FontWeight.bold,
-              fontSize: size.width/20
-            ),),
-            SizedBox(height: size.height/50),
-            Expanded(
-              child: SizedBox(
-                height: 300.0,
-                child: ListView.builder(
-                    itemCount: recentSearches.length,
-                    itemBuilder: (builder, index) {
-                      return ListTile(
-                        leading: Image.network(recentSearches[index].avatar),
-                        title: Text(
-                          recentSearches[index].name,
-                        ),
-                        subtitle: Text(recentSearches[index].username),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => ProfilePage(
-                                    userId: recentSearches[index].userId,
-                                  )));
-                        },
-                      );
-                    }),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: size.height / 50),
+              Text(
+                "Recent Searches",
+                style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.bold,
+                    fontSize: size.width / 20),
               ),
-            ),
-          ],
-        )
+              SizedBox(height: size.height / 50),
+              Expanded(
+                child: SizedBox(
+                  height: 300.0,
+                  child: ListView.builder(
+                      itemCount: recentSearches.length,
+                      itemBuilder: (builder, index) {
+                        return ListTile(
+                          leading: Image.network(recentSearches[index].avatar),
+                          title: Text(
+                            recentSearches[index].name,
+                          ),
+                          subtitle: Text(recentSearches[index].username),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => ProfilePage(
+                                      userId: recentSearches[index].userId,
+                                    )));
+                          },
+                        );
+                      }),
+                ),
+              ),
+            ],
+          )
         : FutureBuilder(
             future: getAllUsers(),
             builder: (context, snapshot) {
@@ -172,30 +177,35 @@ class DataSearch extends SearchDelegate<String> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: size.height/50),
-                    Text("Search Results",
-                    style: TextStyle(
-                      fontFamily: 'Lato',
-                      fontWeight: FontWeight.bold,
-                      fontSize: size.width/20
-                    ),),
-                    SizedBox(height: size.height/50),
-                    Text("Users",
-                    style: TextStyle(
-                      fontFamily: 'Lato',
-                      fontWeight: FontWeight.w500,
-                      fontSize: size.width/20
-                    ),),
+                    SizedBox(height: size.height / 50),
+                    Text(
+                      "Search Results",
+                      style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontWeight: FontWeight.bold,
+                          fontSize: size.width / 20),
+                    ),
+                    SizedBox(height: size.height / 50),
+                    Text(
+                      "Users",
+                      style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontWeight: FontWeight.w500,
+                          fontSize: size.width / 20),
+                    ),
                     //SizedBox(height: size.height/50),
                     Expanded(
                       child: SizedBox(
                         height: 200.0,
                         child: ListView.builder(
-                            itemCount: allSearches.users!=null?allSearches.users.length:0,
+                            itemCount: allSearches.users != null
+                                ? allSearches.users.length
+                                : 0,
                             itemBuilder: (builder, index) {
                               return ListTile(
                                 leading: allSearches.users[index].avatar != null
-                                    ? Image.network(allSearches.users[index].avatar)
+                                    ? Image.network(
+                                        allSearches.users[index].avatar)
                                     : null,
                                 title:
                                     /* RichText(text: TextSpan(
@@ -209,58 +219,66 @@ class DataSearch extends SearchDelegate<String> {
                                     allSearches.users[index].name != null
                                         ? Text(allSearches.users[index].name)
                                         : null,
-                                subtitle: allSearches.users[index].username != null
+                                subtitle: allSearches.users[index].username !=
+                                        null
                                     ? Text(allSearches.users[index].username)
                                     : null,
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (_) => ProfilePage(
-                                            userId: allSearches.users[index].userId,
+                                            userId:
+                                                allSearches.users[index].userId,
                                           )));
                                 },
                               );
                             }),
                       ),
                     ),
-                   InkWell(
-                     child: Container(
-                       child: Text("See all users",
-                       style: TextStyle(
-                         fontFamily: 'Lato',
-                         fontWeight: FontWeight.w500,
-                         fontSize: size.width/25
-                       ),)
-                     )
-                   ),
-                    SizedBox(height: size.height/50,),
-                   // SizedBox(height: size.height/30),
-                    Text("Clubs",
-                    style: TextStyle(
-                      fontFamily: 'Lato',
-                        fontWeight: FontWeight.w500,
-                        fontSize: size.width/20
-                    ),),
-                    SizedBox(height: size.height/50),
+                    InkWell(
+                        child: Container(
+                            child: Text(
+                      "See all users",
+                      style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontWeight: FontWeight.w500,
+                          fontSize: size.width / 25),
+                    ))),
+                    SizedBox(
+                      height: size.height / 50,
+                    ),
+                    // SizedBox(height: size.height/30),
+                    Text(
+                      "Clubs",
+                      style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontWeight: FontWeight.w500,
+                          fontSize: size.width / 20),
+                    ),
+                    SizedBox(height: size.height / 50),
                     Expanded(
                       child: SizedBox(
                         height: 300.0,
                         child: ListView.builder(
                           itemCount: allSearches.clubs.length,
-                          itemBuilder: (builder,index){
+                          itemBuilder: (builder, index) {
                             return ListTile(
-                              leading: allSearches.clubs[index].clubAvatar !=null
-                                  ? Image.network(allSearches.clubs[index].clubAvatar)
-                                  : null,
+                              leading:
+                                  allSearches.clubs[index].clubAvatar != null
+                                      ? Image.network(
+                                          allSearches.clubs[index].clubAvatar)
+                                      : null,
                               title: allSearches.clubs[index].clubAvatar != null
-                                ? Text(allSearches.clubs[index].clubName)
+                                  ? Text(allSearches.clubs[index].clubName)
                                   : null,
-                              subtitle: allSearches.clubs[index].creator != null? Text(allSearches.clubs[index].creator.username): Text("Club"),
-                              onTap: (){
+                              subtitle: allSearches.clubs[index].creator != null
+                                  ? Text(
+                                      allSearches.clubs[index].creator.username)
+                                  : Text("Club"),
+                              onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => ClubPage(
-                                    Club: allSearches.clubs[index],
-                                  )
-                                ));
+                                    builder: (_) => ClubPage(
+                                          Club: allSearches.clubs[index],
+                                        )));
                               },
                             );
                           },
@@ -269,14 +287,13 @@ class DataSearch extends SearchDelegate<String> {
                     ),
                     InkWell(
                         child: Container(
-                            child: Text("See all clubs",
-                              style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: size.width/25
-                              ),)
-                        )
-                    ),
+                            child: Text(
+                      "See all clubs",
+                      style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontWeight: FontWeight.w500,
+                          fontSize: size.width / 25),
+                    ))),
                   ],
                 ),
               );

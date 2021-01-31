@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Authentication/OtpScreen.dart';
-import 'package:mootclub_app/Authentication/signUp.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/aws/cognito.dart';
-import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:otp_text_field/otp_field.dart';
-import 'package:otp_text_field/style.dart';
 
 class Register extends StatefulWidget {
   Register();
@@ -22,8 +13,6 @@ class _RegisterState extends State<Register> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _usernameController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -31,9 +20,6 @@ class _RegisterState extends State<Register> {
 
   bool _askConfirmCode = false;
 
-  bool _loading = false;
-
-  String _confirmCodeController;
   _registerUser() async {
     final bool result = await signUpWithCognito(
         email: _emailController.text.trim(),
@@ -47,17 +33,8 @@ class _RegisterState extends State<Register> {
     }
   }
 
-  _changeLoading() {
-    if (!this.mounted) return;
-
-    setState(() {
-      _loading = !_loading;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return new Scaffold(
       resizeToAvoidBottomPadding: false,
       body: !_askConfirmCode

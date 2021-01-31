@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 const _userPoolId = "us-east-1_VpvKQXRiL";
 const _clientId = "4ljsccr0qt5asjmc8ufla661il";
 
-const _region = 'us-east-1';
+// const _region = 'us-east-1';
 
 final userPool =
     CognitoUserPool(_userPoolId, _clientId, storage: CognitoMemoryStorage());

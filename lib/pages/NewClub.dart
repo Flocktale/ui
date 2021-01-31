@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/Models/sharedPrefKey.dart';
+import 'package:mootclub_app/providers/userData.dart';
 import 'package:provider/provider.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'ImagePage.dart';
+
 class NewClub extends StatefulWidget {
   final String userId;
   NewClub({this.userId});
@@ -50,8 +51,11 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       ..description = description
       ..category = category);
 
-    final resp = await service.createNewClub(newClub, widget.userId);
-    print('========='+resp.body);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    final resp = await service.createNewClub(newClub, widget.userId,
+        authorization: authToken);
+    print('=========' + resp.body);
     print(resp.error);
     Fluttertoast.showToast(msg: 'club entry is created');
   }
@@ -174,7 +178,13 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                                 return;
                               } else {
                                 _formKey.currentState.save();
-                                Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ImagePage(name: name,description: description, category: category, userId: widget.userId,)));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => ImagePage(
+                                          name: name,
+                                          description: description,
+                                          category: category,
+                                          userId: widget.userId,
+                                        )));
                               }
                             },
                             color: Colors.white,
@@ -191,11 +201,9 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                           ),
                         ),
                         Text(
-                            "OR",
+                          "OR",
                           style: TextStyle(
-                            fontFamily: 'Lato',
-                            fontWeight: FontWeight.bold
-                          ),
+                              fontFamily: 'Lato', fontWeight: FontWeight.bold),
                         ),
                         ButtonTheme(
                           minWidth: size.width / 3.5,

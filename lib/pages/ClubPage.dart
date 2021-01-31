@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
-import 'package:built_collection/built_collection.dart';
-import 'package:mootclub_app/pages/ProfilePage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:like_button/like_button.dart';
 
 class ClubPage extends StatefulWidget {
   // BuiltList<BuiltClub> Clubs;
-  BuiltClub Club;
-  ClubPage({this.Club});
+  final BuiltClub Club;
+  const ClubPage({this.Club});
   @override
   _ClubPageState createState() => _ClubPageState();
 }

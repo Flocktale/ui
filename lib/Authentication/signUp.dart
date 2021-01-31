@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
-import 'package:mootclub_app/pages/HomePage.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
@@ -49,7 +48,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ..email = widget.email
       ..username = _usernameController.text.trim());
 
-    final response = await service.createNewUser(newUser);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final response =
+        await service.createNewUser(newUser, authorization: authToken);
 
     if (response != null && response.body != null) {
       Fluttertoast.showToast(msg: 'Your registration is successfull!');
@@ -148,16 +149,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   shadowColor: Colors.amberAccent,
                                   color: Colors.amber,
                                   elevation: 7.0,
-                                    child: Center(
-                                      child: Text(
-                                        'SUBMIT',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Lato'),
-                                      ),
+                                  child: Center(
+                                    child: Text(
+                                      'SUBMIT',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Lato'),
                                     ),
-
+                                  ),
                                 )),
                           ),
                         ],

@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:mootclub_app/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
@@ -275,12 +273,10 @@ abstract class ReactionUser
   int get timestamp;
   int get indexValue;
 
-
   ReactionUser._();
 
   factory ReactionUser([updates(ReactionUserBuilder b)]) = _$ReactionUser;
 
- 
   static Serializer<ReactionUser> get serializer => _$reactionUserSerializer;
 }
 
@@ -298,8 +294,8 @@ abstract class BuiltReaction
   static Serializer<BuiltReaction> get serializer => _$builtReactionSerializer;
 }
 
-
-abstract class ReportSummary implements Built<ReportSummary, ReportSummaryBuilder> {
+abstract class ReportSummary
+    implements Built<ReportSummary, ReportSummaryBuilder> {
   // fields go here
 
   String get body;
@@ -307,13 +303,11 @@ abstract class ReportSummary implements Built<ReportSummary, ReportSummaryBuilde
 
   factory ReportSummary([updates(ReportSummaryBuilder b)]) = _$ReportSummary;
 
- 
   static Serializer<ReportSummary> get serializer => _$reportSummarySerializer;
-
 }
 
-
-abstract class JoinRequests implements Built<JoinRequests, JoinRequestsBuilder> {
+abstract class JoinRequests
+    implements Built<JoinRequests, JoinRequestsBuilder> {
   // fields go here
 
   int get joinRequestAttempts;
@@ -325,11 +319,11 @@ abstract class JoinRequests implements Built<JoinRequests, JoinRequestsBuilder> 
 
   factory JoinRequests([updates(JoinRequestsBuilder b)]) = _$JoinRequests;
 
-  
   static Serializer<JoinRequests> get serializer => _$joinRequestsSerializer;
 }
 
-abstract class BuiltActiveJoinRequests implements Built<BuiltActiveJoinRequests, BuiltActiveJoinRequestsBuilder> {
+abstract class BuiltActiveJoinRequests
+    implements Built<BuiltActiveJoinRequests, BuiltActiveJoinRequestsBuilder> {
   // fields go here
 
   @nullable
@@ -337,20 +331,21 @@ abstract class BuiltActiveJoinRequests implements Built<BuiltActiveJoinRequests,
 
   BuiltActiveJoinRequests._();
 
-  factory BuiltActiveJoinRequests([updates(BuiltActiveJoinRequestsBuilder b)]) = _$BuiltActiveJoinRequests;
+  factory BuiltActiveJoinRequests([updates(BuiltActiveJoinRequestsBuilder b)]) =
+      _$BuiltActiveJoinRequests;
 
   String toJson() {
-    return json.encode(serializers.serializeWith(BuiltActiveJoinRequests.serializer, this));
+    return json.encode(
+        serializers.serializeWith(BuiltActiveJoinRequests.serializer, this));
   }
 
-  
-
-  static Serializer<BuiltActiveJoinRequests> get serializer => _$builtActiveJoinRequestsSerializer;
+  static Serializer<BuiltActiveJoinRequests> get serializer =>
+      _$builtActiveJoinRequestsSerializer;
 }
 
-
-
-abstract class BuiltUnifiedSearchResults implements Built<BuiltUnifiedSearchResults, BuiltUnifiedSearchResultsBuilder> {
+abstract class BuiltUnifiedSearchResults
+    implements
+        Built<BuiltUnifiedSearchResults, BuiltUnifiedSearchResultsBuilder> {
   // fields go here
 
   @nullable
@@ -361,14 +356,15 @@ abstract class BuiltUnifiedSearchResults implements Built<BuiltUnifiedSearchResu
 
   BuiltUnifiedSearchResults._();
 
-  factory BuiltUnifiedSearchResults([updates(BuiltUnifiedSearchResultsBuilder b)]) = _$BuiltUnifiedSearchResults;
+  factory BuiltUnifiedSearchResults(
+          [updates(BuiltUnifiedSearchResultsBuilder b)]) =
+      _$BuiltUnifiedSearchResults;
 
   String toJson() {
-    return json.encode(serializers.serializeWith(BuiltUnifiedSearchResults.serializer, this));
+    return json.encode(
+        serializers.serializeWith(BuiltUnifiedSearchResults.serializer, this));
   }
 
-  
-
-  static Serializer<BuiltUnifiedSearchResults> get serializer => _$builtUnifiedSearchResultsSerializer;
+  static Serializer<BuiltUnifiedSearchResults> get serializer =>
+      _$builtUnifiedSearchResultsSerializer;
 }
-

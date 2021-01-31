@@ -1,15 +1,11 @@
-import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/Club.dart';
-import 'package:mootclub_app/pages/ClubPage.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
-import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 
 class Carousel extends StatefulWidget {
-  static Color shadow = Color(0xFF191818);
-  BuiltList<BuiltClub> Clubs;
+  final Color shadow = Color(0xFF191818);
+  final BuiltList<BuiltClub> Clubs;
   Carousel({this.Clubs});
   @override
   _CarouselState createState() => _CarouselState();
@@ -17,7 +13,7 @@ class Carousel extends StatefulWidget {
 
 class _CarouselState extends State<Carousel> {
   List<String> myClubs = ['Card1.jpg', 'Card2.jpg', 'Card3.jpg', 'Card4.jpg'];
-  PageController _pageController = PageController();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -34,14 +30,12 @@ class _CarouselState extends State<Carousel> {
             width: 200.0,
             child: Card(
               elevation: 10,
-              shadowColor: Carousel.shadow.withOpacity(0.2),
+              shadowColor: widget.shadow.withOpacity(0.2),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => Club(
-                            club : widget.Clubs[index]
-                          )));
+                      builder: (_) => Club(club: widget.Clubs[index])));
                 },
                 child: Wrap(
                   children: <Widget>[
@@ -63,9 +57,7 @@ class _CarouselState extends State<Carousel> {
                               : 'There is no description for this club.',
                           style: TextStyle(
                             fontFamily: 'Lato',
-                          )
-                      ),
-
+                          )),
                     ),
                   ],
                 ),

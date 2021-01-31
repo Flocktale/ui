@@ -1,8 +1,6 @@
 import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Authentication/register.dart';
 import 'package:mootclub_app/Authentication/signUp.dart';
-import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
@@ -20,7 +18,6 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _askConfirmCode = false;
 
   _logInUser() async {
     // print("11111111111111111");
@@ -58,9 +55,7 @@ class _LoginState extends State<Login> {
       } else if (cognitorError == codes[1]) {
         Navigator.of(context).pop();
 
-        setState(() {
-          _askConfirmCode = true;
-        });
+        setState(() {});
       }
       return;
     }
@@ -93,7 +88,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Column(

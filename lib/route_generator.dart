@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Authentication/signUp.dart';
-import 'package:mootclub_app/main.dart';
 import 'package:mootclub_app/pages/HomePage.dart';
 import 'package:mootclub_app/Authentication/login.dart';
 import 'package:mootclub_app/Authentication/register.dart';
 import 'package:mootclub_app/pages/ImagePage.dart';
 import 'package:mootclub_app/pages/NotificationPage.dart';
 
-
-class RouteGenerator{
+class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    final args = settings.arguments;
+    // final args = settings.arguments;
 
     switch (settings.name) {
       case '/':
@@ -29,6 +27,7 @@ class RouteGenerator{
         return _errorRoute();
     }
   }
+
   static Route<dynamic> _errorRoute() {
     return MaterialPageRoute(builder: (_) {
       return Scaffold(
