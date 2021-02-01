@@ -33,7 +33,14 @@ class _ClubState extends State<Club> {
   int audienceCount = -1;
   List<Comment> comments = [];
   void getParticipantListForFirstTime(event) {
+    // print(event);
+    setState(() {});
+  }
+
+  void getAudienceForFirstTime(event) {
     audienceCount = (event['count']);
+    print(event);
+
     setState(() {});
   }
 
@@ -110,14 +117,32 @@ class _ClubState extends State<Club> {
     //   setState(() {});
   }
 
+  void kickParticpant(String userId) {
+    Provider.of<DatabaseApiService>(context, listen: false).kickAudienceId(
+      widget.club.clubId,
+      userId,
+      authorization: null,
+    );
+  }
+
+  void reportClub() {}
+
   @override
   void initState() {
-    Provider.of<MySocket>(context, listen: false).joinClub(
+    Provider.of<DatabaseApiService>(context, listen: false).enterClub(
         widget.club.clubId,
-        putNewComment,
-        addOldComments,
-        getReactionForFirstTime,
-        getParticipantListForFirstTime);
+        Provider.of<UserData>(context, listen: false).user.userId,
+        authorization: null);
+
+    // Provider.of<MySocket>(context,listen:false).currentStatus();
+    Provider.of<MySocket>(context, listen: false).joinClub(
+      widget.club.clubId,
+      putNewComment,
+      addOldComments,
+      getReactionForFirstTime,
+      getParticipantListForFirstTime,
+      getAudienceForFirstTime,
+    );
     super.initState();
   }
 
@@ -138,10 +163,11 @@ class _ClubState extends State<Club> {
     //           ),
     //           Center(
     //             child: RaisedButton(
-    //               onPressed: ()=>Provider.of<MySocket>(context,listen:false).currentStatus(),
+    //               onPressed: () => Provider.of<MySocket>(context, listen: false)
+    //                   .currentStatus(),
     //             ),
     //           ),
-    //           Text('likes : $likes'),
+    //           Text('likes : $likeCount'),
     //           Text('audienceCount : $audienceCount'),
     //           Text('comments: $comments')
     //         ],
@@ -383,7 +409,6 @@ class _ClubState extends State<Club> {
                                       children: <Widget>[
                                         Container(
                                           child: LikeButton(
-                                           
                                             likeBuilder: (bool isLiked) {
                                               return isLiked
                                                   ? Icon(
