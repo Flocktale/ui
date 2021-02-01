@@ -93,8 +93,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     Clubs = (await service.getMyHistoryClubs(widget.userId,
             authorization: authToken))
-        .body
-        .clubs;
+        ?.body
+        ?.clubs;
     //  print("============LENGTH= ${Clubs.length}");
 
     //THIS IS RETURNING NULL

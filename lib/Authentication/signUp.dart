@@ -10,8 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SignUpScreen extends StatefulWidget {
   final String userId;
   final String email;
+  final String password;
 
-  SignUpScreen({this.email, this.userId});
+  SignUpScreen({this.email, this.userId, this.password});
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -40,7 +41,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     _changeLoading();
 
-    final service = Provider.of<DatabaseApiService>(context);
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
 
     final newUser = BuiltUser((b) => b
       ..userId = widget.userId
@@ -57,6 +58,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       final _prefs = await SharedPreferences.getInstance();
       await _prefs.setString(SharedPrefKeys.USERID, widget.userId);
+      await _prefs.setString(SharedPrefKeys.EMAIL, widget.email);
+      await _prefs.setString(SharedPrefKeys.PASSWORD, widget.password);
 
       Provider.of<UserData>(context, listen: false).updateUser = newUser;
       Navigator.of(context).pushNamed('/');
@@ -126,7 +129,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           TextFormField(
                             controller: _usernameController,
                             decoration: InputDecoration(
-                                labelText: 'NICK NAME ',
+                                labelText: 'USER NAME ',
                                 labelStyle: TextStyle(
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.bold,

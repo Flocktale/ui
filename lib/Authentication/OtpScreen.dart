@@ -1,14 +1,17 @@
+import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Authentication/signUp.dart';
 import 'package:mootclub_app/aws/cognito.dart';
+import 'package:mootclub_app/providers/userData.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:provider/provider.dart';
 
 class OtpScreen extends StatefulWidget {
-  final String emailController;
-  final String passwordController;
-  OtpScreen({this.emailController, this.passwordController});
+  final String email;
+  final String password;
+  OtpScreen({this.email, this.password});
   @override
   _OtpScreenState createState() => _OtpScreenState();
 }
@@ -76,7 +79,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 padding: EdgeInsets.only(top: 15.0, left: 20.0),
                 child: InkWell(
                   onTap: () async {
-                    await reSendConfirmationCode(widget.emailController.trim());
+                    await reSendConfirmationCode(widget.email.trim());
                   },
                   child: Text(
                     'Resend OTP',
@@ -100,19 +103,29 @@ class _OtpScreenState extends State<OtpScreen> {
                     child: InkWell(
                       onTap: () async {
                         final bool res = await confirmUserCognito(
-                            email: widget.emailController.trim(),
+                            email: widget.email.trim(),
                             code: _confirmCodeController.trim());
 
                         if (res == true) {
-                          final userId = await startSession(
-                              email: widget.emailController.trim(),
-                              password: widget.passwordController.trim());
+                          String userId;
+                          final cognitoError = await startSession(
+                              email: widget.email.trim(),
+                              password: widget.password.trim(),
+                              callback:
+                                  (String id, CognitoUserSession session) {
+                                userId = id;
+                                Provider.of<UserData>(context, listen: false)
+                                    .cognitoSession = session;
+                              });
+
                           if (userId != null) {
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
                                     builder: (_) => SignUpScreen(
-                                        userId: userId,
-                                        email: widget.emailController.trim())));
+                                          userId: userId,
+                                          email: widget.email.trim(),
+                                          password: widget.password.trim(),
+                                        )));
                           }
                         }
                       },

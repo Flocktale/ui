@@ -194,8 +194,8 @@ class _RegisterState extends State<Register> {
                   ))
             ])
           : OtpScreen(
-              emailController: _emailController.text,
-              passwordController: _passwordController.text,
+              email: _emailController.text,
+              password: _passwordController.text,
             ),
     );
   }

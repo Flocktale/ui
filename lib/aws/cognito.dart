@@ -1,4 +1,5 @@
 import 'package:amazon_cognito_identity_dart_2/cognito.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 const _userPoolId = "us-east-1_VpvKQXRiL";
@@ -54,9 +55,9 @@ reSendConfirmationCode(String email) async {
 }
 
 startSession(
-    {String email,
-    String password,
-    Function(String, CognitoUserSession) callback}) async {
+    {@required String email,
+    @required String password,
+    @required Function(String, CognitoUserSession) callback}) async {
   final cognitoUser =
       CognitoUser(email, userPool, storage: CognitoMemoryStorage());
   final authDetails = AuthenticationDetails(
