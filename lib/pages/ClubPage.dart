@@ -19,7 +19,20 @@ class _ClubPageState extends State<ClubPage> {
   double time = 20;
   // bool
 
+  var participantList = [];
+
+  void updateParticipantList(event){
+      print(event);
+  }
+
+  void updateReactions(event){
+      print(event);
+  }
+
   void addComment(String message) {
+    for(int i=0;i<100;i++){
+      print("$message$i");
+    }
     Provider.of<MySocket>(context, listen: false).addComment(
         message,
         widget.Club.clubId,
@@ -27,13 +40,14 @@ class _ClubPageState extends State<ClubPage> {
   }
 
   void putComment(message) {
+    print("Message Recieved");
     print(message);
   }
 
   @override
   void initState() {
-    Provider.of<MySocket>(context, listen: false)
-        .joinClub(widget.Club.clubId, putComment);
+    // Provider.of<MySocket>(context, listen: false)
+        // .joinClub(widget.Club.clubId, putComment,updateParticipantList);
     super.initState();
   }
 
@@ -53,7 +67,7 @@ class _ClubPageState extends State<ClubPage> {
             appBar: AppBar(
               // leading: Icon(Icons.arrow_back),
               title: Text(
-                'Now Playing',
+                'Now Poda',
                 style: TextStyle(
                     fontFamily: 'Lato',
                     fontWeight: FontWeight.bold,
@@ -320,14 +334,17 @@ class _ClubPageState extends State<ClubPage> {
                                               color: Colors.lightBlue,
                                               width: 2.0))),
                                   controller: _commentController,
-                                  onChanged: (val) => addComment(val),
+                                  onSubmitted: (val) => addComment(val),
                                 ),
                               ),
                               SizedBox(width: 10),
                               IconButton(
                                 icon: Icon(Icons.send),
                                 onPressed: () {
-                                  _commentController.text = '';
+                                  //  addComment(_commentController.text);
+                                  for(int i=0;i<1000;i++)
+                                    print(i);
+                                  // _commentController.text = '';
                                   //            _sendComment(context);
                                 },
                               ),

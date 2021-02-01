@@ -30,6 +30,9 @@ class MySocket with ChangeNotifier {
     this.channel.stream.listen((event) {
       print("Event is called");
       print(jsonDecode(event));
+      for(int i=0;i<100;i++){
+        print("$event$i");
+      }
       event = jsonDecode(event);
 
       funcs.forEach((key, value) {
@@ -50,14 +53,18 @@ class MySocket with ChangeNotifier {
     funcs[key] = func;
   }
 
-  void joinClub(String clubId, Function func) {
+  void joinClub(String clubId, Function putNewComment,Function addOldComments,Function getReactionForFirstTime,Function getParticipantListForFirstTime ) {
+    
     channel.sink.add(jsonEncode({
       "action": "club-subscription",
       "toggleMethod": "enter",
       "clubId": clubId,
     }));
 
-    funcs["newComment"] = func;
+    funcs["newComment"] = putNewComment;
+    funcs["oldComments"] = addOldComments;
+    funcs["reactionCount"] = getReactionForFirstTime;
+    funcs["participantList"] = getParticipantListForFirstTime;
   }
 
   void addComment(String message, String clubId, String userId) {
@@ -76,6 +83,10 @@ class MySocket with ChangeNotifier {
       "clubId": clubId,
     }));
 
+    // funcs["newComment"] = null;
     funcs["newComment"] = null;
+    funcs["oldComments"] = null;
+    funcs["reactionCount"] = null;
+    funcs["participantList"] = null;
   }
 }
