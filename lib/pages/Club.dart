@@ -634,21 +634,21 @@ class _ClubState extends State<Club> {
                                   width: size.width - 30,
                                   color: Colors.white,
                                   child: ListView.builder(
-                                      itemCount: 3,
+                                      itemCount: comments.length,
                                       itemBuilder: (context, index) {
                                         return ListTile(
                                           leading: CircleAvatar(
                                             backgroundImage:
-                                                AssetImage("assets/Card1.jpg"),
+                                                NetworkImage(comments[index].user.avatar),
                                           ),
                                           title: Text(
-                                            "Listener $index",
+                                            comments[index].user.username,
                                             style: TextStyle(
                                               fontFamily: "Lato",
                                             ),
                                           ),
                                           subtitle: Text(
-                                            "The quick brown fox jumped over the lazy dog.",
+                                            comments[index].body,
                                             style:
                                                 TextStyle(fontFamily: "Lato"),
                                           ),
@@ -679,7 +679,7 @@ class _ClubState extends State<Club> {
                                                   color: Colors.black,
                                                   width: 2.0))),
                                       controller: _commentController,
-                                      onSubmitted: (val) => addComment(val),
+                                      onSubmitted: (val) => {addComment(val)},
                                     ),
                                   ),
                                   SizedBox(width: 10),
