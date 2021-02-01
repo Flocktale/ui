@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/pages/HomePage.dart';
+import 'package:mootclub_app/providers/agoraController.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 import 'Authentication/login.dart';
@@ -32,6 +33,12 @@ class MyApp extends StatelessWidget {
           create: (_) => DatabaseApiService.create(),
           dispose: (context, DatabaseApiService service) =>
               service.client.dispose(),
+        ),
+
+        Provider<AgoraController>(
+          create: (_) => AgoraController().create(),
+          dispose: (context, AgoraController agoraController) =>
+              agoraController.dispose(),
         ),
 
 //since we are using DatabaseApiService in another provider, it should be defined after that.
@@ -77,7 +84,7 @@ class MyApp extends StatelessWidget {
                   )
                 : userData.isAuth == false
                     ? Login()
-                    : Consumer<MySocket>(builder:(ctx,_,__)=>HomePage()),
+                    : Consumer<MySocket>(builder: (ctx, _, __) => HomePage()),
             routes: {}),
       ),
     );
