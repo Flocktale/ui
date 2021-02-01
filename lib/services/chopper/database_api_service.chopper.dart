@@ -147,6 +147,17 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<BuiltSearchClubs>> getRelations(
+      String userId, String socialRelation, String lastevaluatedkey) {
+    final $url = '/users/$userId/relations/';
+    final $params = <String, dynamic>{'socialRelation': socialRelation};
+    final $headers = {'lastevaluatedkey': lastevaluatedkey};
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
+  }
+
+  @override
   Future<Response<dynamic>> updateUser(String userId, BuiltUser body,
       {String authorization}) {
     final $url = '/users/$userId';

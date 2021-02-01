@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:provider/provider.dart';
 
 class FollowersPage extends StatefulWidget {
   final int initpos;
@@ -12,6 +14,11 @@ class FollowersPage extends StatefulWidget {
 
 class _FollowersPageState extends State<FollowersPage> {
   List<String> tabs = ['Friends', 'Followers', 'Following'];
+
+  String lastevaluatedkey;
+  void getRelations(String type){ //             ["followings","followers", "requests_sent", "requests_received","friends"]
+    Provider.of<DatabaseApiService>(context,listen:false).getRelations(widget.user.userId, type, lastevaluatedkey);
+  }
 
   Widget searchBar(String hint) {
     return Container(

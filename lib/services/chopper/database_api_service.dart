@@ -94,6 +94,14 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
+  @Get(path: '/users/{userId}/relations/')
+  Future<Response<BuiltSearchClubs>> getRelations(
+    @Path('userId') String userId,
+    @Query('socialRelation')
+        String
+            socialRelation, //["followings","followers", "requests_sent", "requests_received","friends"]
+    @Header('lastevaluatedkey') String lastevaluatedkey,
+  );
   @Patch(path: '/users/{userId}')
   Future<Response> updateUser(
     @Path('userId') String userId,
