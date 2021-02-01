@@ -173,6 +173,9 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   @nullable
   BuiltList<String> get tags;
 
+  @nullable
+  String get agoraToken;
+
   BuiltClub._();
 
   factory BuiltClub([updates(BuiltClubBuilder b)]) = _$BuiltClub;

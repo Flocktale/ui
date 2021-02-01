@@ -3,6 +3,7 @@ import 'package:like_button/like_button.dart';
 import 'package:mootclub_app/Carousel.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/comment.dart';
+import 'package:mootclub_app/providers/agoraController.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
@@ -127,6 +128,25 @@ class _ClubState extends State<Club> {
 
   void reportClub() {}
 
+//! ------------------------------ for test purpose ------------------------------
+  void _fetchClubDetailsAndJoinAsHost() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    var _club = (await service.getClubByClubId(widget.club.clubId)).body;
+
+    if (_club.agoraToken == null) {
+      final userId = Provider.of<UserData>(context, listen: false).user.userId;
+      final data = (await service.generateAgoraTokenForClub(
+        widget.club.clubId,
+        userId,
+      ));
+      print(data.body['agoraToken']);
+      _club = _club.rebuild((b) => b..agoraToken = data.body['agoraToken']);
+    }
+
+    Provider.of<AgoraController>(context, listen: false)
+        .joinAsParticipant(clubId: _club.clubId, token: _club.agoraToken);
+  }
+
   @override
   void initState() {
     Provider.of<DatabaseApiService>(context, listen: false).enterClub(
@@ -143,6 +163,7 @@ class _ClubState extends State<Club> {
       getParticipantListForFirstTime,
       getAudienceForFirstTime,
     );
+    _fetchClubDetailsAndJoinAsHost();
     super.initState();
   }
 
