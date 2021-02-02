@@ -129,9 +129,15 @@ class _ClubState extends State<Club> {
   void reportClub() {}
 
 //! ------------------------------ for test purpose ------------------------------
+  void _stopAgora() async {
+    await Provider.of<AgoraController>(context, listen: false).dispose();
+  }
+
   void _fetchClubDetailsAndJoinAsHost() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     var _club = (await service.getClubByClubId(widget.club.clubId)).body;
+
+    await Provider.of<AgoraController>(context, listen: false).create();
 
     if (_club.agoraToken == null) {
       final userId = Provider.of<UserData>(context, listen: false).user.userId;
@@ -163,7 +169,6 @@ class _ClubState extends State<Club> {
       getParticipantListForFirstTime,
       getAudienceForFirstTime,
     );
-    _fetchClubDetailsAndJoinAsHost();
     super.initState();
   }
 
@@ -536,6 +541,10 @@ class _ClubState extends State<Club> {
                                     onPressed: () {
                                       setState(() {
                                         playing = !playing;
+                                        if (playing)
+                                          _fetchClubDetailsAndJoinAsHost();
+                                        else
+                                          _stopAgora();
                                       });
                                     },
                                     child: !playing
