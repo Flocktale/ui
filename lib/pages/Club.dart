@@ -644,6 +644,7 @@ class _ClubState extends State<Club> {
                                   color: Colors.white,
                                   child: ListView.builder(
                                       itemCount: comments.length,
+                                      reverse: true,
                                       itemBuilder: (context, index) {
                                         return ListTile(
                                           leading: CircleAvatar(
