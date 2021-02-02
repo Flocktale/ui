@@ -24,6 +24,7 @@ class _ClubState extends State<Club> {
   bool start = false;
   bool playing = false;
   bool isLive = true;
+  final _commentController = TextEditingController();
   BuiltList<BuiltClub> Clubs;
   var participantList = [];
 
@@ -204,7 +205,6 @@ class _ClubState extends State<Club> {
     BuiltUser user = Provider.of<UserData>(context, listen: false).user;
     bool isMe = widget.club.creator.userId == user.userId;
     final size = MediaQuery.of(context).size;
-    final _commentController = TextEditingController();
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     int dislikeCount = 0;
     return WillPopScope(
@@ -229,101 +229,101 @@ class _ClubState extends State<Club> {
           elevation: 0.0,
         ),
         body: SafeArea(
-          child: SlidingUpPanel(
-            minHeight: size.height / 15,
-            maxHeight: size.height / 1.5,
-            backdropEnabled: true,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-            panel: Container(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: size.height / 30,
-                ),
-                Center(
-                  child: Text("Panelists",
-                      style: TextStyle(
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.bold,
-                          fontSize: size.width / 20,
-                          color: Colors.red[300])),
-                ),
-                SizedBox(
-                  height: size.height / 50,
-                ),
-                Container(
-                  height: 300,
-                  child: ListView.builder(
-                      itemCount: 3,
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Colors.orange.withOpacity(0.3),
-                                  radius: 32,
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    size: 30,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Colors.orange.withOpacity(0.3),
-                                  radius: 32,
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    size: 30,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Colors.orange.withOpacity(0.3),
-                                  radius: 32,
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    size: 30,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: size.height / 50,
-                            ),
-                          ],
-                        );
-                      }),
-                ),
-                //SizedBox(height: size.height/50,),+
-              ],
-            )),
-            collapsed: Container(
-              decoration: BoxDecoration(
-                  color: Colors.red[300],
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24))),
-              child: Center(
-                child: Text(
-                  "PANELISTS",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Lato',
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2.0),
-                ),
-              ),
-            ),
-            body: Container(
+//          child: SlidingUpPanel(
+//            minHeight: size.height / 15,
+//            maxHeight: size.height / 1.5,
+//            backdropEnabled: true,
+//            borderRadius: BorderRadius.only(
+//                topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+//            panel: Container(
+//                child: Column(
+//              crossAxisAlignment: CrossAxisAlignment.start,
+//              children: [
+//                SizedBox(
+//                  height: size.height / 30,
+//                ),
+//                Center(
+//                  child: Text("Panelists",
+//                      style: TextStyle(
+//                          fontFamily: 'Lato',
+//                          fontWeight: FontWeight.bold,
+//                          fontSize: size.width / 20,
+//                          color: Colors.red[300])),
+//                ),
+//                SizedBox(
+//                  height: size.height / 50,
+//                ),
+//                Container(
+//                  height: 300,
+//                  child: ListView.builder(
+//                      itemCount: 3,
+//                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+//                      itemBuilder: (context, index) {
+//                        return Column(
+//                          children: [
+//                            Row(
+//                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                              children: [
+//                                CircleAvatar(
+//                                  backgroundColor:
+//                                      Colors.orange.withOpacity(0.3),
+//                                  radius: 32,
+//                                  child: Icon(
+//                                    Icons.person_outline,
+//                                    size: 30,
+//                                    color: Colors.black,
+//                                  ),
+//                                ),
+//                                CircleAvatar(
+//                                  backgroundColor:
+//                                      Colors.orange.withOpacity(0.3),
+//                                  radius: 32,
+//                                  child: Icon(
+//                                    Icons.person_outline,
+//                                    size: 30,
+//                                    color: Colors.black,
+//                                  ),
+//                                ),
+//                                CircleAvatar(
+//                                  backgroundColor:
+//                                      Colors.orange.withOpacity(0.3),
+//                                  radius: 32,
+//                                  child: Icon(
+//                                    Icons.person_outline,
+//                                    size: 30,
+//                                    color: Colors.black,
+//                                  ),
+//                                ),
+//                              ],
+//                            ),
+//                            SizedBox(
+//                              height: size.height / 50,
+//                            ),
+//                          ],
+//                        );
+//                      }),
+//                ),
+//                //SizedBox(height: size.height/50,),+
+//              ],
+//            )),
+//            collapsed: Container(
+//              decoration: BoxDecoration(
+//                  color: Colors.red[300],
+//                  borderRadius: BorderRadius.only(
+//                      topLeft: Radius.circular(24),
+//                      topRight: Radius.circular(24))),
+//              child: Center(
+//                child: Text(
+//                  "PANELISTS",
+//                  style: TextStyle(
+//                      color: Colors.white,
+//                      fontFamily: 'Lato',
+//                      fontWeight: FontWeight.bold,
+//                      letterSpacing: 2.0),
+//                ),
+//              ),
+//            ),
+            child: Container(
                 margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                 child: SingleChildScrollView(
                   child: Column(
@@ -582,40 +582,10 @@ class _ClubState extends State<Club> {
                         ),
                       ),
                       SizedBox(height: size.height / 30),
-//                Text('Panelists',
-//                    style: TextStyle(
-//                        fontFamily: 'Lato',
-//                        fontSize: size.width / 20,
-//                        fontWeight: FontWeight.bold,
-//                        color: Colors.black)),
-//                SizedBox(height: size.height / 100),
-//                Container(
-//                  height: 64,
-//                  width: size.width,
-//                  child: ListView.builder(
-//                    scrollDirection: Axis.horizontal,
-//                    itemCount: 10,
-//                    itemBuilder: (ctx, index) {
-//                      return Padding(
-//                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-//                        child: CircleAvatar(
-//                          backgroundColor: Colors.orange.withOpacity(0.3),
-//                          radius: 32,
-//                          child: Icon(
-//                            Icons.person_outline,
-//                            size: 30,
-//                            color: Colors.black,
-//                          ),
-//                        ),
-//                      );
-//                    },
-//                  ),
-//                ),
-
                       //SizedBox(height: size.height/20,),
 
                       Container(
-                          height: size.height / 2,
+                          height: size.height/2 + size.height/30,
                           width: size.width,
                           decoration: BoxDecoration(
                             color: Colors.black12,
@@ -637,73 +607,69 @@ class _ClubState extends State<Club> {
                             ),
                             Positioned(
                                 top: 50,
-                                left: 15,
-                                child: Container(
-                                  height: size.height / 2.5,
-                                  width: size.width - 30,
-                                  color: Colors.white,
-                                  child: ListView.builder(
-                                      itemCount: comments.length,
-                                      reverse: true,
-                                      itemBuilder: (context, index) {
-                                        return ListTile(
-                                          leading: CircleAvatar(
-                                            backgroundImage:
-                                                NetworkImage(comments[index].user.avatar),
-                                          ),
-                                          title: Text(
-                                            comments[index].user.username,
-                                            style: TextStyle(
-                                              fontFamily: "Lato",
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            comments[index].body,
-                                            style:
-                                                TextStyle(fontFamily: "Lato"),
-                                          ),
-                                        );
-                                      }),
-                                )),
-                            Positioned(
-                              left: 20,
-                              bottom: 30,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 40,
-                                    width: size.width / 1.25,
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                          fillColor: Colors.grey[200],
-                                          hintText: 'Comment',
-                                          filled: true,
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(12.0)),
-                                              borderSide: BorderSide(
-                                                  color: Colors.black12,
-                                                  width: 1.0)),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.black,
-                                                  width: 2.0))),
-                                      controller: _commentController,
-                                      onSubmitted: (val) => {addComment(val)},
+                                left: 10,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: size.height / 2.5,
+                                      width: size.width - 20,
+                                      color: Colors.white,
+                                      child: ListView.builder(
+                                          itemCount: comments.length,
+                                          reverse: true,
+                                          itemBuilder: (context, index) {
+                                            return ListTile(
+                                              leading: CircleAvatar(
+                                                backgroundImage:
+                                                    NetworkImage(comments[index].user.avatar),
+                                              ),
+                                              title: Text(
+                                                comments[index].user.username,
+                                                style: TextStyle(
+                                                  fontFamily: "Lato",
+                                                ),
+                                              ),
+                                              subtitle: Text(
+                                                comments[index].body,
+                                                style:
+                                                    TextStyle(fontFamily: "Lato"),
+                                              ),
+                                            );
+                                          }),
                                     ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  IconButton(
-                                    icon: Icon(Icons.send),
-                                    onPressed: () {
-                                      addComment(_commentController.text);
-                                      _commentController.text = '';
-                                      //            _sendComment(context);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
+                                    Container(
+                                      height: 40,
+                                      margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                      width: size.width-20,
+                                      child: TextField(
+                                        controller: _commentController,
+                                        decoration: InputDecoration(
+                                          suffixIcon: IconButton(
+                                            icon: Icon(Icons.send,color: Colors.green,),
+                                            onPressed: () {
+                                              addComment(_commentController.text);
+                                              _commentController.text = '';
+                                              //            _sendComment(context);
+                                            },
+                                          ),
+                                            fillColor: Colors.white,
+                                            hintText: 'Comment',
+                                            filled: true,
+                                            enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5.0)),
+                                                borderSide: BorderSide(
+                                                    color: Colors.black12,
+                                                    width: 1.0)),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.black,
+                                                    width: 2.0))),
+                                        //   onSubmitted: (val) => {addComment(val)},
+                                      ),
+                                    )
+                                  ],
+                                )),
                           ])),
 
                       SizedBox(height: size.height / 30),
@@ -744,11 +710,11 @@ class _ClubState extends State<Club> {
                                 ? Carousel(Clubs: Clubs)
                                 : Container();
                           }),
-                      SizedBox(height: size.height / 5)
+                      SizedBox(height: size.height/20)
                     ],
                   ),
                 )),
-          ),
+  //        ),
         ),
       ),
     );
