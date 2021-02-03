@@ -35,7 +35,7 @@ class _ClubState extends State<Club> {
   int audienceCount = -1;
   List<Comment> comments = [];
   void getParticipantListForFirstTime(event) {
-    // print(event);
+    //print(event);
     setState(() {});
   }
 
@@ -217,14 +217,16 @@ class _ClubState extends State<Club> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black),
-          title: Text(
-            "Now Playing",
-            style: TextStyle(
-                fontFamily: 'Lato',
-                fontWeight: FontWeight.bold,
-                color: Colors.black),
+          iconTheme: IconThemeData(
+              color: Colors.black,
           ),
+//          title: Text(
+//            "Now Playing",
+//            style: TextStyle(
+//                fontFamily: 'Lato',
+//                fontWeight: FontWeight.bold,
+//                color: Colors.black),
+//          ),
           backgroundColor: Colors.white,
           elevation: 0.0,
         ),
@@ -232,7 +234,7 @@ class _ClubState extends State<Club> {
             child: Stack(
               children: [
                 Container(
-                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                //  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
@@ -408,7 +410,7 @@ class _ClubState extends State<Club> {
                             ]),
                         Container(
                           margin:
-                              EdgeInsets.fromLTRB(15, size.height / 30, 15, 0),
+                              EdgeInsets.fromLTRB(15, size.height / 50, 15, 0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -489,7 +491,7 @@ class _ClubState extends State<Club> {
                             ],
                           ),
                         ),
-                        SizedBox(height: size.height / 30),
+                        SizedBox(height: size.height / 50),
                         //SizedBox(height: size.height/20,),
 
                         Container(
@@ -514,7 +516,7 @@ class _ClubState extends State<Club> {
                                 ),
                               ),
                               Positioned(
-                                  top: 50,
+                                  top: 45,
                                   left: 10,
                                   child: Column(
                                     children: [
@@ -649,55 +651,38 @@ class _ClubState extends State<Club> {
                   height: size.height / 50,
                 ),
                 Container(
-                  height: 300,
-                  child: ListView.builder(
-                      itemCount: 3,
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      itemBuilder: (context, index) {
-                        return Column(
+                  height: MediaQuery.of(context).size.height/2 + 40,
+                  child: GridView.builder(
+                    itemCount: 15,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3
+                    ),
+                    itemBuilder: (context,index){
+                      return Container(
+                        child: Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Colors.orange.withOpacity(0.3),
-                                  radius: 32,
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    size: 30,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Colors.orange.withOpacity(0.3),
-                                  radius: 32,
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    size: 30,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Colors.orange.withOpacity(0.3),
-                                  radius: 32,
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    size: 30,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
+                            CircleAvatar(
+                              backgroundColor: Colors.orange.withOpacity(0.3),
+                              radius: 32,
+                              child: Icon(
+                                Icons.person_outline,
+                                size: 30,
+                                color: Colors.black,
+                              ),
                             ),
-                            SizedBox(
-                              height: size.height / 50,
-                            ),
+                            Text(
+                              "Name $index",
+                              style: TextStyle(
+                                fontFamily: "Lato",
+                                fontWeight: FontWeight.bold
+                              ),
+                            )
                           ],
-                        );
-                      }),
-                ),
+                        ),
+                      );
+                    },
+
+                ),)
                 //SizedBox(height: size.height/50,),+
               ],
             )),
