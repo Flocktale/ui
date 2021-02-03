@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    Clubs = (await service.getMyHistoryClubs(widget.userId,
+    Clubs = (await service.getMyOrganizedClubs(widget.userId,
             authorization: authToken))
         ?.body
         ?.clubs;

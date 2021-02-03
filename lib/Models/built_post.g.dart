@@ -564,6 +564,12 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
             specifiedType:
                 const FullType(BuiltList, const [const FullType(String)])));
     }
+    if (object.agoraToken != null) {
+      result
+        ..add('agoraToken')
+        ..add(serializers.serialize(object.agoraToken,
+            specifiedType: const FullType(String)));
+    }
     return result;
   }
 
@@ -635,6 +641,10 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(String)]))
               as BuiltList<Object>);
+          break;
+        case 'agoraToken':
+          result.agoraToken = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
       }
     }
@@ -1946,6 +1956,8 @@ class _$BuiltClub extends BuiltClub {
   final bool isPrivate;
   @override
   final BuiltList<String> tags;
+  @override
+  final String agoraToken;
 
   factory _$BuiltClub([void Function(BuiltClubBuilder) updates]) =>
       (new BuiltClubBuilder()..update(updates)).build();
@@ -1964,7 +1976,8 @@ class _$BuiltClub extends BuiltClub {
       this.isLocal,
       this.isGlobal,
       this.isPrivate,
-      this.tags})
+      this.tags,
+      this.agoraToken})
       : super._();
 
   @override
@@ -1991,7 +2004,8 @@ class _$BuiltClub extends BuiltClub {
         isLocal == other.isLocal &&
         isGlobal == other.isGlobal &&
         isPrivate == other.isPrivate &&
-        tags == other.tags;
+        tags == other.tags &&
+        agoraToken == other.agoraToken;
   }
 
   @override
@@ -2008,20 +2022,26 @@ class _$BuiltClub extends BuiltClub {
                                         $jc(
                                             $jc(
                                                 $jc(
-                                                    $jc($jc(0, clubId.hashCode),
-                                                        clubName.hashCode),
-                                                    creator.hashCode),
-                                                timeWindow.hashCode),
-                                            category.hashCode),
-                                        createdOn.hashCode),
-                                    modifiedOn.hashCode),
-                                scheduleTime.hashCode),
-                            clubAvatar.hashCode),
-                        description.hashCode),
-                    isLocal.hashCode),
-                isGlobal.hashCode),
-            isPrivate.hashCode),
-        tags.hashCode));
+                                                    $jc(
+                                                        $jc(
+                                                            $jc(
+                                                                0,
+                                                                clubId
+                                                                    .hashCode),
+                                                            clubName.hashCode),
+                                                        creator.hashCode),
+                                                    timeWindow.hashCode),
+                                                category.hashCode),
+                                            createdOn.hashCode),
+                                        modifiedOn.hashCode),
+                                    scheduleTime.hashCode),
+                                clubAvatar.hashCode),
+                            description.hashCode),
+                        isLocal.hashCode),
+                    isGlobal.hashCode),
+                isPrivate.hashCode),
+            tags.hashCode),
+        agoraToken.hashCode));
   }
 
   @override
@@ -2040,7 +2060,8 @@ class _$BuiltClub extends BuiltClub {
           ..add('isLocal', isLocal)
           ..add('isGlobal', isGlobal)
           ..add('isPrivate', isPrivate)
-          ..add('tags', tags))
+          ..add('tags', tags)
+          ..add('agoraToken', agoraToken))
         .toString();
   }
 }
@@ -2105,6 +2126,10 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
   ListBuilder<String> get tags => _$this._tags ??= new ListBuilder<String>();
   set tags(ListBuilder<String> tags) => _$this._tags = tags;
 
+  String _agoraToken;
+  String get agoraToken => _$this._agoraToken;
+  set agoraToken(String agoraToken) => _$this._agoraToken = agoraToken;
+
   BuiltClubBuilder();
 
   BuiltClubBuilder get _$this {
@@ -2123,6 +2148,7 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       _isGlobal = _$v.isGlobal;
       _isPrivate = _$v.isPrivate;
       _tags = _$v.tags?.toBuilder();
+      _agoraToken = _$v.agoraToken;
       _$v = null;
     }
     return this;
@@ -2160,7 +2186,8 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
               isLocal: isLocal,
               isGlobal: isGlobal,
               isPrivate: isPrivate,
-              tags: _tags?.build());
+              tags: _tags?.build(),
+              agoraToken: agoraToken);
     } catch (_) {
       String _$failedField;
       try {

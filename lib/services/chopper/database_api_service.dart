@@ -241,6 +241,13 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
+  @Post(path: '/clubs/{clubId}/agora/token/create/')
+  Future<Response> generateAgoraTokenForClub(
+    @Path() String clubId,
+    @Query() String userId, {
+    @required @Header() String authorization,
+  });
+
   static DatabaseApiService create() {
     print("------------------initiating database----------------");
     final client = ChopperClient(
