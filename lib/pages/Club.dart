@@ -36,10 +36,10 @@ class _ClubState extends State<Club> {
   List<Comment> comments = [];
   void getParticipantListForFirstTime(event) {
     //print(event);
-    SummaryUser u = SummaryUser((r) => r
-      ..avatar = event['avatar']
-      ..userId = event['userId']
-      ..username = event['username']);
+    // SummaryUser u = SummaryUser((r) => r
+    //   ..avatar = event['avatar']
+    //   ..userId = event['userId']
+    //   ..username = event['username']);
     event['participantList'].forEach((e){
       SummaryUser u = SummaryUser((r)=>r
         ..userId = e['userId']
@@ -160,6 +160,7 @@ class _ClubState extends State<Club> {
       ));
       print(data.body['agoraToken']);
       _club = _club.rebuild((b) => b..agoraToken = data.body['agoraToken']);
+      Provider.of<AgoraController>(context,listen: false).club = _club;
     }
 
     Provider.of<AgoraController>(context, listen: false)

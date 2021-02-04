@@ -1,11 +1,12 @@
 import 'package:agora_handler/main.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mootclub_app/Models/built_post.dart';
 
 class AgoraController {
   AgoraHandler _agoraHandler;
   bool _isClubMuted;
   bool _isMicMuted;
-
+  BuiltClub club;
   AgoraController create() {
     _agoraHandler = AgoraHandler();
     _isClubMuted = false;
@@ -46,5 +47,6 @@ class AgoraController {
 
   Future<void> dispose() async {
     await _agoraHandler.dispose();
+    club = null;
   }
 }
