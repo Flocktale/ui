@@ -20,7 +20,7 @@ void main() async {
 
   _setupLogging();
   _configureFCM();
-  runApp(NotificationTesting());
+  runApp(MyApp());
 }
 
 void _setupLogging() {

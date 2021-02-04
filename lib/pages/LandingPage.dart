@@ -118,7 +118,7 @@ class _LandingPageState extends State<LandingPage>
               ),
               SizedBox(height: size.height/10,)
             ],
-        ),
+        )
       ),
               Positioned(
                 bottom:0,
