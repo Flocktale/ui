@@ -176,6 +176,12 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   @nullable
   String get agoraToken;
 
+  @nullable
+  String get tagline;
+
+  @nullable
+  int get online; // this field is, "0" when user is online and represent timestamp when user is offline.
+
   BuiltClub._();
 
   factory BuiltClub([updates(BuiltClubBuilder b)]) = _$BuiltClub;
@@ -195,6 +201,12 @@ abstract class SummaryUser implements Built<SummaryUser, SummaryUserBuilder> {
 
   @nullable
   String get avatar;
+
+  @nullable
+  String get tagline;
+
+  @nullable
+  int get online; // this field is, "0" when user is online and represent timestamp when user is offline.
 
   SummaryUser._();
 

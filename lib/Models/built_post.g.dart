@@ -570,6 +570,18 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         ..add(serializers.serialize(object.agoraToken,
             specifiedType: const FullType(String)));
     }
+    if (object.tagline != null) {
+      result
+        ..add('tagline')
+        ..add(serializers.serialize(object.tagline,
+            specifiedType: const FullType(String)));
+    }
+    if (object.online != null) {
+      result
+        ..add('online')
+        ..add(serializers.serialize(object.online,
+            specifiedType: const FullType(int)));
+    }
     return result;
   }
 
@@ -646,6 +658,14 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
           result.agoraToken = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
+        case 'tagline':
+          result.tagline = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'online':
+          result.online = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
       }
     }
 
@@ -687,6 +707,18 @@ class _$SummaryUserSerializer implements StructuredSerializer<SummaryUser> {
         ..add(serializers.serialize(object.avatar,
             specifiedType: const FullType(String)));
     }
+    if (object.tagline != null) {
+      result
+        ..add('tagline')
+        ..add(serializers.serialize(object.tagline,
+            specifiedType: const FullType(String)));
+    }
+    if (object.online != null) {
+      result
+        ..add('online')
+        ..add(serializers.serialize(object.online,
+            specifiedType: const FullType(int)));
+    }
     return result;
   }
 
@@ -716,6 +748,14 @@ class _$SummaryUserSerializer implements StructuredSerializer<SummaryUser> {
         case 'avatar':
           result.avatar = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'tagline':
+          result.tagline = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'online':
+          result.online = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -1958,6 +1998,10 @@ class _$BuiltClub extends BuiltClub {
   final BuiltList<String> tags;
   @override
   final String agoraToken;
+  @override
+  final String tagline;
+  @override
+  final int online;
 
   factory _$BuiltClub([void Function(BuiltClubBuilder) updates]) =>
       (new BuiltClubBuilder()..update(updates)).build();
@@ -1977,7 +2021,9 @@ class _$BuiltClub extends BuiltClub {
       this.isGlobal,
       this.isPrivate,
       this.tags,
-      this.agoraToken})
+      this.agoraToken,
+      this.tagline,
+      this.online})
       : super._();
 
   @override
@@ -2005,7 +2051,9 @@ class _$BuiltClub extends BuiltClub {
         isGlobal == other.isGlobal &&
         isPrivate == other.isPrivate &&
         tags == other.tags &&
-        agoraToken == other.agoraToken;
+        agoraToken == other.agoraToken &&
+        tagline == other.tagline &&
+        online == other.online;
   }
 
   @override
@@ -2025,23 +2073,30 @@ class _$BuiltClub extends BuiltClub {
                                                     $jc(
                                                         $jc(
                                                             $jc(
-                                                                0,
-                                                                clubId
+                                                                $jc(
+                                                                    $jc(
+                                                                        0,
+                                                                        clubId
+                                                                            .hashCode),
+                                                                    clubName
+                                                                        .hashCode),
+                                                                creator
                                                                     .hashCode),
-                                                            clubName.hashCode),
-                                                        creator.hashCode),
-                                                    timeWindow.hashCode),
-                                                category.hashCode),
-                                            createdOn.hashCode),
-                                        modifiedOn.hashCode),
-                                    scheduleTime.hashCode),
-                                clubAvatar.hashCode),
-                            description.hashCode),
-                        isLocal.hashCode),
-                    isGlobal.hashCode),
-                isPrivate.hashCode),
-            tags.hashCode),
-        agoraToken.hashCode));
+                                                            timeWindow
+                                                                .hashCode),
+                                                        category.hashCode),
+                                                    createdOn.hashCode),
+                                                modifiedOn.hashCode),
+                                            scheduleTime.hashCode),
+                                        clubAvatar.hashCode),
+                                    description.hashCode),
+                                isLocal.hashCode),
+                            isGlobal.hashCode),
+                        isPrivate.hashCode),
+                    tags.hashCode),
+                agoraToken.hashCode),
+            tagline.hashCode),
+        online.hashCode));
   }
 
   @override
@@ -2061,7 +2116,9 @@ class _$BuiltClub extends BuiltClub {
           ..add('isGlobal', isGlobal)
           ..add('isPrivate', isPrivate)
           ..add('tags', tags)
-          ..add('agoraToken', agoraToken))
+          ..add('agoraToken', agoraToken)
+          ..add('tagline', tagline)
+          ..add('online', online))
         .toString();
   }
 }
@@ -2130,6 +2187,14 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
   String get agoraToken => _$this._agoraToken;
   set agoraToken(String agoraToken) => _$this._agoraToken = agoraToken;
 
+  String _tagline;
+  String get tagline => _$this._tagline;
+  set tagline(String tagline) => _$this._tagline = tagline;
+
+  int _online;
+  int get online => _$this._online;
+  set online(int online) => _$this._online = online;
+
   BuiltClubBuilder();
 
   BuiltClubBuilder get _$this {
@@ -2149,6 +2214,8 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       _isPrivate = _$v.isPrivate;
       _tags = _$v.tags?.toBuilder();
       _agoraToken = _$v.agoraToken;
+      _tagline = _$v.tagline;
+      _online = _$v.online;
       _$v = null;
     }
     return this;
@@ -2187,7 +2254,9 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
               isGlobal: isGlobal,
               isPrivate: isPrivate,
               tags: _tags?.build(),
-              agoraToken: agoraToken);
+              agoraToken: agoraToken,
+              tagline: tagline,
+              online: online);
     } catch (_) {
       String _$failedField;
       try {
@@ -2216,11 +2285,21 @@ class _$SummaryUser extends SummaryUser {
   final String name;
   @override
   final String avatar;
+  @override
+  final String tagline;
+  @override
+  final int online;
 
   factory _$SummaryUser([void Function(SummaryUserBuilder) updates]) =>
       (new SummaryUserBuilder()..update(updates)).build();
 
-  _$SummaryUser._({this.userId, this.username, this.name, this.avatar})
+  _$SummaryUser._(
+      {this.userId,
+      this.username,
+      this.name,
+      this.avatar,
+      this.tagline,
+      this.online})
       : super._();
 
   @override
@@ -2237,14 +2316,21 @@ class _$SummaryUser extends SummaryUser {
         userId == other.userId &&
         username == other.username &&
         name == other.name &&
-        avatar == other.avatar;
+        avatar == other.avatar &&
+        tagline == other.tagline &&
+        online == other.online;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, userId.hashCode), username.hashCode), name.hashCode),
-        avatar.hashCode));
+        $jc(
+            $jc(
+                $jc($jc($jc(0, userId.hashCode), username.hashCode),
+                    name.hashCode),
+                avatar.hashCode),
+            tagline.hashCode),
+        online.hashCode));
   }
 
   @override
@@ -2253,7 +2339,9 @@ class _$SummaryUser extends SummaryUser {
           ..add('userId', userId)
           ..add('username', username)
           ..add('name', name)
-          ..add('avatar', avatar))
+          ..add('avatar', avatar)
+          ..add('tagline', tagline)
+          ..add('online', online))
         .toString();
   }
 }
@@ -2277,6 +2365,14 @@ class SummaryUserBuilder implements Builder<SummaryUser, SummaryUserBuilder> {
   String get avatar => _$this._avatar;
   set avatar(String avatar) => _$this._avatar = avatar;
 
+  String _tagline;
+  String get tagline => _$this._tagline;
+  set tagline(String tagline) => _$this._tagline = tagline;
+
+  int _online;
+  int get online => _$this._online;
+  set online(int online) => _$this._online = online;
+
   SummaryUserBuilder();
 
   SummaryUserBuilder get _$this {
@@ -2285,6 +2381,8 @@ class SummaryUserBuilder implements Builder<SummaryUser, SummaryUserBuilder> {
       _username = _$v.username;
       _name = _$v.name;
       _avatar = _$v.avatar;
+      _tagline = _$v.tagline;
+      _online = _$v.online;
       _$v = null;
     }
     return this;
@@ -2307,7 +2405,12 @@ class SummaryUserBuilder implements Builder<SummaryUser, SummaryUserBuilder> {
   _$SummaryUser build() {
     final _$result = _$v ??
         new _$SummaryUser._(
-            userId: userId, username: username, name: name, avatar: avatar);
+            userId: userId,
+            username: username,
+            name: name,
+            avatar: avatar,
+            tagline: tagline,
+            online: online);
     replace(_$result);
     return _$result;
   }
