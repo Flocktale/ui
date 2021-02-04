@@ -1,10 +1,15 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/pages/HomePage.dart';
 import 'package:mootclub_app/providers/agoraController.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 import 'Authentication/login.dart';
+import 'notificationPilot.dart';
 import 'providers/userData.dart';
 import 'package:logging/logging.dart';
 import 'route_generator.dart';
@@ -14,7 +19,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   _setupLogging();
-  runApp(MyApp());
+  _configureFCM();
+  runApp(NotificationTesting());
 }
 
 void _setupLogging() {
@@ -22,6 +28,22 @@ void _setupLogging() {
   Logger.root.onRecord.listen((rec) {
     print('${rec.level.name}: ${rec.time}: ${rec.message}');
   });
+}
+
+_configureFCM() async {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  _firebaseMessaging.configure(
+    onMessage: (Map<String, dynamic> message) async {
+      print('hola');
+      print("onMessage: $message");
+    },
+    onLaunch: (Map<String, dynamic> message) async {
+      print("onLaunch: $message");
+    },
+    onResume: (Map<String, dynamic> message) async {
+      print("onResume: $message");
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {

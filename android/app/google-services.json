@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "43077743941",
+    "firebase_url": "https://mootclub-4f769.firebaseio.com",
+    "project_id": "mootclub-4f769",
+    "storage_bucket": "mootclub-4f769.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43077743941:android:e72fa3eeef02ca91cafa2c",
+        "android_client_info": {
+          "package_name": "com.example.mootclub_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "43077743941-j4fl783sgnkihck9pivuuhssh5ea30tu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHavF6EP3AExkNsMxz71tvEHTMyi_M2x0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "43077743941-j4fl783sgnkihck9pivuuhssh5ea30tu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
