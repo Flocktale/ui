@@ -4,6 +4,7 @@ import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:provider/provider.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import '../MinClub.dart';
 import 'ImagePage.dart';
 
 class NewClub extends StatefulWidget {
@@ -134,111 +135,118 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return Scaffold(
         body: SafeArea(
-      child: Container(
-        margin: EdgeInsets.only(left: size.width / 50, right: size.width / 50),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: size.height / 50),
-            Text(
-              'Create a new club',
-              style: TextStyle(
-                fontFamily: 'Lato',
-                fontWeight: FontWeight.bold,
-                fontSize: size.height / 25,
+      child: Stack(
+        children: [
+          Container(
+          margin: EdgeInsets.only(left: size.width / 50, right: size.width / 50),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: size.height / 50),
+              Text(
+                'Create a new club',
+                style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.height / 25,
+                ),
               ),
-            ),
-            SizedBox(
-              height: size.height / 50,
-            ),
-            Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    _buildName(),
-                    SizedBox(
-                      height: size.height / 50,
-                    ),
-                    _buildDescription(),
-                    SizedBox(
-                      height: size.height / 50,
-                    ),
-                    _buildCategory(),
-                    SizedBox(
-                      height: size.height / 50,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ButtonTheme(
-                          minWidth: size.width / 3.5,
-                          child: RaisedButton(
-                            onPressed: () {
-                              if (!_formKey.currentState.validate()) {
-                                return;
-                              } else {
-                                _formKey.currentState.save();
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => ImagePage(
-                                          name: name,
-                                          description: description,
-                                          category: category,
-                                          userId: widget.userId,
-                                        )));
-                              }
-                            },
-                            color: Colors.white,
-                            child: Text('Select an image',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w200,
-                                  fontFamily: 'Lato',
-                                )),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              //side: BorderSide(color: Colors.red[600]),
+              SizedBox(
+                height: size.height / 50,
+              ),
+              Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      _buildName(),
+                      SizedBox(
+                        height: size.height / 50,
+                      ),
+                      _buildDescription(),
+                      SizedBox(
+                        height: size.height / 50,
+                      ),
+                      _buildCategory(),
+                      SizedBox(
+                        height: size.height / 50,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ButtonTheme(
+                            minWidth: size.width / 3.5,
+                            child: RaisedButton(
+                              onPressed: () {
+                                if (!_formKey.currentState.validate()) {
+                                  return;
+                                } else {
+                                  _formKey.currentState.save();
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => ImagePage(
+                                            name: name,
+                                            description: description,
+                                            category: category,
+                                            userId: widget.userId,
+                                          )));
+                                }
+                              },
+                              color: Colors.white,
+                              child: Text('Select an image',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w200,
+                                    fontFamily: 'Lato',
+                                  )),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                //side: BorderSide(color: Colors.red[600]),
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          "OR",
-                          style: TextStyle(
-                              fontFamily: 'Lato', fontWeight: FontWeight.bold),
-                        ),
-                        ButtonTheme(
-                          minWidth: size.width / 3.5,
-                          child: RaisedButton(
-                            onPressed: () {
-                              if (!_formKey.currentState.validate()) {
-                                return;
-                              } else {
-                                _formKey.currentState.save();
-                                print(name);
-                                print(description);
-                                print(category);
+                          Text(
+                            "OR",
+                            style: TextStyle(
+                                fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                          ),
+                          ButtonTheme(
+                            minWidth: size.width / 3.5,
+                            child: RaisedButton(
+                              onPressed: () {
+                                if (!_formKey.currentState.validate()) {
+                                  return;
+                                } else {
+                                  _formKey.currentState.save();
+                                  print(name);
+                                  print(description);
+                                  print(category);
 //                                Navigator.of(context).pushNamed('/imagePage');
-                                _createClub();
-                              }
-                            },
-                            color: Colors.red[600],
-                            child: Text('Skip and Submit',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Lato',
-                                )),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                              //side: BorderSide(color: Colors.red[600]),
+                                  _createClub();
+                                }
+                              },
+                              color: Colors.red[600],
+                              child: Text('Skip and Submit',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Lato',
+                                  )),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                //side: BorderSide(color: Colors.red[600]),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  ],
-                ))
-          ],
+                        ],
+                      )
+                    ],
+                  ))
+            ],
+          ),
         ),
+          Positioned(
+              bottom:0,
+              child: MinClub())
+        ]
       ),
     ));
   }

@@ -5,7 +5,8 @@ import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
-import 'ClubPage.dart';
+import '../MinClub.dart';
+import 'Club.dart';
 
 class SearchPage extends StatefulWidget {
   BuiltUser user;
@@ -23,51 +24,59 @@ class _SearchPageState extends State<SearchPage> {
     List<BuiltUser> recentSearches = [widget.user, widget.user, widget.user];
     // List<BuiltUser> allSearches = [widget.user];
     return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            height: size.height / 50,
-          ),
-          Text(
-            'Search',
-            style: TextStyle(
-                fontFamily: 'Lato',
-                fontWeight: FontWeight.bold,
-                fontSize: size.width / 10),
-          ),
-          SizedBox(
-            height: size.height / 50,
-          ),
-          Container(
-            height: 50,
-            margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
-            child: TextField(
-              decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.black,
-                  ),
-                  fillColor: Colors.grey[200],
-                  hintText: 'Artists or Clubs',
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      borderSide: BorderSide(color: Colors.black, width: 1.0)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 2.0))),
-              onTap: () {
-                showSearch(
-                    context: context,
-                    delegate: DataSearch(
-                        recentSearches: recentSearches, context: context));
-              },
+      child: Stack(
+        children:
+        [
+          Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: size.height / 50,
             ),
-          ),
-          SizedBox(
-            height: size.height / 50,
-          )
-        ],
+            Text(
+              'Search',
+              style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontWeight: FontWeight.bold,
+                  fontSize: size.width / 10),
+            ),
+            SizedBox(
+              height: size.height / 50,
+            ),
+            Container(
+              height: 50,
+              margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+              child: TextField(
+                decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Colors.black,
+                    ),
+                    fillColor: Colors.grey[200],
+                    hintText: 'Artists or Clubs',
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        borderSide: BorderSide(color: Colors.black, width: 1.0)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2.0))),
+                onTap: () {
+                  showSearch(
+                      context: context,
+                      delegate: DataSearch(
+                          recentSearches: recentSearches, context: context));
+                },
+              ),
+            ),
+            SizedBox(
+              height: size.height / 50,
+            )
+          ],
+        ),
+          Positioned(
+              bottom:0,
+              child: MinClub())
+        ]
       ),
     );
   }
@@ -276,8 +285,8 @@ class DataSearch extends SearchDelegate<String> {
                                   : Text("Club"),
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => ClubPage(
-                                          Club: allSearches.clubs[index],
+                                    builder: (_) => Club(
+                                          club: allSearches.clubs[index],
                                         )));
                               },
                             );

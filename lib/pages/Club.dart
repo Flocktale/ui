@@ -26,7 +26,7 @@ class _ClubState extends State<Club> {
   bool isLive = true;
   final _commentController = TextEditingController();
   BuiltList<BuiltClub> Clubs;
-  var participantList = [];
+  List<SummaryUser> participantList = [];
 
   // int likes = -1;
   int likeCount = -1;
@@ -36,6 +36,18 @@ class _ClubState extends State<Club> {
   List<Comment> comments = [];
   void getParticipantListForFirstTime(event) {
     //print(event);
+    SummaryUser u = SummaryUser((r) => r
+      ..avatar = event['avatar']
+      ..userId = event['userId']
+      ..username = event['username']);
+    event['participantList'].forEach((e){
+      SummaryUser u = SummaryUser((r)=>r
+        ..userId = e['userId']
+        ..username = e['username']
+        ..avatar = e['avatar']
+      );
+      participantList.add(u);
+    });
     setState(() {});
   }
 
@@ -653,7 +665,7 @@ class _ClubState extends State<Club> {
                 Container(
                   height: MediaQuery.of(context).size.height/2 + 40,
                   child: GridView.builder(
-                    itemCount: 15,
+                    itemCount: participantList.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3
                     ),
@@ -662,16 +674,11 @@ class _ClubState extends State<Club> {
                         child: Column(
                           children: [
                             CircleAvatar(
-                              backgroundColor: Colors.orange.withOpacity(0.3),
-                              radius: 32,
-                              child: Icon(
-                                Icons.person_outline,
-                                size: 30,
-                                color: Colors.black,
-                              ),
+                            radius:size.width/10,
+                            backgroundImage: NetworkImage(participantList[index].avatar),
                             ),
                             Text(
-                              "Name $index",
+                              participantList[index].username,
                               style: TextStyle(
                                 fontFamily: "Lato",
                                 fontWeight: FontWeight.bold

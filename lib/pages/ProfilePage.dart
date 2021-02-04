@@ -9,6 +9,8 @@ import '../AppBarWidget.dart';
 import '../Carousel.dart';
 import 'package:built_collection/built_collection.dart';
 
+import '../MinClub.dart';
+
 class ProfilePage extends StatefulWidget {
   final String userId;
   ProfilePage({this.userId});
@@ -217,348 +219,356 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
         backgroundColor: Colors.amber,
-        body: FutureBuilder(
-            future: fetchUser(),
-            builder: (context, snapshot) {
-              if (_user == null ||
-                  snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
-              return SafeArea(
-                child: Scaffold(
-                  body: Stack(fit: StackFit.expand, children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment(0.8,
-                              0.5), // 10% of the width, so there are ten blinds.
-                          colors: [
-                            const Color(0xfffac043),
-                            const Color(0xffd61a09)
-                            //  const Color(0xffd90000)
-                          ], // red to yellow
-                          tileMode: TileMode
-                              .repeated, // repeats the gradient over the canvas
+        body: Stack(
+          children:
+          [
+            FutureBuilder(
+              future: fetchUser(),
+              builder: (context, snapshot) {
+                if (_user == null ||
+                    snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return SafeArea(
+                  child: Scaffold(
+                    body: Stack(fit: StackFit.expand, children: <Widget>[
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment(0.8,
+                                0.5), // 10% of the width, so there are ten blinds.
+                            colors: [
+                              const Color(0xfffac043),
+                              const Color(0xffd61a09)
+                              //  const Color(0xffd90000)
+                            ], // red to yellow
+                            tileMode: TileMode
+                                .repeated, // repeats the gradient over the canvas
+                          ),
                         ),
                       ),
-                    ),
-                    AppBarWidget(), //AppBar
-                    Positioned(
-                      top: ((size.height / 14) +
-                          (size.height / 9) -
-                          (size.height / 25)),
-                      height: size.height -
-                          ((size.height / 14) +
-                              (size.height / 9) -
-                              (size.height / 25)),
-                      width: size.width,
-                      child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
+                      AppBarWidget(), //AppBar
+                      Positioned(
+                        top: ((size.height / 14) +
+                            (size.height / 9) -
+                            (size.height / 25)),
+                        height: size.height -
+                            ((size.height / 14) +
+                                (size.height / 9) -
+                                (size.height / 25)),
+                        width: size.width,
+                        child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
 //                            borderRadius: BorderRadius.only(
 //                                topLeft: Radius.circular(45.0),
 //                                topRight: Radius.circular(45.0)),
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.elliptical(
-                                      size.width / 2, size.height / 20))),
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(height: size.height / 20),
-                              Text(
-                                //  'Caroline Steele',
-                                _user.name != null
-                                    ? _user.name
-                                    : _user.username,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: size.width / 20,
-                                  color: Colors.red[300],
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.elliptical(
+                                        size.width / 2, size.height / 20))),
+                            child: Column(
+                              children: <Widget>[
+                                SizedBox(height: size.height / 20),
+                                Text(
+                                  //  'Caroline Steele',
+                                  _user.name != null
+                                      ? _user.name
+                                      : _user.username,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: size.width / 20,
+                                    color: Colors.red[300],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: size.height / 130,
-                              ),
-                              Text(
-                                //'Music Composer',
-                                '@${_user.username}',
-                                style: TextStyle(
-                                    fontSize: size.width / 26,
-                                    color: Colors.grey[400]),
-                              ),
-                              SizedBox(
-                                height: size.height / 50,
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    left: size.width / 20,
-                                    right: size.width / 20),
-                                child: Text(
-                                  //'Hi my name is Carol and I am a music composer. Music is the greatest passion of my life',
-                                  _user.bio != null ? _user.bio : '',
-                                  textAlign: TextAlign.center,
+                                SizedBox(
+                                  height: size.height / 130,
+                                ),
+                                Text(
+                                  //'Music Composer',
+                                  '@${_user.username}',
                                   style: TextStyle(
                                       fontSize: size.width / 26,
-                                      color: Colors.grey[500]),
+                                      color: Colors.grey[400]),
                                 ),
-                              ),
-                              SizedBox(
-                                height: size.height / 30,
-                              ),
-                              !_isMe
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        ButtonTheme(
-                                          minWidth: size.width / 3.5,
-                                          child: RaisedButton(
-                                            onPressed: () async {
-                                              if (!sentFollowRequest) {
-                                                await sendFollow();
-                                                setState(() {
-                                                  sentFollowRequest =
-                                                      !sentFollowRequest;
-                                                });
-                                              }
-                                            },
-                                            color: !sentFollowRequest
-                                                ? Colors.red[600]
-                                                : Colors.white,
-                                            child: Text(
-                                                !sentFollowRequest
-                                                    ? 'Follow'
-                                                    : 'Sent follow request',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: !sentFollowRequest
-                                                      ? Colors.white
-                                                      : Colors.grey[700],
-                                                )),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(18.0),
-                                              side: BorderSide(
-                                                  color: Colors.red[600]),
+                                SizedBox(
+                                  height: size.height / 50,
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      left: size.width / 20,
+                                      right: size.width / 20),
+                                  child: Text(
+                                    //'Hi my name is Carol and I am a music composer. Music is the greatest passion of my life',
+                                    _user.bio != null ? _user.bio : '',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: size.width / 26,
+                                        color: Colors.grey[500]),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: size.height / 30,
+                                ),
+                                !_isMe
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          ButtonTheme(
+                                            minWidth: size.width / 3.5,
+                                            child: RaisedButton(
+                                              onPressed: () async {
+                                                if (!sentFollowRequest) {
+                                                  await sendFollow();
+                                                  setState(() {
+                                                    sentFollowRequest =
+                                                        !sentFollowRequest;
+                                                  });
+                                                }
+                                              },
+                                              color: !sentFollowRequest
+                                                  ? Colors.red[600]
+                                                  : Colors.white,
+                                              child: Text(
+                                                  !sentFollowRequest
+                                                      ? 'Follow'
+                                                      : 'Sent follow request',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: !sentFollowRequest
+                                                        ? Colors.white
+                                                        : Colors.grey[700],
+                                                  )),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(18.0),
+                                                side: BorderSide(
+                                                    color: Colors.red[600]),
+                                              ),
+                                              elevation: 0.0,
                                             ),
-                                            elevation: 0.0,
                                           ),
-                                        ),
-                                        ButtonTheme(
-                                          minWidth: size.width / 3.5,
-                                          child: RaisedButton(
-                                            onPressed: () async {
-                                              if (!sentFriendRequest) {
-                                                await sendFreindRequest();
-                                                setState(() {
-                                                  sentFriendRequest =
-                                                      !sentFriendRequest;
-                                                });
-                                              }
-                                            },
-                                            color: Colors.white,
-                                            child: Text(
-                                                !sentFriendRequest
-                                                    ? 'Add friend'
-                                                    : 'Sent Friend Request',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: !sentFriendRequest
-                                                      ? Colors.red[600]
-                                                      : Colors.grey[700],
-                                                )),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(18.0),
-                                              side: BorderSide(
-                                                  color: Colors.red[600]),
+                                          ButtonTheme(
+                                            minWidth: size.width / 3.5,
+                                            child: RaisedButton(
+                                              onPressed: () async {
+                                                if (!sentFriendRequest) {
+                                                  await sendFreindRequest();
+                                                  setState(() {
+                                                    sentFriendRequest =
+                                                        !sentFriendRequest;
+                                                  });
+                                                }
+                                              },
+                                              color: Colors.white,
+                                              child: Text(
+                                                  !sentFriendRequest
+                                                      ? 'Add friend'
+                                                      : 'Sent Friend Request',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: !sentFriendRequest
+                                                        ? Colors.red[600]
+                                                        : Colors.grey[700],
+                                                  )),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(18.0),
+                                                side: BorderSide(
+                                                    color: Colors.red[600]),
+                                              ),
+                                              elevation: 0.0,
                                             ),
-                                            elevation: 0.0,
                                           ),
+                                        ],
+                                      )
+                                    : ButtonTheme(
+                                        minWidth: size.width / 1.5,
+                                        child: RaisedButton(
+                                          onPressed: () {
+                                            // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
+                                          },
+                                          color: Colors.white,
+                                          child: Text('EDIT PROFILE',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.red[600],
+                                              )),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(18.0),
+                                            side: BorderSide(
+                                                color: Colors.red[600]),
+                                          ),
+                                          elevation: 0.0,
                                         ),
-                                      ],
-                                    )
-                                  : ButtonTheme(
-                                      minWidth: size.width / 1.5,
-                                      child: RaisedButton(
-                                        onPressed: () {
-                                          // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
-                                        },
-                                        color: Colors.white,
-                                        child: Text('EDIT PROFILE',
+                                      ),
+                                SizedBox(height: size.height / 30),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  //crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) => FollowersPage(
+                                                    initpos: 0, user: _user)));
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                              _user.friendsCount.toString() !=
+                                                      'null'
+                                                  ? _user.friendsCount.toString()
+                                                  : '0',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[600],
+                                                fontSize: size.width / 20,
+                                              )),
+                                          Text(
+                                            'Friends',
                                             style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red[600],
-                                            )),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(18.0),
-                                          side: BorderSide(
-                                              color: Colors.red[600]),
-                                        ),
-                                        elevation: 0.0,
+                                              color: Colors.red[300],
+                                              fontSize: size.width / 26,
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     ),
-                              SizedBox(height: size.height / 30),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                //crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (_) => FollowersPage(
-                                                  initpos: 0, user: _user)));
-                                    },
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                            _user.friendsCount.toString() !=
-                                                    'null'
-                                                ? _user.friendsCount.toString()
-                                                : '0',
+                                    VerticalDivider(
+                                      color: Colors.grey[400],
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) => FollowersPage(
+                                                    initpos: 1, user: _user)));
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                              _user.followerCount.toString() !=
+                                                      'null'
+                                                  ? _user.followerCount.toString()
+                                                  : '0',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[600],
+                                                fontSize: size.width / 20,
+                                              )),
+                                          Text(
+                                            'Followers',
                                             style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey[600],
-                                              fontSize: size.width / 20,
-                                            )),
-                                        Text(
-                                          'Friends',
-                                          style: TextStyle(
-                                            color: Colors.red[300],
-                                            fontSize: size.width / 26,
-                                          ),
-                                        )
-                                      ],
+                                              color: Colors.red[300],
+                                              fontSize: size.width / 26,
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  VerticalDivider(
-                                    color: Colors.grey[400],
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (_) => FollowersPage(
-                                                  initpos: 1, user: _user)));
-                                    },
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                            _user.followerCount.toString() !=
-                                                    'null'
-                                                ? _user.followerCount.toString()
-                                                : '0',
+                                    VerticalDivider(
+                                      color: Colors.grey[400],
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) => FollowersPage(
+                                                    initpos: 2, user: _user)));
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                              _user.followingCount.toString() !=
+                                                      'null'
+                                                  ? _user.followingCount
+                                                      .toString()
+                                                  : '0',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[600],
+                                                fontSize: size.width / 20,
+                                              )),
+                                          Text(
+                                            'Following',
                                             style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey[600],
-                                              fontSize: size.width / 20,
-                                            )),
-                                        Text(
-                                          'Followers',
-                                          style: TextStyle(
-                                            color: Colors.red[300],
-                                            fontSize: size.width / 26,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  VerticalDivider(
-                                    color: Colors.grey[400],
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (_) => FollowersPage(
-                                                  initpos: 2, user: _user)));
-                                    },
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                            _user.followingCount.toString() !=
-                                                    'null'
-                                                ? _user.followingCount
-                                                    .toString()
-                                                : '0',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey[600],
-                                              fontSize: size.width / 20,
-                                            )),
-                                        Text(
-                                          'Following',
-                                          style: TextStyle(
-                                            color: Colors.red[300],
-                                            fontSize: size.width / 26,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: size.height / 30),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    left: size.width / 50,
-                                    right: size.width / 50),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      'My Clubs',
-                                      style: TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.red[300]),
-                                    ),
-                                    Text(
-                                      'View All',
-                                      style: TextStyle(
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey[600],
+                                              color: Colors.red[300],
+                                              fontSize: size.width / 26,
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              SizedBox(
-                                height: size.height / 50,
-                              ),
-                              FutureBuilder(
-                                  future: _fetchAllClubs(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                    return Clubs != null
-                                        ? Carousel(Clubs: Clubs)
-                                        : Container();
-                                  })
-                            ],
-                          )),
-                    ),
+                                SizedBox(height: size.height / 30),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      left: size.width / 50,
+                                      right: size.width / 50),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        'My Clubs',
+                                        style: TextStyle(
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red[300]),
+                                      ),
+                                      Text(
+                                        'View All',
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: size.height / 50,
+                                ),
+                                FutureBuilder(
+                                    future: _fetchAllClubs(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                            child: CircularProgressIndicator());
+                                      }
+                                      return Clubs != null
+                                          ? Carousel(Clubs: Clubs)
+                                          : Container();
+                                    })
+                              ],
+                            )),
+                      ),
 
-                    Positioned(
-                      top: size.height / 14,
-                      left: ((size.width / 2) - (size.width / 9)),
-                      child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          backgroundImage: NetworkImage(getImageUrl()),
-                          //backgroundImage: AssetImage('assets/images/Default-female.png'),
-                          radius: size.height / 18),
-                    )
-                  ]),
-                ),
-              );
-            }));
+                      Positioned(
+                        top: size.height / 14,
+                        left: ((size.width / 2) - (size.width / 9)),
+                        child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            backgroundImage: NetworkImage(getImageUrl()),
+                            //backgroundImage: AssetImage('assets/images/Default-female.png'),
+                            radius: size.height / 18),
+                      )
+                    ]),
+                  ),
+                );
+              }),
+            Positioned(
+                bottom:0,
+                child: MinClub())
+          ]
+        ));
   }
 }
