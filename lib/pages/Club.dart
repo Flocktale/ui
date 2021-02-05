@@ -10,7 +10,8 @@ import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
+import 'ProfilePage.dart';
 import 'ClubJoinRequests.dart';
 
 class Club extends StatefulWidget {
@@ -23,6 +24,7 @@ class Club extends StatefulWidget {
 class _ClubState extends State<Club> {
   bool start = false;
   bool playing = false;
+  bool sentRequest = false;
   bool isLive = true;
   final _commentController = TextEditingController();
   BuiltList<BuiltClub> Clubs;
@@ -138,7 +140,21 @@ class _ClubState extends State<Club> {
       authorization: null,
     );
   }
+  sendJoinRequest() async{
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    await service.sendJoinRequest(cuser.userId, widget.club.clubId, authorization: authToken);
+    Fluttertoast.showToast(msg: "Join Request Sent");
+  }
 
+  deleteJoinRequest() async{
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    await service.deleteJoinRequet(cuser.userId, widget.club.clubId, authorization: authToken);
+    Fluttertoast.showToast(msg: "Join Request Cancelled");
+  }
   void reportClub() {}
 
 //! ------------------------------ for test purpose ------------------------------
@@ -216,7 +232,7 @@ class _ClubState extends State<Club> {
     //   ),
     // );
     BuiltUser user = Provider.of<UserData>(context, listen: false).user;
-    bool isMe = widget.club.creator.userId == user.userId;
+    bool isMe = (widget.club.creator.userId == user.userId);
     final size = MediaQuery.of(context).size;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     int dislikeCount = 0;
@@ -427,35 +443,42 @@ class _ClubState extends State<Club> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Row(children: <Widget>[
-                                CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(widget.club.creator.avatar),
-                                  radius: size.width / 20,
-                                ),
-                                widget.club.creator.name != null
-                                    ? Container(
-                                        margin: EdgeInsets.fromLTRB(
-                                            size.width / 30, 0, 0, 0),
-                                        child: Text(
-                                          widget.club.creator.name,
-                                          style: TextStyle(
-                                              fontFamily: 'Lato',
-                                              fontWeight: FontWeight.bold),
+                              InkWell(
+                                onTap: (){
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_)=>ProfilePage(userId: widget.club.creator.userId,)
+                                  ));
+                                },
+                                child: Row(children: <Widget>[
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(widget.club.creator.avatar),
+                                    radius: size.width / 20,
+                                  ),
+                                  widget.club.creator.name != null
+                                      ? Container(
+                                          margin: EdgeInsets.fromLTRB(
+                                              size.width / 30, 0, 0, 0),
+                                          child: Text(
+                                            widget.club.creator.name,
+                                            style: TextStyle(
+                                                fontFamily: 'Lato',
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      : Container(
+                                          margin: EdgeInsets.fromLTRB(
+                                              size.width / 30, 0, 0, 0),
+                                          child: Text(
+                                            '@' + widget.club.creator.username,
+                                            style: TextStyle(
+                                                fontFamily: 'Lato',
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: size.width / 25),
+                                          ),
                                         ),
-                                      )
-                                    : Container(
-                                        margin: EdgeInsets.fromLTRB(
-                                            size.width / 30, 0, 0, 0),
-                                        child: Text(
-                                          '@' + widget.club.creator.username,
-                                          style: TextStyle(
-                                              fontFamily: 'Lato',
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: size.width / 25),
-                                        ),
-                                      ),
-                              ]),
+                                ]),
+                              ),
                               Row(
                                 children: [
                                   Container(
@@ -481,8 +504,7 @@ class _ClubState extends State<Club> {
                                     margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                     child: FloatingActionButton(
                                       heroTag: "btn2",
-                                      onPressed: () {
-                                        setState(() {});
+                                      onPressed: () async{
                                         if (isMe && playing) {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
@@ -491,12 +513,23 @@ class _ClubState extends State<Club> {
                                                         club: widget.club,
                                                       )));
                                         }
+                                        else if(!isMe && playing){
+                                          if(!sentRequest){
+                                            await sendJoinRequest();
+                                          }
+                                          else{
+                                            await deleteJoinRequest();
+                                          }
+                                          setState(() {
+                                            sentRequest = !sentRequest;
+                                          });
+                                        }
                                       },
                                       child: !isMe
                                           ? Icon(Icons.mic_none_rounded)
                                           : Icon(Icons.person_add),
                                       backgroundColor:
-                                          !playing ? Colors.grey : Colors.amber,
+                                          !playing ? Colors.grey : !sentRequest?Colors.amber:Colors.grey,
                                     ),
                                   ),
                                 ],

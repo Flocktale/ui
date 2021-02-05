@@ -20,6 +20,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   static BuiltUser _user;
+  List _userRelations;
   bool _isMe;
   Image image;
   bool isFollowing = false;
@@ -39,7 +40,17 @@ class _ProfilePageState extends State<ProfilePage> {
               .body['value'];
     }
   }
-
+  fetchUserRelations() async{
+    print("==================FetchUserRelations=========================");
+    final service  = Provider.of<DatabaseApiService>(context);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    _userRelations = (await service.getUserProfile(widget.userId, authorization: authToken))?.body?.relationIndexObj?.values;
+    print("==================");
+    print(_userRelations);
+    print("==================");
+    setState(() {
+    });
+  }
   fetchUser() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     print(cuser.userId + '==' + widget.userId);
@@ -59,10 +70,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    _user =
-        (await service.getUserProfile(widget.userId, authorization: authToken))
-            ?.body
-            ?.user;
+    _user = (await service.getUserProfile(widget.userId, authorization: authToken))?.body?.user;
+
+
+    await fetchUserRelations();
+
     if (_user.userId == null) {
       _user = null;
       Fluttertoast.showToast(
@@ -113,6 +125,16 @@ class _ProfilePageState extends State<ProfilePage> {
     Fluttertoast.showToast(msg: 'Follow Request Sent');
   }
 
+  sendUnFollow() async {
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    await service.unfollow(cuser.userId, widget.userId, authorization: authToken);
+    Fluttertoast.showToast(msg: 'User Unfollowed');
+  }
+
   sendFreindRequest() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
@@ -122,6 +144,27 @@ class _ProfilePageState extends State<ProfilePage> {
         authorization: authToken);
 
     Fluttertoast.showToast(msg: 'Friend Request Sent');
+  }
+  cancelFriendRequest() async{
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    await service.deleteFriendRequest(cuser.userId, widget.userId,
+        authorization: authToken);
+
+    Fluttertoast.showToast(msg: 'Friend Request Cancelled');
+  }
+
+  unFriend() async{
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    await service.unfriend(cuser.userId, widget.userId,
+        authorization: authToken);
+
+    Fluttertoast.showToast(msg: 'Good Bye!');
   }
 
   checkingResponse(value) {
@@ -319,24 +362,27 @@ class _ProfilePageState extends State<ProfilePage> {
                                             minWidth: size.width / 3.5,
                                             child: RaisedButton(
                                               onPressed: () async {
-                                                if (!sentFollowRequest) {
-                                                  await sendFollow();
-                                                  setState(() {
-                                                    sentFollowRequest =
-                                                        !sentFollowRequest;
-                                                  });
-                                                }
+                                                if(_userRelations[4]==0)
+                                                  {
+                                                    await sendFollow();
+                                                  }
+                                                else
+                                                  {
+                                                    await sendUnFollow();
+                                                  }
+                                                setState(() {
+                                                });
                                               },
-                                              color: !sentFollowRequest
+                                              color: _userRelations[4]==0
                                                   ? Colors.red[600]
                                                   : Colors.white,
                                               child: Text(
-                                                  !sentFollowRequest
+                                                  _userRelations[4]==0
                                                       ? 'Follow'
-                                                      : 'Sent follow request',
+                                                      : 'Following',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    color: !sentFollowRequest
+                                                    color: _userRelations[4]==0
                                                         ? Colors.white
                                                         : Colors.grey[700],
                                                   )),
@@ -353,24 +399,34 @@ class _ProfilePageState extends State<ProfilePage> {
                                             minWidth: size.width / 3.5,
                                             child: RaisedButton(
                                               onPressed: () async {
-                                                if (!sentFriendRequest) {
-                                                  await sendFreindRequest();
-                                                  setState(() {
-                                                    sentFriendRequest =
-                                                        !sentFriendRequest;
-                                                  });
+                                                if(_userRelations[0]==1){
+                                                  await unFriend();
                                                 }
+                                                else if(_userRelations[2]==0)
+                                                  {
+                                                    await sendFreindRequest();
+                                                  }
+                                                else {
+                                                  await cancelFriendRequest();
+                                                }
+                                                setState(() {
+                                                });
                                               },
                                               color: Colors.white,
                                               child: Text(
-                                                  !sentFriendRequest
-                                                      ? 'Add friend'
-                                                      : 'Sent Friend Request',
+                                                  _userRelations[0]==1?
+                                                      "FRIENDS":
+                                                      _userRelations[2]==0?
+                                                          "Add Friend":
+                                                          "Request Sent",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    color: !sentFriendRequest
-                                                        ? Colors.red[600]
-                                                        : Colors.grey[700],
+                                                    color:
+                                                    _userRelations[0]==1?
+                                                    Colors.red:
+                                                    _userRelations[2]==0?
+                                                    Colors.black:
+                                                    Colors.black12,
                                                   )),
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -564,6 +620,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ]),
                   ),
                 );
+
               }),
             Positioned(
                 bottom:0,

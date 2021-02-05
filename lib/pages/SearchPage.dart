@@ -131,6 +131,8 @@ class DataSearch extends SearchDelegate<String> {
     allSearches = (await service.unifiedQueryRoutes(username, "unified", null,
             authorization: authToken))
         .body;
+    print("===================");
+    print(allSearches);
   }
 
   @override
