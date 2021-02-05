@@ -21,6 +21,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(CategoryClubsList.serializer)
       ..add(JoinRequests.serializer)
       ..add(ReactionUser.serializer)
+      ..add(RelationIndexObject.serializer)
       ..add(ReportSummary.serializer)
       ..add(SummaryUser.serializer)
       ..addBuilderFactory(

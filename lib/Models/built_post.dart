@@ -7,12 +7,29 @@ import 'package:mootclub_app/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
 
+abstract class RelationIndexObject
+    implements Built<RelationIndexObject, RelationIndexObjectBuilder> {
+  bool get B1;
+  bool get B2;
+  bool get B3;
+  bool get B4;
+  bool get B5;
+
+  RelationIndexObject._();
+
+  factory RelationIndexObject([updates(RelationIndexObjectBuilder b)]) =
+      _$RelationIndexObject;
+
+  static Serializer<RelationIndexObject> get serializer =>
+      _$relationIndexObjectSerializer;
+}
+
 abstract class BuiltProfile
     implements Built<BuiltProfile, BuiltProfileBuilder> {
   BuiltUser get user;
 
   @nullable
-  BuiltMap get relationIndexObj;
+  RelationIndexObject get relationIndexObj;
 
   BuiltProfile._();
 
@@ -39,6 +56,12 @@ abstract class BuiltUser implements Built<BuiltUser, BuiltUserBuilder> {
 
   @nullable
   String get avatar;
+
+  @nullable
+  String get tagline;
+
+  @nullable
+  int get online; // this field is, "0" when user is online and represent timestamp when user is offline.
 
   @nullable
   String get bio;
@@ -175,12 +198,6 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
 
   @nullable
   String get agoraToken;
-
-  @nullable
-  String get tagline;
-
-  @nullable
-  int get online; // this field is, "0" when user is online and represent timestamp when user is offline.
 
   BuiltClub._();
 

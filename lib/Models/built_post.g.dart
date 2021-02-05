@@ -6,6 +6,8 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<RelationIndexObject> _$relationIndexObjectSerializer =
+    new _$RelationIndexObjectSerializer();
 Serializer<BuiltProfile> _$builtProfileSerializer =
     new _$BuiltProfileSerializer();
 Serializer<BuiltUser> _$builtUserSerializer = new _$BuiltUserSerializer();
@@ -35,6 +37,75 @@ Serializer<BuiltActiveJoinRequests> _$builtActiveJoinRequestsSerializer =
 Serializer<BuiltUnifiedSearchResults> _$builtUnifiedSearchResultsSerializer =
     new _$BuiltUnifiedSearchResultsSerializer();
 
+class _$RelationIndexObjectSerializer
+    implements StructuredSerializer<RelationIndexObject> {
+  @override
+  final Iterable<Type> types = const [
+    RelationIndexObject,
+    _$RelationIndexObject
+  ];
+  @override
+  final String wireName = 'RelationIndexObject';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, RelationIndexObject object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'B1',
+      serializers.serialize(object.B1, specifiedType: const FullType(bool)),
+      'B2',
+      serializers.serialize(object.B2, specifiedType: const FullType(bool)),
+      'B3',
+      serializers.serialize(object.B3, specifiedType: const FullType(bool)),
+      'B4',
+      serializers.serialize(object.B4, specifiedType: const FullType(bool)),
+      'B5',
+      serializers.serialize(object.B5, specifiedType: const FullType(bool)),
+    ];
+
+    return result;
+  }
+
+  @override
+  RelationIndexObject deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new RelationIndexObjectBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'B1':
+          result.B1 = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'B2':
+          result.B2 = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'B3':
+          result.B3 = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'B4':
+          result.B4 = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'B5':
+          result.B5 = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
 class _$BuiltProfileSerializer implements StructuredSerializer<BuiltProfile> {
   @override
   final Iterable<Type> types = const [BuiltProfile, _$BuiltProfile];
@@ -53,7 +124,7 @@ class _$BuiltProfileSerializer implements StructuredSerializer<BuiltProfile> {
       result
         ..add('relationIndexObj')
         ..add(serializers.serialize(object.relationIndexObj,
-            specifiedType: const FullType(BuiltMap)));
+            specifiedType: const FullType(RelationIndexObject)));
     }
     return result;
   }
@@ -74,8 +145,9 @@ class _$BuiltProfileSerializer implements StructuredSerializer<BuiltProfile> {
               specifiedType: const FullType(BuiltUser)) as BuiltUser);
           break;
         case 'relationIndexObj':
-          result.relationIndexObj = serializers.deserialize(value,
-              specifiedType: const FullType(BuiltMap)) as BuiltMap;
+          result.relationIndexObj.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(RelationIndexObject))
+              as RelationIndexObject);
           break;
       }
     }
@@ -129,6 +201,18 @@ class _$BuiltUserSerializer implements StructuredSerializer<BuiltUser> {
         ..add('avatar')
         ..add(serializers.serialize(object.avatar,
             specifiedType: const FullType(String)));
+    }
+    if (object.tagline != null) {
+      result
+        ..add('tagline')
+        ..add(serializers.serialize(object.tagline,
+            specifiedType: const FullType(String)));
+    }
+    if (object.online != null) {
+      result
+        ..add('online')
+        ..add(serializers.serialize(object.online,
+            specifiedType: const FullType(int)));
     }
     if (object.bio != null) {
       result
@@ -263,6 +347,14 @@ class _$BuiltUserSerializer implements StructuredSerializer<BuiltUser> {
         case 'avatar':
           result.avatar = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'tagline':
+          result.tagline = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'online':
+          result.online = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
         case 'bio':
           result.bio = serializers.deserialize(value,
@@ -570,18 +662,6 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         ..add(serializers.serialize(object.agoraToken,
             specifiedType: const FullType(String)));
     }
-    if (object.tagline != null) {
-      result
-        ..add('tagline')
-        ..add(serializers.serialize(object.tagline,
-            specifiedType: const FullType(String)));
-    }
-    if (object.online != null) {
-      result
-        ..add('online')
-        ..add(serializers.serialize(object.online,
-            specifiedType: const FullType(int)));
-    }
     return result;
   }
 
@@ -657,14 +737,6 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         case 'agoraToken':
           result.agoraToken = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
-          break;
-        case 'tagline':
-          result.tagline = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'online':
-          result.online = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -1292,11 +1364,146 @@ class _$BuiltUnifiedSearchResultsSerializer
   }
 }
 
+class _$RelationIndexObject extends RelationIndexObject {
+  @override
+  final bool B1;
+  @override
+  final bool B2;
+  @override
+  final bool B3;
+  @override
+  final bool B4;
+  @override
+  final bool B5;
+
+  factory _$RelationIndexObject(
+          [void Function(RelationIndexObjectBuilder) updates]) =>
+      (new RelationIndexObjectBuilder()..update(updates)).build();
+
+  _$RelationIndexObject._({this.B1, this.B2, this.B3, this.B4, this.B5})
+      : super._() {
+    if (B1 == null) {
+      throw new BuiltValueNullFieldError('RelationIndexObject', 'B1');
+    }
+    if (B2 == null) {
+      throw new BuiltValueNullFieldError('RelationIndexObject', 'B2');
+    }
+    if (B3 == null) {
+      throw new BuiltValueNullFieldError('RelationIndexObject', 'B3');
+    }
+    if (B4 == null) {
+      throw new BuiltValueNullFieldError('RelationIndexObject', 'B4');
+    }
+    if (B5 == null) {
+      throw new BuiltValueNullFieldError('RelationIndexObject', 'B5');
+    }
+  }
+
+  @override
+  RelationIndexObject rebuild(
+          void Function(RelationIndexObjectBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  RelationIndexObjectBuilder toBuilder() =>
+      new RelationIndexObjectBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is RelationIndexObject &&
+        B1 == other.B1 &&
+        B2 == other.B2 &&
+        B3 == other.B3 &&
+        B4 == other.B4 &&
+        B5 == other.B5;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc($jc($jc($jc(0, B1.hashCode), B2.hashCode), B3.hashCode),
+            B4.hashCode),
+        B5.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('RelationIndexObject')
+          ..add('B1', B1)
+          ..add('B2', B2)
+          ..add('B3', B3)
+          ..add('B4', B4)
+          ..add('B5', B5))
+        .toString();
+  }
+}
+
+class RelationIndexObjectBuilder
+    implements Builder<RelationIndexObject, RelationIndexObjectBuilder> {
+  _$RelationIndexObject _$v;
+
+  bool _B1;
+  bool get B1 => _$this._B1;
+  set B1(bool B1) => _$this._B1 = B1;
+
+  bool _B2;
+  bool get B2 => _$this._B2;
+  set B2(bool B2) => _$this._B2 = B2;
+
+  bool _B3;
+  bool get B3 => _$this._B3;
+  set B3(bool B3) => _$this._B3 = B3;
+
+  bool _B4;
+  bool get B4 => _$this._B4;
+  set B4(bool B4) => _$this._B4 = B4;
+
+  bool _B5;
+  bool get B5 => _$this._B5;
+  set B5(bool B5) => _$this._B5 = B5;
+
+  RelationIndexObjectBuilder();
+
+  RelationIndexObjectBuilder get _$this {
+    if (_$v != null) {
+      _B1 = _$v.B1;
+      _B2 = _$v.B2;
+      _B3 = _$v.B3;
+      _B4 = _$v.B4;
+      _B5 = _$v.B5;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(RelationIndexObject other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$RelationIndexObject;
+  }
+
+  @override
+  void update(void Function(RelationIndexObjectBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$RelationIndexObject build() {
+    final _$result = _$v ??
+        new _$RelationIndexObject._(B1: B1, B2: B2, B3: B3, B4: B4, B5: B5);
+    replace(_$result);
+    return _$result;
+  }
+}
+
 class _$BuiltProfile extends BuiltProfile {
   @override
   final BuiltUser user;
   @override
-  final BuiltMap relationIndexObj;
+  final RelationIndexObject relationIndexObj;
 
   factory _$BuiltProfile([void Function(BuiltProfileBuilder) updates]) =>
       (new BuiltProfileBuilder()..update(updates)).build();
@@ -1344,9 +1551,10 @@ class BuiltProfileBuilder
   BuiltUserBuilder get user => _$this._user ??= new BuiltUserBuilder();
   set user(BuiltUserBuilder user) => _$this._user = user;
 
-  BuiltMap _relationIndexObj;
-  BuiltMap get relationIndexObj => _$this._relationIndexObj;
-  set relationIndexObj(BuiltMap relationIndexObj) =>
+  RelationIndexObjectBuilder _relationIndexObj;
+  RelationIndexObjectBuilder get relationIndexObj =>
+      _$this._relationIndexObj ??= new RelationIndexObjectBuilder();
+  set relationIndexObj(RelationIndexObjectBuilder relationIndexObj) =>
       _$this._relationIndexObj = relationIndexObj;
 
   BuiltProfileBuilder();
@@ -1354,7 +1562,7 @@ class BuiltProfileBuilder
   BuiltProfileBuilder get _$this {
     if (_$v != null) {
       _user = _$v.user?.toBuilder();
-      _relationIndexObj = _$v.relationIndexObj;
+      _relationIndexObj = _$v.relationIndexObj?.toBuilder();
       _$v = null;
     }
     return this;
@@ -1379,12 +1587,14 @@ class BuiltProfileBuilder
     try {
       _$result = _$v ??
           new _$BuiltProfile._(
-              user: user.build(), relationIndexObj: relationIndexObj);
+              user: user.build(), relationIndexObj: _relationIndexObj?.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'user';
         user.build();
+        _$failedField = 'relationIndexObj';
+        _relationIndexObj?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuiltProfile', _$failedField, e.toString());
@@ -1409,6 +1619,10 @@ class _$BuiltUser extends BuiltUser {
   final String phone;
   @override
   final String avatar;
+  @override
+  final String tagline;
+  @override
+  final int online;
   @override
   final String bio;
   @override
@@ -1452,6 +1666,8 @@ class _$BuiltUser extends BuiltUser {
       this.email,
       this.phone,
       this.avatar,
+      this.tagline,
+      this.online,
       this.bio,
       this.friendsCount,
       this.followerCount,
@@ -1487,6 +1703,8 @@ class _$BuiltUser extends BuiltUser {
         email == other.email &&
         phone == other.phone &&
         avatar == other.avatar &&
+        tagline == other.tagline &&
+        online == other.online &&
         bio == other.bio &&
         friendsCount == other.friendsCount &&
         followerCount == other.followerCount &&
@@ -1525,10 +1743,10 @@ class _$BuiltUser extends BuiltUser {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc($jc($jc($jc(0, userId.hashCode), username.hashCode), name.hashCode),
-                                                                                email.hashCode),
-                                                                            phone.hashCode),
-                                                                        avatar.hashCode),
+                                                                            $jc($jc($jc($jc($jc($jc(0, userId.hashCode), username.hashCode), name.hashCode), email.hashCode), phone.hashCode),
+                                                                                avatar.hashCode),
+                                                                            tagline.hashCode),
+                                                                        online.hashCode),
                                                                     bio.hashCode),
                                                                 friendsCount.hashCode),
                                                             followerCount.hashCode),
@@ -1556,6 +1774,8 @@ class _$BuiltUser extends BuiltUser {
           ..add('email', email)
           ..add('phone', phone)
           ..add('avatar', avatar)
+          ..add('tagline', tagline)
+          ..add('online', online)
           ..add('bio', bio)
           ..add('friendsCount', friendsCount)
           ..add('followerCount', followerCount)
@@ -1602,6 +1822,14 @@ class BuiltUserBuilder implements Builder<BuiltUser, BuiltUserBuilder> {
   String _avatar;
   String get avatar => _$this._avatar;
   set avatar(String avatar) => _$this._avatar = avatar;
+
+  String _tagline;
+  String get tagline => _$this._tagline;
+  set tagline(String tagline) => _$this._tagline = tagline;
+
+  int _online;
+  int get online => _$this._online;
+  set online(int online) => _$this._online = online;
 
   String _bio;
   String get bio => _$this._bio;
@@ -1685,6 +1913,8 @@ class BuiltUserBuilder implements Builder<BuiltUser, BuiltUserBuilder> {
       _email = _$v.email;
       _phone = _$v.phone;
       _avatar = _$v.avatar;
+      _tagline = _$v.tagline;
+      _online = _$v.online;
       _bio = _$v.bio;
       _friendsCount = _$v.friendsCount;
       _followerCount = _$v.followerCount;
@@ -1729,6 +1959,8 @@ class BuiltUserBuilder implements Builder<BuiltUser, BuiltUserBuilder> {
             email: email,
             phone: phone,
             avatar: avatar,
+            tagline: tagline,
+            online: online,
             bio: bio,
             friendsCount: friendsCount,
             followerCount: followerCount,
@@ -1998,10 +2230,6 @@ class _$BuiltClub extends BuiltClub {
   final BuiltList<String> tags;
   @override
   final String agoraToken;
-  @override
-  final String tagline;
-  @override
-  final int online;
 
   factory _$BuiltClub([void Function(BuiltClubBuilder) updates]) =>
       (new BuiltClubBuilder()..update(updates)).build();
@@ -2021,9 +2249,7 @@ class _$BuiltClub extends BuiltClub {
       this.isGlobal,
       this.isPrivate,
       this.tags,
-      this.agoraToken,
-      this.tagline,
-      this.online})
+      this.agoraToken})
       : super._();
 
   @override
@@ -2051,9 +2277,7 @@ class _$BuiltClub extends BuiltClub {
         isGlobal == other.isGlobal &&
         isPrivate == other.isPrivate &&
         tags == other.tags &&
-        agoraToken == other.agoraToken &&
-        tagline == other.tagline &&
-        online == other.online;
+        agoraToken == other.agoraToken;
   }
 
   @override
@@ -2073,30 +2297,23 @@ class _$BuiltClub extends BuiltClub {
                                                     $jc(
                                                         $jc(
                                                             $jc(
-                                                                $jc(
-                                                                    $jc(
-                                                                        0,
-                                                                        clubId
-                                                                            .hashCode),
-                                                                    clubName
-                                                                        .hashCode),
-                                                                creator
+                                                                0,
+                                                                clubId
                                                                     .hashCode),
-                                                            timeWindow
-                                                                .hashCode),
-                                                        category.hashCode),
-                                                    createdOn.hashCode),
-                                                modifiedOn.hashCode),
-                                            scheduleTime.hashCode),
-                                        clubAvatar.hashCode),
-                                    description.hashCode),
-                                isLocal.hashCode),
-                            isGlobal.hashCode),
-                        isPrivate.hashCode),
-                    tags.hashCode),
-                agoraToken.hashCode),
-            tagline.hashCode),
-        online.hashCode));
+                                                            clubName.hashCode),
+                                                        creator.hashCode),
+                                                    timeWindow.hashCode),
+                                                category.hashCode),
+                                            createdOn.hashCode),
+                                        modifiedOn.hashCode),
+                                    scheduleTime.hashCode),
+                                clubAvatar.hashCode),
+                            description.hashCode),
+                        isLocal.hashCode),
+                    isGlobal.hashCode),
+                isPrivate.hashCode),
+            tags.hashCode),
+        agoraToken.hashCode));
   }
 
   @override
@@ -2116,9 +2333,7 @@ class _$BuiltClub extends BuiltClub {
           ..add('isGlobal', isGlobal)
           ..add('isPrivate', isPrivate)
           ..add('tags', tags)
-          ..add('agoraToken', agoraToken)
-          ..add('tagline', tagline)
-          ..add('online', online))
+          ..add('agoraToken', agoraToken))
         .toString();
   }
 }
@@ -2187,14 +2402,6 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
   String get agoraToken => _$this._agoraToken;
   set agoraToken(String agoraToken) => _$this._agoraToken = agoraToken;
 
-  String _tagline;
-  String get tagline => _$this._tagline;
-  set tagline(String tagline) => _$this._tagline = tagline;
-
-  int _online;
-  int get online => _$this._online;
-  set online(int online) => _$this._online = online;
-
   BuiltClubBuilder();
 
   BuiltClubBuilder get _$this {
@@ -2214,8 +2421,6 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       _isPrivate = _$v.isPrivate;
       _tags = _$v.tags?.toBuilder();
       _agoraToken = _$v.agoraToken;
-      _tagline = _$v.tagline;
-      _online = _$v.online;
       _$v = null;
     }
     return this;
@@ -2254,9 +2459,7 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
               isGlobal: isGlobal,
               isPrivate: isPrivate,
               tags: _tags?.build(),
-              agoraToken: agoraToken,
-              tagline: tagline,
-              online: online);
+              agoraToken: agoraToken);
     } catch (_) {
       String _$failedField;
       try {
