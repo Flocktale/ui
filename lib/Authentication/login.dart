@@ -63,7 +63,7 @@ class _LoginState extends State<Login> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final user =
-        (await service.getUserProfile(userId, authorization: authToken))
+        (await service.getUserProfile(null,userId,authorization: authToken))
             ?.body
             ?.user;
     Navigator.of(context).pop();

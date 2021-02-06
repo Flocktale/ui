@@ -579,11 +579,30 @@ class _ClubState extends State<Club> {
                                                   backgroundImage:
                                                       NetworkImage(comments[index].user.avatar),
                                                 ),
-                                                title: Text(
-                                                  comments[index].user.username,
-                                                  style: TextStyle(
-                                                    fontFamily: "Lato",
-                                                  ),
+                                                title: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      comments[index].user.username,
+                                                      style: TextStyle(
+                                                        fontFamily: "Lato",
+                                                        color: Colors.redAccent
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds<60?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds.toString() + " seconds ago":
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes<60?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes.toString() + " minutes ago":
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours<24?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours.toString() + " hours ago":
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays.toString()+" days ago",
+                                                      style: TextStyle(
+                                                        fontFamily: 'Lato',
+                                                        fontSize: size.width/30
+                                                      ),
+                                                    )
+                                                  ],
                                                 ),
                                                 subtitle: Text(
                                                   comments[index].body,
@@ -603,6 +622,7 @@ class _ClubState extends State<Club> {
                                             suffixIcon: IconButton(
                                               icon: Icon(Icons.send,color: Colors.green,),
                                               onPressed: () {
+                                                print("=<<>>><<>>><<>>>="+_commentController.text);
                                                 addComment(_commentController.text);
                                                 _commentController.text = '';
                                                 //            _sendComment(context);

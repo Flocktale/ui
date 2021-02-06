@@ -34,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
     BuiltUser cuser = Provider.of<UserData>(context,listen: false).user;
     final service  = Provider.of<DatabaseApiService>(context,listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    _userRelations = (await service.getUserProfile(widget.userId, authorization: authToken)).body.relationIndexObj;
+    _userRelations = (await service.getUserProfile(widget.userId, cuser.userId, authorization: authToken)).body.relationIndexObj;
     print("==================");
     print(_userRelations);
     print("==================");
@@ -58,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     else {
       _isMe = false;
-      _user = (await service.getUserProfile(widget.userId, authorization: authToken))?.body?.user;
+      _user = (await service.getUserProfile(widget.userId, cuser.userId, authorization: authToken))?.body?.user;
     }
 
     await fetchUserRelations();
