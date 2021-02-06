@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:provider/provider.dart';
+import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:mootclub_app/providers/userData.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ClubJoinRequests extends StatefulWidget {
   final BuiltClub club;
@@ -9,6 +13,22 @@ class ClubJoinRequests extends StatefulWidget {
 }
 
 class _ClubJoinRequestsState extends State<ClubJoinRequests> {
+  BuiltActiveJoinRequests joinRequests;
+  getJoinRequests() async{
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    String lastevaluatedkey;
+    joinRequests = (await service.getActiveJoinRequests(widget.club.clubId, lastevaluatedkey, authorization: authToken)).body;
+  }
+
+  acceptJoinRequest(String audienceId) async{
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    await service.respondToJoinRequest(widget.club.clubId, "accept", audienceId, authorization: authToken);
+    Fluttertoast.showToast(msg:"Join Request Accepted");
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -26,25 +46,33 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
         backgroundColor: Colors.white,
       ),
       body: Container(
-        child: ListView.builder(itemBuilder: (context, index) {
+        child: joinRequests!=null && joinRequests.activeJoinRequestUsers!=null?
+        ListView.builder(
+          itemCount: joinRequests.activeJoinRequestUsers.length,
+            itemBuilder: (context, index) {
           return Container(
-            child: ListTile(
+            child:
+            ListTile(
               leading: CircleAvatar(
-                backgroundImage: AssetImage('assets/Card1.jpg'),
+                backgroundImage: NetworkImage(joinRequests?.activeJoinRequestUsers[index]?.audience?.avatar),
               ),
               title: Text(
-                "Listener $index",
+                joinRequests?.activeJoinRequestUsers[index]?.audience?.name!=null?
+                joinRequests?.activeJoinRequestUsers[index]?.audience?.name:"Name $index",
                 style:
                     TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                "@Username$index",
+                joinRequests?.activeJoinRequestUsers[index]?.audience?.username!=null?
+                joinRequests?.activeJoinRequestUsers[index]?.audience?.username:"@Username$index",
                 style: TextStyle(fontFamily: 'Lato'),
               ),
               trailing: ButtonTheme(
                 minWidth: size.width / 3.5,
                 child: RaisedButton(
-                  onPressed: () {},
+                  onPressed: () async{
+                    await acceptJoinRequest(joinRequests?.activeJoinRequestUsers[index]?.audience?.userId);
+                  },
                   color: Colors.red[600],
                   child: Text('Accept',
                       style: TextStyle(
@@ -60,7 +88,7 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
               ),
             ),
           );
-        }),
+        }):Container(height: 0),
       ),
     ));
   }

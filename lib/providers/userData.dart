@@ -46,7 +46,7 @@ class UserData with ChangeNotifier {
       // if we have userId, it means user never logged out from current UserID.
       _isAuth = true;
 
-      final response = await _postApiService.getUserProfile(userId,
+      final response = await _postApiService.getUserProfile(null,userId,
           authorization: authToken);
       if (response != null && response.body != null) {
         _builtUser = response.body.user;

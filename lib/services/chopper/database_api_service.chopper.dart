@@ -17,11 +17,14 @@ class _$DatabaseApiService extends DatabaseApiService {
   final definitionType = DatabaseApiService;
 
   @override
-  Future<Response<BuiltProfile>> getUserProfile(String userId,
+  Future<Response<BuiltProfile>> getUserProfile(
+      String primaryUserId, String userId,
       {String authorization}) {
     final $url = '/users/$userId';
+    final $params = <String, dynamic>{'primaryUserId': primaryUserId};
     final $headers = {'authorization': authorization};
-    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<BuiltProfile, BuiltProfile>($request);
   }
 
@@ -117,7 +120,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   Future<Response<dynamic>> deleteFriendRequest(
       String userId, String foreignUserId,
       {String authorization}) {
-    final $url = '/users/$userId/relations/remove?action=deleteFriendRequest';
+    final $url = '/users/$userId/relations/remove?action=delete_friend_request';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
