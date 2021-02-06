@@ -13,6 +13,8 @@ part 'database_api_service.chopper.dart';
 abstract class DatabaseApiService extends ChopperService {
   @Get(path: '/users/{userId}')
   Future<Response<BuiltProfile>> getUserProfile(
+    @Query() String primaryUserId,
+
     @Path('userId') String userId, {
     @required @Header() String authorization,
   });
