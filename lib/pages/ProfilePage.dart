@@ -20,7 +20,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   static BuiltUser _user;
-  List _userRelations;
+  RelationIndexObject _userRelations;
   bool _isMe;
   Image image;
   bool isFollowing = false;
@@ -29,22 +29,12 @@ class _ProfilePageState extends State<ProfilePage> {
   int followersCount = 0;
   int followingCount = 0;
   BuiltList<BuiltClub> Clubs;
-  checkIsFollowing() async {
-    if (_isMe == false) {
-      BuiltUser user = Provider.of<UserData>(context, listen: false).user;
-      final authToken = Provider.of<UserData>(context, listen: false).authToken;
-      isFollowing =
-          (await Provider.of<DatabaseApiService>(context, listen: false)
-                  .checkFollow(user.userId, user.username, _user.username,
-                      authorization: authToken))
-              .body['value'];
-    }
-  }
   fetchUserRelations() async{
     print("==================FetchUserRelations=========================");
-    final service  = Provider.of<DatabaseApiService>(context);
+    BuiltUser cuser = Provider.of<UserData>(context,listen: false).user;
+    final service  = Provider.of<DatabaseApiService>(context,listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    _userRelations = (await service.getUserProfile(widget.userId, authorization: authToken))?.body?.relationIndexObj?.values;
+    _userRelations = (await service.getUserProfile(widget.userId, authorization: authToken)).body.relationIndexObj;
     print("==================");
     print(_userRelations);
     print("==================");
@@ -53,25 +43,23 @@ class _ProfilePageState extends State<ProfilePage> {
   }
   fetchUser() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    final service = Provider.of<DatabaseApiService>(context,listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     print(cuser.userId + '==' + widget.userId);
     if (widget.userId == null || cuser.userId == widget.userId) {
       setState(() {
         _isMe = true;
         _user = cuser;
       });
-      await checkIsFollowing();
-      if (_user.followerCount != null) followersCount = _user.followerCount;
-      if (_user.followingCount != null) followingCount = _user.followingCount;
-      return;
-    } else
+      if (_user.followerCount != null)
+        followersCount = _user.followerCount;
+      if (_user.followingCount != null)
+        followingCount = _user.followingCount;
+    }
+    else {
       _isMe = false;
-    final service = Provider.of<DatabaseApiService>(context);
-    // _user = cuser;
-
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
-
-    _user = (await service.getUserProfile(widget.userId, authorization: authToken))?.body?.user;
-
+      _user = (await service.getUserProfile(widget.userId, authorization: authToken))?.body?.user;
+    }
 
     await fetchUserRelations();
 
@@ -87,10 +75,11 @@ class _ProfilePageState extends State<ProfilePage> {
           fontSize: 16.0);
       Navigator.pop(context);
     } else {
-      await checkIsFollowing();
       if (_user.followerCount != null) followersCount = _user.followerCount;
       if (_user.followingCount != null) followingCount = _user.followingCount;
     }
+    setState(() {
+    });
     print(_user.followerCount);
   }
 
@@ -173,6 +162,11 @@ class _ProfilePageState extends State<ProfilePage> {
     print(value.error);
   }
 
+  @override
+  void initState(){
+    fetchUser();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -260,372 +254,365 @@ class _ProfilePageState extends State<ProfilePage> {
     //searching for users
     // service.unifiedQueryRoutes("hola", "users",null).then((value) => checkingResponse(value));
 
-    return Scaffold(
-        backgroundColor: Colors.amber,
-        body: Stack(
-          children:
-          [
-            FutureBuilder(
-              future: fetchUser(),
-              builder: (context, snapshot) {
-                if (_user == null ||
-                    snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                return SafeArea(
-                  child: Scaffold(
-                    body: Stack(fit: StackFit.expand, children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment(0.8,
-                                0.5), // 10% of the width, so there are ten blinds.
-                            colors: [
-                              const Color(0xfffac043),
-                              const Color(0xffd61a09)
-                              //  const Color(0xffd90000)
-                            ], // red to yellow
-                            tileMode: TileMode
-                                .repeated, // repeats the gradient over the canvas
-                          ),
-                        ),
-                      ),
-                      AppBarWidget(), //AppBar
-                      Positioned(
-                        top: ((size.height / 14) +
-                            (size.height / 9) -
-                            (size.height / 25)),
-                        height: size.height -
-                            ((size.height / 14) +
-                                (size.height / 9) -
-                                (size.height / 25)),
-                        width: size.width,
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
+    return SafeArea(
+      child: Scaffold(
+          backgroundColor: Colors.amber,
+          body: _user!=null?
+          Stack(fit: StackFit.expand, children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment(0.8,
+                      0.5), // 10% of the width, so there are ten blinds.
+                  colors: [
+                    const Color(0xfffac043),
+                    const Color(0xffd61a09)
+                    //  const Color(0xffd90000)
+                  ], // red to yellow
+                  tileMode: TileMode
+                      .repeated, // repeats the gradient over the canvas
+                ),
+              ),
+            ),
+            AppBarWidget(), //AppBar
+            Positioned(
+              top: ((size.height / 14) +
+                  (size.height / 9) -
+                  (size.height / 25)),
+              height: size.height -
+                  ((size.height / 14) +
+                      (size.height / 9) -
+                      (size.height / 25)),
+              width: size.width,
+              child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
 //                            borderRadius: BorderRadius.only(
 //                                topLeft: Radius.circular(45.0),
 //                                topRight: Radius.circular(45.0)),
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.elliptical(
-                                        size.width / 2, size.height / 20))),
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.elliptical(
+                              size.width / 2, size.height / 20))),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: size.height / 20),
+                      Text(
+                        //  'Caroline Steele',
+                        _user.name != null
+                            ? _user.name
+                            : _user.username,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: size.width / 20,
+                          color: Colors.red[300],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height / 130,
+                      ),
+                      Text(
+                        //'Music Composer',
+                        '@${_user.username}',
+                        style: TextStyle(
+                            fontSize: size.width / 26,
+                            color: Colors.grey[400]),
+                      ),
+                      SizedBox(
+                        height: size.height / 50,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: size.width / 20,
+                            right: size.width / 20),
+                        child: Text(
+                          //'Hi my name is Carol and I am a music composer. Music is the greatest passion of my life',
+                          _user.bio != null ? _user.bio : '',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: size.width / 26,
+                              color: Colors.grey[500]),
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height / 30,
+                      ),
+                      (!_isMe&&_userRelations!=null)
+                          ? Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                ButtonTheme(
+                                  minWidth: size.width / 3.5,
+                                  child: RaisedButton(
+                                    onPressed: () async {
+                                      if(_userRelations.B4==false)
+                                        {
+                                          await sendFollow();
+                                        }
+                                      else
+                                        {
+                                          await sendUnFollow();
+                                        }
+                                      setState(() {
+                                      });
+                                    },
+                                    color: _userRelations.B4==false
+                                        ? Colors.red[600]
+                                        : Colors.white,
+                                    child: Text(
+                                        _userRelations.B4==false
+                                            ? 'Follow'
+                                            : 'Following',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: _userRelations.B4==false
+                                              ? Colors.white
+                                              : Colors.grey[700],
+                                        )),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(18.0),
+                                      side: BorderSide(
+                                          color: Colors.red[600]),
+                                    ),
+                                    elevation: 0.0,
+                                  ),
+                                ),
+                                ButtonTheme(
+                                  minWidth: size.width / 3.5,
+                                  child: RaisedButton(
+                                    onPressed: () async {
+                                      if(_userRelations.B1==true){
+                                        await unFriend();
+                                      }
+                                      else if(_userRelations.B3==false)
+                                        {
+                                          await sendFreindRequest();
+                                        }
+                                      else {
+                                        await cancelFriendRequest();
+                                      }
+                                      setState(() {
+                                      });
+                                    },
+                                    color: Colors.white,
+                                    child: Text(
+                                        _userRelations.B1==true?
+                                            "FRIENDS":
+                                            _userRelations.B3==false?
+                                                "Add Friend":
+                                                "Request Sent",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                          _userRelations.B1==true?
+                                          Colors.red:
+                                          _userRelations.B3==false?
+                                          Colors.black:
+                                          Colors.black12,
+                                        )),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(18.0),
+                                      side: BorderSide(
+                                          color: Colors.red[600]),
+                                    ),
+                                    elevation: 0.0,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : ButtonTheme(
+                              minWidth: size.width / 1.5,
+                              child: RaisedButton(
+                                onPressed: () {
+                                  // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
+                                },
+                                color: Colors.white,
+                                child: Text('EDIT PROFILE',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red[600],
+                                    )),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(18.0),
+                                  side: BorderSide(
+                                      color: Colors.red[600]),
+                                ),
+                                elevation: 0.0,
+                              ),
+                            ),
+                      SizedBox(height: size.height / 30),
+                      Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceEvenly,
+                        //crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (_) => FollowersPage(
+                                          initpos: 0, user: _user)));
+                            },
                             child: Column(
                               children: <Widget>[
-                                SizedBox(height: size.height / 20),
                                 Text(
-                                  //  'Caroline Steele',
-                                  _user.name != null
-                                      ? _user.name
-                                      : _user.username,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: size.width / 20,
-                                    color: Colors.red[300],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: size.height / 130,
-                                ),
-                                Text(
-                                  //'Music Composer',
-                                  '@${_user.username}',
-                                  style: TextStyle(
-                                      fontSize: size.width / 26,
-                                      color: Colors.grey[400]),
-                                ),
-                                SizedBox(
-                                  height: size.height / 50,
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      left: size.width / 20,
-                                      right: size.width / 20),
-                                  child: Text(
-                                    //'Hi my name is Carol and I am a music composer. Music is the greatest passion of my life',
-                                    _user.bio != null ? _user.bio : '',
-                                    textAlign: TextAlign.center,
+                                    _user.friendsCount.toString() !=
+                                            'null'
+                                        ? _user.friendsCount.toString()
+                                        : '0',
                                     style: TextStyle(
-                                        fontSize: size.width / 26,
-                                        color: Colors.grey[500]),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[600],
+                                      fontSize: size.width / 20,
+                                    )),
+                                Text(
+                                  'Friends',
+                                  style: TextStyle(
+                                    color: Colors.red[300],
+                                    fontSize: size.width / 26,
                                   ),
-                                ),
-                                SizedBox(
-                                  height: size.height / 30,
-                                ),
-                                !_isMe
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          ButtonTheme(
-                                            minWidth: size.width / 3.5,
-                                            child: RaisedButton(
-                                              onPressed: () async {
-                                                if(_userRelations[4]==0)
-                                                  {
-                                                    await sendFollow();
-                                                  }
-                                                else
-                                                  {
-                                                    await sendUnFollow();
-                                                  }
-                                                setState(() {
-                                                });
-                                              },
-                                              color: _userRelations[4]==0
-                                                  ? Colors.red[600]
-                                                  : Colors.white,
-                                              child: Text(
-                                                  _userRelations[4]==0
-                                                      ? 'Follow'
-                                                      : 'Following',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: _userRelations[4]==0
-                                                        ? Colors.white
-                                                        : Colors.grey[700],
-                                                  )),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(18.0),
-                                                side: BorderSide(
-                                                    color: Colors.red[600]),
-                                              ),
-                                              elevation: 0.0,
-                                            ),
-                                          ),
-                                          ButtonTheme(
-                                            minWidth: size.width / 3.5,
-                                            child: RaisedButton(
-                                              onPressed: () async {
-                                                if(_userRelations[0]==1){
-                                                  await unFriend();
-                                                }
-                                                else if(_userRelations[2]==0)
-                                                  {
-                                                    await sendFreindRequest();
-                                                  }
-                                                else {
-                                                  await cancelFriendRequest();
-                                                }
-                                                setState(() {
-                                                });
-                                              },
-                                              color: Colors.white,
-                                              child: Text(
-                                                  _userRelations[0]==1?
-                                                      "FRIENDS":
-                                                      _userRelations[2]==0?
-                                                          "Add Friend":
-                                                          "Request Sent",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color:
-                                                    _userRelations[0]==1?
-                                                    Colors.red:
-                                                    _userRelations[2]==0?
-                                                    Colors.black:
-                                                    Colors.black12,
-                                                  )),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(18.0),
-                                                side: BorderSide(
-                                                    color: Colors.red[600]),
-                                              ),
-                                              elevation: 0.0,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : ButtonTheme(
-                                        minWidth: size.width / 1.5,
-                                        child: RaisedButton(
-                                          onPressed: () {
-                                            // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
-                                          },
-                                          color: Colors.white,
-                                          child: Text('EDIT PROFILE',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.red[600],
-                                              )),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(18.0),
-                                            side: BorderSide(
-                                                color: Colors.red[600]),
-                                          ),
-                                          elevation: 0.0,
-                                        ),
-                                      ),
-                                SizedBox(height: size.height / 30),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  //crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: <Widget>[
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (_) => FollowersPage(
-                                                    initpos: 0, user: _user)));
-                                      },
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text(
-                                              _user.friendsCount.toString() !=
-                                                      'null'
-                                                  ? _user.friendsCount.toString()
-                                                  : '0',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey[600],
-                                                fontSize: size.width / 20,
-                                              )),
-                                          Text(
-                                            'Friends',
-                                            style: TextStyle(
-                                              color: Colors.red[300],
-                                              fontSize: size.width / 26,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    VerticalDivider(
-                                      color: Colors.grey[400],
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (_) => FollowersPage(
-                                                    initpos: 1, user: _user)));
-                                      },
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text(
-                                              _user.followerCount.toString() !=
-                                                      'null'
-                                                  ? _user.followerCount.toString()
-                                                  : '0',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey[600],
-                                                fontSize: size.width / 20,
-                                              )),
-                                          Text(
-                                            'Followers',
-                                            style: TextStyle(
-                                              color: Colors.red[300],
-                                              fontSize: size.width / 26,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    VerticalDivider(
-                                      color: Colors.grey[400],
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (_) => FollowersPage(
-                                                    initpos: 2, user: _user)));
-                                      },
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text(
-                                              _user.followingCount.toString() !=
-                                                      'null'
-                                                  ? _user.followingCount
-                                                      .toString()
-                                                  : '0',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey[600],
-                                                fontSize: size.width / 20,
-                                              )),
-                                          Text(
-                                            'Following',
-                                            style: TextStyle(
-                                              color: Colors.red[300],
-                                              fontSize: size.width / 26,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: size.height / 30),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      left: size.width / 50,
-                                      right: size.width / 50),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        'My Clubs',
-                                        style: TextStyle(
-                                            fontSize: 15.0,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.red[300]),
-                                      ),
-                                      Text(
-                                        'View All',
-                                        style: TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: size.height / 50,
-                                ),
-                                FutureBuilder(
-                                    future: _fetchAllClubs(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                            child: CircularProgressIndicator());
-                                      }
-                                      return Clubs != null
-                                          ? Carousel(Clubs: Clubs)
-                                          : Container();
-                                    })
+                                )
                               ],
-                            )),
+                            ),
+                          ),
+                          VerticalDivider(
+                            color: Colors.grey[400],
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (_) => FollowersPage(
+                                          initpos: 1, user: _user)));
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                    _user.followerCount.toString() !=
+                                            'null'
+                                        ? _user.followerCount.toString()
+                                        : '0',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[600],
+                                      fontSize: size.width / 20,
+                                    )),
+                                Text(
+                                  'Followers',
+                                  style: TextStyle(
+                                    color: Colors.red[300],
+                                    fontSize: size.width / 26,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          VerticalDivider(
+                            color: Colors.grey[400],
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (_) => FollowersPage(
+                                          initpos: 2, user: _user)));
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                    _user.followingCount.toString() !=
+                                            'null'
+                                        ? _user.followingCount
+                                            .toString()
+                                        : '0',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[600],
+                                      fontSize: size.width / 20,
+                                    )),
+                                Text(
+                                  'Following',
+                                  style: TextStyle(
+                                    color: Colors.red[300],
+                                    fontSize: size.width / 26,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
+                      SizedBox(height: size.height / 30),
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: size.width / 50,
+                            right: size.width / 50),
+                        child: Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              'My Clubs',
+                              style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red[300]),
+                            ),
+                            Text(
+                              'View All',
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height / 50,
+                      ),
+                      FutureBuilder(
+                          future: _fetchAllClubs(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            return Clubs != null
+                                ? Carousel(Clubs: Clubs)
+                                : Container();
+                          })
+                    ],
+                  )),
+            ),
 
-                      Positioned(
-                        top: size.height / 14,
-                        left: ((size.width / 2) - (size.width / 9)),
-                        child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            backgroundImage: NetworkImage(getImageUrl()),
-                            //backgroundImage: AssetImage('assets/images/Default-female.png'),
-                            radius: size.height / 18),
-                      )
-                    ]),
-                  ),
-                );
-
-              }),
+            Positioned(
+              top: size.height / 14,
+              left: ((size.width / 2) - (size.width / 9)),
+              child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  backgroundImage: NetworkImage(getImageUrl()),
+                  //backgroundImage: AssetImage('assets/images/Default-female.png'),
+                  radius: size.height / 18),
+            ),
             Positioned(
                 bottom:0,
                 child: MinClub())
-          ]
-        ));
+          ]):
+          Center(
+            child: Container(
+              height: size.height/10,
+              width: size.width/5,
+              child: CircularProgressIndicator()
+            ),
+          )
+      ),
+    );
   }
 }
