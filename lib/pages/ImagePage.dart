@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -71,6 +72,14 @@ class _ImagePageState extends State<ImagePage> {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final resp = await service.createNewClub(newClub, widget.userId,
         authorization: authToken);
+    
+    if(resp.isSuccessful && image!=null){
+      String imageInBase64;
+      if(image!=null){
+        var pickedImage = await image.readAsBytes();
+        imageInBase64 = base64Encode(pickedImage);
+      }
+    }
     print('=========' + resp.body);
     print(resp.error);
     Fluttertoast.showToast(msg: 'club entry is created');
