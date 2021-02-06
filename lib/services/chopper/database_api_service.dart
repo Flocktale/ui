@@ -73,7 +73,7 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
-  @Post(path: '/users/{userId}/relations/remove?action=deleteFriendRequest')
+  @Post(path: '/users/{userId}/relations/remove?action=delete_friend_request')
   Future<Response> deleteFriendRequest(
     @Path('userId') String userId,
     @Query('foreignUserId') String foreignUserId, {

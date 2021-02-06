@@ -34,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
     BuiltUser cuser = Provider.of<UserData>(context,listen: false).user;
     final service  = Provider.of<DatabaseApiService>(context,listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    _userRelations = (await service.getUserProfile(widget.userId, cuser.userId, authorization: authToken)).body.relationIndexObj;
+    _userRelations = (await service.getUserProfile(cuser.userId, widget.userId,  authorization: authToken)).body.relationIndexObj;
     print("==================");
     print(_userRelations);
     print("==================");
@@ -58,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     else {
       _isMe = false;
-      _user = (await service.getUserProfile(widget.userId, cuser.userId, authorization: authToken))?.body?.user;
+      _user = (await service.getUserProfile(null, widget.userId, authorization: authToken))?.body?.user;
     }
 
     await fetchUserRelations();
@@ -111,6 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     await service.follow(cuser.userId, widget.userId, authorization: authToken);
+    await fetchUserRelations();
     Fluttertoast.showToast(msg: 'Follow Request Sent');
   }
 
@@ -121,6 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     await service.unfollow(cuser.userId, widget.userId, authorization: authToken);
+    await fetchUserRelations();
     Fluttertoast.showToast(msg: 'User Unfollowed');
   }
 
@@ -132,6 +134,8 @@ class _ProfilePageState extends State<ProfilePage> {
     await service.sendFriendRequest(cuser.userId, widget.userId,
         authorization: authToken);
 
+    await fetchUserRelations();
+
     Fluttertoast.showToast(msg: 'Friend Request Sent');
   }
   cancelFriendRequest() async{
@@ -141,6 +145,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     await service.deleteFriendRequest(cuser.userId, widget.userId,
         authorization: authToken);
+
+    await fetchUserRelations();
 
     Fluttertoast.showToast(msg: 'Friend Request Cancelled');
   }
@@ -152,6 +158,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     await service.unfriend(cuser.userId, widget.userId,
         authorization: authToken);
+
+    await fetchUserRelations();
 
     Fluttertoast.showToast(msg: 'Good Bye!');
   }
@@ -275,7 +283,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            AppBarWidget(), //AppBar
             Positioned(
               top: ((size.height / 14) +
                   (size.height / 9) -
@@ -337,8 +344,21 @@ class _ProfilePageState extends State<ProfilePage> {
                       SizedBox(
                         height: size.height / 30,
                       ),
-                      (!_isMe&&_userRelations!=null)
-                          ? Row(
+                      (!_isMe)
+                          ? _userRelations==null?
+                          Container(
+                            height: size.height/20,
+                            child: Center(
+                              child: Text(
+                                  "Loading...",
+                                style: TextStyle(
+                                  fontFamily: "Lato",
+                                  color: Colors.black38
+                                ),
+                              )
+                            )
+                          ):
+                      Row(
                               mainAxisAlignment:
                                   MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
@@ -346,7 +366,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   minWidth: size.width / 3.5,
                                   child: RaisedButton(
                                     onPressed: () async {
-                                      if(_userRelations.B4==false)
+                                      if(_userRelations.B5==false)
                                         {
                                           await sendFollow();
                                         }
@@ -357,16 +377,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                       setState(() {
                                       });
                                     },
-                                    color: _userRelations.B4==false
+                                    color: _userRelations.B5==false
                                         ? Colors.red[600]
                                         : Colors.white,
                                     child: Text(
-                                        _userRelations.B4==false
+                                        _userRelations.B5==false
                                             ? 'Follow'
                                             : 'Following',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: _userRelations.B4==false
+                                          color: _userRelations.B5==false
                                               ? Colors.white
                                               : Colors.grey[700],
                                         )),
@@ -410,7 +430,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           Colors.red:
                                           _userRelations.B3==false?
                                           Colors.black:
-                                          Colors.black12,
+                                          Colors.black38,
                                         )),
                                     shape: RoundedRectangleBorder(
                                       borderRadius:

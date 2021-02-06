@@ -120,7 +120,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   Future<Response<dynamic>> deleteFriendRequest(
       String userId, String foreignUserId,
       {String authorization}) {
-    final $url = '/users/$userId/relations/remove?action=deleteFriendRequest';
+    final $url = '/users/$userId/relations/remove?action=delete_friend_request';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
