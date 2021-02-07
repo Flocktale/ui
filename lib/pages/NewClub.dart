@@ -67,7 +67,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       decoration: InputDecoration(
         labelText: 'Name',
         border: OutlineInputBorder(),
-        focusColor: Colors.amber,
+        focusColor: Colors.red,
       ),
       validator: (value) {
         if (value.isEmpty) return 'Required';

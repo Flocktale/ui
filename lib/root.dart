@@ -11,6 +11,7 @@ import 'Authentication/login.dart';
 class RootPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Consumer<UserData>(
       builder: (ctx, userData, loadingWidget) {
         Provider.of<MySocket>(context, listen: false).update(userData.userId);
@@ -35,7 +36,7 @@ class RootPage extends StatelessWidget {
                 fontSize: 40.0,
                 fontWeight: FontWeight.bold,
               ),
-              boxHeight: 300.0,
+              boxHeight: size.height,
             ),
           ),
         ),

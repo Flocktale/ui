@@ -101,7 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           style: TextStyle(
                               fontSize: 80.0,
                               fontWeight: FontWeight.bold,
-                              color: Colors.amber),
+                              color: Colors.red),
                         ),
                       )
                     ],
@@ -124,7 +124,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     color: Colors.grey[400]),
                                 focusedBorder: UnderlineInputBorder(
                                     borderSide:
-                                        BorderSide(color: Colors.amber))),
+                                        BorderSide(color: Colors.red))),
                             validator: (val) {
                               if (val.isEmpty) return 'Please fill this field';
                               return null;
@@ -141,7 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     color: Colors.grey[400]),
                                 focusedBorder: UnderlineInputBorder(
                                     borderSide:
-                                        BorderSide(color: Colors.amber))),
+                                        BorderSide(color: Colors.red))),
                             validator: (val) {
                               if (val.isEmpty) return 'Please fill this field';
                               return null;
@@ -154,8 +154,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 height: 40.0,
                                 child: Material(
                                   borderRadius: BorderRadius.circular(20.0),
-                                  shadowColor: Colors.amberAccent,
-                                  color: Colors.amber,
+                                  shadowColor: Colors.redAccent,
+                                  color: Colors.red,
                                   elevation: 7.0,
                                   child: Center(
                                     child: Text(

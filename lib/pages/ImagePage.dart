@@ -34,7 +34,7 @@ class _ImagePageState extends State<ImagePage> {
           maxWidth: 700,
           compressFormat: ImageCompressFormat.jpg,
           androidUiSettings: AndroidUiSettings(
-              statusBarColor: Colors.amber,
+              statusBarColor: Colors.redAccent,
               cropFrameColor: Colors.grey[600],
               backgroundColor: Colors.white,
               toolbarColor: Colors.white));

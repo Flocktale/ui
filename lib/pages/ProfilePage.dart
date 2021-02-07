@@ -264,18 +264,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Colors.amber,
+          backgroundColor: Colors.redAccent,
           body: _user!=null?
           Stack(fit: StackFit.expand, children: <Widget>[
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
-                  end: Alignment(0.8,
-                      0.5), // 10% of the width, so there are ten blinds.
+                  end: Alignment(0.5,
+                      0.0), // 10% of the width, so there are ten blinds.
                   colors: [
-                    const Color(0xfffac043),
-                    const Color(0xffd61a09)
+                    const Color(0xfffa939e),
+                    const Color(0xffad1323)
                     //  const Color(0xffd90000)
                   ], // red to yellow
                   tileMode: TileMode
@@ -312,7 +312,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: size.width / 20,
-                          color: Colors.red[300],
+                          color: Colors.redAccent,
                         ),
                       ),
                       SizedBox(
@@ -492,7 +492,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Text(
                                   'Friends',
                                   style: TextStyle(
-                                    color: Colors.red[300],
+                                    color: Colors.redAccent,
                                     fontSize: size.width / 26,
                                   ),
                                 )
@@ -524,7 +524,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Text(
                                   'Followers',
                                   style: TextStyle(
-                                    color: Colors.red[300],
+                                    color: Colors.redAccent,
                                     fontSize: size.width / 26,
                                   ),
                                 )
@@ -557,7 +557,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Text(
                                   'Following',
                                   style: TextStyle(
-                                    color: Colors.red[300],
+                                    color: Colors.redAccent,
                                     fontSize: size.width / 26,
                                   ),
                                 )
@@ -566,7 +566,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: size.height / 30),
+                      SizedBox(height: size.height / 20),
                       Container(
                         margin: EdgeInsets.only(
                             left: size.width / 50,
@@ -580,7 +580,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.red[300]),
+                                  color: Colors.redAccent),
                             ),
                             Text(
                               'View All',

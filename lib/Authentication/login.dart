@@ -125,7 +125,7 @@ class _LoginState extends State<Login> {
                               fontFamily: 'Lato',
                               fontSize: 80.0,
                               fontWeight: FontWeight.bold,
-                              color: Colors.amber),
+                              color: Colors.red),
                         ),
                       )
                     ],
@@ -144,7 +144,7 @@ class _LoginState extends State<Login> {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey[400]),
                             focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.amber))),
+                                borderSide: BorderSide(color: Colors.red))),
                       ),
                       SizedBox(
                         height: 20.0,
@@ -158,7 +158,7 @@ class _LoginState extends State<Login> {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey[400]),
                             focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.amber))),
+                                borderSide: BorderSide(color: Colors.red))),
                         obscureText: true,
                       ),
                       SizedBox(
@@ -173,7 +173,7 @@ class _LoginState extends State<Login> {
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontWeight: FontWeight.bold,
-                              color: Colors.amber,
+                              color: Colors.red,
                               decoration: TextDecoration.underline,
                             ),
                           ),
@@ -184,8 +184,8 @@ class _LoginState extends State<Login> {
                         height: 40.0,
                         child: Material(
                           borderRadius: BorderRadius.circular(20.0),
-                          shadowColor: Colors.amberAccent,
-                          color: Colors.amber,
+                          shadowColor: Colors.redAccent,
+                          color: Colors.red,
                           elevation: 7.0,
                           child: InkWell(
                             onTap: () {
@@ -252,7 +252,7 @@ class _LoginState extends State<Login> {
                       child: Text(
                         'Register',
                         style: TextStyle(
-                            color: Colors.amber,
+                            color: Colors.red,
                             fontFamily: 'Lato',
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline),

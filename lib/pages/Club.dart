@@ -498,7 +498,7 @@ class _ClubState extends State<Club> {
                                           ? Icon(Icons.play_arrow)
                                           : Icon(Icons.stop),
                                       backgroundColor:
-                                          !playing ? Colors.green : Colors.red,
+                                          !playing ? Colors.red : Colors.redAccent,
                                     ),
                                   ),
                                   Container(
@@ -545,7 +545,7 @@ class _ClubState extends State<Club> {
                             height: size.height/2 + size.height/30,
                             width: size.width,
                             decoration: BoxDecoration(
-                              color: Colors.black12,
+                              color: Colors.grey[100],
                               borderRadius: BorderRadius.circular(0),
                             ),
                             child: Stack(children: <Widget>[
@@ -621,7 +621,7 @@ class _ClubState extends State<Club> {
                                           controller: _commentController,
                                           decoration: InputDecoration(
                                             suffixIcon: IconButton(
-                                              icon: Icon(Icons.send,color: Colors.green,),
+                                              icon: Icon(Icons.send,color: Colors.redAccent,),
                                               onPressed: () {
                                                 print("=<<>>><<>>><<>>>="+_commentController.text);
                                                 addComment(_commentController.text);
@@ -712,7 +712,7 @@ class _ClubState extends State<Club> {
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.bold,
                           fontSize: size.width / 20,
-                          color: Colors.red[300])),
+                          color: Colors.redAccent)),
                 ),
                 SizedBox(
                   height: size.height / 50,
@@ -750,7 +750,7 @@ class _ClubState extends State<Club> {
             )),
               collapsed: Container(
               decoration: BoxDecoration(
-                  color: Colors.red[300],
+                  color: Colors.redAccent,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24))

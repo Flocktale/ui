@@ -19,6 +19,8 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     String lastevaluatedkey;
     joinRequests = (await service.getActiveJoinRequests(widget.club.clubId, lastevaluatedkey, authorization: authToken)).body;
+    setState(() {
+    });
   }
 
   acceptJoinRequest(String audienceId) async{
@@ -29,6 +31,11 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
     setState(() {});
   }
 
+  @override
+  void initState(){
+    getJoinRequests();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

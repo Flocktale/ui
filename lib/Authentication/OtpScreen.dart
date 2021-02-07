@@ -49,7 +49,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           fontFamily: 'Lato',
                           fontSize: 80.0,
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber),
+                          color: Colors.red),
                     ),
                   ),
                 ],
@@ -64,8 +64,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   style: TextStyle(
                       fontFamily: 'Lato',
                       fontWeight: FontWeight.bold,
-                      color: Colors.amber,
-                      decorationColor: Colors.green),
+                      color: Colors.red,
+                      decorationColor: Colors.red),
                   onCompleted: (pin) {
                     setState(() {
                       _confirmCodeController = pin;
@@ -88,7 +88,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     style: TextStyle(
                       fontFamily: 'Lato',
                       fontWeight: FontWeight.bold,
-                      color: Colors.amber,
+                      color: Colors.red,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -99,8 +99,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   height: 40.0,
                   child: Material(
                     borderRadius: BorderRadius.circular(20.0),
-                    shadowColor: Colors.amberAccent,
-                    color: Colors.amber,
+                    shadowColor: Colors.redAccent,
+                    color: Colors.red,
                     elevation: 7.0,
                     child: InkWell(
                       onTap: () async {

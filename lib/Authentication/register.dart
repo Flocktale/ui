@@ -58,7 +58,7 @@ class _RegisterState extends State<Register> {
                         style: TextStyle(
                             fontSize: 80.0,
                             fontWeight: FontWeight.bold,
-                            color: Colors.amber),
+                            color: Colors.red),
                       ),
                     )
                   ],
@@ -84,7 +84,7 @@ class _RegisterState extends State<Register> {
                                   // hintStyle: ,
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Colors.green))),
+                                          BorderSide(color: Colors.red))),
                               validator: (val) {
                                 if (val.isEmpty)
                                   return 'Please fill this field';
@@ -102,7 +102,7 @@ class _RegisterState extends State<Register> {
                                       color: Colors.grey[400]),
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Colors.green))),
+                                          BorderSide(color: Colors.red))),
                               validator: (val) {
                                 if (val.isEmpty)
                                   return 'Please fill this field';
@@ -121,7 +121,7 @@ class _RegisterState extends State<Register> {
                                       color: Colors.grey[400]),
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Colors.green))),
+                                          BorderSide(color: Colors.red))),
                               obscureText: true,
                               validator: (val) {
                                 if (val.isEmpty)
@@ -151,8 +151,8 @@ class _RegisterState extends State<Register> {
                             height: 40.0,
                             child: Material(
                               borderRadius: BorderRadius.circular(20.0),
-                              shadowColor: Colors.amberAccent,
-                              color: Colors.amber,
+                              shadowColor: Colors.redAccent,
+                              color: Colors.red,
                               elevation: 7.0,
                               child: Center(
                                 child: Text(
