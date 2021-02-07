@@ -48,25 +48,21 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> uploadAvatar(String userId, BuiltProfileImage image,
+  Future<Response<dynamic>> registerFCMToken(BuiltFCMToken body,
       {String authorization}) {
-    final $url = '/users/$userId/avatar/';
+    final $url = '/users/{userId}/notifications/device-token';
     final $headers = {'authorization': authorization};
-    final $body = image;
+    final $body = body;
     final $request =
         Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<dynamic>> uploadProfilePic(
-      String userId, BuiltProfileImage body,
-      {String authorization}) {
-    final $url = '/users/$userId/uploadImage';
+  Future<Response<dynamic>> deleteFCMToken({String authorization}) {
+    final $url = '/users/{userId}/notifications/device-token';
     final $headers = {'authorization': authorization};
-    final $body = body;
-    final $request =
-        Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
+    final $request = Request('DELETE', $url, client.baseUrl, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
 

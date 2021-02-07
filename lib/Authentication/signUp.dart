@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
@@ -55,6 +56,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (response != null && response.body != null) {
       Fluttertoast.showToast(msg: 'Your registration is successfull!');
+
+      final fcmToken = await FirebaseMessaging().getToken();
+      final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+      // sending device token to backend to get notifications for this user on current device.
+      Provider.of<DatabaseApiService>(context, listen: false).registerFCMToken(
+          BuiltFCMToken((b) => b..deviceToken = fcmToken),
+          authorization: authToken);
 
       Provider.of<UserData>(context, listen: false).updateUser = newUser;
       Navigator.of(context).popUntil(ModalRoute.withName("/"));

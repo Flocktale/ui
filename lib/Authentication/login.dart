@@ -1,7 +1,10 @@
 import 'package:amazon_cognito_identity_dart_2/cognito.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/aws/cognito.dart';
+import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,6 +63,14 @@ class _LoginState extends State<Login> {
     }
 
     // user is logged in
+
+    final fcmToken = await FirebaseMessaging().getToken();
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+// sending device token to backend to get notifications for this user on current device.
+    Provider.of<DatabaseApiService>(context, listen: false).registerFCMToken(
+        BuiltFCMToken((b) => b..deviceToken = fcmToken),
+        authorization: authToken);
 
     final _prefs = await SharedPreferences.getInstance();
     await _prefs.setString(SharedPrefKeys.USERID, userId);

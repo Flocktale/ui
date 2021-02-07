@@ -14,7 +14,6 @@ abstract class DatabaseApiService extends ChopperService {
   @Get(path: '/users/{userId}')
   Future<Response<BuiltProfile>> getUserProfile(
     @Query() String primaryUserId,
-
     @Path('userId') String userId, {
     @required @Header() String authorization,
   });
@@ -30,18 +29,16 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
-  @Post(path: '/users/{userId}/avatar/')
-  @Multipart()
-  Future<Response> uploadAvatar(
-    @Path('userId') String userId,
-    @Body() BuiltProfileImage image, {
+  /// this method is to be called when user is logging in (manually either through login page or signUp page)
+  @Post(path: '/users/{userId}/notifications/device-token')
+  Future<Response> registerFCMToken(
+    @Body() BuiltFCMToken body, {
     @required @Header() String authorization,
   });
 
-  @Post(path: '/users/{userId}/uploadImage')
-  Future<Response> uploadProfilePic(
-    @Path('userId') String userId,
-    @Body() BuiltProfileImage body, {
+  /// this method is to be called when user is logging out.
+  @Delete(path: '/users/{userId}/notifications/device-token')
+  Future<Response> deleteFCMToken({
     @required @Header() String authorization,
   });
 

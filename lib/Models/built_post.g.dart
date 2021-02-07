@@ -6,6 +6,8 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<BuiltFCMToken> _$builtFCMTokenSerializer =
+    new _$BuiltFCMTokenSerializer();
 Serializer<RelationIndexObject> _$relationIndexObjectSerializer =
     new _$RelationIndexObjectSerializer();
 Serializer<BuiltProfile> _$builtProfileSerializer =
@@ -36,6 +38,48 @@ Serializer<BuiltActiveJoinRequests> _$builtActiveJoinRequestsSerializer =
     new _$BuiltActiveJoinRequestsSerializer();
 Serializer<BuiltUnifiedSearchResults> _$builtUnifiedSearchResultsSerializer =
     new _$BuiltUnifiedSearchResultsSerializer();
+
+class _$BuiltFCMTokenSerializer implements StructuredSerializer<BuiltFCMToken> {
+  @override
+  final Iterable<Type> types = const [BuiltFCMToken, _$BuiltFCMToken];
+  @override
+  final String wireName = 'BuiltFCMToken';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, BuiltFCMToken object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.deviceToken != null) {
+      result
+        ..add('deviceToken')
+        ..add(serializers.serialize(object.deviceToken,
+            specifiedType: const FullType(String)));
+    }
+    return result;
+  }
+
+  @override
+  BuiltFCMToken deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltFCMTokenBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'deviceToken':
+          result.deviceToken = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$RelationIndexObjectSerializer
     implements StructuredSerializer<RelationIndexObject> {
@@ -1361,6 +1405,80 @@ class _$BuiltUnifiedSearchResultsSerializer
     }
 
     return result.build();
+  }
+}
+
+class _$BuiltFCMToken extends BuiltFCMToken {
+  @override
+  final String deviceToken;
+
+  factory _$BuiltFCMToken([void Function(BuiltFCMTokenBuilder) updates]) =>
+      (new BuiltFCMTokenBuilder()..update(updates)).build();
+
+  _$BuiltFCMToken._({this.deviceToken}) : super._();
+
+  @override
+  BuiltFCMToken rebuild(void Function(BuiltFCMTokenBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltFCMTokenBuilder toBuilder() => new BuiltFCMTokenBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltFCMToken && deviceToken == other.deviceToken;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(0, deviceToken.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltFCMToken')
+          ..add('deviceToken', deviceToken))
+        .toString();
+  }
+}
+
+class BuiltFCMTokenBuilder
+    implements Builder<BuiltFCMToken, BuiltFCMTokenBuilder> {
+  _$BuiltFCMToken _$v;
+
+  String _deviceToken;
+  String get deviceToken => _$this._deviceToken;
+  set deviceToken(String deviceToken) => _$this._deviceToken = deviceToken;
+
+  BuiltFCMTokenBuilder();
+
+  BuiltFCMTokenBuilder get _$this {
+    if (_$v != null) {
+      _deviceToken = _$v.deviceToken;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltFCMToken other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltFCMToken;
+  }
+
+  @override
+  void update(void Function(BuiltFCMTokenBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltFCMToken build() {
+    final _$result = _$v ?? new _$BuiltFCMToken._(deviceToken: deviceToken);
+    replace(_$result);
+    return _$result;
   }
 }
 

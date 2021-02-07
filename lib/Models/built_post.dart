@@ -7,6 +7,18 @@ import 'package:mootclub_app/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
 
+abstract class BuiltFCMToken
+    implements Built<BuiltFCMToken, BuiltFCMTokenBuilder> {
+  @nullable
+  String get deviceToken;
+
+  BuiltFCMToken._();
+
+  factory BuiltFCMToken([updates(BuiltFCMTokenBuilder b)]) = _$BuiltFCMToken;
+
+  static Serializer<BuiltFCMToken> get serializer => _$builtFCMTokenSerializer;
+}
+
 abstract class RelationIndexObject
     implements Built<RelationIndexObject, RelationIndexObjectBuilder> {
   bool get B1;
