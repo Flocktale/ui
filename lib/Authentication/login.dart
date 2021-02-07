@@ -69,7 +69,7 @@ class _LoginState extends State<Login> {
 
 // sending device token to backend to get notifications for this user on current device.
     Provider.of<DatabaseApiService>(context, listen: false).registerFCMToken(
-        BuiltFCMToken((b) => b..deviceToken = fcmToken),
+        userId, BuiltFCMToken((b) => b..deviceToken = fcmToken),
         authorization: authToken);
 
     final _prefs = await SharedPreferences.getInstance();

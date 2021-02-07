@@ -48,9 +48,22 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> registerFCMToken(BuiltFCMToken body,
+  Future<Response<BuiltNotificationList>> getNotifications(
+      String userId, String lastevaluatedkey,
       {String authorization}) {
-    final $url = '/users/{userId}/notifications/device-token';
+    final $url = '/users/$userId/notifications';
+    final $headers = {
+      'lastevaluatedkey': lastevaluatedkey,
+      'authorization': authorization
+    };
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client.send<BuiltNotificationList, BuiltNotificationList>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> registerFCMToken(String userId, BuiltFCMToken body,
+      {String authorization}) {
+    final $url = '/users/$userId/notifications/device-token';
     final $headers = {'authorization': authorization};
     final $body = body;
     final $request =
@@ -59,8 +72,9 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> deleteFCMToken({String authorization}) {
-    final $url = '/users/{userId}/notifications/device-token';
+  Future<Response<dynamic>> deleteFCMToken(String userId,
+      {String authorization}) {
+    final $url = '/users/$userId/notifications/device-token';
     final $headers = {'authorization': authorization};
     final $request = Request('DELETE', $url, client.baseUrl, headers: $headers);
     return client.send<dynamic, dynamic>($request);

@@ -12,6 +12,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(BuiltClub.serializer)
       ..add(BuiltFCMToken.serializer)
       ..add(BuiltFollow.serializer)
+      ..add(BuiltNotificationList.serializer)
       ..add(BuiltProfile.serializer)
       ..add(BuiltProfileImage.serializer)
       ..add(BuiltReaction.serializer)
@@ -21,6 +22,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(BuiltUser.serializer)
       ..add(CategoryClubsList.serializer)
       ..add(JoinRequests.serializer)
+      ..add(NotificationData.serializer)
       ..add(ReactionUser.serializer)
       ..add(RelationIndexObject.serializer)
       ..add(ReportSummary.serializer)
@@ -37,6 +39,9 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(JoinRequests)]),
           () => new ListBuilder<JoinRequests>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(NotificationData)]),
+          () => new ListBuilder<NotificationData>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(ReactionUser)]),
           () => new ListBuilder<ReactionUser>())

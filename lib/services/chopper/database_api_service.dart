@@ -29,16 +29,25 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
+  @Get(path: '/users/{userId}/notifications')
+  Future<Response<BuiltNotificationList>> getNotifications(
+    @Path('userId') String userId,
+    @Header('lastevaluatedkey') String lastevaluatedkey, {
+    @required @Header() String authorization,
+  });
+
   /// this method is to be called when user is logging in (manually either through login page or signUp page)
   @Post(path: '/users/{userId}/notifications/device-token')
   Future<Response> registerFCMToken(
+    @Path('userId') String userId,
     @Body() BuiltFCMToken body, {
     @required @Header() String authorization,
   });
 
   /// this method is to be called when user is logging out.
   @Delete(path: '/users/{userId}/notifications/device-token')
-  Future<Response> deleteFCMToken({
+  Future<Response> deleteFCMToken(
+    @Path('userId') String userId, {
     @required @Header() String authorization,
   });
 

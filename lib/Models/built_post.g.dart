@@ -6,6 +6,10 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<NotificationData> _$notificationDataSerializer =
+    new _$NotificationDataSerializer();
+Serializer<BuiltNotificationList> _$builtNotificationListSerializer =
+    new _$BuiltNotificationListSerializer();
 Serializer<BuiltFCMToken> _$builtFCMTokenSerializer =
     new _$BuiltFCMTokenSerializer();
 Serializer<RelationIndexObject> _$relationIndexObjectSerializer =
@@ -38,6 +42,150 @@ Serializer<BuiltActiveJoinRequests> _$builtActiveJoinRequestsSerializer =
     new _$BuiltActiveJoinRequestsSerializer();
 Serializer<BuiltUnifiedSearchResults> _$builtUnifiedSearchResultsSerializer =
     new _$BuiltUnifiedSearchResultsSerializer();
+
+class _$NotificationDataSerializer
+    implements StructuredSerializer<NotificationData> {
+  @override
+  final Iterable<Type> types = const [NotificationData, _$NotificationData];
+  @override
+  final String wireName = 'NotificationData';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, NotificationData object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'type',
+      serializers.serialize(object.type, specifiedType: const FullType(String)),
+      'title',
+      serializers.serialize(object.title,
+          specifiedType: const FullType(String)),
+      'avatar',
+      serializers.serialize(object.avatar,
+          specifiedType: const FullType(String)),
+      'timestamp',
+      serializers.serialize(object.timestamp,
+          specifiedType: const FullType(int)),
+      'targetResourceId',
+      serializers.serialize(object.targetResourceId,
+          specifiedType: const FullType(String)),
+      'opened',
+      serializers.serialize(object.opened, specifiedType: const FullType(bool)),
+    ];
+    if (object.secondaryAvatar != null) {
+      result
+        ..add('secondaryAvatar')
+        ..add(serializers.serialize(object.secondaryAvatar,
+            specifiedType: const FullType(String)));
+    }
+    return result;
+  }
+
+  @override
+  NotificationData deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new NotificationDataBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'type':
+          result.type = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'title':
+          result.title = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'avatar':
+          result.avatar = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'timestamp':
+          result.timestamp = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'targetResourceId':
+          result.targetResourceId = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'opened':
+          result.opened = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'secondaryAvatar':
+          result.secondaryAvatar = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$BuiltNotificationListSerializer
+    implements StructuredSerializer<BuiltNotificationList> {
+  @override
+  final Iterable<Type> types = const [
+    BuiltNotificationList,
+    _$BuiltNotificationList
+  ];
+  @override
+  final String wireName = 'BuiltNotificationList';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, BuiltNotificationList object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.notifications != null) {
+      result
+        ..add('notifications')
+        ..add(serializers.serialize(object.notifications,
+            specifiedType: const FullType(
+                BuiltList, const [const FullType(NotificationData)])));
+    }
+    if (object.lastevaluatedkey != null) {
+      result
+        ..add('lastevaluatedkey')
+        ..add(serializers.serialize(object.lastevaluatedkey,
+            specifiedType: const FullType(String)));
+    }
+    return result;
+  }
+
+  @override
+  BuiltNotificationList deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltNotificationListBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'notifications':
+          result.notifications.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(NotificationData)]))
+              as BuiltList<Object>);
+          break;
+        case 'lastevaluatedkey':
+          result.lastevaluatedkey = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$BuiltFCMTokenSerializer implements StructuredSerializer<BuiltFCMToken> {
   @override
@@ -1405,6 +1553,291 @@ class _$BuiltUnifiedSearchResultsSerializer
     }
 
     return result.build();
+  }
+}
+
+class _$NotificationData extends NotificationData {
+  @override
+  final String type;
+  @override
+  final String title;
+  @override
+  final String avatar;
+  @override
+  final int timestamp;
+  @override
+  final String targetResourceId;
+  @override
+  final bool opened;
+  @override
+  final String secondaryAvatar;
+
+  factory _$NotificationData(
+          [void Function(NotificationDataBuilder) updates]) =>
+      (new NotificationDataBuilder()..update(updates)).build();
+
+  _$NotificationData._(
+      {this.type,
+      this.title,
+      this.avatar,
+      this.timestamp,
+      this.targetResourceId,
+      this.opened,
+      this.secondaryAvatar})
+      : super._() {
+    if (type == null) {
+      throw new BuiltValueNullFieldError('NotificationData', 'type');
+    }
+    if (title == null) {
+      throw new BuiltValueNullFieldError('NotificationData', 'title');
+    }
+    if (avatar == null) {
+      throw new BuiltValueNullFieldError('NotificationData', 'avatar');
+    }
+    if (timestamp == null) {
+      throw new BuiltValueNullFieldError('NotificationData', 'timestamp');
+    }
+    if (targetResourceId == null) {
+      throw new BuiltValueNullFieldError(
+          'NotificationData', 'targetResourceId');
+    }
+    if (opened == null) {
+      throw new BuiltValueNullFieldError('NotificationData', 'opened');
+    }
+  }
+
+  @override
+  NotificationData rebuild(void Function(NotificationDataBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  NotificationDataBuilder toBuilder() =>
+      new NotificationDataBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is NotificationData &&
+        type == other.type &&
+        title == other.title &&
+        avatar == other.avatar &&
+        timestamp == other.timestamp &&
+        targetResourceId == other.targetResourceId &&
+        opened == other.opened &&
+        secondaryAvatar == other.secondaryAvatar;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc($jc($jc(0, type.hashCode), title.hashCode),
+                        avatar.hashCode),
+                    timestamp.hashCode),
+                targetResourceId.hashCode),
+            opened.hashCode),
+        secondaryAvatar.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('NotificationData')
+          ..add('type', type)
+          ..add('title', title)
+          ..add('avatar', avatar)
+          ..add('timestamp', timestamp)
+          ..add('targetResourceId', targetResourceId)
+          ..add('opened', opened)
+          ..add('secondaryAvatar', secondaryAvatar))
+        .toString();
+  }
+}
+
+class NotificationDataBuilder
+    implements Builder<NotificationData, NotificationDataBuilder> {
+  _$NotificationData _$v;
+
+  String _type;
+  String get type => _$this._type;
+  set type(String type) => _$this._type = type;
+
+  String _title;
+  String get title => _$this._title;
+  set title(String title) => _$this._title = title;
+
+  String _avatar;
+  String get avatar => _$this._avatar;
+  set avatar(String avatar) => _$this._avatar = avatar;
+
+  int _timestamp;
+  int get timestamp => _$this._timestamp;
+  set timestamp(int timestamp) => _$this._timestamp = timestamp;
+
+  String _targetResourceId;
+  String get targetResourceId => _$this._targetResourceId;
+  set targetResourceId(String targetResourceId) =>
+      _$this._targetResourceId = targetResourceId;
+
+  bool _opened;
+  bool get opened => _$this._opened;
+  set opened(bool opened) => _$this._opened = opened;
+
+  String _secondaryAvatar;
+  String get secondaryAvatar => _$this._secondaryAvatar;
+  set secondaryAvatar(String secondaryAvatar) =>
+      _$this._secondaryAvatar = secondaryAvatar;
+
+  NotificationDataBuilder();
+
+  NotificationDataBuilder get _$this {
+    if (_$v != null) {
+      _type = _$v.type;
+      _title = _$v.title;
+      _avatar = _$v.avatar;
+      _timestamp = _$v.timestamp;
+      _targetResourceId = _$v.targetResourceId;
+      _opened = _$v.opened;
+      _secondaryAvatar = _$v.secondaryAvatar;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(NotificationData other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$NotificationData;
+  }
+
+  @override
+  void update(void Function(NotificationDataBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$NotificationData build() {
+    final _$result = _$v ??
+        new _$NotificationData._(
+            type: type,
+            title: title,
+            avatar: avatar,
+            timestamp: timestamp,
+            targetResourceId: targetResourceId,
+            opened: opened,
+            secondaryAvatar: secondaryAvatar);
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$BuiltNotificationList extends BuiltNotificationList {
+  @override
+  final BuiltList<NotificationData> notifications;
+  @override
+  final String lastevaluatedkey;
+
+  factory _$BuiltNotificationList(
+          [void Function(BuiltNotificationListBuilder) updates]) =>
+      (new BuiltNotificationListBuilder()..update(updates)).build();
+
+  _$BuiltNotificationList._({this.notifications, this.lastevaluatedkey})
+      : super._();
+
+  @override
+  BuiltNotificationList rebuild(
+          void Function(BuiltNotificationListBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltNotificationListBuilder toBuilder() =>
+      new BuiltNotificationListBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltNotificationList &&
+        notifications == other.notifications &&
+        lastevaluatedkey == other.lastevaluatedkey;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, notifications.hashCode), lastevaluatedkey.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltNotificationList')
+          ..add('notifications', notifications)
+          ..add('lastevaluatedkey', lastevaluatedkey))
+        .toString();
+  }
+}
+
+class BuiltNotificationListBuilder
+    implements Builder<BuiltNotificationList, BuiltNotificationListBuilder> {
+  _$BuiltNotificationList _$v;
+
+  ListBuilder<NotificationData> _notifications;
+  ListBuilder<NotificationData> get notifications =>
+      _$this._notifications ??= new ListBuilder<NotificationData>();
+  set notifications(ListBuilder<NotificationData> notifications) =>
+      _$this._notifications = notifications;
+
+  String _lastevaluatedkey;
+  String get lastevaluatedkey => _$this._lastevaluatedkey;
+  set lastevaluatedkey(String lastevaluatedkey) =>
+      _$this._lastevaluatedkey = lastevaluatedkey;
+
+  BuiltNotificationListBuilder();
+
+  BuiltNotificationListBuilder get _$this {
+    if (_$v != null) {
+      _notifications = _$v.notifications?.toBuilder();
+      _lastevaluatedkey = _$v.lastevaluatedkey;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltNotificationList other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltNotificationList;
+  }
+
+  @override
+  void update(void Function(BuiltNotificationListBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltNotificationList build() {
+    _$BuiltNotificationList _$result;
+    try {
+      _$result = _$v ??
+          new _$BuiltNotificationList._(
+              notifications: _notifications?.build(),
+              lastevaluatedkey: lastevaluatedkey);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'notifications';
+        _notifications?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuiltNotificationList', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
   }
 }
 

@@ -62,7 +62,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       // sending device token to backend to get notifications for this user on current device.
       Provider.of<DatabaseApiService>(context, listen: false).registerFCMToken(
-          BuiltFCMToken((b) => b..deviceToken = fcmToken),
+          userId, BuiltFCMToken((b) => b..deviceToken = fcmToken),
           authorization: authToken);
 
       Provider.of<UserData>(context, listen: false).updateUser = newUser;

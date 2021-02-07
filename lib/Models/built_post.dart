@@ -7,6 +7,45 @@ import 'package:mootclub_app/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
 
+abstract class NotificationData
+    implements Built<NotificationData, NotificationDataBuilder> {
+  String get type;
+  String get title;
+  String get avatar;
+  int get timestamp;
+  String get targetResourceId;
+
+  bool get opened;
+
+  @nullable
+  String get secondaryAvatar;
+
+  NotificationData._();
+
+  factory NotificationData([updates(NotificationDataBuilder b)]) =
+      _$NotificationData;
+
+  static Serializer<NotificationData> get serializer =>
+      _$notificationDataSerializer;
+}
+
+abstract class BuiltNotificationList
+    implements Built<BuiltNotificationList, BuiltNotificationListBuilder> {
+  @nullable
+  BuiltList<NotificationData> get notifications;
+
+  @nullable
+  String get lastevaluatedkey;
+
+  BuiltNotificationList._();
+
+  factory BuiltNotificationList([updates(BuiltNotificationListBuilder b)]) =
+      _$BuiltNotificationList;
+
+  static Serializer<BuiltNotificationList> get serializer =>
+      _$builtNotificationListSerializer;
+}
+
 abstract class BuiltFCMToken
     implements Built<BuiltFCMToken, BuiltFCMTokenBuilder> {
   @nullable
