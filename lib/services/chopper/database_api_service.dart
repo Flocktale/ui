@@ -23,12 +23,23 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
+  
+
   @Post(path: '/users/create')
   Future<Response> createNewUser(
     @Body() BuiltUser body, {
     @required @Header() String authorization,
   });
 
+  @Post(path: '/users/{userId}/avatar/')
+  @Multipart()
+  Future<Response> uploadAvatar(
+    @Path('userId') String userId,
+    @Body() BuiltProfileImage image, {
+    @required @Header() String authorization,
+  });
+
+  
   @Get(path: '/users/{userId}/notifications')
   Future<Response<BuiltNotificationList>> getNotifications(
     @Path('userId') String userId,

@@ -48,6 +48,17 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<dynamic>> uploadAvatar(String userId, BuiltProfileImage image,
+      {String authorization}) {
+    final $url = '/users/$userId/avatar/';
+    final $headers = {'authorization': authorization};
+    final $body = image;
+    final $request =
+        Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<BuiltNotificationList>> getNotifications(
       String userId, String lastevaluatedkey,
       {String authorization}) {
