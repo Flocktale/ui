@@ -20,7 +20,7 @@ void main() async {
 
   _setupLogging();
   _configureFCM();
-  runApp(MyApp());
+  runApp(NotificationTesting());
 }
 
 void _setupLogging() {
@@ -30,9 +30,14 @@ void _setupLogging() {
   });
 }
 
+Future onBackgroundMessageHandler(Map<String, dynamic> message) async {
+  print('message in bgHandler: $message');
+}
+
 _configureFCM() async {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   _firebaseMessaging.configure(
+    onBackgroundMessage: onBackgroundMessageHandler,
     onMessage: (Map<String, dynamic> message) async {
       print('hola');
       print("onMessage: $message");
