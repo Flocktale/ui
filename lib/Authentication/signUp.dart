@@ -8,11 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
-  final String userId;
-  final String email;
-  final String password;
-
-  SignUpScreen({this.email, this.userId, this.password});
+  SignUpScreen();
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -43,10 +39,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     final service = Provider.of<DatabaseApiService>(context, listen: false);
 
+    final _prefs = await SharedPreferences.getInstance();
+    final userId = _prefs.getString(SharedPrefKeys.USERID);
+    final email = _prefs.getString(SharedPrefKeys.EMAIL);
+
     final newUser = BuiltUser((b) => b
-      ..userId = widget.userId
+      ..userId = userId
       ..name = _nameController.text.trim()
-      ..email = widget.email
+      ..email = email
       ..username = _usernameController.text.trim());
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
@@ -56,13 +56,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (response != null && response.body != null) {
       Fluttertoast.showToast(msg: 'Your registration is successfull!');
 
-      final _prefs = await SharedPreferences.getInstance();
-      await _prefs.setString(SharedPrefKeys.USERID, widget.userId);
-      await _prefs.setString(SharedPrefKeys.EMAIL, widget.email);
-      await _prefs.setString(SharedPrefKeys.PASSWORD, widget.password);
-
       Provider.of<UserData>(context, listen: false).updateUser = newUser;
-      Navigator.of(context).pushNamed('/');
+      Navigator.of(context).popUntil(ModalRoute.withName("/"));
+
       // We don't need to push from here as Consumer at root path will automatically change the screen to home screen on listening changes of auth status;
 
     }

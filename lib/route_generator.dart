@@ -5,6 +5,7 @@ import 'package:mootclub_app/Authentication/login.dart';
 import 'package:mootclub_app/Authentication/register.dart';
 import 'package:mootclub_app/pages/ImagePage.dart';
 import 'package:mootclub_app/pages/NotificationPage.dart';
+import 'package:mootclub_app/root.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -12,13 +13,11 @@ class RouteGenerator {
 
     switch (settings.name) {
       case '/':
+        return MaterialPageRoute(builder: (_) => RootPage());
+      case '/home':
         return MaterialPageRoute(builder: (_) => HomePage());
-      case '/login':
-        return MaterialPageRoute(builder: (_) => Login());
       case '/register':
         return MaterialPageRoute(builder: (_) => Register());
-      case '/signup':
-        return MaterialPageRoute(builder: (_) => SignUpScreen());
       case '/notificationPage':
         return MaterialPageRoute(builder: (_) => NotificationPage());
       case '/imagePage':

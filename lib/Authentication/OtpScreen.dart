@@ -2,11 +2,13 @@ import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Authentication/signUp.dart';
+import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -107,26 +109,16 @@ class _OtpScreenState extends State<OtpScreen> {
                             code: _confirmCodeController.trim());
 
                         if (res == true) {
-                          String userId;
-                          final cognitoError = await startSession(
-                              email: widget.email.trim(),
-                              password: widget.password.trim(),
-                              callback:
-                                  (String id, CognitoUserSession session) {
-                                userId = id;
-                                Provider.of<UserData>(context, listen: false)
-                                    .cognitoSession = session;
-                              });
+                          final _prefs = await SharedPreferences.getInstance();
+                          await _prefs.setString(
+                              SharedPrefKeys.EMAIL, widget.email.trim());
+                          await _prefs.setString(
+                              SharedPrefKeys.PASSWORD, widget.password.trim());
 
-                          if (userId != null) {
-                            Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(
-                                    builder: (_) => SignUpScreen(
-                                          userId: userId,
-                                          email: widget.email.trim(),
-                                          password: widget.password.trim(),
-                                        )));
-                          }
+                          Provider.of<UserData>(context, listen: false)
+                              .initiate(newRegistration: true);
+                          Navigator.of(context)
+                              .popUntil(ModalRoute.withName("/"));
                         }
                       },
                       child: Center(

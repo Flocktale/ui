@@ -18,7 +18,13 @@ class MySocket with ChangeNotifier {
   }
 
   void update(String userId) {
-    if (userId != this.userId) init(userId);
+    if (userId == null)
+      closeConnection();
+    else if (userId != this.userId) init(userId);
+  }
+
+  Future<void> closeConnection() async {
+    await this.channel?.sink?.close();
   }
 
   void init(String userId) {
@@ -27,6 +33,7 @@ class MySocket with ChangeNotifier {
       Uri.parse("wss://jpkq996li6.execute-api.us-east-1.amazonaws.com/Dev"),
       headers: {"userid": userId},
     );
+
     this.channel.stream.listen((event) {
       print("Event is called");
       print(jsonDecode(event));
@@ -71,7 +78,6 @@ class MySocket with ChangeNotifier {
     funcs["reactionCount"] = getReactionForFirstTime;
     funcs["participantList"] = getParticipantListForFirstTime;
     funcs["audienceCount"] = getAudienceForFirstTime;
-    
   }
 
   void addComment(String message, String clubId, String userId) {

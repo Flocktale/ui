@@ -1,14 +1,8 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/pages/HomePage.dart';
 import 'package:mootclub_app/providers/agoraController.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:provider/provider.dart';
-import 'Authentication/login.dart';
 import 'notificationPilot.dart';
 import 'providers/userData.dart';
 import 'package:logging/logging.dart';
@@ -20,7 +14,8 @@ void main() async {
 
   _setupLogging();
   _configureFCM();
-  runApp(NotificationTesting());
+  runApp(MyApp());
+  // runApp(NotificationTesting());
 }
 
 void _setupLogging() {
@@ -82,37 +77,14 @@ class MyApp extends StatelessWidget {
         // create: (ctx)=> MySocket(Provider.of<UserData>(ctx, listen: false).user.userId),
         // ),
       ],
-      child: Consumer<UserData>(
-        builder: (ctx, userData, _) => MaterialApp(
-            onGenerateRoute: RouteGenerator.generateRoute,
-            title: 'Mootclub',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primaryColor: Colors.purple,
-              accentColor: Colors.teal,
-            ),
-            home: userData.loaded == false
-                ? Scaffold(
-                    body: Center(
-                      child: SizedBox(
-                        // width: 250.0,
-                        child: TextLiquidFill(
-                          text: 'MOOTCLUB',
-                          waveColor: Colors.blueAccent,
-                          boxBackgroundColor: Colors.redAccent,
-                          textStyle: TextStyle(
-                            fontSize: 40.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          boxHeight: 300.0,
-                        ),
-                      ),
-                    ),
-                  )
-                : userData.isAuth == false
-                    ? Login()
-                    : Consumer<MySocket>(builder: (ctx, _, __) => HomePage()),
-            routes: {}),
+      child: MaterialApp(
+        onGenerateRoute: RouteGenerator.generateRoute,
+        title: 'Mootclub',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primaryColor: Colors.purple,
+          accentColor: Colors.teal,
+        ),
       ),
     );
   }

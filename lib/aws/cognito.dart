@@ -76,6 +76,7 @@ startSession(
     print(cognitoUser.username);
 
     callback(cognitoUser.username, session);
+    return null;
   } on CognitoClientException catch (e) {
     Fluttertoast.showToast(msg: e.message, gravity: ToastGravity.CENTER);
 

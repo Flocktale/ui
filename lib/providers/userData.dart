@@ -19,10 +19,12 @@ class UserData with ChangeNotifier {
 
   UserData(this._postApiService) {
     print('-------------------initiating------------------------------------');
-    _initiate();
+    initiate();
   }
 
-  _initiate() async {
+  /// set newRegistration to true when new user has registered
+  /// (in above case, user has login credentials, email and password, but no entry in database)
+  initiate({bool newRegistration = false}) async {
     final _prefs = await SharedPreferences.getInstance();
     final email = _prefs.containsKey(SharedPrefKeys.EMAIL)
         ? _prefs.getString(SharedPrefKeys.EMAIL)
@@ -34,35 +36,55 @@ class UserData with ChangeNotifier {
 
     String userId;
 
-    final cognitoError = await startSession(
-        email: email,
-        password: password,
-        callback: (String id, CognitoUserSession session) {
-          userId = id;
-          _currentSession = session;
-        });
+    if (email != null && password != null) {
+      await startSession(
+          email: email,
+          password: password,
+          callback: (String id, CognitoUserSession session) {
+            userId = id;
+            _currentSession = session;
+          });
+    }
 
-    if (cognitoError == null) {
-      // if we have userId, it means user never logged out from current UserID.
+    if (userId != null) {
       _isAuth = true;
 
-      final response = await _postApiService.getUserProfile(null,userId,
-          authorization: authToken);
-      if (response != null && response.body != null) {
-        _builtUser = response.body.user;
+      if (newRegistration == false) {
+        final response = await _postApiService.getUserProfile(null, userId,
+            authorization: authToken);
 
-        print(
-            '-------------------------builtuser loaded --------------------------------');
-        print(_builtUser);
+        if (response != null && response.body != null) {
+          _builtUser = response.body.user;
+        } else {
+          // this case can arrive if user don't have internt connection.
+          // then we can load some trivial info like name,username etc from sharedPreferences
+
+        }
       } else {
-        // this case can arrive if user don't have internt connection.
-        // then we can load some trivial info like name,username etc from sharedPreferences
+        _builtUser = null;
       }
     } else {
       _isAuth = false;
     }
 
     _loaded = true;
+
+    notifyListeners();
+  }
+
+  /// when user is logged in only then this method can be used
+  Future<void> fetchUserFromBackend(String userId) async {
+    if (userId == null || _currentSession == null) return;
+
+    _isAuth = true;
+
+    final response = await _postApiService.getUserProfile(null, userId,
+        authorization: authToken);
+
+    if (response != null && response.body != null) {
+      _builtUser = response.body.user;
+    }
+
     notifyListeners();
   }
 
@@ -72,6 +94,8 @@ class UserData with ChangeNotifier {
 
   BuiltUser get user => _builtUser;
 
+  String get userId => _builtUser?.userId;
+
   set updateUser(BuiltUser user) {
     _isAuth = true;
 
@@ -80,7 +104,7 @@ class UserData with ChangeNotifier {
     notifyListeners();
   }
 
-  String get authToken => _currentSession.idToken.jwtToken;
+  String get authToken => _currentSession?.idToken?.jwtToken;
 
   set cognitoSession(CognitoUserSession session) {
     _currentSession = session;
