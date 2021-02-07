@@ -95,7 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     Clubs = (await service.getMyOrganizedClubs(widget.userId,
-            authorization: authToken))
+        authorization: authToken))
         ?.body
         ?.clubs;
     //  print("============LENGTH= ${Clubs.length}");
@@ -283,6 +283,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
+            _isMe==false?
+                Positioned(
+                  left:0,
+                  top:0,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back_outlined),
+                    color: Colors.white,
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ):Container(height: 0,),
             Positioned(
               top: ((size.height / 14) +
                   (size.height / 9) -
@@ -346,128 +358,128 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       (!_isMe)
                           ? _userRelations==null?
-                          Container(
-                            height: size.height/20,
-                            child: Center(
+                      Container(
+                          height: size.height/20,
+                          child: Center(
                               child: Text(
-                                  "Loading...",
+                                "Loading...",
                                 style: TextStyle(
-                                  fontFamily: "Lato",
-                                  color: Colors.black38
+                                    fontFamily: "Lato",
+                                    color: Colors.black38
                                 ),
                               )
-                            )
-                          ):
+                          )
+                      ):
                       Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                ButtonTheme(
-                                  minWidth: size.width / 3.5,
-                                  child: RaisedButton(
-                                    onPressed: () async {
-                                      if(_userRelations.B5==false)
-                                        {
-                                          await sendFollow();
-                                        }
-                                      else
-                                        {
-                                          await sendUnFollow();
-                                        }
-                                      setState(() {
-                                      });
-                                    },
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          ButtonTheme(
+                            minWidth: size.width / 3.5,
+                            child: RaisedButton(
+                              onPressed: () async {
+                                if(_userRelations.B5==false)
+                                {
+                                  await sendFollow();
+                                }
+                                else
+                                {
+                                  await sendUnFollow();
+                                }
+                                setState(() {
+                                });
+                              },
+                              color: _userRelations.B5==false
+                                  ? Colors.red[600]
+                                  : Colors.white,
+                              child: Text(
+                                  _userRelations.B5==false
+                                      ? 'Follow'
+                                      : 'Following',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
                                     color: _userRelations.B5==false
-                                        ? Colors.red[600]
-                                        : Colors.white,
-                                    child: Text(
-                                        _userRelations.B5==false
-                                            ? 'Follow'
-                                            : 'Following',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: _userRelations.B5==false
-                                              ? Colors.white
-                                              : Colors.grey[700],
-                                        )),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(18.0),
-                                      side: BorderSide(
-                                          color: Colors.red[600]),
-                                    ),
-                                    elevation: 0.0,
-                                  ),
-                                ),
-                                ButtonTheme(
-                                  minWidth: size.width / 3.5,
-                                  child: RaisedButton(
-                                    onPressed: () async {
-                                      if(_userRelations.B1==true){
-                                        await unFriend();
-                                      }
-                                      else if(_userRelations.B3==false)
-                                        {
-                                          await sendFreindRequest();
-                                        }
-                                      else {
-                                        await cancelFriendRequest();
-                                      }
-                                      setState(() {
-                                      });
-                                    },
-                                    color: Colors.white,
-                                    child: Text(
-                                        _userRelations.B1==true?
-                                            "FRIENDS":
-                                            _userRelations.B3==false?
-                                                "Add Friend":
-                                                "Request Sent",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                          _userRelations.B1==true?
-                                          Colors.red:
-                                          _userRelations.B3==false?
-                                          Colors.black:
-                                          Colors.black38,
-                                        )),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(18.0),
-                                      side: BorderSide(
-                                          color: Colors.red[600]),
-                                    ),
-                                    elevation: 0.0,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : ButtonTheme(
-                              minWidth: size.width / 1.5,
-                              child: RaisedButton(
-                                onPressed: () {
-                                  // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
-                                },
-                                color: Colors.white,
-                                child: Text('EDIT PROFILE',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red[600],
-                                    )),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(18.0),
-                                  side: BorderSide(
-                                      color: Colors.red[600]),
-                                ),
-                                elevation: 0.0,
+                                        ? Colors.white
+                                        : Colors.grey[700],
+                                  )),
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                    color: Colors.red[600]),
                               ),
+                              elevation: 0.0,
                             ),
+                          ),
+                          ButtonTheme(
+                            minWidth: size.width / 3.5,
+                            child: RaisedButton(
+                              onPressed: () async {
+                                if(_userRelations.B1==true){
+                                  await unFriend();
+                                }
+                                else if(_userRelations.B3==false)
+                                {
+                                  await sendFreindRequest();
+                                }
+                                else {
+                                  await cancelFriendRequest();
+                                }
+                                setState(() {
+                                });
+                              },
+                              color: Colors.white,
+                              child: Text(
+                                  _userRelations.B1==true?
+                                  "FRIENDS":
+                                  _userRelations.B3==false?
+                                  "Add Friend":
+                                  "Request Sent",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                    _userRelations.B1==true?
+                                    Colors.red:
+                                    _userRelations.B3==false?
+                                    Colors.black:
+                                    Colors.black38,
+                                  )),
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                    color: Colors.red[600]),
+                              ),
+                              elevation: 0.0,
+                            ),
+                          ),
+                        ],
+                      )
+                          : ButtonTheme(
+                        minWidth: size.width / 1.5,
+                        child: RaisedButton(
+                          onPressed: () {
+                            // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
+                          },
+                          color: Colors.white,
+                          child: Text('EDIT PROFILE',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red[600],
+                              )),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(18.0),
+                            side: BorderSide(
+                                color: Colors.red[600]),
+                          ),
+                          elevation: 0.0,
+                        ),
+                      ),
                       SizedBox(height: size.height / 30),
                       Row(
                         mainAxisAlignment:
-                            MainAxisAlignment.spaceEvenly,
+                        MainAxisAlignment.spaceEvenly,
                         //crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           InkWell(
@@ -481,7 +493,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: <Widget>[
                                 Text(
                                     _user.friendsCount.toString() !=
-                                            'null'
+                                        'null'
                                         ? _user.friendsCount.toString()
                                         : '0',
                                     style: TextStyle(
@@ -513,7 +525,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: <Widget>[
                                 Text(
                                     _user.followerCount.toString() !=
-                                            'null'
+                                        'null'
                                         ? _user.followerCount.toString()
                                         : '0',
                                     style: TextStyle(
@@ -545,9 +557,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: <Widget>[
                                 Text(
                                     _user.followingCount.toString() !=
-                                            'null'
+                                        'null'
                                         ? _user.followingCount
-                                            .toString()
+                                        .toString()
                                         : '0',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -573,7 +585,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             right: size.width / 50),
                         child: Row(
                           mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                          MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
                               'My Clubs',
@@ -627,9 +639,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ]):
           Center(
             child: Container(
-              height: size.height/10,
-              width: size.width/5,
-              child: CircularProgressIndicator()
+                height: size.height/10,
+                width: size.width/5,
+                child: CircularProgressIndicator()
             ),
           )
       ),

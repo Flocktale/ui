@@ -200,6 +200,8 @@ class _ClubState extends State<Club> {
       getParticipantListForFirstTime,
       getAudienceForFirstTime,
     );
+    setState(() {
+    });
     super.initState();
   }
 
@@ -591,11 +593,19 @@ class _ClubState extends State<Club> {
                                                     ),
                                                     Text(
                                                         DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds<60?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds==1?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds.toString()+" second ago":
                                                         DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds.toString() + " seconds ago":
                                                         DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes<60?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes==1?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes.toString() + " minute ago":
                                                         DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes.toString() + " minutes ago":
                                                         DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours<24?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours==1?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours.toString() + " hour ago":
                                                         DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours.toString() + " hours ago":
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays==1?
+                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays.toString()+" day ago":
                                                         DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays.toString()+" days ago",
                                                       style: TextStyle(
                                                         fontFamily: 'Lato',

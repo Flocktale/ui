@@ -78,7 +78,10 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                 minWidth: size.width / 3.5,
                 child: RaisedButton(
                   onPressed: () async{
-                    await acceptJoinRequest(joinRequests?.activeJoinRequestUsers[index]?.audience?.userId);
+                    final resp = await acceptJoinRequest(joinRequests?.activeJoinRequestUsers[index]?.audience?.userId);
+                    Fluttertoast.showToast(msg: "Join Request Accepted");
+                    setState(() {
+                    });
                   },
                   color: Colors.red[600],
                   child: Text('Accept',
