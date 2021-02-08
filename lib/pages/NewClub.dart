@@ -253,5 +253,5 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
 
   @override
 // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }

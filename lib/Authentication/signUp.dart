@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/sharedPrefKey.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/pages/ProfileImagePage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
@@ -148,6 +149,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             },
                           ),
                           SizedBox(height: 50),
+                          InkWell(
+                            onTap: (){
+                              Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfileImagePage(name: _nameController.text,userName: _usernameController.text)));
+                            },
+                            child: Container(
+                                height: 40.0,
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  shadowColor: Colors.grey[200],
+                                  color: Colors.white,
+                                  elevation: 7.0,
+                                  child: Center(
+                                    child: Text(
+                                      'Upload Profile Picture',
+                                      style: TextStyle(
+                                          color: Colors.redAccent,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Lato'),
+                                    ),
+                                  ),
+                                )),
+                          ),
+                          SizedBox(height: 20),
                           InkWell(
                             onTap: _signUpWithBackend,
                             child: Container(

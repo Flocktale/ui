@@ -30,8 +30,8 @@ class _ImagePageState extends State<ImagePage> {
           sourcePath: selectedImage.path,
           aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
           compressQuality: 50,
-          maxHeight: 700,
-          maxWidth: 700,
+          maxHeight: 600,
+          maxWidth: 600,
           compressFormat: ImageCompressFormat.jpg,
           androidUiSettings: AndroidUiSettings(
               statusBarColor: Colors.redAccent,
@@ -72,15 +72,21 @@ class _ImagePageState extends State<ImagePage> {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final resp = await service.createNewClub(newClub, widget.userId,
         authorization: authToken);
-    
+    print("!!!!!!!!!!!!!!!!!!!!!!!");
+    print(resp.body);
     if(resp.isSuccessful && image!=null){
       String imageInBase64;
       if(image!=null){
         var pickedImage = await image.readAsBytes();
         imageInBase64 = base64Encode(pickedImage);
+        final newImage = BuiltProfileImage((b) => b
+        ..image = imageInBase64);
+        final response = await service.updateClubAvatar(resp.body['clubId'], newImage, authorization: authToken);
+        print("!!!!!!!!!!!!!!!!!!!!!!!");
+        print(response.isSuccessful);
       }
     }
-    print('=========' + resp.body);
+    print('=========${resp.body}');
     print(resp.error);
     Fluttertoast.showToast(msg: 'club entry is created');
   }

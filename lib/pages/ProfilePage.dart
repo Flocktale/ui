@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../AppBarWidget.dart';
 import '../Carousel.dart';
 import 'package:built_collection/built_collection.dart';
+import 'ProfileImagePage.dart';
 
 import '../MinClub.dart';
 
@@ -459,7 +460,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         minWidth: size.width / 1.5,
                         child: RaisedButton(
                           onPressed: () {
-                            // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>OtpScreen()));
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfileImagePage(name: _user.name,userName: _user.username,)));
                           },
                           color: Colors.white,
                           child: Text('EDIT PROFILE',
