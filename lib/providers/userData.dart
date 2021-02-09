@@ -7,8 +7,9 @@ import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData with ChangeNotifier {
-  BuiltUser _builtUser = BuiltUser();
+  BuiltUser _builtUser;
   CognitoUserSession _currentSession;
+  String _userId;
 
   final DatabaseApiService _postApiService;
 
@@ -34,14 +35,12 @@ class UserData with ChangeNotifier {
         ? _prefs.getString(SharedPrefKeys.PASSWORD)
         : null;
 
-    String userId;
-
     if (email != null && password != null) {
       await startSession(
           email: email,
           password: password,
           callback: (String id, CognitoUserSession session) {
-            userId = id;
+            _userId = id;
             _currentSession = session;
           });
     }
@@ -58,7 +57,10 @@ class UserData with ChangeNotifier {
         } else {
           // this case can arrive if user don't have internt connection.
           // then we can load some trivial info like name,username etc from sharedPreferences
+        }
 
+        if (_builtUser?.userId == null) {
+          _builtUser = null;
         }
       } else {
         _builtUser = null;
@@ -73,16 +75,20 @@ class UserData with ChangeNotifier {
   }
 
   /// when user is logged in only then this method can be used
-  Future<void> fetchUserFromBackend(String userId) async {
+  Future<void> fetchUserFromBackend() async {
     if (userId == null || _currentSession == null) return;
 
     _isAuth = true;
 
-    final response = await _postApiService.getUserProfile(null, userId,
+    final response = await _postApiService.getUserProfile(null, _userId,
         authorization: authToken);
 
     if (response != null && response.body != null) {
       _builtUser = response.body.user;
+
+      if (_builtUser?.userId == null) {
+        _builtUser = null;
+      }
     }
 
     notifyListeners();
@@ -94,7 +100,9 @@ class UserData with ChangeNotifier {
 
   BuiltUser get user => _builtUser;
 
-  String get userId => _builtUser?.userId;
+  String get userId => _userId;
+
+  set userId(String id) => {_userId = id};
 
   set updateUser(BuiltUser user) {
     _isAuth = true;

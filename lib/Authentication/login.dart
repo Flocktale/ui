@@ -37,13 +37,11 @@ class _LoginState extends State<Login> {
     final _email = _emailController.text.trim();
     final _password = _passwordController.text.trim();
 
-    String userId;
-
     final cognitorError = await startSession(
         email: _email,
         password: _password,
         callback: (String id, CognitoUserSession session) {
-          userId = id;
+          Provider.of<UserData>(context, listen: false).userId = id;
           Provider.of<UserData>(context, listen: false).cognitoSession =
               session;
         });
@@ -66,6 +64,7 @@ class _LoginState extends State<Login> {
 
     final fcmToken = await FirebaseMessaging().getToken();
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final userId = Provider.of<UserData>(context, listen: false).userId;
 
 // sending device token to backend to get notifications for this user on current device.
     Provider.of<DatabaseApiService>(context, listen: false).registerFCMToken(
@@ -73,14 +72,13 @@ class _LoginState extends State<Login> {
         authorization: authToken);
 
     final _prefs = await SharedPreferences.getInstance();
-    await _prefs.setString(SharedPrefKeys.USERID, userId);
     await _prefs.setString(SharedPrefKeys.EMAIL, _email);
     await _prefs.setString(SharedPrefKeys.PASSWORD, _password);
 
 // current navigation path is "/" , i.e. we are in RootPage class
 // so Provider.of<UserData>(context, listen: false).fetchUserFromBackend(); will automatically handle further action,
 // which is whether to go to sign up or home page
-    Provider.of<UserData>(context, listen: false).fetchUserFromBackend(userId);
+    Provider.of<UserData>(context, listen: false).fetchUserFromBackend();
   }
 
   @override

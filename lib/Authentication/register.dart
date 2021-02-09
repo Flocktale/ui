@@ -128,7 +128,7 @@ class _RegisterState extends State<Register> {
                                 if (val.isEmpty)
                                   return 'Please fill this field';
                                 else if (_register == true &&
-                                    _confirmPasswordController.text.trim() !=
+                                    _passwordController.text.trim() !=
                                         val.trim()) return 'password mismatch';
                                 return null;
                               },

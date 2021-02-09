@@ -117,8 +117,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
                           Provider.of<UserData>(context, listen: false)
                               .initiate(newRegistration: true);
-                          Navigator.of(context)
-                              .popUntil(ModalRoute.withName("/"));
+                          Navigator.of(context).pop();
                         }
                       },
                       child: Center(
