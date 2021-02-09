@@ -173,6 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState(){
+    _user = null;
     fetchUser();
     super.initState();
   }
