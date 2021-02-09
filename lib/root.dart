@@ -16,13 +16,19 @@ class RootPage extends StatelessWidget {
       builder: (ctx, userData, loadingWidget) {
         Provider.of<MySocket>(context, listen: false).update(userData.userId);
 
-        return userData.loaded == false
-            ? loadingWidget
-            : userData.isAuth == false
-                ? Login()
-                : userData.user == null
-                    ? SignUpScreen()
-                    : HomePage();
+        Widget widget = loadingWidget;
+
+        if (userData.loaded) {
+          if (userData.isAuth == false)
+            widget = Login();
+          else if (userData.user == null) {
+            widget = SignUpScreen();
+          } else {
+            widget = HomePage();
+          }
+        }
+
+        return widget;
       },
       child: Scaffold(
         body: Center(

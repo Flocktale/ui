@@ -9,14 +9,6 @@ class MySocket with ChangeNotifier {
   String userId;
   Map<String, Function> funcs = {"newComment": () => print("hi")};
 
-  MySocket(String userId) {
-    if (userId != null) init(userId);
-    // funcs["newComment"] = null;
-    // funcs["oldComments"] = null;
-    // funcs["reactionCount"] = null;
-    // funcs["audienceCount"] = null;
-  }
-
   void update(String userId) {
     if (userId == null)
       closeConnection();

@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
         ),
 
         ChangeNotifierProvider<MySocket>(
-          create: (ctx) => MySocket("aksdkkd"),
+          create: (ctx) => MySocket(),
         ),
         // Provider(
         // create: (ctx)=> MySocket(Provider.of<UserData>(ctx, listen: false).user.userId),

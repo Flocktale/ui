@@ -123,7 +123,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           authorization: authToken);
 
       Provider.of<UserData>(context, listen: false).updateUser = newUser;
-      Navigator.of(context).popUntil(ModalRoute.withName("/"));
 
       // We don't need to push from here as Consumer at root path will automatically change the screen to home screen on listening changes of auth status;
 
