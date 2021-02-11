@@ -30,14 +30,21 @@ class _LandingPageState extends State<LandingPage>
     'Other'
   ];
 
-  _fetchAllClubs() async {
+ Future _fetchAllClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     Clubs = (await service.getAllClubs(authorization: authToken))
         .body
         .categoryClubs;
+    setState(() {
+    });
   }
 
+  @override
+  void initState(){
+    _fetchAllClubs();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -45,58 +52,45 @@ class _LandingPageState extends State<LandingPage>
     return SafeArea(
       child: Scaffold(
           body: Stack(
-            children: [
-              Container(
-        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppBarWidget(),
-              SizedBox(
-                height: 20,
-              ),
-              /* Text(
-                    'Join your \nfavourite clubs.',
-                    style: TextStyle(
-                      fontFamily: "Lato",
-                      fontWeight: FontWeight.w300,
-                      color: Colors.black,
-                      fontSize: size.width/10
-                    ),
-                  ),*/
-              SizedBox(
-                width: 250.0,
-                child: TypewriterAnimatedTextKit(
-                  isRepeatingAnimation: false,
-                  speed: const Duration(milliseconds: 125),
-                  onTap: () {
-                    print("Tap Event");
-                  },
-                  text: [
-                    'Join your \nfavourite clubs.',
-                  ],
-                  textStyle: TextStyle(
-                      fontSize: 30.0,
-                      fontFamily: "Lato",
-                      fontWeight: FontWeight.w300,
-                      color: Colors.black),
-                  textAlign: TextAlign.start,
-                ),
-              ),
-              Expanded(
-                child: FutureBuilder(
-                    future: _fetchAllClubs(),
-                    builder: (context, snapshot) {
-                      if (Clubs == null ||
-                          snapshot.connectionState == ConnectionState.waiting) {
-                        //  return Center(child: CircularProgressIndicator());
-                        return Container();
-                      }
-                      return ListView.builder(
-                          itemCount: Category.length,
-                          itemBuilder: (context, index) {
-                            return Clubs[index].clubs.isNotEmpty
-                                ? Column(
+              children: [
+                Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppBarWidget(),
+//                        SizedBox(
+//                          height: 20,
+//                        ),
+//                        SizedBox(
+//                          width: 250.0,
+//                          child: TypewriterAnimatedTextKit(
+//                            isRepeatingAnimation: false,
+//                            speed: const Duration(milliseconds: 125),
+//                            onTap: () {
+//                              print("Tap Event");
+//                            },
+//                            text: [
+//                              'Join your \nfavourite clubs.',
+//                            ],
+//                            textStyle: TextStyle(
+//                                fontSize: 30.0,
+//                                fontFamily: "Lato",
+//                                fontWeight: FontWeight.w300,
+//                                color: Colors.black),
+//                            textAlign: TextAlign.start,
+//                          ),
+//                        ),
+                        RefreshIndicator(
+                          onRefresh: _fetchAllClubs,
+                          child: Container(
+                            height: size.height-157,
+                            child: Clubs!=null?
+                            ListView.builder(
+                                itemCount: Category.length,
+                                itemBuilder: (context, index) {
+                                  return Clubs[index].clubs.isNotEmpty
+                                      ? Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
                                       SizedBox(height: size.height / 30),
@@ -112,19 +106,30 @@ class _LandingPageState extends State<LandingPage>
                                       Carousel(Clubs: Clubs[index].clubs),
                                     ],
                                   )
-                                : Container();
-                          });
-                    }),
-              ),
-            //  SizedBox(height: size.height/10,)
-            ],
-        )
-      ),
-              Positioned(
-                bottom:0,
-                  child: MinClub())
+                                      : Container();
+                                }):
+                            Container(
+                              child: Center(
+                                  child: Text(
+                                    "Loading...",
+                                    style: TextStyle(
+                                        fontFamily: "Lato",
+                                        color: Colors.grey
+                                    ),
+                                  )
+                              ),
+                            ),
+                          ),
+                        ),
+                        //  SizedBox(height: size.height/10,)
+                      ],
+                    )
+                ),
+                Positioned(
+                    bottom:0,
+                    child: MinClub())
 
-            ]
+              ]
           )),
     );
   }

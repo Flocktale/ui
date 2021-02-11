@@ -6,6 +6,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/pages/Club.dart';
+import 'package:mootclub_app/pages/LandingPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
@@ -84,6 +86,8 @@ class _ImagePageState extends State<ImagePage> {
         final response = await service.updateClubAvatar(resp.body['clubId'], newImage, authorization: authToken);
         print("!!!!!!!!!!!!!!!!!!!!!!!");
         print(response.isSuccessful);
+        BuiltClub newClub = (await service.getClubByClubId(resp.body['clubId'], authorization: authToken)).body;
+        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Club(club: newClub,)));
       }
     }
     print('=========${resp.body}');
@@ -109,12 +113,12 @@ class _ImagePageState extends State<ImagePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            height: size.height / 2,
-            width: size.width / 2,
-            child: Center(
+          Center(
+            child: Container(
+              height: size.height / 2,
+              width: size.width / 2,
               child: image == null
-                  ? Text('No image selected.')
+                  ? Center(child: Text('No image selected.'))
                   : Image.file(image),
             ),
           ),
@@ -154,25 +158,28 @@ class _ImagePageState extends State<ImagePage> {
                     )
                   ],
                 )
-              : ButtonTheme(
-                  child: RaisedButton(
-                    onPressed: () {
-                      print(widget.name);
-                      print(widget.description);
-                      print(widget.category);
-                      print(widget.userId);
-                      _createClub();
-                    },
-                    child: Text(
-                      "Submit",
-                      style: TextStyle(
-                          fontFamily: 'Lato',
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
+              : Container(
+            margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                child: ButtonTheme(
+                    child: RaisedButton(
+                      onPressed: () {
+                        print(widget.name);
+                        print(widget.description);
+                        print(widget.category);
+                        print(widget.userId);
+                        _createClub();
+                      },
+                      child: Text(
+                        "Submit",
+                        style: TextStyle(
+                            fontFamily: 'Lato',
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      color: Colors.red,
                     ),
-                    color: Colors.red,
                   ),
-                )
+              )
         ],
       ),
     );
