@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/AppBarWidget.dart';
 import 'package:mootclub_app/Carousel.dart';
 import 'package:mootclub_app/MinClub.dart';
 import 'package:mootclub_app/Models/built_post.dart';
@@ -30,12 +29,25 @@ class _LandingPageState extends State<LandingPage>
     'Other'
   ];
 
+  BuiltNotificationList notificationList;
+  bool hasNewNotifications = false;
+  Future getNotifications() async{
+    final service = Provider.of<DatabaseApiService>(context,listen: false);
+    final cuser = Provider.of<UserData>(context,listen:false).user;
+    final authToken = Provider.of<UserData>(context,listen:false).authToken;
+    String lastEvalustedKey;
+    BuiltNotificationList tempNotificationList =  (await service.getNotifications(cuser.userId, lastEvalustedKey, authorization: authToken)).body;
+    if(notificationList!=null && tempNotificationList.notifications.length>notificationList.notifications.length)
+      hasNewNotifications = true;
+    notificationList = tempNotificationList;
+  }
  Future _fetchAllClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     Clubs = (await service.getAllClubs(authorization: authToken))
         .body
         .categoryClubs;
+    await getNotifications();
     setState(() {
     });
   }
@@ -58,7 +70,25 @@ class _LandingPageState extends State<LandingPage>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppBarWidget(),
+                      Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        IconButton(icon: Icon(Icons.camera_alt_outlined), onPressed: null),
+                        Text(
+                          'MOOTCLUB',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2.0,
+                          ),
+                        ),
+                        IconButton(
+                          icon: hasNewNotifications==false?Icon(Icons.notifications_none_outlined):Icon(Icons.notifications_active,color: Colors.redAccent,),
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('/notificationPage');
+                          },
+                        ),
+                      ],
+                    ),
 //                        SizedBox(
 //                          height: 20,
 //                        ),

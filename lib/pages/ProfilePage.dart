@@ -5,7 +5,7 @@ import 'package:mootclub_app/pages/FollowersPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
-import '../AppBarWidget.dart';
+
 import '../Carousel.dart';
 import 'package:built_collection/built_collection.dart';
 import 'ProfileImagePage.dart';
