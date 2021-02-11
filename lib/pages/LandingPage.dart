@@ -31,97 +31,108 @@ class _LandingPageState extends State<LandingPage>
 
   BuiltNotificationList notificationList;
   bool hasNewNotifications = false;
-  Future getNotifications() async{
-    final service = Provider.of<DatabaseApiService>(context,listen: false);
-    final cuser = Provider.of<UserData>(context,listen:false).user;
-    final authToken = Provider.of<UserData>(context,listen:false).authToken;
+  Future getNotifications() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final cuser = Provider.of<UserData>(context, listen: false).user;
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     String lastEvalustedKey;
-    BuiltNotificationList tempNotificationList =  (await service.getNotifications(cuser.userId, lastEvalustedKey, authorization: authToken)).body;
-    if(notificationList!=null && tempNotificationList.notifications.length>notificationList.notifications.length)
-      hasNewNotifications = true;
+    BuiltNotificationList tempNotificationList =
+        (await service.getNotifications(cuser.userId, lastEvalustedKey,
+                authorization: authToken))
+            .body;
+    if (notificationList != null &&
+        tempNotificationList.notifications.length >
+            notificationList.notifications.length) hasNewNotifications = true;
     notificationList = tempNotificationList;
   }
- Future _fetchAllClubs() async {
+
+  Future _fetchAllClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     Clubs = (await service.getAllClubs(authorization: authToken))
         .body
         .categoryClubs;
     await getNotifications();
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
-  void initState(){
+  void initState() {
     _fetchAllClubs();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-          body: Stack(
-              children: [
-                Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        IconButton(icon: Icon(Icons.camera_alt_outlined), onPressed: null),
-                        Text(
-                          'MOOTCLUB',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                          ),
+          body: Stack(children: [
+        Container(
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: RefreshIndicator(
+              onRefresh: _fetchAllClubs,
+              child: ListView(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      IconButton(
+                          icon: Icon(Icons.camera_alt_outlined),
+                          onPressed: null),
+                      Text(
+                        'MOOTCLUB',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2.0,
                         ),
-                        IconButton(
-                          icon: hasNewNotifications==false?Icon(Icons.notifications_none_outlined):Icon(Icons.notifications_active,color: Colors.redAccent,),
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('/notificationPage');
-                          },
-                        ),
+                      ),
+                      IconButton(
+                        icon: hasNewNotifications == false
+                            ? Icon(Icons.notifications_none_outlined)
+                            : Icon(
+                                Icons.notifications_active,
+                                color: Colors.redAccent,
+                              ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/notificationPage');
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    width: 250.0,
+                    child: TypewriterAnimatedTextKit(
+                      isRepeatingAnimation: false,
+                      speed: const Duration(milliseconds: 125),
+                      onTap: () {
+                        print("Tap Event");
+                      },
+                      text: [
+                        'Join your \nfavourite clubs.',
                       ],
+                      textStyle: TextStyle(
+                          fontSize: 30.0,
+                          fontFamily: "Lato",
+                          fontWeight: FontWeight.w300,
+                          color: Colors.black),
+                      textAlign: TextAlign.start,
                     ),
-//                        SizedBox(
-//                          height: 20,
-//                        ),
-//                        SizedBox(
-//                          width: 250.0,
-//                          child: TypewriterAnimatedTextKit(
-//                            isRepeatingAnimation: false,
-//                            speed: const Duration(milliseconds: 125),
-//                            onTap: () {
-//                              print("Tap Event");
-//                            },
-//                            text: [
-//                              'Join your \nfavourite clubs.',
-//                            ],
-//                            textStyle: TextStyle(
-//                                fontSize: 30.0,
-//                                fontFamily: "Lato",
-//                                fontWeight: FontWeight.w300,
-//                                color: Colors.black),
-//                            textAlign: TextAlign.start,
-//                          ),
-//                        ),
-                        RefreshIndicator(
-                          onRefresh: _fetchAllClubs,
-                          child: Container(
-                            height: size.height-157,
-                            child: Clubs!=null?
-                            ListView.builder(
-                                itemCount: Category.length,
-                                itemBuilder: (context, index) {
-                                  return Clubs[index].clubs.isNotEmpty
-                                      ? Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                  Clubs != null
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: Category.length,
+                          itemBuilder: (context, index) {
+                            return Clubs[index].clubs.isNotEmpty
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       SizedBox(height: size.height / 30),
                                       Text(
@@ -136,31 +147,24 @@ class _LandingPageState extends State<LandingPage>
                                       Carousel(Clubs: Clubs[index].clubs),
                                     ],
                                   )
-                                      : Container();
-                                }):
-                            Container(
-                              child: Center(
-                                  child: Text(
-                                    "Loading...",
-                                    style: TextStyle(
-                                        fontFamily: "Lato",
-                                        color: Colors.grey
-                                    ),
-                                  )
-                              ),
-                            ),
-                          ),
+                                : Container();
+                          })
+                      : Container(
+                          child: Center(
+                              child: Text(
+                            "Loading...",
+                            style: TextStyle(
+                                fontFamily: "Lato", color: Colors.grey),
+                          )),
                         ),
-                        //  SizedBox(height: size.height/10,)
-                      ],
-                    )
-                ),
-                Positioned(
-                    bottom:0,
-                    child: MinClub())
-
-              ]
-          )),
+                  SizedBox(
+                    height: size.height / 10,
+                  )
+                ],
+              ),
+            )),
+        Positioned(bottom: 0, child: MinClub())
+      ])),
     );
   }
 
