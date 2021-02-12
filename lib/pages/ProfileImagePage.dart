@@ -10,7 +10,7 @@ import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mootclub_app/services/sharedPrefKey.dart';
+import 'package:mootclub_app/services/SecureStorage.dart';
 
 import 'ProfilePage.dart';
 

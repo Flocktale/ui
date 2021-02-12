@@ -3,7 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/services/sharedPrefKey.dart';
+import 'package:mootclub_app/services/SecureStorage.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mootclub_app/providers/userData.dart';
 
-import '../services/sharedPrefKey.dart';
-import '../services/sharedPrefKey.dart';
+import '../services/SecureStorage.dart';
+import '../services/SecureStorage.dart';
 
 class Login extends StatefulWidget {
   @override

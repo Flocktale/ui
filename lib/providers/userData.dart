@@ -1,7 +1,7 @@
 import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/services/sharedPrefKey.dart';
+import 'package:mootclub_app/services/SecureStorage.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';

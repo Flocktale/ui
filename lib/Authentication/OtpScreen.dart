@@ -2,7 +2,7 @@ import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Authentication/signUp.dart';
-import 'package:mootclub_app/services/sharedPrefKey.dart';
+import 'package:mootclub_app/services/SecureStorage.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:otp_text_field/otp_field.dart';
