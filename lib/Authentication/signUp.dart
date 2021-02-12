@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mootclub_app/Models/sharedPrefKey.dart';
+import 'package:mootclub_app/services/sharedPrefKey.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/ProfileImagePage.dart';
 import 'package:mootclub_app/providers/userData.dart';
@@ -82,7 +82,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final userId = Provider.of<UserData>(context, listen: false).userId;
 
     final _prefs = await SharedPreferences.getInstance();
-    final email = _prefs.getString(SharedPrefKeys.EMAIL);
+
+    final _storage = SecureStorage();
+    final email = await _storage.getEmail();
+
 
     final newUser = BuiltUser((b) => b
       ..userId = userId

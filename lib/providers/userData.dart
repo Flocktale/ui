@@ -1,7 +1,7 @@
 import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/Models/sharedPrefKey.dart';
+import 'package:mootclub_app/services/sharedPrefKey.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,14 +26,17 @@ class UserData with ChangeNotifier {
   /// set newRegistration to true when new user has registered
   /// (in above case, user has login credentials, email and password, but no entry in database)
   initiate({bool newRegistration = false}) async {
-    final _prefs = await SharedPreferences.getInstance();
-    final email = _prefs.containsKey(SharedPrefKeys.EMAIL)
-        ? _prefs.getString(SharedPrefKeys.EMAIL)
-        : null;
+    final _storage = SecureStorage();
+    final email = await _storage.getEmail();
+    final password = await _storage.getPassword();
 
-    final password = _prefs.containsKey(SharedPrefKeys.PASSWORD)
-        ? _prefs.getString(SharedPrefKeys.PASSWORD)
-        : null;
+    // final email = _prefs.containsKey(SharedPrefKeys.EMAIL)
+    //     ? _prefs.getString(SharedPrefKeys.EMAIL)
+    //     : null;
+
+    // final password = _prefs.containsKey(SharedPrefKeys.PASSWORD)
+    //     ? _prefs.getString(SharedPrefKeys.PASSWORD)
+    //     : null;
 
     if (email != null && password != null) {
       await startSession(

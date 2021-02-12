@@ -1,14 +1,18 @@
 import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/Models/sharedPrefKey.dart';
+import 'package:mootclub_app/services/sharedPrefKey.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mootclub_app/providers/userData.dart';
+
+import '../services/sharedPrefKey.dart';
+import '../services/sharedPrefKey.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -71,9 +75,11 @@ class _LoginState extends State<Login> {
         userId, BuiltFCMToken((b) => b..deviceToken = fcmToken),
         authorization: authToken);
 
-    final _prefs = await SharedPreferences.getInstance();
-    await _prefs.setString(SharedPrefKeys.EMAIL, _email);
-    await _prefs.setString(SharedPrefKeys.PASSWORD, _password);
+    // final _prefs = await SharedPreferences.getInstance();
+    // final _storage = new FlutterSecureStorage();
+    final _storage = SecureStorage();
+    await _storage.setEmail(_email);
+    await _storage.setPassword(_password);
 
 // current navigation path is "/" , i.e. we are in RootPage class
 // so Provider.of<UserData>(context, listen: false).fetchUserFromBackend(); will automatically handle further action,

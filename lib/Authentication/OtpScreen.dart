@@ -2,7 +2,7 @@ import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Authentication/signUp.dart';
-import 'package:mootclub_app/Models/sharedPrefKey.dart';
+import 'package:mootclub_app/services/sharedPrefKey.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -109,12 +109,10 @@ class _OtpScreenState extends State<OtpScreen> {
                             code: _confirmCodeController.trim());
 
                         if (res == true) {
-                          final _prefs = await SharedPreferences.getInstance();
-                          await _prefs.setString(
-                              SharedPrefKeys.EMAIL, widget.email.trim());
-                          await _prefs.setString(
-                              SharedPrefKeys.PASSWORD, widget.password.trim());
-
+                          // final _prefs = await SharedPreferences.getInstance();
+                           final _storage = SecureStorage();
+                            await _storage.setEmail(widget.email.trim());
+                            await _storage.setPassword(widget.password.trim());
                           Provider.of<UserData>(context, listen: false)
                               .initiate(newRegistration: true);
                           Navigator.of(context).pop();
