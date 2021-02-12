@@ -5,7 +5,7 @@ import 'package:mootclub_app/pages/FollowersPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
-import '../AppBarWidget.dart';
+
 import '../Carousel.dart';
 import 'package:built_collection/built_collection.dart';
 import 'ProfileImagePage.dart';
@@ -46,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context,listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    print(cuser.userId + '==' + widget.userId);
+    print('${cuser.userId}==${widget.userId}');
     if (widget.userId == null || cuser.userId == widget.userId) {
       setState(() {
         _isMe = true;
@@ -99,6 +99,9 @@ class _ProfilePageState extends State<ProfilePage> {
         authorization: authToken))
         ?.body
         ?.clubs;
+    setState(() {
+
+    });
     //  print("============LENGTH= ${Clubs.length}");
 
     //THIS IS RETURNING NULL
@@ -175,6 +178,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState(){
     _user = null;
     fetchUser();
+    _fetchAllClubs();
     super.initState();
   }
   @override
@@ -610,18 +614,22 @@ class _ProfilePageState extends State<ProfilePage> {
                       SizedBox(
                         height: size.height / 50,
                       ),
-                      FutureBuilder(
-                          future: _fetchAllClubs(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(
-                                  child: CircularProgressIndicator());
-                            }
-                            return Clubs != null
-                                ? Carousel(Clubs: Clubs)
-                                : Container();
-                          })
+
+                      Clubs != null
+                          ? Carousel(Clubs: Clubs)
+                          : Container(
+                        margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                        child: Center(
+                          child: Text(
+                            "Loading..",
+                            style: TextStyle(
+                              fontFamily: 'Lato',
+                              color: Colors.grey
+                            ),
+                          )
+                        )
+                      ),
+
                     ],
                   )),
             ),

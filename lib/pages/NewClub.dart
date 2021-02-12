@@ -5,6 +5,7 @@ import 'package:mootclub_app/providers/userData.dart';
 import 'package:provider/provider.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import '../MinClub.dart';
+import 'Club.dart';
 import 'ImagePage.dart';
 
 class NewClub extends StatefulWidget {
@@ -56,9 +57,12 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
 
     final resp = await service.createNewClub(newClub, widget.userId,
         authorization: authToken);
+    Fluttertoast.showToast(msg: 'club entry is created');
+    BuiltClub tempClub = (await service.getClubByClubId(resp.body['clubId'], authorization: authToken)).body;
+    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Club(club: tempClub,)));
+    Navigator.of(context).popUntil(ModalRoute.withName("/"));
     print('=========' + resp.body);
     print(resp.error);
-    Fluttertoast.showToast(msg: 'club entry is created');
   }
 
   Widget _buildName() {
@@ -181,6 +185,17 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                                   return;
                                 } else {
                                   _formKey.currentState.save();
+                                  if (name == null ||
+                                      name.isEmpty ||
+                                      description == null ||
+                                      description.isEmpty ||
+                                      category == null ||
+                                      category.isEmpty) {
+                                    Fluttertoast.showToast(msg: 'Fill all fields');
+                                    print('flll all the fields');
+                                    return;
+                                  }
+
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (_) => ImagePage(
                                             name: name,
