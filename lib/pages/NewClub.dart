@@ -58,6 +58,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
         authorization: authToken);
     print('=========' + resp.body);
     print(resp.error);
+   
     Fluttertoast.showToast(msg: 'club entry is created');
   }
 
@@ -71,6 +72,10 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       ),
       validator: (value) {
         if (value.isEmpty) return 'Required';
+        if (value.length<3) return 'Minimum Length should be 3';
+        if (value.length>25) return 'Maximum Length should be 25';
+
+
         return null;
       },
       onSaved: (String value) {

@@ -75,6 +75,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       Fluttertoast.showToast(msg: 'USER NAME length must be between 3 to 25');
       return;
     }
+    if (_nameController.text.length < 3 ||
+        _nameController.text.length > 25) {
+      Fluttertoast.showToast(msg: 'NAME length must be between 3 to 25');
+      return;
+    }
 
     _changeLoading();
 
@@ -223,6 +228,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     borderSide: BorderSide(color: Colors.red))),
                             validator: (val) {
                               if (val.isEmpty) return 'Please fill this field';
+                              if (val.length<3) return 'Minimum length should be 3';
+
                               return null;
                             },
                           ),
@@ -239,6 +246,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     borderSide: BorderSide(color: Colors.red))),
                             validator: (val) {
                               if (val.isEmpty) return 'Please fill this field';
+                              if (val.length<3) return 'Minimum length should be 3';
+
                               return null;
                             },
                           ),

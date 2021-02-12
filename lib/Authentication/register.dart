@@ -22,6 +22,7 @@ class _RegisterState extends State<Register> {
   bool _askConfirmCode = false;
 
   _registerUser() async {
+    
     final bool result = await signUpWithCognito(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim());
@@ -86,9 +87,14 @@ class _RegisterState extends State<Register> {
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.red))),
-                              validator: (val) {
-                                if (val.isEmpty)
-                                  return 'Please fill this field';
+                              validator: (value) {
+                                if (value.isEmpty ||
+                                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                        .hasMatch(value)) {
+                                  return 'Enter a valid email!';
+                                 
+                                }
+                               
                                 return null;
                               },
                             ),
@@ -139,6 +145,8 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: 50.0),
                       InkWell(
                         onTap: () async {
+                          // for(int i=0;i<100;i++)
+                          // print("$i$_register");
                           if (_formKey.currentState.validate()) {
                             _formKey.currentState.save();
                             if (_register)
