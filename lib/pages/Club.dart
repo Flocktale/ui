@@ -207,33 +207,6 @@ class _ClubState extends State<Club> {
 
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   body: Container(
-    //     padding: EdgeInsetsDirectional.fromSTEB(0, 100, 0, 0),
-    //     child: Center(
-    //       child: Column(
-    //         children: [
-    //           Center(
-    //             child: RaisedButton(
-    //               child: Text("Add Comment"),
-    //               onPressed: () =>
-    //                   addComment("Hi! I'm Adarsh, I'm testing this widget"),
-    //             ),
-    //           ),
-    //           Center(
-    //             child: RaisedButton(
-    //               onPressed: () => Provider.of<MySocket>(context, listen: false)
-    //                   .currentStatus(),
-    //             ),
-    //           ),
-    //           Text('likes : $likeCount'),
-    //           Text('audienceCount : $audienceCount'),
-    //           Text('comments: $comments')
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    // );
     BuiltUser user = Provider.of<UserData>(context, listen: false).user;
     bool isMe = (widget.club.creator.userId == user.userId);
     final size = MediaQuery.of(context).size;
