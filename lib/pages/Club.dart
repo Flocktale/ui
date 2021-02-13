@@ -26,6 +26,8 @@ class _ClubState extends State<Club> {
   bool playing = false;
   bool sentRequest = false;
   bool isLive = true;
+  bool isMuted = false;
+  bool isParticipant = false;
   final _commentController = TextEditingController();
   BuiltList<BuiltClub> Clubs;
   List<SummaryUser> participantList = [];
@@ -42,6 +44,7 @@ class _ClubState extends State<Club> {
     //   ..avatar = event['avatar']
     //   ..userId = event['userId']
     //   ..username = event['username']);
+    final cuser = Provider.of<UserData>(context,listen: false).user;
     event['participantList'].forEach((e){
       SummaryUser u = SummaryUser((r)=>r
         ..userId = e['userId']
@@ -49,6 +52,8 @@ class _ClubState extends State<Club> {
         ..avatar = e['avatar']
       );
       participantList.add(u);
+      if(u.userId==cuser.userId)
+        isParticipant = true;
     });
     setState(() {});
   }
@@ -183,6 +188,23 @@ class _ClubState extends State<Club> {
     Provider.of<AgoraController>(context, listen: false)
         .joinAsParticipant(clubId: _club.clubId, token: _club.agoraToken);
   }
+  void handleClick(String value) {
+    switch (value) {
+      case 'Show Join Requests':
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (_)=>ClubJoinRequests(club: widget.club,)
+        ));
+        break;
+      case 'Show Listeners':
+        break;
+      case 'Invite Panelist':
+        break;
+      case 'Show Listeners':
+        break;
+      case 'Invite Audience':
+        break;
+    }
+  }
 
   @override
   void initState() {
@@ -232,6 +254,26 @@ class _ClubState extends State<Club> {
 //                fontWeight: FontWeight.bold,
 //                color: Colors.black),
 //          ),
+          actions: <Widget>[
+            PopupMenuButton<String>(
+              onSelected: handleClick,
+              itemBuilder: (BuildContext context) {
+                return isParticipant?
+                  {'Show Join Requests','Show Listeners','Invite Panelist'}.map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList() :
+                {'Show Listeners','Invite Audience'}.map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList();
+              },
+            ),
+          ],
           backgroundColor: Colors.white,
           elevation: 0.0,
         ),
@@ -481,28 +523,23 @@ class _ClubState extends State<Club> {
                                     child: FloatingActionButton(
                                       heroTag: "btn2",
                                       onPressed: () async{
-                                        if (isMe && playing) {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      ClubJoinRequests(
-                                                        club: widget.club,
-                                                      )));
+                                        if (isParticipant && playing) {
+                                          isMuted = !isMuted;
                                         }
-                                        else if(!isMe && playing){
+                                        else if(!isParticipant && playing){
                                           if(!sentRequest){
                                             await sendJoinRequest();
                                           }
                                           else{
                                             await deleteJoinRequest();
                                           }
-                                          setState(() {
-                                            sentRequest = !sentRequest;
-                                          });
+                                          sentRequest = !sentRequest;
                                         }
+                                        setState(() {
+                                        });
                                       },
-                                      child: !isMe
-                                          ? Icon(Icons.mic_none_rounded)
+                                      child: isParticipant
+                                          ? !isMuted?Icon(Icons.mic_none_rounded):Icon(Icons.mic_off_rounded)
                                           : Icon(Icons.person_add),
                                       backgroundColor:
                                           !playing ? Colors.grey : !sentRequest?Colors.amber:Colors.grey,
@@ -666,7 +703,7 @@ class _ClubState extends State<Club> {
                                 return Center(child: CircularProgressIndicator());
                               }
                               return Clubs != null
-                                  ? Carousel(Clubs: Clubs)
+                                  ? Carousel(Clubs:Clubs.where((club) => club.clubId!=widget.club.clubId).toBuiltList())
                                   : Container();
                             }),
                         SizedBox(height: size.height/20)
@@ -700,6 +737,7 @@ class _ClubState extends State<Club> {
                   height: size.height / 50,
                 ),
                 Container(
+                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                   height: MediaQuery.of(context).size.height/2 + 40,
                   child: GridView.builder(
                     itemCount: participantList.length,
@@ -711,8 +749,12 @@ class _ClubState extends State<Club> {
                         child: Column(
                           children: [
                             CircleAvatar(
-                            radius:size.width/10,
-                            backgroundImage: NetworkImage(participantList[index].avatar),
+                              radius: size.width/9,
+                              backgroundColor: Color(0xffFDCF09),
+                              child: CircleAvatar(
+                              radius:size.width/10,
+                              backgroundImage: NetworkImage(participantList[index].avatar),
+                              ),
                             ),
                             Text(
                               participantList[index].username,

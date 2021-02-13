@@ -114,7 +114,7 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   @Get(path: '/users/{userId}/relations/')
-  Future<Response<BuiltSearchClubs>> getRelations(
+  Future<Response<BuiltSearchUsers>> getRelations(
     @Path('userId') String userId,
     @Query('socialRelation')
         String

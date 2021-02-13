@@ -60,7 +60,7 @@ class _NotificationPageState extends State<NotificationPage> {
                 margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
                 child: ListTile(
                   leading: notificationList.notifications[index].secondaryAvatar!=null?
-                  CircleAvatar(backgroundImage: NetworkImage(notificationList.notifications[index].secondaryAvatar)):
+                  CircleAvatar(backgroundImage: NetworkImage(notificationList.notifications[index].avatar)):
                   CircleAvatar(backgroundImage:AssetImage("assets/Card1.jpg")),
                   title: Column(
                     children: [

@@ -14,10 +14,14 @@ class FollowersPage extends StatefulWidget {
 
 class _FollowersPageState extends State<FollowersPage> {
   List<String> tabs = ['Friends', 'Followers', 'Following'];
+  List<String> relations = ['friends','followers','followings'];
+  BuiltSearchUsers relationList;
 
   String lastevaluatedkey;
-  void getRelations(String type){ //             ["followings","followers", "requests_sent", "requests_received","friends"]
-    Provider.of<DatabaseApiService>(context,listen:false).getRelations(widget.user.userId, type, lastevaluatedkey);
+  void getRelations(String type)async{ //             ["followings","followers", "requests_sent", "requests_received","friends"]
+    relationList = (await Provider.of<DatabaseApiService>(context,listen:false).getRelations(widget.user.userId, type, lastevaluatedkey)).body;
+    setState(() {
+    });
   }
 
   Widget searchBar(String hint) {
@@ -43,11 +47,7 @@ class _FollowersPageState extends State<FollowersPage> {
   }
 
   Widget tabPage(int index) {
-    // List<BuiltUser> userList = [
-    //   widget.user,
-    //   widget.user,
-    //   widget.user,
-    // ];
+
     return Column(
       children: <Widget>[
         SizedBox(
@@ -71,31 +71,32 @@ class _FollowersPageState extends State<FollowersPage> {
         ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
-            itemCount: 7,
+            itemCount: relationList!=null?relationList.users.length:0,
             physics:
                 BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             itemBuilder: (context, ind) {
-              return Container(
+              return relationList!=null?
+              Container(
                 margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     CircleAvatar(
                       backgroundImage: NetworkImage(
-                        widget.user.avatar,
+                        relationList.users[ind].avatar,
                       ),
                       radius: 30,
                     ),
                     Column(
                       children: <Widget>[
                         Text(
-                          widget.user.username,
+                          relationList.users[ind].username,
                           style: TextStyle(
                             fontFamily: 'Lato',
                           ),
                         ),
                         Text(
-                          widget.user.name,
+                          relationList.users[ind].name,
                           style: TextStyle(
                               fontFamily: 'Lato', color: Colors.grey[700]),
                         )
@@ -119,7 +120,7 @@ class _FollowersPageState extends State<FollowersPage> {
                     )
                   ],
                 ),
-              );
+              ):Container();
             })
         //  ListView.builder(),//To be filled with get results.
       ],
@@ -127,6 +128,7 @@ class _FollowersPageState extends State<FollowersPage> {
   }
 
   Widget build(BuildContext context) {
+  //  getRelations(relations[widget.initpos]);
     return DefaultTabController(
       initialIndex: widget.initpos,
       length: tabs.length,
