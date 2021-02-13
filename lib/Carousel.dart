@@ -39,76 +39,84 @@ class _CarouselState extends State<Carousel> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => Club(club: widget.Clubs[index])));
                 },
-                child: Wrap(
+                child: Stack(
                   children: <Widget>[
                     Container(
-                      height: 80,
-                      child: Center(
-                        child: Image.network(
-                          widget.Clubs[index].clubAvatar,
+                      height: 100,
+                      width: size.width,
+                      child: Image.network(
+                        widget.Clubs[index].clubAvatar,
                 //      height: 130,
                 //      width: 200,
-                          fit: BoxFit.cover,
-                        ),
+                        fit: BoxFit.fill,
                       ),
                     ),
-                    ListTile(
-                      title: Text(
-                        widget.Clubs[index].clubName,
-                        style: TextStyle(
-                            fontFamily: 'Lato', fontWeight: FontWeight.bold),
-                      ),
-                      subtitle:
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                backgroundImage: NetworkImage(widget.Clubs[index].creator.avatar),
-                                radius: 10,
-                              ),
-                                SizedBox(width: 5,),
 
-                                Text(
-                                  widget.Clubs[index].creator.username,
-                                style: TextStyle(
-                                  fontFamily: "Lato",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10,
-                                  color: Colors.redAccent
-                                ),
-                              ),]
+                       Positioned(
+                         top: 100,
+                         left: 5,
+                         child: Text(
+                          widget.Clubs[index].clubName,
+                          style: TextStyle(
+                              fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                      ),
+                       ),
+
+                        Positioned(
+                          top: 120,
+                          left: 5,
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                              backgroundImage: NetworkImage(widget.Clubs[index].creator.avatar),
+                              radius: 10,
                             ),
-                       Container(
-                         margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                         child: Row(
-                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                           children: [
-                             Text("12.1K LISTENERS",style: TextStyle(
+                              SizedBox(width: 5,),
+
+                              Text(
+                                widget.Clubs[index].creator.username,
+                              style: TextStyle(
+                                fontFamily: "Lato",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                                color: Colors.redAccent
+                              ),
+                            ),]
+                          ),
+                        ),
+                       Positioned(
+                        // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                         bottom: 5,
+                            left: 5,
+                            child: Text("12.1K LISTENERS",style: TextStyle(
                                fontFamily: "Lato",
                                fontSize: size.width/50,
                                color: Colors.grey
                              ),),
-                             Container(
-                                color: Colors.red,
-                                alignment: Alignment(1, 1),
-                                padding: EdgeInsets.all(2),
-                                child: Text(
-                                  "LIVE",
-                                  style: TextStyle(
-                                      fontFamily: 'Lato',
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      letterSpacing: 2.0,
-                                    fontSize: size.width/50
+                       ),
+                             Positioned(
+                               bottom: 5,
+                               right: 5,
+                               child: Container(
+                                 height: 15,
+                                  width: 30,
+                                  color: Colors.red,
+                                  padding: EdgeInsets.all(2),
+                                  child: Center(
+                                    child: Text(
+                                      "LIVE",
+                                      style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          letterSpacing: 2.0,
+                                        fontSize: size.width/50
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                           ],
-                         ),
-                       ),
-                          ],
-                        ),
+                             ),
+
 //                      trailing:  Container(
 //                        color: Colors.red,
 //                        child: Text(
@@ -122,7 +130,7 @@ class _CarouselState extends State<Carousel> {
 //                          ),
 //                        ),
 //                      ),
-                    ),
+
                   ],
                 ),
               ),
