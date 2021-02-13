@@ -1579,17 +1579,16 @@ class _$BuiltInviteFormatSerializer
   Iterable<Object> serialize(Serializers serializers, BuiltInviteFormat object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[];
-    if (object.invitee != null) {
-      result
-        ..add('invitee')
-        ..add(serializers.serialize(object.invitee,
-            specifiedType:
-                const FullType(BuiltList, const [const FullType(String)])));
-    }
     if (object.type != null) {
       result
         ..add('type')
         ..add(serializers.serialize(object.type,
+            specifiedType: const FullType(String)));
+    }
+    if (object.invitee != null) {
+      result
+        ..add('invitee')
+        ..add(serializers.serialize(object.invitee,
             specifiedType:
                 const FullType(BuiltList, const [const FullType(String)])));
     }
@@ -1608,14 +1607,12 @@ class _$BuiltInviteFormatSerializer
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
+        case 'type':
+          result.type = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
         case 'invitee':
           result.invitee.replace(serializers.deserialize(value,
-                  specifiedType:
-                      const FullType(BuiltList, const [const FullType(String)]))
-              as BuiltList<Object>);
-          break;
-        case 'type':
-          result.type.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(String)]))
               as BuiltList<Object>);
@@ -4287,15 +4284,15 @@ class BuiltUnifiedSearchResultsBuilder
 
 class _$BuiltInviteFormat extends BuiltInviteFormat {
   @override
-  final BuiltList<String> invitee;
+  final String type;
   @override
-  final BuiltList<String> type;
+  final BuiltList<String> invitee;
 
   factory _$BuiltInviteFormat(
           [void Function(BuiltInviteFormatBuilder) updates]) =>
       (new BuiltInviteFormatBuilder()..update(updates)).build();
 
-  _$BuiltInviteFormat._({this.invitee, this.type}) : super._();
+  _$BuiltInviteFormat._({this.type, this.invitee}) : super._();
 
   @override
   BuiltInviteFormat rebuild(void Function(BuiltInviteFormatBuilder) updates) =>
@@ -4309,20 +4306,20 @@ class _$BuiltInviteFormat extends BuiltInviteFormat {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is BuiltInviteFormat &&
-        invitee == other.invitee &&
-        type == other.type;
+        type == other.type &&
+        invitee == other.invitee;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, invitee.hashCode), type.hashCode));
+    return $jf($jc($jc(0, type.hashCode), invitee.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('BuiltInviteFormat')
-          ..add('invitee', invitee)
-          ..add('type', type))
+          ..add('type', type)
+          ..add('invitee', invitee))
         .toString();
   }
 }
@@ -4331,21 +4328,21 @@ class BuiltInviteFormatBuilder
     implements Builder<BuiltInviteFormat, BuiltInviteFormatBuilder> {
   _$BuiltInviteFormat _$v;
 
+  String _type;
+  String get type => _$this._type;
+  set type(String type) => _$this._type = type;
+
   ListBuilder<String> _invitee;
   ListBuilder<String> get invitee =>
       _$this._invitee ??= new ListBuilder<String>();
   set invitee(ListBuilder<String> invitee) => _$this._invitee = invitee;
 
-  ListBuilder<String> _type;
-  ListBuilder<String> get type => _$this._type ??= new ListBuilder<String>();
-  set type(ListBuilder<String> type) => _$this._type = type;
-
   BuiltInviteFormatBuilder();
 
   BuiltInviteFormatBuilder get _$this {
     if (_$v != null) {
+      _type = _$v.type;
       _invitee = _$v.invitee?.toBuilder();
-      _type = _$v.type?.toBuilder();
       _$v = null;
     }
     return this;
@@ -4369,15 +4366,12 @@ class BuiltInviteFormatBuilder
     _$BuiltInviteFormat _$result;
     try {
       _$result = _$v ??
-          new _$BuiltInviteFormat._(
-              invitee: _invitee?.build(), type: _type?.build());
+          new _$BuiltInviteFormat._(type: type, invitee: _invitee?.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'invitee';
         _invitee?.build();
-        _$failedField = 'type';
-        _type?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuiltInviteFormat', _$failedField, e.toString());

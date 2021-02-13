@@ -240,7 +240,7 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
-  @Get(path: '/clubs/{clubId}/join-request')
+  @Get(path: '/clubs/{clubId}/join-request/query')
   Future<Response<BuiltActiveJoinRequests>> searchInActiveJoinRequests(
     @Path() String clubId,
     @Query() String searchString,
@@ -272,23 +272,24 @@ abstract class DatabaseApiService extends ChopperService {
 
   // -------------- Inviting APIs----------------
 
-  @Post(path: '/clubs/{clubId}/all-followers')
+  @Post(path: '/clubs/{clubId}/invite/all-followers')
   Future<Response> inviteAllFollowers(
-    @Query() String sponsorId,{
+    @Path() String clubId,
+    @Query() String sponsorId, {
     @required @Header() String authorization,
-  }
-  );
+  });
 
-  @Post(path: '/clubs/{clubId}/all-followers')
+  @Post(path: '/clubs/{clubId}/invite/')
   Future<Response> inviteUsers(
+    @Path() String clubId,
     @Query() String sponsorId,
-    @Body() BuiltInviteFormat invite,{
+    @Body() BuiltInviteFormat invite, {
     @required @Header() String authorization,
-  }
-  );
+  });
 
   @Get(path: '/clubs/{clubId}/block')
-  Future<Response<BuiltActiveJoinRequests>> getAllBlockedUsers({
+  Future<Response<BuiltActiveJoinRequests>> getAllBlockedUsers(
+    @Path() String clubId, {
     @required @Header() String authorization,
   });
 

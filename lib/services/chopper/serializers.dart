@@ -25,6 +25,7 @@ part 'serializers.g.dart';
   JoinRequests,
   BuiltActiveJoinRequests,
   BuiltUnifiedSearchResults,
+  BuiltInviteFormat,
 ])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

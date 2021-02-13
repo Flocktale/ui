@@ -379,7 +379,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   Future<Response<BuiltActiveJoinRequests>> searchInActiveJoinRequests(
       String clubId, String searchString, String lastevaluatedkey,
       {String authorization}) {
-    final $url = '/clubs/$clubId/join-request';
+    final $url = '/clubs/$clubId/join-request/query';
     final $params = <String, dynamic>{'searchString': searchString};
     final $headers = {
       'lastevaluatedkey': lastevaluatedkey,
@@ -429,9 +429,9 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> inviteAllFollowers(String sponsorId,
+  Future<Response<dynamic>> inviteAllFollowers(String clubId, String sponsorId,
       {String authorization}) {
-    final $url = '/clubs/{clubId}/all-followers';
+    final $url = '/clubs/$clubId/invite/all-followers';
     final $params = <String, dynamic>{'sponsorId': sponsorId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
@@ -441,9 +441,9 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<dynamic>> inviteUsers(
-      String sponsorId, BuiltInviteFormat invite,
+      String clubId, String sponsorId, BuiltInviteFormat invite,
       {String authorization}) {
-    final $url = '/clubs/{clubId}/all-followers';
+    final $url = '/clubs/$clubId/invite/';
     final $params = <String, dynamic>{'sponsorId': sponsorId};
     final $headers = {'authorization': authorization};
     final $body = invite;
@@ -453,9 +453,9 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<BuiltActiveJoinRequests>> getAllBlockedUsers(
+  Future<Response<BuiltActiveJoinRequests>> getAllBlockedUsers(String clubId,
       {String authorization}) {
-    final $url = '/clubs/{clubId}/block';
+    final $url = '/clubs/$clubId/block';
     final $headers = {'authorization': authorization};
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client

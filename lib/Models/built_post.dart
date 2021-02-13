@@ -458,10 +458,11 @@ abstract class BuiltUnifiedSearchResults
 abstract class BuiltInviteFormat implements Built<BuiltInviteFormat, BuiltInviteFormatBuilder> {
   // fields go here
 
+  
+  @nullable
+  String get type;
   @nullable
   BuiltList<String> get invitee;
-  @nullable
-  BuiltList<String> get type;
 
   BuiltInviteFormat._();
 
