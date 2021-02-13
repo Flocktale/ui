@@ -68,6 +68,38 @@ class _LandingPageState extends State<LandingPage>
     Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(50.0),
+          child: Material(
+            elevation: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                IconButton(
+                    icon: Icon(Icons.camera_alt_outlined),
+                    onPressed: null),
+                Text(
+                  'MOOTCLUB',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2.0,
+                  ),
+                ),
+                IconButton(
+                  icon: hasNewNotifications == false
+                      ? Icon(Icons.notifications_none_outlined)
+                      : Icon(
+                    Icons.notifications_active,
+                    color: Colors.redAccent,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/notificationPage');
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
           body: Stack(children: [
         Container(
             margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -75,53 +107,44 @@ class _LandingPageState extends State<LandingPage>
               onRefresh: _fetchAllClubs,
               child: ListView(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      IconButton(
-                          icon: Icon(Icons.camera_alt_outlined),
-                          onPressed: null),
-                      Text(
-                        'MOOTCLUB',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      IconButton(
-                        icon: hasNewNotifications == false
-                            ? Icon(Icons.notifications_none_outlined)
-                            : Icon(
-                                Icons.notifications_active,
-                                color: Colors.redAccent,
-                              ),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('/notificationPage');
-                        },
-                      ),
-                    ],
-                  ),
                   SizedBox(
                     height: 20,
                   ),
-                  SizedBox(
-                    width: 250.0,
-                    child: TypewriterAnimatedTextKit(
-                      isRepeatingAnimation: false,
-                      speed: const Duration(milliseconds: 125),
-                      onTap: () {
-                        print("Tap Event");
-                      },
-                      text: [
-                        'Join your \nfavourite clubs.',
-                      ],
-                      textStyle: TextStyle(
-                          fontSize: 30.0,
-                          fontFamily: "Lato",
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black),
-                      textAlign: TextAlign.start,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 250.0,
+                        height: 80,
+                        child: TypewriterAnimatedTextKit(
+                          isRepeatingAnimation: false,
+
+                          speed: const Duration(milliseconds: 125),
+                          onTap: () {
+                            print("Tap Event");
+                          },
+                          text: [
+                            'Join your \nfavourite clubs.',
+                          ],
+                          textStyle: TextStyle(
+                              fontSize: 30.0,
+                              fontFamily: "Lato",
+                              fontWeight: FontWeight.w300,
+                              color: Colors.red),
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.redAccent,width: 10)
+                        ),
+                        child: Image.asset(
+                          "assets/LandingPage.gif",
+                          width: 80,
+                          height: 80
+                        ),
+                      )
+                    ],
                   ),
                   Clubs != null
                       ? ListView.builder(

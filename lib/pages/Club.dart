@@ -31,7 +31,7 @@ class _ClubState extends State<Club> {
   final _commentController = TextEditingController();
   BuiltList<BuiltClub> Clubs;
   List<SummaryUser> participantList = [];
-
+  List<SummaryUser> audienceList = [];
   // int likes = -1;
   int likeCount = -1;
   int dislikes = -1;
@@ -60,8 +60,8 @@ class _ClubState extends State<Club> {
 
   void getAudienceForFirstTime(event) {
     audienceCount = (event['count']);
+    print("<<<<<<<<<<<<<<<<");
     print(event);
-
     setState(() {});
   }
 
@@ -206,6 +206,34 @@ class _ClubState extends State<Club> {
     }
   }
 
+  Future<bool> onLikeButtonTapped(bool isLiked) async{
+    /// send your request here
+     toggleLikeClub();
+
+    /// if failed, you can do nothing
+    // return success? !isLiked:isLiked;
+
+    return !isLiked;
+  }
+  Future<bool> onDisLikeButtonTapped(bool isLiked) async{
+    /// send your request here
+    toggleDislikeClub();
+
+    /// if failed, you can do nothing
+    // return success? !isLiked:isLiked;
+
+    return !isLiked;
+  }
+  Future<bool> ondReportButtonTapped(bool isLiked) async{
+    /// send your request here
+    toggleReportClub();
+
+    /// if failed, you can do nothing
+    // return success? !isLiked:isLiked;
+
+    return !isLiked;
+  }
+
   @override
   void initState() {
     Provider.of<DatabaseApiService>(context, listen: false).enterClub(
@@ -259,13 +287,13 @@ class _ClubState extends State<Club> {
               onSelected: handleClick,
               itemBuilder: (BuildContext context) {
                 return isParticipant?
-                  {'Show Join Requests','Show Listeners','Invite Panelist'}.map((String choice) {
+                  {'Show Join Requests','Show Audience','Invite Panelist'}.map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Text(choice),
                   );
                 }).toList() :
-                {'Show Listeners','Invite Audience'}.map((String choice) {
+                {'Show Audience','Invite Audience'}.map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Text(choice),
@@ -306,9 +334,12 @@ class _ClubState extends State<Club> {
                                     ],
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0))),
-                                child: Image.network(
-                                  widget.club.clubAvatar,
-                                  fit: BoxFit.cover,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                  child: Image.network(
+                                    widget.club.clubAvatar,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               Container(
@@ -392,6 +423,7 @@ class _ClubState extends State<Club> {
                                         children: <Widget>[
                                           Container(
                                             child: LikeButton(
+                                              onTap: onLikeButtonTapped,
                                               likeBuilder: (bool isLiked) {
                                                 return isLiked
                                                     ? Icon(
@@ -413,6 +445,7 @@ class _ClubState extends State<Club> {
                                             margin:
                                                 EdgeInsets.fromLTRB(10, 0, 0, 0),
                                             child: LikeButton(
+                                              onTap: onDisLikeButtonTapped,
                                               likeCount: dislikeCount,
                                               likeBuilder: (bool isLiked) {
                                                 return isLiked
@@ -433,6 +466,7 @@ class _ClubState extends State<Club> {
                                             margin:
                                                 EdgeInsets.fromLTRB(10, 0, 0, 0),
                                             child: LikeButton(
+                                              onTap: ondReportButtonTapped,
                                               likeBuilder: (bool isLiked) {
                                                 return isLiked
                                                     ? Icon(
@@ -525,6 +559,10 @@ class _ClubState extends State<Club> {
                                       onPressed: () async{
                                         if (isParticipant && playing) {
                                           isMuted = !isMuted;
+                                          if(isMuted)
+                                            Fluttertoast.showToast(msg: 'Muted');
+                                          else
+                                            Fluttertoast.showToast(msg: 'Unmuted');
                                         }
                                         else if(!isParticipant && playing){
                                           if(!sentRequest){
