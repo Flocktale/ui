@@ -412,6 +412,8 @@ abstract class BuiltActiveJoinRequests
   @nullable
   BuiltList<JoinRequests> get activeJoinRequestUsers;
 
+  @nullable
+  String get lastevaluatedkey;
   BuiltActiveJoinRequests._();
 
   factory BuiltActiveJoinRequests([updates(BuiltActiveJoinRequestsBuilder b)]) =
@@ -450,4 +452,29 @@ abstract class BuiltUnifiedSearchResults
 
   static Serializer<BuiltUnifiedSearchResults> get serializer =>
       _$builtUnifiedSearchResultsSerializer;
+}
+
+
+abstract class BuiltInviteFormat implements Built<BuiltInviteFormat, BuiltInviteFormatBuilder> {
+  // fields go here
+
+  
+  @nullable
+  String get type;
+  @nullable
+  BuiltList<String> get invitee;
+
+  BuiltInviteFormat._();
+
+  factory BuiltInviteFormat([updates(BuiltInviteFormatBuilder b)]) = _$BuiltInviteFormat;
+
+  String toJson() {
+    return json.encode(serializers.serializeWith(BuiltInviteFormat.serializer, this));
+  }
+
+  static BuiltInviteFormat fromJson(String jsonString) {
+    return serializers.deserializeWith(BuiltInviteFormat.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<BuiltInviteFormat> get serializer => _$builtInviteFormatSerializer;
 }

@@ -23,7 +23,11 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
-  
+  @Get(path: '/users/username-availability')
+  Future<Response> isThisUsernameAvailable(
+    @Query() String username, {
+    @required @Header() String authorization,
+  });
 
   @Post(path: '/users/create')
   Future<Response> createNewUser(
@@ -39,11 +43,17 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
-  
   @Get(path: '/users/{userId}/notifications')
   Future<Response<BuiltNotificationList>> getNotifications(
     @Path('userId') String userId,
     @Header('lastevaluatedkey') String lastevaluatedkey, {
+    @required @Header() String authorization,
+  });
+
+  @Get(path: '/users/{userId}/notifications/opened')
+  Future<Response<BuiltNotificationList>> responseToNotification(
+    @Path('userId') String userId,
+    @Query() String notificationId, {
     @required @Header() String authorization,
   });
 
@@ -230,6 +240,14 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
+  @Get(path: '/clubs/{clubId}/join-request/query')
+  Future<Response<BuiltActiveJoinRequests>> searchInActiveJoinRequests(
+    @Path() String clubId,
+    @Query() String searchString,
+    @Header() String lastevaluatedkey, {
+    @required @Header() String authorization,
+  });
+
   @Post(path: '/clubs/{clubId}/join-request/response')
   Future<Response> respondToJoinRequest(
     @Path() String clubId,
@@ -249,6 +267,29 @@ abstract class DatabaseApiService extends ChopperService {
   Future<Response> kickAudienceId(
     @Path() String clubId,
     @Query() String audienceId, {
+    @required @Header() String authorization,
+  });
+
+  // -------------- Inviting APIs----------------
+
+  @Post(path: '/clubs/{clubId}/invite/all-followers')
+  Future<Response> inviteAllFollowers(
+    @Path() String clubId,
+    @Query() String sponsorId, {
+    @required @Header() String authorization,
+  });
+
+  @Post(path: '/clubs/{clubId}/invite/')
+  Future<Response> inviteUsers(
+    @Path() String clubId,
+    @Query() String sponsorId,
+    @Body() BuiltInviteFormat invite, {
+    @required @Header() String authorization,
+  });
+
+  @Get(path: '/clubs/{clubId}/block')
+  Future<Response<BuiltActiveJoinRequests>> getAllBlockedUsers(
+    @Path() String clubId, {
     @required @Header() String authorization,
   });
 

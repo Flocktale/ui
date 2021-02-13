@@ -37,6 +37,17 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<dynamic>> isThisUsernameAvailable(String username,
+      {String authorization}) {
+    final $url = '/users/username-availability';
+    final $params = <String, dynamic>{'username': username};
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<dynamic>> createNewUser(BuiltUser body,
       {String authorization}) {
     final $url = '/users/create';
@@ -68,6 +79,18 @@ class _$DatabaseApiService extends DatabaseApiService {
       'authorization': authorization
     };
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client.send<BuiltNotificationList, BuiltNotificationList>($request);
+  }
+
+  @override
+  Future<Response<BuiltNotificationList>> responseToNotification(
+      String userId, String notificationId,
+      {String authorization}) {
+    final $url = '/users/$userId/notifications/opened';
+    final $params = <String, dynamic>{'notificationId': notificationId};
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
     return client.send<BuiltNotificationList, BuiltNotificationList>($request);
   }
 
@@ -353,6 +376,22 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<BuiltActiveJoinRequests>> searchInActiveJoinRequests(
+      String clubId, String searchString, String lastevaluatedkey,
+      {String authorization}) {
+    final $url = '/clubs/$clubId/join-request/query';
+    final $params = <String, dynamic>{'searchString': searchString};
+    final $headers = {
+      'lastevaluatedkey': lastevaluatedkey,
+      'authorization': authorization
+    };
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client
+        .send<BuiltActiveJoinRequests, BuiltActiveJoinRequests>($request);
+  }
+
+  @override
   Future<Response<dynamic>> respondToJoinRequest(
       String clubId, String action, String audienceId,
       {String authorization}) {
@@ -387,6 +426,40 @@ class _$DatabaseApiService extends DatabaseApiService {
     final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);
     return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> inviteAllFollowers(String clubId, String sponsorId,
+      {String authorization}) {
+    final $url = '/clubs/$clubId/invite/all-followers';
+    final $params = <String, dynamic>{'sponsorId': sponsorId};
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> inviteUsers(
+      String clubId, String sponsorId, BuiltInviteFormat invite,
+      {String authorization}) {
+    final $url = '/clubs/$clubId/invite/';
+    final $params = <String, dynamic>{'sponsorId': sponsorId};
+    final $headers = {'authorization': authorization};
+    final $body = invite;
+    final $request = Request('POST', $url, client.baseUrl,
+        body: $body, parameters: $params, headers: $headers);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<BuiltActiveJoinRequests>> getAllBlockedUsers(String clubId,
+      {String authorization}) {
+    final $url = '/clubs/$clubId/block';
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client
+        .send<BuiltActiveJoinRequests, BuiltActiveJoinRequests>($request);
   }
 
   @override

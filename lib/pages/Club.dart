@@ -44,16 +44,14 @@ class _ClubState extends State<Club> {
     //   ..avatar = event['avatar']
     //   ..userId = event['userId']
     //   ..username = event['username']);
-    final cuser = Provider.of<UserData>(context,listen: false).user;
-    event['participantList'].forEach((e){
-      SummaryUser u = SummaryUser((r)=>r
+    final cuser = Provider.of<UserData>(context, listen: false).user;
+    event['participantList'].forEach((e) {
+      SummaryUser u = SummaryUser((r) => r
         ..userId = e['userId']
         ..username = e['username']
-        ..avatar = e['avatar']
-      );
+        ..avatar = e['avatar']);
       participantList.add(u);
-      if(u.userId==cuser.userId)
-        isParticipant = true;
+      if (u.userId == cuser.userId) isParticipant = true;
     });
     setState(() {});
   }
@@ -146,21 +144,25 @@ class _ClubState extends State<Club> {
       authorization: null,
     );
   }
-  sendJoinRequest() async{
+
+  sendJoinRequest() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
-    await service.sendJoinRequest(cuser.userId, widget.club.clubId, authorization: authToken);
+    await service.sendJoinRequest(cuser.userId, widget.club.clubId,
+        authorization: authToken);
     Fluttertoast.showToast(msg: "Join Request Sent");
   }
 
-  deleteJoinRequest() async{
+  deleteJoinRequest() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
-    await service.deleteJoinRequet(cuser.userId, widget.club.clubId, authorization: authToken);
+    await service.deleteJoinRequet(cuser.userId, widget.club.clubId,
+        authorization: authToken);
     Fluttertoast.showToast(msg: "Join Request Cancelled");
   }
+
   void reportClub() {}
 
 //! ------------------------------ for test purpose ------------------------------
@@ -182,18 +184,20 @@ class _ClubState extends State<Club> {
       ));
       print(data.body['agoraToken']);
       _club = _club.rebuild((b) => b..agoraToken = data.body['agoraToken']);
-      Provider.of<AgoraController>(context,listen: false).club = _club;
+      Provider.of<AgoraController>(context, listen: false).club = _club;
     }
 
     Provider.of<AgoraController>(context, listen: false)
         .joinAsParticipant(clubId: _club.clubId, token: _club.agoraToken);
   }
+
   void handleClick(String value) {
     switch (value) {
       case 'Show Join Requests':
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (_)=>ClubJoinRequests(club: widget.club,)
-        ));
+            builder: (_) => ClubJoinRequests(
+                  club: widget.club,
+                )));
         break;
       case 'Show Listeners':
         break;
@@ -206,16 +210,17 @@ class _ClubState extends State<Club> {
     }
   }
 
-  Future<bool> onLikeButtonTapped(bool isLiked) async{
+  Future<bool> onLikeButtonTapped(bool isLiked) async {
     /// send your request here
-     toggleLikeClub();
+    toggleLikeClub();
 
     /// if failed, you can do nothing
     // return success? !isLiked:isLiked;
 
     return !isLiked;
   }
-  Future<bool> onDisLikeButtonTapped(bool isLiked) async{
+
+  Future<bool> onDisLikeButtonTapped(bool isLiked) async {
     /// send your request here
     toggleDislikeClub();
 
@@ -224,7 +229,8 @@ class _ClubState extends State<Club> {
 
     return !isLiked;
   }
-  Future<bool> ondReportButtonTapped(bool isLiked) async{
+
+  Future<bool> ondReportButtonTapped(bool isLiked) async {
     /// send your request here
     toggleReportClub();
 
@@ -241,7 +247,22 @@ class _ClubState extends State<Club> {
         Provider.of<UserData>(context, listen: false).user.userId,
         authorization: null);
 
-    // Provider.of<MySocket>(context,listen:false).currentStatus();
+    // Inviting all followers
+    // Provider.of<DatabaseApiService>(context,listen: false).inviteAllFollowers(widget.club.clubId,Provider.of<UserData>(context, listen: false).user.userId, authorization: null);
+
+    // Inviting some users
+    // String type = "participant";
+
+    // BuiltList<String> list = BuiltList<String>([]);
+    // var builder = list.toBuilder();
+    // builder.add('140f54d2-10ef-4cc1-90d6-07a44a1860e6');
+    // // ..
+    //  BuiltInviteFormat u = BuiltInviteFormat((r) => r
+    // ..type = type
+    // ..invitee =  builder
+    // );
+    // Provider.of<DatabaseApiService>(context,listen: false).inviteUsers(widget.club.clubId, Provider.of<UserData>(context,listen: false).userId, u, authorization: null);
+    Provider.of<MySocket>(context, listen: false).currentStatus();
     Provider.of<MySocket>(context, listen: false).joinClub(
       widget.club.clubId,
       putNewComment,
@@ -250,8 +271,11 @@ class _ClubState extends State<Club> {
       getParticipantListForFirstTime,
       getAudienceForFirstTime,
     );
-    setState(() {
-    });
+
+    Provider.of<DatabaseApiService>(context, listen: false)
+        .getActiveJoinRequests(widget.club.clubId, null, authorization: null);
+
+    setState(() {});
     super.initState();
   }
 
@@ -273,7 +297,7 @@ class _ClubState extends State<Club> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(
-              color: Colors.black,
+            color: Colors.black,
           ),
 //          title: Text(
 //            "Now Playing",
@@ -286,19 +310,20 @@ class _ClubState extends State<Club> {
             PopupMenuButton<String>(
               onSelected: handleClick,
               itemBuilder: (BuildContext context) {
-                return isParticipant?
-                  {'Show Join Requests','Show Audience','Invite Panelist'}.map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList() :
-                {'Show Audience','Invite Audience'}.map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
+                return isParticipant
+                    ? {'Show Join Requests', 'Show Audience', 'Invite Panelist'}
+                        .map((String choice) {
+                        return PopupMenuItem<String>(
+                          value: choice,
+                          child: Text(choice),
+                        );
+                      }).toList()
+                    : {'Show Audience', 'Invite Audience'}.map((String choice) {
+                        return PopupMenuItem<String>(
+                          value: choice,
+                          child: Text(choice),
+                        );
+                      }).toList();
               },
             ),
           ],
@@ -306,532 +331,557 @@ class _ClubState extends State<Club> {
           elevation: 0.0,
         ),
         body: SafeArea(
-            child: Stack(
-              children: [
-                Container(
-                //  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          child: Stack(
+            children: [
+              Container(
+                  //  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                   child: SingleChildScrollView(
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                height: size.height / 5,
-                                width: size.width / 2.5,
-                                margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                                decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        blurRadius: 25.0, // soften the shadow
-                                        spreadRadius: 1.0, //extend the shadow
-                                        offset: Offset(
-                                          0.0,
-                                          15.0, // Move to bottom 10 Vertically
-                                        ),
-                                      )
-                                    ],
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.0))),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                  child: Image.network(
-                                    widget.club.clubAvatar,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    widget.club.clubName != null
-                                        ? SizedBox(
-                                            width: size.width / 2,
-                                            child: Text(
-                                              widget.club.clubName,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontFamily: 'Lato',
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: size.width / 25),
-                                            ),
-                                          )
-                                        : SizedBox(
-                                            width: size.width / 2,
-                                            child: Text(
-                                              "ANONYMOUS CLUB",
-                                              style: TextStyle(
-                                                  fontFamily: 'Lato',
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                    widget.club.description != null
-                                        ? SizedBox(
-                                            width: size.width / 2,
-                                            child: Text(
-                                              widget.club.description,
-                                              style: TextStyle(
-                                                  fontFamily: 'Lato',
-                                                  fontSize: size.width / 30,
-                                                  color: Colors.black54),
-                                            ),
-                                          )
-                                        : SizedBox(
-                                            width: size.width / 2,
-                                            child: Text(
-                                              "There is no description provided for this club",
-                                              style: TextStyle(
-                                                  fontFamily: 'Lato',
-                                                  fontSize: size.width / 30,
-                                                  color: Colors.black54),
-                                            ),
-                                          ),
-                                    isLive
-                                        ? Container(
-                                            margin:
-                                                EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                            padding:
-                                                EdgeInsets.fromLTRB(2, 2, 2, 2),
-                                            color: Colors.red,
-                                            child: Text(
-                                              "LIVE",
-                                              style: TextStyle(
-                                                  fontFamily: 'Lato',
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  letterSpacing: 2.0),
-                                            ),
-                                          )
-                                        : Container(
-                                            margin:
-                                                EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                            child: Text(
-                                              "23 mins",
-                                              style: TextStyle(
-                                                  fontFamily: 'Lato',
-                                                  color: Colors.black54),
-                                            ),
-                                          ),
-                                    Container(
-                                      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Container(
-                                            child: LikeButton(
-                                              onTap: onLikeButtonTapped,
-                                              likeBuilder: (bool isLiked) {
-                                                return isLiked
-                                                    ? Icon(
-                                                        Icons.favorite,
-                                                        color: Colors.redAccent,
-                                                        size: size.height / 25,
-                                                      )
-                                                    : Icon(
-                                                        Icons
-                                                            .favorite_border_rounded,
-                                                        color: Colors.black,
-                                                        size: size.height / 25,
-                                                      );
-                                              },
-                                              likeCount: likeCount,
-                                            ),
-                                          ),
-                                          Container(
-                                            margin:
-                                                EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                            child: LikeButton(
-                                              onTap: onDisLikeButtonTapped,
-                                              likeCount: dislikeCount,
-                                              likeBuilder: (bool isLiked) {
-                                                return isLiked
-                                                    ? Icon(
-                                                        Icons.thumb_down,
-                                                        color: Colors.amber,
-                                                        size: size.height / 25,
-                                                      )
-                                                    : Icon(
-                                                        Icons.thumb_down_outlined,
-                                                        color: Colors.black,
-                                                        size: size.height / 25,
-                                                      );
-                                              },
-                                            ),
-                                          ),
-                                          Container(
-                                            margin:
-                                                EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                            child: LikeButton(
-                                              onTap: ondReportButtonTapped,
-                                              likeBuilder: (bool isLiked) {
-                                                return isLiked
-                                                    ? Icon(
-                                                        Icons.flag,
-                                                        color: Colors.black,
-                                                        size: size.height / 25,
-                                                      )
-                                                    : Icon(
-                                                        Icons.flag_outlined,
-                                                        color: Colors.black,
-                                                        size: size.height / 25,
-                                                      );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
+                child: Column(
+                  children: <Widget>[
+                    Row(mainAxisAlignment: MainAxisAlignment.start, children: <
+                        Widget>[
+                      Container(
+                        height: size.height / 5,
+                        width: size.width / 2.5,
+                        margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 25.0, // soften the shadow
+                                spreadRadius: 1.0, //extend the shadow
+                                offset: Offset(
+                                  0.0,
+                                  15.0, // Move to bottom 10 Vertically
                                 ),
                               )
-                            ]),
-                        Container(
-                          margin:
-                              EdgeInsets.fromLTRB(15, size.height / 50, 15, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              InkWell(
-                                onTap: (){
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (_)=>ProfilePage(userId: widget.club.creator.userId,)
-                                  ));
-                                },
-                                child: Row(children: <Widget>[
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(widget.club.creator.avatar),
-                                    radius: size.width / 20,
+                            ],
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          child: Image.network(
+                            widget.club.clubAvatar,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            widget.club.clubName != null
+                                ? SizedBox(
+                                    width: size.width / 2,
+                                    child: Text(
+                                      widget.club.clubName,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: size.width / 25),
+                                    ),
+                                  )
+                                : SizedBox(
+                                    width: size.width / 2,
+                                    child: Text(
+                                      "ANONYMOUS CLUB",
+                                      style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                  widget.club.creator.name != null
-                                      ? Container(
-                                          margin: EdgeInsets.fromLTRB(
-                                              size.width / 30, 0, 0, 0),
-                                          child: Text(
-                                            widget.club.creator.name,
-                                            style: TextStyle(
-                                                fontFamily: 'Lato',
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        )
-                                      : Container(
-                                          margin: EdgeInsets.fromLTRB(
-                                              size.width / 30, 0, 0, 0),
-                                          child: Text(
-                                            '@' + widget.club.creator.username,
-                                            style: TextStyle(
-                                                fontFamily: 'Lato',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: size.width / 25),
-                                          ),
-                                        ),
-                                ]),
-                              ),
-                              Row(
-                                children: [
+                            widget.club.description != null
+                                ? SizedBox(
+                                    width: size.width / 2,
+                                    child: Text(
+                                      widget.club.description,
+                                      style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontSize: size.width / 30,
+                                          color: Colors.black54),
+                                    ),
+                                  )
+                                : SizedBox(
+                                    width: size.width / 2,
+                                    child: Text(
+                                      "There is no description provided for this club",
+                                      style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontSize: size.width / 30,
+                                          color: Colors.black54),
+                                    ),
+                                  ),
+                            isLive
+                                ? Container(
+                                    margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                    color: Colors.red,
+                                    child: Text(
+                                      "LIVE",
+                                      style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          letterSpacing: 2.0),
+                                    ),
+                                  )
+                                : Container(
+                                    margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    child: Text(
+                                      "23 mins",
+                                      style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          color: Colors.black54),
+                                    ),
+                                  ),
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
                                   Container(
-                                    child: FloatingActionButton(
-                                      heroTag: "btn1",
-                                      onPressed: () {
-                                        setState(() {
-                                          playing = !playing;
-                                          if (playing)
-                                            _fetchClubDetailsAndJoinAsHost();
-                                          else
-                                            _stopAgora();
-                                        });
+                                    child: LikeButton(
+                                      onTap: onLikeButtonTapped,
+                                      likeBuilder: (bool isLiked) {
+                                        return isLiked
+                                            ? Icon(
+                                                Icons.favorite,
+                                                color: Colors.redAccent,
+                                                size: size.height / 25,
+                                              )
+                                            : Icon(
+                                                Icons.favorite_border_rounded,
+                                                color: Colors.black,
+                                                size: size.height / 25,
+                                              );
                                       },
-                                      child: !playing
-                                          ? Icon(Icons.play_arrow)
-                                          : Icon(Icons.stop),
-                                      backgroundColor:
-                                          !playing ? Colors.red : Colors.redAccent,
+                                      likeCount: likeCount,
                                     ),
                                   ),
                                   Container(
                                     margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                    child: FloatingActionButton(
-                                      heroTag: "btn2",
-                                      onPressed: () async{
-                                        if (isParticipant && playing) {
-                                          isMuted = !isMuted;
-                                          if(isMuted)
-                                            Fluttertoast.showToast(msg: 'Muted');
-                                          else
-                                            Fluttertoast.showToast(msg: 'Unmuted');
-                                        }
-                                        else if(!isParticipant && playing){
-                                          if(!sentRequest){
-                                            await sendJoinRequest();
-                                          }
-                                          else{
-                                            await deleteJoinRequest();
-                                          }
-                                          sentRequest = !sentRequest;
-                                        }
-                                        setState(() {
-                                        });
+                                    child: LikeButton(
+                                      onTap: onDisLikeButtonTapped,
+                                      likeCount: dislikeCount,
+                                      likeBuilder: (bool isLiked) {
+                                        return isLiked
+                                            ? Icon(
+                                                Icons.thumb_down,
+                                                color: Colors.amber,
+                                                size: size.height / 25,
+                                              )
+                                            : Icon(
+                                                Icons.thumb_down_outlined,
+                                                color: Colors.black,
+                                                size: size.height / 25,
+                                              );
                                       },
-                                      child: isParticipant
-                                          ? !isMuted?Icon(Icons.mic_none_rounded):Icon(Icons.mic_off_rounded)
-                                          : Icon(Icons.person_add),
-                                      backgroundColor:
-                                          !playing ? Colors.grey : !sentRequest?Colors.amber:Colors.grey,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                    child: LikeButton(
+                                      onTap: ondReportButtonTapped,
+                                      likeBuilder: (bool isLiked) {
+                                        return isLiked
+                                            ? Icon(
+                                                Icons.flag,
+                                                color: Colors.black,
+                                                size: size.height / 25,
+                                              )
+                                            : Icon(
+                                                Icons.flag_outlined,
+                                                color: Colors.black,
+                                                size: size.height / 25,
+                                              );
+                                      },
                                     ),
                                   ),
                                 ],
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: size.height / 50),
-                        //SizedBox(height: size.height/20,),
-
-                        Container(
-                            height: size.height/2 + size.height/30,
-                            width: size.width,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(0),
-                            ),
-                            child: Stack(children: <Widget>[
-                              Positioned(
-                                top: 15,
-                                left: 10,
-                                child: Text(
-                                  'COMMENTS',
-                                  style: TextStyle(
-                                      fontFamily: 'Lato',
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                      fontSize: size.width / 25,
-                                      letterSpacing: 2.0),
-                                ),
-                              ),
-                              Positioned(
-                                  top: 45,
-                                  left: 10,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: size.height / 2.5,
-                                        width: size.width - 20,
-                                        color: Colors.white,
-                                        child: ListView.builder(
-                                            itemCount: comments.length,
-                                            itemBuilder: (context, index) {
-                                              return ListTile(
-                                                leading: CircleAvatar(
-                                                  backgroundImage:
-                                                      NetworkImage(comments[index].user.avatar),
-                                                ),
-                                                title: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      comments[index].user.username,
-                                                      style: TextStyle(
-                                                        fontFamily: "Lato",
-                                                        color: Colors.redAccent
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds<60?
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds==1?
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds.toString()+" second ago":
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds.toString() + " seconds ago":
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes<60?
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes==1?
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes.toString() + " minute ago":
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes.toString() + " minutes ago":
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours<24?
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours==1?
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours.toString() + " hour ago":
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours.toString() + " hours ago":
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays==1?
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays.toString()+" day ago":
-                                                        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays.toString()+" days ago",
-                                                      style: TextStyle(
-                                                        fontFamily: 'Lato',
-                                                        fontSize: size.width/30
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                subtitle: Text(
-                                                  comments[index].body,
-                                                  style:
-                                                      TextStyle(fontFamily: "Lato"),
-                                                ),
-                                              );
-                                            }),
-                                      ),
-                                      Container(
-                                        height: 40,
-                                        margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                        width: size.width-20,
-                                        child: TextField(
-                                          controller: _commentController,
-                                          decoration: InputDecoration(
-                                            suffixIcon: IconButton(
-                                              icon: Icon(Icons.send,color: Colors.redAccent,),
-                                              onPressed: () {
-                                                print("=<<>>><<>>><<>>>="+_commentController.text);
-                                                addComment(_commentController.text);
-                                                _commentController.text = '';
-                                                //            _sendComment(context);
-                                              },
-                                            ),
-                                              fillColor: Colors.white,
-                                              hintText: 'Comment',
-                                              filled: true,
-                                              enabledBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.all(
-                                                      Radius.circular(5.0)),
-                                                  borderSide: BorderSide(
-                                                      color: Colors.black12,
-                                                      width: 1.0)),
-                                              focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.black,
-                                                      width: 2.0))),
-                                          //   onSubmitted: (val) => {addComment(val)},
-                                        ),
-                                      )
-                                    ],
-                                  )),
-                            ])),
-
-                        SizedBox(height: size.height / 30),
-                        Container(
-                          margin: EdgeInsets.only(
-                              left: size.width / 50, right: size.width / 50),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'More from @${widget.club.creator.username}',
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                              ),
-                              Text(
-                                'View All',
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: size.height / 50),
-                        FutureBuilder(
-                            future: _fetchAllClubs(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(child: CircularProgressIndicator());
-                              }
-                              return Clubs != null
-                                  ? Carousel(Clubs:Clubs.where((club) => club.clubId!=widget.club.clubId).toBuiltList())
-                                  : Container();
-                            }),
-                        SizedBox(height: size.height/20)
-                      ],
-                    ),
-                  )
-                ),
-                MediaQuery.of(context).viewInsets.bottom==0?
-                SlidingUpPanel(
-                  minHeight: size.height / 20,
-                  maxHeight: size.height / 1.5,
-                  backdropEnabled: true,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-                  panel: Container(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: size.height / 30,
-                ),
-                Center(
-                  child: Text("Panelists",
-                      style: TextStyle(
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.bold,
-                          fontSize: size.width / 20,
-                          color: Colors.redAccent)),
-                ),
-                SizedBox(
-                  height: size.height / 50,
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  height: MediaQuery.of(context).size.height/2 + 40,
-                  child: GridView.builder(
-                    itemCount: participantList.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3
-                    ),
-                    itemBuilder: (context,index){
-                      return Container(
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                              radius: size.width/9,
-                              backgroundColor: Color(0xffFDCF09),
-                              child: CircleAvatar(
-                              radius:size.width/10,
-                              backgroundImage: NetworkImage(participantList[index].avatar),
-                              ),
-                            ),
-                            Text(
-                              participantList[index].username,
-                              style: TextStyle(
-                                fontFamily: "Lato",
-                                fontWeight: FontWeight.bold
                               ),
                             )
                           ],
                         ),
-                      );
-                    },
+                      )
+                    ]),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(15, size.height / 50, 15, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => ProfilePage(
+                                        userId: widget.club.creator.userId,
+                                      )));
+                            },
+                            child: Row(children: <Widget>[
+                              CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(widget.club.creator.avatar),
+                                radius: size.width / 20,
+                              ),
+                              widget.club.creator.name != null
+                                  ? Container(
+                                      margin: EdgeInsets.fromLTRB(
+                                          size.width / 30, 0, 0, 0),
+                                      child: Text(
+                                        widget.club.creator.name,
+                                        style: TextStyle(
+                                            fontFamily: 'Lato',
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.fromLTRB(
+                                          size.width / 30, 0, 0, 0),
+                                      child: Text(
+                                        '@' + widget.club.creator.username,
+                                        style: TextStyle(
+                                            fontFamily: 'Lato',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: size.width / 25),
+                                      ),
+                                    ),
+                            ]),
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                child: FloatingActionButton(
+                                  heroTag: "btn1",
+                                  onPressed: () {
+                                    setState(() {
+                                      playing = !playing;
+                                      if (playing)
+                                        _fetchClubDetailsAndJoinAsHost();
+                                      else
+                                        _stopAgora();
+                                    });
+                                  },
+                                  child: !playing
+                                      ? Icon(Icons.play_arrow)
+                                      : Icon(Icons.stop),
+                                  backgroundColor:
+                                      !playing ? Colors.red : Colors.redAccent,
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                child: FloatingActionButton(
+                                  heroTag: "btn2",
+                                  onPressed: () async {
+                                    if (isParticipant && playing) {
+                                      isMuted = !isMuted;
+                                      if (isMuted)
+                                        Fluttertoast.showToast(msg: 'Muted');
+                                      else
+                                        Fluttertoast.showToast(msg: 'Unmuted');
+                                    } else if (!isParticipant && playing) {
+                                      if (!sentRequest) {
+                                        await sendJoinRequest();
+                                      } else {
+                                        await deleteJoinRequest();
+                                      }
+                                      sentRequest = !sentRequest;
+                                    }
+                                    setState(() {});
+                                  },
+                                  child: isParticipant
+                                      ? !isMuted
+                                          ? Icon(Icons.mic_none_rounded)
+                                          : Icon(Icons.mic_off_rounded)
+                                      : Icon(Icons.person_add),
+                                  backgroundColor: !playing
+                                      ? Colors.grey
+                                      : !sentRequest
+                                          ? Colors.amber
+                                          : Colors.grey,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: size.height / 50),
+                    //SizedBox(height: size.height/20,),
 
-                ),)
-                //SizedBox(height: size.height/50,),+
-              ],
-            )),
-              collapsed: Container(
-              decoration: BoxDecoration(
-                  color: Colors.redAccent,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24))
-              ),
-                child: Center(
-                child: Text(
-                  "PANELISTS",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Lato',
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2.0),
+                    Container(
+                        height: size.height / 2 + size.height / 30,
+                        width: size.width,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(0),
+                        ),
+                        child: Stack(children: <Widget>[
+                          Positioned(
+                            top: 15,
+                            left: 10,
+                            child: Text(
+                              'COMMENTS',
+                              style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: size.width / 25,
+                                  letterSpacing: 2.0),
+                            ),
+                          ),
+                          Positioned(
+                              top: 45,
+                              left: 10,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: size.height / 2.5,
+                                    width: size.width - 20,
+                                    color: Colors.white,
+                                    child: ListView.builder(
+                                        itemCount: comments.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  comments[index].user.avatar),
+                                            ),
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  comments[index].user.username,
+                                                  style: TextStyle(
+                                                      fontFamily: "Lato",
+                                                      color: Colors.redAccent),
+                                                ),
+                                                Text(
+                                                  DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds <
+                                                          60
+                                                      ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inSeconds ==
+                                                              1
+                                                          ? DateTime.now()
+                                                                  .difference(DateTime.fromMillisecondsSinceEpoch(comments[index]
+                                                                      .timestamp))
+                                                                  .inSeconds
+                                                                  .toString() +
+                                                              " second ago"
+                                                          : DateTime.now()
+                                                                  .difference(DateTime.fromMillisecondsSinceEpoch(
+                                                                      comments[index]
+                                                                          .timestamp))
+                                                                  .inSeconds
+                                                                  .toString() +
+                                                              " seconds ago"
+                                                      : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes <
+                                                              60
+                                                          ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes ==
+                                                                  1
+                                                              ? DateTime.now()
+                                                                      .difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp))
+                                                                      .inMinutes
+                                                                      .toString() +
+                                                                  " minute ago"
+                                                              : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inMinutes.toString() + " minutes ago"
+                                                          : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours < 24
+                                                              ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours == 1
+                                                                  ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours.toString() + " hour ago"
+                                                                  : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inHours.toString() + " hours ago"
+                                                              : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays == 1
+                                                                  ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays.toString() + " day ago"
+                                                                  : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(comments[index].timestamp)).inDays.toString() + " days ago",
+                                                  style: TextStyle(
+                                                      fontFamily: 'Lato',
+                                                      fontSize:
+                                                          size.width / 30),
+                                                )
+                                              ],
+                                            ),
+                                            subtitle: Text(
+                                              comments[index].body,
+                                              style:
+                                                  TextStyle(fontFamily: "Lato"),
+                                            ),
+                                          );
+                                        }),
+                                  ),
+                                  Container(
+                                    height: 40,
+                                    margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                    width: size.width - 20,
+                                    child: TextField(
+                                      controller: _commentController,
+                                      decoration: InputDecoration(
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              Icons.send,
+                                              color: Colors.redAccent,
+                                            ),
+                                            onPressed: () {
+                                              print("=<<>>><<>>><<>>>=" +
+                                                  _commentController.text);
+                                              addComment(
+                                                  _commentController.text);
+                                              _commentController.text = '';
+                                              //            _sendComment(context);
+                                            },
+                                          ),
+                                          fillColor: Colors.white,
+                                          hintText: 'Comment',
+                                          filled: true,
+                                          enabledBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5.0)),
+                                              borderSide: BorderSide(
+                                                  color: Colors.black12,
+                                                  width: 1.0)),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.black,
+                                                  width: 2.0))),
+                                      //   onSubmitted: (val) => {addComment(val)},
+                                    ),
+                                  )
+                                ],
+                              )),
+                        ])),
+
+                    SizedBox(height: size.height / 30),
+                    Container(
+                      margin: EdgeInsets.only(
+                          left: size.width / 50, right: size.width / 50),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'More from @${widget.club.creator.username}',
+                            style: TextStyle(
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
+                          ),
+                          Text(
+                            'View All',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: size.height / 50),
+                    FutureBuilder(
+                        future: _fetchAllClubs(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          return Clubs != null
+                              ? Carousel(
+                                  Clubs: Clubs.where((club) =>
+                                          club.clubId != widget.club.clubId)
+                                      .toBuiltList())
+                              : Container();
+                        }),
+                    SizedBox(height: size.height / 20)
+                  ],
                 ),
-              ),
-              ),
-                ):Container(height: 0,)
-              ],
-            ),
-  //        ),
+              )),
+              MediaQuery.of(context).viewInsets.bottom == 0
+                  ? SlidingUpPanel(
+                      minHeight: size.height / 20,
+                      maxHeight: size.height / 1.5,
+                      backdropEnabled: true,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24)),
+                      panel: Container(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: size.height / 30,
+                          ),
+                          Center(
+                            child: Text("Panelists",
+                                style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: size.width / 20,
+                                    color: Colors.redAccent)),
+                          ),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            height: MediaQuery.of(context).size.height / 2 + 40,
+                            child: GridView.builder(
+                              itemCount: participantList.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3),
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  child: Column(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: size.width / 9,
+                                        backgroundColor: Color(0xffFDCF09),
+                                        child: CircleAvatar(
+                                          radius: size.width / 10,
+                                          backgroundImage: NetworkImage(
+                                              participantList[index].avatar),
+                                        ),
+                                      ),
+                                      Text(
+                                        participantList[index].username,
+                                        style: TextStyle(
+                                            fontFamily: "Lato",
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                          //SizedBox(height: size.height/50,),+
+                        ],
+                      )),
+                      collapsed: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.redAccent,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(24),
+                                topRight: Radius.circular(24))),
+                        child: Center(
+                          child: Text(
+                            "PANELISTS",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Lato',
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2.0),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      height: 0,
+                    )
+            ],
+          ),
+          //        ),
         ),
       ),
     );

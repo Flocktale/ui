@@ -1,0 +1,260 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:provider/provider.dart';
+
+class SocialRelationPage extends StatefulWidget {
+  final int initpos;
+  final BuiltUser user;
+  SocialRelationPage({this.initpos, this.user});
+  @override
+  _SocialRelationPageState createState() => _SocialRelationPageState();
+}
+
+class _SocialRelationPageState extends State<SocialRelationPage>
+    with SingleTickerProviderStateMixin {
+  List<String> tabs = ['Friends', 'Followers', 'Following'];
+  List<String> relations = ['friends', 'followers', 'followings'];
+  Map<String, Map<String, dynamic>> relationMap = {
+    'friends': {'list': null, 'isLoading': true},
+    'followers': {'list': null, 'isLoading': true},
+    'followings': {'list': null, 'isLoading': true},
+  };
+
+  TabController _tabController;
+
+  void _initRelationData(String type) async {
+    //             ["followings","followers", "requests_sent", "requests_received","friends"]
+
+    if (relationMap[type]['list'] != null) return;
+
+    relationMap[type]['list'] =
+        (await Provider.of<DatabaseApiService>(context, listen: false)
+                .getRelations(
+                    widget.user.userId,
+                    type,
+                    (relationMap[type]['list'] as BuiltSearchUsers)
+                        ?.lastevaluatedkey))
+            .body;
+    relationMap[type]['isLoading'] = false;
+
+    setState(() {});
+  }
+
+  void _fetchMoreRelationData(String type) async {
+    //             ["followings","followers", "requests_sent", "requests_received","friends"]
+
+    if (relationMap[type]['isLoading'] == true) return;
+    setState(() {});
+
+    print(
+        'asdfafasfasdfasdfasdfdsasdfasfasfasdfasdfasdfasdfsadasdfsadfsaf-----------');
+
+    final lastevaulatedkey =
+        (relationMap[type]['list'] as BuiltSearchUsers)?.lastevaluatedkey;
+
+    if (lastevaulatedkey != null) {
+      relationMap[type]['list'] =
+          (await Provider.of<DatabaseApiService>(context, listen: false)
+                  .getRelations(
+                      widget.user.userId,
+                      type,
+                      (relationMap[type]['list'] as BuiltSearchUsers)
+                          ?.lastevaluatedkey))
+              .body;
+    } else {
+      await Future.delayed(Duration(milliseconds: 3000));
+    }
+    relationMap[type]['isLoading'] = false;
+
+    setState(() {});
+  }
+
+  Widget searchBar(String hint) {
+    return Container(
+      height: 40,
+      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: TextField(
+        decoration: InputDecoration(
+            prefixIcon: Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
+            fillColor: Colors.grey[200],
+            hintText: 'Search $hint',
+            filled: true,
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                borderSide: BorderSide(color: Colors.black, width: 1.0)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black, width: 2.0))),
+      ),
+    );
+  }
+
+  Widget tabPage(int index) {
+    final BuiltSearchUsers relationList = relationMap[relations[index]]['list'];
+    final bool isLoading = relationMap[relations[index]]['isLoading'];
+    final listLength = (relationList?.users?.length ?? 0) + 1;
+
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 30,
+        ),
+        searchBar(tabs[index]),
+        SizedBox(
+          height: 40,
+        ),
+        Text(
+          'All ${tabs[index]}',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+          textAlign: TextAlign.left,
+        ),
+        SizedBox(
+          height: 30,
+        ),
+        Expanded(
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (scrollInfo.metrics.pixels ==
+                  scrollInfo.metrics.maxScrollExtent) {
+                print('ho gya ji');
+                final type = relations[_tabController.index];
+                _fetchMoreRelationData(type);
+                relationMap[type]['isLoading'] = true;
+              }
+              return true;
+            },
+            child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemCount: listLength,
+                physics: ScrollPhysics(),
+                itemBuilder: (context, ind) {
+                  // last index of this list is being used for loading animation while more users are loaded.
+                  if (ind == listLength - 1) {
+                    if (isLoading)
+                      return Container(
+                        margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    else
+                      return Container();
+                  }
+                  return Container(
+                    key: ValueKey(relationList.users[ind].username),
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            relationList.users[ind].avatar,
+                          ),
+                          radius: 30,
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              relationList.users[ind].username,
+                              style: TextStyle(
+                                fontFamily: 'Lato',
+                              ),
+                            ),
+                            Text(
+                              relationList.users[ind].name,
+                              style: TextStyle(
+                                  fontFamily: 'Lato', color: Colors.grey[700]),
+                            )
+                          ],
+                        ),
+                        InkWell(
+                          onTap: () {
+                            // TODO: complete this functionality
+                          },
+                          child: Container(
+                            width: 100,
+                            height: 35,
+                            child: Center(
+                              child: Text(index == 0
+                                  ? 'Remove Friend'
+                                  : index == 1
+                                      ? 'Remove'
+                                      : 'Following'),
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey[700]),
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }),
+          ),
+        ),
+
+        //  ListView.builder(),//To be filled with get results.
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    _tabController =
+        TabController(length: 3, vsync: this, initialIndex: widget.initpos);
+    _initRelationData(relations[widget.initpos]);
+
+    _tabController.addListener(() {
+      _initRelationData(relations[_tabController.index]);
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      initialIndex: widget.initpos,
+      length: tabs.length,
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.black),
+          backgroundColor: Colors.grey[100],
+          title: Text(
+            widget.user.username,
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.bold),
+          ),
+          bottom: TabBar(
+            controller: _tabController,
+            isScrollable: true,
+            unselectedLabelColor: Colors.grey[700],
+            labelColor: Colors.black,
+            labelStyle:
+                TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+            indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            indicatorSize: TabBarIndicatorSize.tab,
+            tabs: List<Widget>.generate(
+                tabs.length,
+                (index) => Tab(
+                      text: tabs[index],
+                    )),
+          ),
+        ),
+        body: TabBarView(
+            controller: _tabController,
+            children: [tabPage(0), tabPage(1), tabPage(2)]),
+      ),
+    );
+  }
+}

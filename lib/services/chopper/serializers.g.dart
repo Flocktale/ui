@@ -12,6 +12,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(BuiltClub.serializer)
       ..add(BuiltFCMToken.serializer)
       ..add(BuiltFollow.serializer)
+      ..add(BuiltInviteFormat.serializer)
       ..add(BuiltNotificationList.serializer)
       ..add(BuiltProfile.serializer)
       ..add(BuiltProfileImage.serializer)
@@ -45,6 +46,9 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(ReactionUser)]),
           () => new ListBuilder<ReactionUser>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => new ListBuilder<String>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
           () => new ListBuilder<String>())
