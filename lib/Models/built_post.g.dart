@@ -42,6 +42,8 @@ Serializer<BuiltActiveJoinRequests> _$builtActiveJoinRequestsSerializer =
     new _$BuiltActiveJoinRequestsSerializer();
 Serializer<BuiltUnifiedSearchResults> _$builtUnifiedSearchResultsSerializer =
     new _$BuiltUnifiedSearchResultsSerializer();
+Serializer<BuiltInviteFormat> _$builtInviteFormatSerializer =
+    new _$BuiltInviteFormatSerializer();
 
 class _$NotificationDataSerializer
     implements StructuredSerializer<NotificationData> {
@@ -1465,6 +1467,12 @@ class _$BuiltActiveJoinRequestsSerializer
             specifiedType: const FullType(
                 BuiltList, const [const FullType(JoinRequests)])));
     }
+    if (object.lastevaluatedkey != null) {
+      result
+        ..add('lastevaluatedkey')
+        ..add(serializers.serialize(object.lastevaluatedkey,
+            specifiedType: const FullType(String)));
+    }
     return result;
   }
 
@@ -1485,6 +1493,10 @@ class _$BuiltActiveJoinRequestsSerializer
                   specifiedType: const FullType(
                       BuiltList, const [const FullType(JoinRequests)]))
               as BuiltList<Object>);
+          break;
+        case 'lastevaluatedkey':
+          result.lastevaluatedkey = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
       }
     }
@@ -1547,6 +1559,65 @@ class _$BuiltUnifiedSearchResultsSerializer
           result.clubs.replace(serializers.deserialize(value,
                   specifiedType: const FullType(
                       BuiltList, const [const FullType(BuiltClub)]))
+              as BuiltList<Object>);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$BuiltInviteFormatSerializer
+    implements StructuredSerializer<BuiltInviteFormat> {
+  @override
+  final Iterable<Type> types = const [BuiltInviteFormat, _$BuiltInviteFormat];
+  @override
+  final String wireName = 'BuiltInviteFormat';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, BuiltInviteFormat object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.invitee != null) {
+      result
+        ..add('invitee')
+        ..add(serializers.serialize(object.invitee,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(String)])));
+    }
+    if (object.type != null) {
+      result
+        ..add('type')
+        ..add(serializers.serialize(object.type,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(String)])));
+    }
+    return result;
+  }
+
+  @override
+  BuiltInviteFormat deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltInviteFormatBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'invitee':
+          result.invitee.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(BuiltList, const [const FullType(String)]))
+              as BuiltList<Object>);
+          break;
+        case 'type':
+          result.type.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(BuiltList, const [const FullType(String)]))
               as BuiltList<Object>);
           break;
       }
@@ -3999,12 +4070,16 @@ class JoinRequestsBuilder
 class _$BuiltActiveJoinRequests extends BuiltActiveJoinRequests {
   @override
   final BuiltList<JoinRequests> activeJoinRequestUsers;
+  @override
+  final String lastevaluatedkey;
 
   factory _$BuiltActiveJoinRequests(
           [void Function(BuiltActiveJoinRequestsBuilder) updates]) =>
       (new BuiltActiveJoinRequestsBuilder()..update(updates)).build();
 
-  _$BuiltActiveJoinRequests._({this.activeJoinRequestUsers}) : super._();
+  _$BuiltActiveJoinRequests._(
+      {this.activeJoinRequestUsers, this.lastevaluatedkey})
+      : super._();
 
   @override
   BuiltActiveJoinRequests rebuild(
@@ -4019,18 +4094,21 @@ class _$BuiltActiveJoinRequests extends BuiltActiveJoinRequests {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is BuiltActiveJoinRequests &&
-        activeJoinRequestUsers == other.activeJoinRequestUsers;
+        activeJoinRequestUsers == other.activeJoinRequestUsers &&
+        lastevaluatedkey == other.lastevaluatedkey;
   }
 
   @override
   int get hashCode {
-    return $jf($jc(0, activeJoinRequestUsers.hashCode));
+    return $jf($jc(
+        $jc(0, activeJoinRequestUsers.hashCode), lastevaluatedkey.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('BuiltActiveJoinRequests')
-          ..add('activeJoinRequestUsers', activeJoinRequestUsers))
+          ..add('activeJoinRequestUsers', activeJoinRequestUsers)
+          ..add('lastevaluatedkey', lastevaluatedkey))
         .toString();
   }
 }
@@ -4047,11 +4125,17 @@ class BuiltActiveJoinRequestsBuilder
           ListBuilder<JoinRequests> activeJoinRequestUsers) =>
       _$this._activeJoinRequestUsers = activeJoinRequestUsers;
 
+  String _lastevaluatedkey;
+  String get lastevaluatedkey => _$this._lastevaluatedkey;
+  set lastevaluatedkey(String lastevaluatedkey) =>
+      _$this._lastevaluatedkey = lastevaluatedkey;
+
   BuiltActiveJoinRequestsBuilder();
 
   BuiltActiveJoinRequestsBuilder get _$this {
     if (_$v != null) {
       _activeJoinRequestUsers = _$v.activeJoinRequestUsers?.toBuilder();
+      _lastevaluatedkey = _$v.lastevaluatedkey;
       _$v = null;
     }
     return this;
@@ -4076,7 +4160,8 @@ class BuiltActiveJoinRequestsBuilder
     try {
       _$result = _$v ??
           new _$BuiltActiveJoinRequests._(
-              activeJoinRequestUsers: _activeJoinRequestUsers?.build());
+              activeJoinRequestUsers: _activeJoinRequestUsers?.build(),
+              lastevaluatedkey: lastevaluatedkey);
     } catch (_) {
       String _$failedField;
       try {
@@ -4192,6 +4277,110 @@ class BuiltUnifiedSearchResultsBuilder
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuiltUnifiedSearchResults', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$BuiltInviteFormat extends BuiltInviteFormat {
+  @override
+  final BuiltList<String> invitee;
+  @override
+  final BuiltList<String> type;
+
+  factory _$BuiltInviteFormat(
+          [void Function(BuiltInviteFormatBuilder) updates]) =>
+      (new BuiltInviteFormatBuilder()..update(updates)).build();
+
+  _$BuiltInviteFormat._({this.invitee, this.type}) : super._();
+
+  @override
+  BuiltInviteFormat rebuild(void Function(BuiltInviteFormatBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltInviteFormatBuilder toBuilder() =>
+      new BuiltInviteFormatBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltInviteFormat &&
+        invitee == other.invitee &&
+        type == other.type;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, invitee.hashCode), type.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltInviteFormat')
+          ..add('invitee', invitee)
+          ..add('type', type))
+        .toString();
+  }
+}
+
+class BuiltInviteFormatBuilder
+    implements Builder<BuiltInviteFormat, BuiltInviteFormatBuilder> {
+  _$BuiltInviteFormat _$v;
+
+  ListBuilder<String> _invitee;
+  ListBuilder<String> get invitee =>
+      _$this._invitee ??= new ListBuilder<String>();
+  set invitee(ListBuilder<String> invitee) => _$this._invitee = invitee;
+
+  ListBuilder<String> _type;
+  ListBuilder<String> get type => _$this._type ??= new ListBuilder<String>();
+  set type(ListBuilder<String> type) => _$this._type = type;
+
+  BuiltInviteFormatBuilder();
+
+  BuiltInviteFormatBuilder get _$this {
+    if (_$v != null) {
+      _invitee = _$v.invitee?.toBuilder();
+      _type = _$v.type?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltInviteFormat other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltInviteFormat;
+  }
+
+  @override
+  void update(void Function(BuiltInviteFormatBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltInviteFormat build() {
+    _$BuiltInviteFormat _$result;
+    try {
+      _$result = _$v ??
+          new _$BuiltInviteFormat._(
+              invitee: _invitee?.build(), type: _type?.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'invitee';
+        _invitee?.build();
+        _$failedField = 'type';
+        _type?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuiltInviteFormat', _$failedField, e.toString());
       }
       rethrow;
     }
