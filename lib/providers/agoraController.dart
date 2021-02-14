@@ -49,4 +49,9 @@ class AgoraController {
     await _agoraHandler.dispose();
     club = null;
   }
+
+  Future<void> hardMute() async{
+    _isMicMuted = true;
+    await _agoraHandler.muteSwitchMic(_isMicMuted);
+  }
 }

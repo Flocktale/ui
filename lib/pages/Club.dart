@@ -48,6 +48,7 @@ class _ClubState extends State<Club> {
     //   ..userId = event['userId']
     //   ..username = event['username']);
     final cuser = Provider.of<UserData>(context, listen: false).user;
+    participantList = [];
     event['participantList'].forEach((e) {
       SummaryUser u = SummaryUser((r) => r
         ..userId = e['userId']
@@ -77,6 +78,37 @@ class _ClubState extends State<Club> {
       flags = v;
 
     setState(() {});
+  }
+  void youAreBlocked(event) { 
+    // block if the current Club is blocked
+    if (event['clubId'] == widget.club.clubId) {
+      Provider.of<MySocket>(context, listen: false)
+          .leaveClub(widget.club.clubId);
+      _stopAgora();
+      Navigator.pop(context);
+      Fluttertoast.showToast(msg: "Sorry, You are blocked from this club");
+    }
+  }
+
+  void youAreMuted(event) {
+    Provider.of<AgoraController>(context, listen: false).hardMute();
+    Fluttertoast.showToast(msg: "Sorry, You are blocked muted");
+     setState(() {
+      
+    });
+  }
+
+  void clubStarted(event) {
+    Fluttertoast.showToast(msg: "This Club is live now");
+    setState(() {
+      _club.club.rebuild((b) => b..agoraToken = event['agoraToken']);
+    });
+    // assign agora token
+    // widget.club.agoraToken= event['agoraToken'];
+    // call for agora
+
+    //TODO
+    // enable play button 
   }
 
   void putNewComment(event) {
@@ -341,6 +373,9 @@ class _ClubState extends State<Club> {
       getReactionForFirstTime,
       getParticipantListForFirstTime,
       getAudienceForFirstTime,
+      clubStarted,
+      youAreMuted,
+      youAreBlocked
     );
 
     Provider.of<DatabaseApiService>(context, listen: false)

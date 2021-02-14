@@ -58,7 +58,10 @@ class MySocket with ChangeNotifier {
       Function addOldComments,
       Function getReactionForFirstTime,
       Function getParticipantListForFirstTime,
-      Function getAudienceForFirstTime) {
+      Function getAudienceForFirstTime,
+      Function clubStarted,
+      Function youAreMuted,
+      Function youAreBlocked) {
     channel.sink.add(jsonEncode({
       "action": "club-subscription",
       "toggleMethod": "enter",
@@ -70,6 +73,10 @@ class MySocket with ChangeNotifier {
     funcs["reactionCount"] = getReactionForFirstTime;
     funcs["participantList"] = getParticipantListForFirstTime;
     funcs["audienceCount"] = getAudienceForFirstTime;
+    funcs["clubStarted"] = clubStarted;
+    funcs["muteParticipant"] = youAreMuted;
+    funcs["blocked"] = youAreBlocked;
+
   }
 
   void addComment(String message, String clubId, String userId) {
@@ -93,5 +100,9 @@ class MySocket with ChangeNotifier {
     funcs["oldComments"] = null;
     funcs["reactionCount"] = null;
     funcs["participantList"] = null;
+    funcs["audienceCount"] = null;
+    funcs["clubStarted"] = null;
+    funcs["muteParticipant"] = null;
+    funcs["blocked"] = null;
   }
 }
