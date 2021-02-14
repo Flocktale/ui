@@ -958,7 +958,7 @@ class _ClubState extends State<Club> {
                                 height: size.height / 50,
                               ),
                               Container(
-                                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
                                 height: MediaQuery.of(context).size.height / 2 + 40,
                                 child: GridView.builder(
                                   itemCount: participantList.length,
@@ -967,22 +967,41 @@ class _ClubState extends State<Club> {
                                           crossAxisCount: 3),
                                   itemBuilder: (context, index) {
                                     return Container(
-                                      child: Column(
+                                      child: Stack(
                                         children: [
-                                          CircleAvatar(
-                                            radius: size.width / 9,
-                                            backgroundColor: Color(0xffFDCF09),
-                                            child: CircleAvatar(
-                                              radius: size.width / 10,
-                                              backgroundImage: NetworkImage(
-                                                  participantList[index].avatar),
-                                            ),
+                                          Column(
+                                            children: [
+                                              CircleAvatar(
+                                                radius: size.width / 9,
+                                                backgroundColor: Color(0xffFDCF09),
+                                                child: CircleAvatar(
+                                                  radius: size.width / 10,
+                                                  backgroundImage: NetworkImage(
+                                                      participantList[index].avatar),
+                                                ),
+                                              ),
+                                              Text(
+                                              participantList[index].username,
+                                              style: TextStyle(
+                                                  fontFamily: "Lato",
+                                                  fontWeight: FontWeight.bold),
+                                                ),
+                                            ],
                                           ),
-                                          Text(
-                                            participantList[index].username,
-                                            style: TextStyle(
-                                                fontFamily: "Lato",
-                                                fontWeight: FontWeight.bold),
+                                          Positioned(
+                                            right:10,
+                                            child: PopupMenuButton<String>(
+                                              onSelected: handleClick,
+                                              itemBuilder: (BuildContext context) {
+                                                return {'Remove Panelist', 'Mute Panelist',}
+                                                    .map((String choice) {
+                                                  return PopupMenuItem<String>(
+                                                    value: choice,
+                                                    child: Text(choice),
+                                                  );
+                                                }).toList();
+                                              },
+                                            ),
                                           )
                                         ],
                                       ),
