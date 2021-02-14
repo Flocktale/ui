@@ -3,6 +3,7 @@ import 'package:like_button/like_button.dart';
 import 'package:mootclub_app/Carousel.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/comment.dart';
+import 'package:mootclub_app/pages/InviteScreen.dart';
 import 'package:mootclub_app/providers/agoraController.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
@@ -199,13 +200,26 @@ class _ClubState extends State<Club> {
                   club: widget.club,
                 )));
         break;
-      case 'Show Listeners':
+      case 'Show Audience':
         break;
       case 'Invite Panelist':
-        break;
-      case 'Show Listeners':
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => InviteScreen(
+                  club: widget.club,
+                  // TODO: send the sponsor id (it is id of user who is inviting)
+                  sponsorId: null,
+                  forPanelist: true,
+                )));
+
         break;
       case 'Invite Audience':
+              Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => InviteScreen(
+                  club: widget.club,
+                  // TODO: send the sponsor id (it is id of user who is inviting)
+                  sponsorId: null,
+                  forPanelist: false,
+                )));
         break;
     }
   }

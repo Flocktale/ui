@@ -17,9 +17,9 @@ class _SocialRelationPageState extends State<SocialRelationPage>
   List<String> tabs = ['Friends', 'Followers', 'Following'];
   List<String> relations = ['friends', 'followers', 'followings'];
   Map<String, Map<String, dynamic>> relationMap = {
-    'friends': {'list': null, 'isLoading': true},
-    'followers': {'list': null, 'isLoading': true},
-    'followings': {'list': null, 'isLoading': true},
+    'friends': {'data': null, 'isLoading': true},
+    'followers': {'data': null, 'isLoading': true},
+    'followings': {'data': null, 'isLoading': true},
   };
 
   TabController _tabController;
@@ -27,14 +27,14 @@ class _SocialRelationPageState extends State<SocialRelationPage>
   void _initRelationData(String type) async {
     //             ["followings","followers", "requests_sent", "requests_received","friends"]
 
-    if (relationMap[type]['list'] != null) return;
+    if (relationMap[type]['data'] != null) return;
 
-    relationMap[type]['list'] =
+    relationMap[type]['data'] =
         (await Provider.of<DatabaseApiService>(context, listen: false)
                 .getRelations(
                     widget.user.userId,
                     type,
-                    (relationMap[type]['list'] as BuiltSearchUsers)
+                    (relationMap[type]['data'] as BuiltSearchUsers)
                         ?.lastevaluatedkey))
             .body;
     relationMap[type]['isLoading'] = false;
@@ -48,23 +48,20 @@ class _SocialRelationPageState extends State<SocialRelationPage>
     if (relationMap[type]['isLoading'] == true) return;
     setState(() {});
 
-    print(
-        'asdfafasfasdfasdfasdfdsasdfasfasfasdfasdfasdfasdfsadasdfsadfsaf-----------');
-
     final lastevaulatedkey =
-        (relationMap[type]['list'] as BuiltSearchUsers)?.lastevaluatedkey;
+        (relationMap[type]['data'] as BuiltSearchUsers)?.lastevaluatedkey;
 
     if (lastevaulatedkey != null) {
-      relationMap[type]['list'] =
+      relationMap[type]['data'] =
           (await Provider.of<DatabaseApiService>(context, listen: false)
                   .getRelations(
                       widget.user.userId,
                       type,
-                      (relationMap[type]['list'] as BuiltSearchUsers)
+                      (relationMap[type]['data'] as BuiltSearchUsers)
                           ?.lastevaluatedkey))
               .body;
     } else {
-      await Future.delayed(Duration(milliseconds: 3000));
+      await Future.delayed(Duration(milliseconds: 200));
     }
     relationMap[type]['isLoading'] = false;
 
@@ -94,9 +91,10 @@ class _SocialRelationPageState extends State<SocialRelationPage>
   }
 
   Widget tabPage(int index) {
-    final BuiltSearchUsers relationList = relationMap[relations[index]]['list'];
+    final relationUsers =
+        (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users;
     final bool isLoading = relationMap[relations[index]]['isLoading'];
-    final listLength = (relationList?.users?.length ?? 0) + 1;
+    final listLength = (relationUsers?.length ?? 0) + 1;
 
     return Column(
       children: <Widget>[
@@ -123,7 +121,6 @@ class _SocialRelationPageState extends State<SocialRelationPage>
             onNotification: (ScrollNotification scrollInfo) {
               if (scrollInfo.metrics.pixels ==
                   scrollInfo.metrics.maxScrollExtent) {
-                print('ho gya ji');
                 final type = relations[_tabController.index];
                 _fetchMoreRelationData(type);
                 relationMap[type]['isLoading'] = true;
@@ -146,28 +143,31 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                     else
                       return Container();
                   }
+
+                  final _user = relationUsers[ind];
+
                   return Container(
-                    key: ValueKey(relationList.users[ind].username),
+                    key: ValueKey(_user.username),
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         CircleAvatar(
                           backgroundImage: NetworkImage(
-                            relationList.users[ind].avatar,
+                            _user.avatar,
                           ),
                           radius: 30,
                         ),
                         Column(
                           children: <Widget>[
                             Text(
-                              relationList.users[ind].username,
+                              _user.username,
                               style: TextStyle(
                                 fontFamily: 'Lato',
                               ),
                             ),
                             Text(
-                              relationList.users[ind].name,
+                              _user.name,
                               style: TextStyle(
                                   fontFamily: 'Lato', color: Colors.grey[700]),
                             )

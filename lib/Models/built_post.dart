@@ -392,9 +392,11 @@ abstract class ReportSummary
 abstract class JoinRequests
     implements Built<JoinRequests, JoinRequestsBuilder> {
   // fields go here
-
+  @nullable
   int get joinRequestAttempts;
+  @nullable
   int get timestamp;
+
   SummaryUser get audience;
   // BuiltList<SummaryUser> get audience;
 
@@ -454,11 +456,10 @@ abstract class BuiltUnifiedSearchResults
       _$builtUnifiedSearchResultsSerializer;
 }
 
-
-abstract class BuiltInviteFormat implements Built<BuiltInviteFormat, BuiltInviteFormatBuilder> {
+abstract class BuiltInviteFormat
+    implements Built<BuiltInviteFormat, BuiltInviteFormatBuilder> {
   // fields go here
 
-  
   @nullable
   String get type;
   @nullable
@@ -466,15 +467,19 @@ abstract class BuiltInviteFormat implements Built<BuiltInviteFormat, BuiltInvite
 
   BuiltInviteFormat._();
 
-  factory BuiltInviteFormat([updates(BuiltInviteFormatBuilder b)]) = _$BuiltInviteFormat;
+  factory BuiltInviteFormat([updates(BuiltInviteFormatBuilder b)]) =
+      _$BuiltInviteFormat;
 
   String toJson() {
-    return json.encode(serializers.serializeWith(BuiltInviteFormat.serializer, this));
+    return json
+        .encode(serializers.serializeWith(BuiltInviteFormat.serializer, this));
   }
 
   static BuiltInviteFormat fromJson(String jsonString) {
-    return serializers.deserializeWith(BuiltInviteFormat.serializer, json.decode(jsonString));
+    return serializers.deserializeWith(
+        BuiltInviteFormat.serializer, json.decode(jsonString));
   }
 
-  static Serializer<BuiltInviteFormat> get serializer => _$builtInviteFormatSerializer;
+  static Serializer<BuiltInviteFormat> get serializer =>
+      _$builtInviteFormatSerializer;
 }

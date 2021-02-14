@@ -1401,17 +1401,22 @@ class _$JoinRequestsSerializer implements StructuredSerializer<JoinRequests> {
   Iterable<Object> serialize(Serializers serializers, JoinRequests object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'joinRequestAttempts',
-      serializers.serialize(object.joinRequestAttempts,
-          specifiedType: const FullType(int)),
-      'timestamp',
-      serializers.serialize(object.timestamp,
-          specifiedType: const FullType(int)),
       'audience',
       serializers.serialize(object.audience,
           specifiedType: const FullType(SummaryUser)),
     ];
-
+    if (object.joinRequestAttempts != null) {
+      result
+        ..add('joinRequestAttempts')
+        ..add(serializers.serialize(object.joinRequestAttempts,
+            specifiedType: const FullType(int)));
+    }
+    if (object.timestamp != null) {
+      result
+        ..add('timestamp')
+        ..add(serializers.serialize(object.timestamp,
+            specifiedType: const FullType(int)));
+    }
     return result;
   }
 
@@ -3952,12 +3957,6 @@ class _$JoinRequests extends JoinRequests {
 
   _$JoinRequests._({this.joinRequestAttempts, this.timestamp, this.audience})
       : super._() {
-    if (joinRequestAttempts == null) {
-      throw new BuiltValueNullFieldError('JoinRequests', 'joinRequestAttempts');
-    }
-    if (timestamp == null) {
-      throw new BuiltValueNullFieldError('JoinRequests', 'timestamp');
-    }
     if (audience == null) {
       throw new BuiltValueNullFieldError('JoinRequests', 'audience');
     }

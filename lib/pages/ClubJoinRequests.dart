@@ -14,28 +14,32 @@ class ClubJoinRequests extends StatefulWidget {
 
 class _ClubJoinRequestsState extends State<ClubJoinRequests> {
   BuiltActiveJoinRequests joinRequests;
-  getJoinRequests() async{
+  getJoinRequests() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     String lastevaluatedkey;
-    joinRequests = (await service.getActiveJoinRequests(widget.club.clubId, lastevaluatedkey, authorization: authToken)).body;
-    setState(() {
-    });
+    joinRequests = (await service.getActiveJoinRequests(
+            widget.club.clubId, lastevaluatedkey,
+            authorization: authToken))
+        .body;
+    setState(() {});
   }
 
-  acceptJoinRequest(String audienceId) async{
+  acceptJoinRequest(String audienceId) async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    await service.respondToJoinRequest(widget.club.clubId, "accept", audienceId, authorization: authToken);
-    Fluttertoast.showToast(msg:"Join Request Accepted");
+    await service.respondToJoinRequest(widget.club.clubId, "accept", audienceId,
+        authorization: authToken);
+    Fluttertoast.showToast(msg: "Join Request Accepted");
     setState(() {});
   }
 
   @override
-  void initState(){
+  void initState() {
     getJoinRequests();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -53,52 +57,66 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
         backgroundColor: Colors.white,
       ),
       body: Container(
-        child: joinRequests!=null && joinRequests.activeJoinRequestUsers!=null?
-        ListView.builder(
-          itemCount: joinRequests.activeJoinRequestUsers.length,
-            itemBuilder: (context, index) {
-          return Container(
-            child:
-            ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(joinRequests?.activeJoinRequestUsers[index]?.audience?.avatar),
-              ),
-              title: Text(
-                joinRequests?.activeJoinRequestUsers[index]?.audience?.name!=null?
-                joinRequests?.activeJoinRequestUsers[index]?.audience?.name:"Name $index",
-                style:
-                    TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(
-                joinRequests?.activeJoinRequestUsers[index]?.audience?.username!=null?
-                joinRequests?.activeJoinRequestUsers[index]?.audience?.username:"@Username$index",
-                style: TextStyle(fontFamily: 'Lato'),
-              ),
-              trailing: ButtonTheme(
-                minWidth: size.width / 3.5,
-                child: RaisedButton(
-                  onPressed: () async{
-                    final resp = await acceptJoinRequest(joinRequests?.activeJoinRequestUsers[index]?.audience?.userId);
-                    Fluttertoast.showToast(msg: "Join Request Accepted");
-                    setState(() {
-                    });
-                  },
-                  color: Colors.red[600],
-                  child: Text('Accept',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Lato',
-                      )),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    //side: BorderSide(color: Colors.red[600]),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }):Container(height: 0),
+        child: joinRequests != null &&
+                joinRequests.activeJoinRequestUsers != null
+            ? ListView.builder(
+                itemCount: joinRequests.activeJoinRequestUsers.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    key: ValueKey(joinRequests
+                        .activeJoinRequestUsers[index].audience.userId),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(joinRequests
+                            ?.activeJoinRequestUsers[index]?.audience?.avatar),
+                      ),
+                      title: Text(
+                        joinRequests?.activeJoinRequestUsers[index]?.audience
+                                    ?.username !=
+                                null
+                            ? joinRequests?.activeJoinRequestUsers[index]
+                                ?.audience?.username
+                            : "@Username$index",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                      ),
+                      trailing: ButtonTheme(
+                        minWidth: size.width / 3.5,
+                        child: RaisedButton(
+                          onPressed: () async {
+                            final resp = await acceptJoinRequest(joinRequests
+                                ?.activeJoinRequestUsers[index]
+                                ?.audience
+                                ?.userId);
+                            Fluttertoast.showToast(
+                                msg: "Join Request Accepted");
+                            final allRequests =
+                                joinRequests.activeJoinRequestUsers.toBuilder();
+
+                            allRequests.removeAt(index);
+                            joinRequests = joinRequests.rebuild(
+                                (b) => b..activeJoinRequestUsers = allRequests);
+
+                            setState(() {});
+                          },
+                          color: Colors.red[600],
+                          child: Text('Accept',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Lato',
+                              )),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            //side: BorderSide(color: Colors.red[600]),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                })
+            : Container(height: 0),
       ),
     ));
   }
