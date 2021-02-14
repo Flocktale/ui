@@ -2828,12 +2828,16 @@ class _$BuiltClubAndAudience extends BuiltClubAndAudience {
   final BuiltClub club;
   @override
   final AudienceData audienceData;
+  @override
+  final int reactionIndexValue;
 
   factory _$BuiltClubAndAudience(
           [void Function(BuiltClubAndAudienceBuilder) updates]) =>
       (new BuiltClubAndAudienceBuilder()..update(updates)).build();
 
-  _$BuiltClubAndAudience._({this.club, this.audienceData}) : super._() {
+  _$BuiltClubAndAudience._(
+      {this.club, this.audienceData, this.reactionIndexValue})
+      : super._() {
     if (club == null) {
       throw new BuiltValueNullFieldError('BuiltClubAndAudience', 'club');
     }
@@ -2853,19 +2857,22 @@ class _$BuiltClubAndAudience extends BuiltClubAndAudience {
     if (identical(other, this)) return true;
     return other is BuiltClubAndAudience &&
         club == other.club &&
-        audienceData == other.audienceData;
+        audienceData == other.audienceData &&
+        reactionIndexValue == other.reactionIndexValue;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, club.hashCode), audienceData.hashCode));
+    return $jf($jc($jc($jc(0, club.hashCode), audienceData.hashCode),
+        reactionIndexValue.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('BuiltClubAndAudience')
           ..add('club', club)
-          ..add('audienceData', audienceData))
+          ..add('audienceData', audienceData)
+          ..add('reactionIndexValue', reactionIndexValue))
         .toString();
   }
 }
@@ -2884,12 +2891,18 @@ class BuiltClubAndAudienceBuilder
   set audienceData(AudienceDataBuilder audienceData) =>
       _$this._audienceData = audienceData;
 
+  int _reactionIndexValue;
+  int get reactionIndexValue => _$this._reactionIndexValue;
+  set reactionIndexValue(int reactionIndexValue) =>
+      _$this._reactionIndexValue = reactionIndexValue;
+
   BuiltClubAndAudienceBuilder();
 
   BuiltClubAndAudienceBuilder get _$this {
     if (_$v != null) {
       _club = _$v.club?.toBuilder();
       _audienceData = _$v.audienceData?.toBuilder();
+      _reactionIndexValue = _$v.reactionIndexValue;
       _$v = null;
     }
     return this;
@@ -2914,7 +2927,9 @@ class BuiltClubAndAudienceBuilder
     try {
       _$result = _$v ??
           new _$BuiltClubAndAudience._(
-              club: club.build(), audienceData: _audienceData?.build());
+              club: club.build(),
+              audienceData: _audienceData?.build(),
+              reactionIndexValue: reactionIndexValue);
     } catch (_) {
       String _$failedField;
       try {

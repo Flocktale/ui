@@ -211,6 +211,9 @@ abstract class BuiltClubAndAudience
   @nullable
   AudienceData get audienceData;
 
+  @nullable
+  int get reactionIndexValue;
+
   BuiltClubAndAudience._();
 
   factory BuiltClubAndAudience([updates(BuiltClubAndAudienceBuilder b)]) =
