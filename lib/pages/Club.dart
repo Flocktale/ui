@@ -145,7 +145,7 @@ class _ClubState extends State<Club> {
   void toggleLikeClub() {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     service.postReaction(widget.club.clubId,
-        Provider.of<UserData>(context, listen: false).user.userId, 0,
+        Provider.of<UserData>(context, listen: false).user.userId, 2,
         authorization: null);
   }
 
@@ -159,7 +159,7 @@ class _ClubState extends State<Club> {
   void toggleReportClub() {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     service.postReaction(widget.club.clubId,
-        Provider.of<UserData>(context, listen: false).user.userId, 2,
+        Provider.of<UserData>(context, listen: false).user.userId, 0,
         authorization: null);
   }
 
@@ -685,7 +685,12 @@ class _ClubState extends State<Club> {
                                       heroTag: "btn1",
                                       onPressed: () {
                                         setState(() {
-                                          playing = !playing;
+                                          if(_club.club.agoraToken!=null){
+                                            playing = !playing;
+                                          }
+                                          else{
+                                            Fluttertoast.showToast(msg: "The Club has not started yet");
+                                          }
                                           if (playing) {
                                             if (isMe) {
                                               startClub();
@@ -702,7 +707,7 @@ class _ClubState extends State<Club> {
                                           ? Icon(Icons.play_arrow)
                                           : Icon(Icons.stop),
                                       backgroundColor:
-                                          !playing ? Colors.red : Colors.redAccent,
+                                          _club.club.agoraToken!=null?!playing ? Colors.red : Colors.redAccent:Colors.grey,
                                     ),
                                   ),
                                   Container(
