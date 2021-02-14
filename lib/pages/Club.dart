@@ -91,6 +91,8 @@ class _ClubState extends State<Club> {
   }
 
   void youAreMuted(event) {
+    if(event['clubId']!=_club.club.clubId)
+      return;
     Provider.of<AgoraController>(context, listen: false).hardMute();
     Fluttertoast.showToast(msg: "Sorry, You are blocked muted");
      setState(() {
@@ -99,7 +101,10 @@ class _ClubState extends State<Club> {
   }
 
   void clubStarted(event) {
+    if(event['clubId']!=_club.club.clubId)
+      return;
     Fluttertoast.showToast(msg: "This Club is live now");
+
     setState(() {
       _club.club.rebuild((b) => b..agoraToken = event['agoraToken']);
     });
