@@ -76,18 +76,25 @@ class _ImagePageState extends State<ImagePage> {
         authorization: authToken);
     print("!!!!!!!!!!!!!!!!!!!!!!!");
     print(resp.body);
-    if(resp.isSuccessful && image!=null){
+    if (resp.isSuccessful && image != null) {
       String imageInBase64;
-      if(image!=null){
+      if (image != null) {
         var pickedImage = await image.readAsBytes();
         imageInBase64 = base64Encode(pickedImage);
-        final newImage = BuiltProfileImage((b) => b
-        ..image = imageInBase64);
-        final response = await service.updateClubAvatar(resp.body['clubId'], newImage, authorization: authToken);
+        final newImage = BuiltProfileImage((b) => b..image = imageInBase64);
+        final response = await service.updateClubAvatar(
+            resp.body['clubId'], newImage,
+            authorization: authToken);
         print("!!!!!!!!!!!!!!!!!!!!!!!");
         print(response.isSuccessful);
-        BuiltClub newClub = (await service.getClubByClubId(resp.body['clubId'], authorization: authToken)).body;
-        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Club(club: newClub,)));
+        BuiltClub newClub = (await service.getClubByClubId(resp.body['clubId'],
+                authorization: authToken))
+            .body
+            ?.club;
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => Club(
+                  club: newClub,
+                )));
       }
     }
     print('=========${resp.body}');
@@ -159,8 +166,8 @@ class _ImagePageState extends State<ImagePage> {
                   ],
                 )
               : Container(
-            margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                child: ButtonTheme(
+                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: ButtonTheme(
                     child: RaisedButton(
                       onPressed: () {
                         print(widget.name);
@@ -179,7 +186,7 @@ class _ImagePageState extends State<ImagePage> {
                       color: Colors.red,
                     ),
                   ),
-              )
+                )
         ],
       ),
     );

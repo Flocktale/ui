@@ -2823,6 +2823,300 @@ class BuiltFollowBuilder implements Builder<BuiltFollow, BuiltFollowBuilder> {
   }
 }
 
+class _$BuiltClubAndAudience extends BuiltClubAndAudience {
+  @override
+  final BuiltClub club;
+  @override
+  final AudienceData audienceData;
+
+  factory _$BuiltClubAndAudience(
+          [void Function(BuiltClubAndAudienceBuilder) updates]) =>
+      (new BuiltClubAndAudienceBuilder()..update(updates)).build();
+
+  _$BuiltClubAndAudience._({this.club, this.audienceData}) : super._() {
+    if (club == null) {
+      throw new BuiltValueNullFieldError('BuiltClubAndAudience', 'club');
+    }
+  }
+
+  @override
+  BuiltClubAndAudience rebuild(
+          void Function(BuiltClubAndAudienceBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltClubAndAudienceBuilder toBuilder() =>
+      new BuiltClubAndAudienceBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltClubAndAudience &&
+        club == other.club &&
+        audienceData == other.audienceData;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, club.hashCode), audienceData.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltClubAndAudience')
+          ..add('club', club)
+          ..add('audienceData', audienceData))
+        .toString();
+  }
+}
+
+class BuiltClubAndAudienceBuilder
+    implements Builder<BuiltClubAndAudience, BuiltClubAndAudienceBuilder> {
+  _$BuiltClubAndAudience _$v;
+
+  BuiltClubBuilder _club;
+  BuiltClubBuilder get club => _$this._club ??= new BuiltClubBuilder();
+  set club(BuiltClubBuilder club) => _$this._club = club;
+
+  AudienceDataBuilder _audienceData;
+  AudienceDataBuilder get audienceData =>
+      _$this._audienceData ??= new AudienceDataBuilder();
+  set audienceData(AudienceDataBuilder audienceData) =>
+      _$this._audienceData = audienceData;
+
+  BuiltClubAndAudienceBuilder();
+
+  BuiltClubAndAudienceBuilder get _$this {
+    if (_$v != null) {
+      _club = _$v.club?.toBuilder();
+      _audienceData = _$v.audienceData?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltClubAndAudience other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltClubAndAudience;
+  }
+
+  @override
+  void update(void Function(BuiltClubAndAudienceBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltClubAndAudience build() {
+    _$BuiltClubAndAudience _$result;
+    try {
+      _$result = _$v ??
+          new _$BuiltClubAndAudience._(
+              club: club.build(), audienceData: _audienceData?.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'club';
+        club.build();
+        _$failedField = 'audienceData';
+        _audienceData?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuiltClubAndAudience', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$AudienceData extends AudienceData {
+  @override
+  final bool isBlocked;
+  @override
+  final bool isParticipant;
+  @override
+  final bool joinRequested;
+  @override
+  final int joinRequestAttempts;
+  @override
+  final SummaryUser audience;
+  @override
+  final String invitationId;
+  @override
+  final int timestamp;
+
+  factory _$AudienceData([void Function(AudienceDataBuilder) updates]) =>
+      (new AudienceDataBuilder()..update(updates)).build();
+
+  _$AudienceData._(
+      {this.isBlocked,
+      this.isParticipant,
+      this.joinRequested,
+      this.joinRequestAttempts,
+      this.audience,
+      this.invitationId,
+      this.timestamp})
+      : super._() {
+    if (isBlocked == null) {
+      throw new BuiltValueNullFieldError('AudienceData', 'isBlocked');
+    }
+    if (isParticipant == null) {
+      throw new BuiltValueNullFieldError('AudienceData', 'isParticipant');
+    }
+    if (joinRequested == null) {
+      throw new BuiltValueNullFieldError('AudienceData', 'joinRequested');
+    }
+    if (audience == null) {
+      throw new BuiltValueNullFieldError('AudienceData', 'audience');
+    }
+  }
+
+  @override
+  AudienceData rebuild(void Function(AudienceDataBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  AudienceDataBuilder toBuilder() => new AudienceDataBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is AudienceData &&
+        isBlocked == other.isBlocked &&
+        isParticipant == other.isParticipant &&
+        joinRequested == other.joinRequested &&
+        joinRequestAttempts == other.joinRequestAttempts &&
+        audience == other.audience &&
+        invitationId == other.invitationId &&
+        timestamp == other.timestamp;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc($jc($jc(0, isBlocked.hashCode), isParticipant.hashCode),
+                        joinRequested.hashCode),
+                    joinRequestAttempts.hashCode),
+                audience.hashCode),
+            invitationId.hashCode),
+        timestamp.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('AudienceData')
+          ..add('isBlocked', isBlocked)
+          ..add('isParticipant', isParticipant)
+          ..add('joinRequested', joinRequested)
+          ..add('joinRequestAttempts', joinRequestAttempts)
+          ..add('audience', audience)
+          ..add('invitationId', invitationId)
+          ..add('timestamp', timestamp))
+        .toString();
+  }
+}
+
+class AudienceDataBuilder
+    implements Builder<AudienceData, AudienceDataBuilder> {
+  _$AudienceData _$v;
+
+  bool _isBlocked;
+  bool get isBlocked => _$this._isBlocked;
+  set isBlocked(bool isBlocked) => _$this._isBlocked = isBlocked;
+
+  bool _isParticipant;
+  bool get isParticipant => _$this._isParticipant;
+  set isParticipant(bool isParticipant) =>
+      _$this._isParticipant = isParticipant;
+
+  bool _joinRequested;
+  bool get joinRequested => _$this._joinRequested;
+  set joinRequested(bool joinRequested) =>
+      _$this._joinRequested = joinRequested;
+
+  int _joinRequestAttempts;
+  int get joinRequestAttempts => _$this._joinRequestAttempts;
+  set joinRequestAttempts(int joinRequestAttempts) =>
+      _$this._joinRequestAttempts = joinRequestAttempts;
+
+  SummaryUserBuilder _audience;
+  SummaryUserBuilder get audience =>
+      _$this._audience ??= new SummaryUserBuilder();
+  set audience(SummaryUserBuilder audience) => _$this._audience = audience;
+
+  String _invitationId;
+  String get invitationId => _$this._invitationId;
+  set invitationId(String invitationId) => _$this._invitationId = invitationId;
+
+  int _timestamp;
+  int get timestamp => _$this._timestamp;
+  set timestamp(int timestamp) => _$this._timestamp = timestamp;
+
+  AudienceDataBuilder();
+
+  AudienceDataBuilder get _$this {
+    if (_$v != null) {
+      _isBlocked = _$v.isBlocked;
+      _isParticipant = _$v.isParticipant;
+      _joinRequested = _$v.joinRequested;
+      _joinRequestAttempts = _$v.joinRequestAttempts;
+      _audience = _$v.audience?.toBuilder();
+      _invitationId = _$v.invitationId;
+      _timestamp = _$v.timestamp;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(AudienceData other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$AudienceData;
+  }
+
+  @override
+  void update(void Function(AudienceDataBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$AudienceData build() {
+    _$AudienceData _$result;
+    try {
+      _$result = _$v ??
+          new _$AudienceData._(
+              isBlocked: isBlocked,
+              isParticipant: isParticipant,
+              joinRequested: joinRequested,
+              joinRequestAttempts: joinRequestAttempts,
+              audience: audience.build(),
+              invitationId: invitationId,
+              timestamp: timestamp);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'audience';
+        audience.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'AudienceData', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
 class _$BuiltClub extends BuiltClub {
   @override
   final String clubId;

@@ -182,8 +182,9 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   @Get(path: '/clubs/{clubId}')
-  Future<Response<BuiltClub>> getClubByClubId(
+  Future<Response<BuiltClubAndAudience>> getClubByClubId(
     @Path() String clubId, {
+    @Query() String userId,
     @required @Header() String authorization,
   });
 

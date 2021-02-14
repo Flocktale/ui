@@ -173,23 +173,28 @@ class _ClubState extends State<Club> {
 
   void _fetchClubDetailsAndJoinAsHost() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    var _club = (await service.getClubByClubId(widget.club.clubId)).body;
-
+    final userId = Provider.of<UserData>(context, listen: false).userId;
+    var _clubAudience =
+        (await service.getClubByClubId(widget.club.clubId, userId: userId))
+            .body;
     await Provider.of<AgoraController>(context, listen: false).create();
 
-    if (_club.agoraToken == null) {
+    if (_clubAudience.club.agoraToken == null) {
       final userId = Provider.of<UserData>(context, listen: false).user.userId;
       final data = (await service.generateAgoraTokenForClub(
         widget.club.clubId,
         userId,
       ));
       print(data.body['agoraToken']);
-      _club = _club.rebuild((b) => b..agoraToken = data.body['agoraToken']);
-      Provider.of<AgoraController>(context, listen: false).club = _club;
+      _clubAudience = _clubAudience
+          .rebuild((b) => b..club.agoraToken = data.body['agoraToken']);
+      Provider.of<AgoraController>(context, listen: false).club =
+          _clubAudience.club;
     }
 
-    Provider.of<AgoraController>(context, listen: false)
-        .joinAsParticipant(clubId: _club.clubId, token: _club.agoraToken);
+    Provider.of<AgoraController>(context, listen: false).joinAsParticipant(
+        clubId: _clubAudience.club.clubId,
+        token: _clubAudience.club.agoraToken);
   }
 
   void handleClick(String value) {
@@ -213,7 +218,7 @@ class _ClubState extends State<Club> {
 
         break;
       case 'Invite Audience':
-              Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => InviteScreen(
                   club: widget.club,
                   // TODO: send the sponsor id (it is id of user who is inviting)

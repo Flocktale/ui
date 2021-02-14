@@ -282,12 +282,14 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<BuiltClub>> getClubByClubId(String clubId,
-      {String authorization}) {
+  Future<Response<BuiltClubAndAudience>> getClubByClubId(String clubId,
+      {String userId, String authorization}) {
     final $url = '/clubs/$clubId';
+    final $params = <String, dynamic>{'userId': userId};
     final $headers = {'authorization': authorization};
-    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
-    return client.send<BuiltClub, BuiltClub>($request);
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<BuiltClubAndAudience, BuiltClubAndAudience>($request);
   }
 
   @override

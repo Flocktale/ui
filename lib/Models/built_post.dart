@@ -204,6 +204,41 @@ abstract class BuiltFollow implements Built<BuiltFollow, BuiltFollowBuilder> {
   static Serializer<BuiltFollow> get serializer => _$builtFollowSerializer;
 }
 
+abstract class BuiltClubAndAudience
+    implements Built<BuiltClubAndAudience, BuiltClubAndAudienceBuilder> {
+  BuiltClub get club;
+
+  @nullable
+  AudienceData get audienceData;
+
+  BuiltClubAndAudience._();
+
+  factory BuiltClubAndAudience([updates(BuiltClubAndAudienceBuilder b)]) =
+      _$BuiltClubAndAudience;
+}
+
+abstract class AudienceData
+    implements Built<AudienceData, AudienceDataBuilder> {
+  bool get isBlocked;
+  bool get isParticipant;
+  bool get joinRequested;
+
+  @nullable
+  int get joinRequestAttempts;
+
+  SummaryUser get audience;
+
+  @nullable
+  String get invitationId;
+
+  @nullable
+  int get timestamp;
+
+  AudienceData._();
+
+  factory AudienceData([updates(AudienceDataBuilder b)]) = _$AudienceData;
+}
+
 abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   @nullable
   String get clubId;

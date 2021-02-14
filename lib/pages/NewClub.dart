@@ -58,12 +58,18 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     final resp = await service.createNewClub(newClub, widget.userId,
         authorization: authToken);
     Fluttertoast.showToast(msg: 'club entry is created');
-    BuiltClub tempClub = (await service.getClubByClubId(resp.body['clubId'], authorization: authToken)).body;
-    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Club(club: tempClub,)));
+    BuiltClub tempClub = (await service.getClubByClubId(resp.body['clubId'],
+            authorization: authToken))
+        .body
+        ?.club;
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => Club(
+              club: tempClub,
+            )));
     Navigator.of(context).popUntil(ModalRoute.withName("/"));
     print('=========' + resp.body);
     print(resp.error);
-   
+
     Fluttertoast.showToast(msg: 'club entry is created');
   }
 
@@ -77,9 +83,8 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       ),
       validator: (value) {
         if (value.isEmpty) return 'Required';
-        if (value.length<3) return 'Minimum Length should be 3';
-        if (value.length>25) return 'Maximum Length should be 25';
-
+        if (value.length < 3) return 'Minimum Length should be 3';
+        if (value.length > 25) return 'Maximum Length should be 25';
 
         return null;
       },
@@ -145,10 +150,10 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return Scaffold(
         body: SafeArea(
-      child: Stack(
-        children: [
-          Container(
-          margin: EdgeInsets.only(left: size.width / 50, right: size.width / 50),
+      child: Stack(children: [
+        Container(
+          margin:
+              EdgeInsets.only(left: size.width / 50, right: size.width / 50),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -197,7 +202,8 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                                       description.isEmpty ||
                                       category == null ||
                                       category.isEmpty) {
-                                    Fluttertoast.showToast(msg: 'Fill all fields');
+                                    Fluttertoast.showToast(
+                                        msg: 'Fill all fields');
                                     print('flll all the fields');
                                     return;
                                   }
@@ -227,7 +233,8 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                           Text(
                             "OR",
                             style: TextStyle(
-                                fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                                fontFamily: 'Lato',
+                                fontWeight: FontWeight.bold),
                           ),
                           ButtonTheme(
                             minWidth: size.width / 3.5,
@@ -264,11 +271,8 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
             ],
           ),
         ),
-          Positioned(
-              bottom:0,
-              child: MinClub())
-        ]
-      ),
+        Positioned(bottom: 0, child: MinClub())
+      ]),
     ));
   }
 
