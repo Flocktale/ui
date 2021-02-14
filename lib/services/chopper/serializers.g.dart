@@ -7,9 +7,11 @@ part of 'serializers.dart';
 // **************************************************************************
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(AudienceData.serializer)
       ..add(BuiltActiveJoinRequests.serializer)
       ..add(BuiltAllClubsList.serializer)
       ..add(BuiltClub.serializer)
+      ..add(BuiltClubAndAudience.serializer)
       ..add(BuiltFCMToken.serializer)
       ..add(BuiltFollow.serializer)
       ..add(BuiltInviteFormat.serializer)

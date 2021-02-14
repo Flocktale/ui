@@ -206,6 +206,8 @@ abstract class BuiltFollow implements Built<BuiltFollow, BuiltFollowBuilder> {
 
 abstract class BuiltClubAndAudience
     implements Built<BuiltClubAndAudience, BuiltClubAndAudienceBuilder> {
+  // fields go here
+  @nullable
   BuiltClub get club;
 
   @nullable
@@ -213,15 +215,29 @@ abstract class BuiltClubAndAudience
 
   @nullable
   int get reactionIndexValue;
-
   BuiltClubAndAudience._();
 
   factory BuiltClubAndAudience([updates(BuiltClubAndAudienceBuilder b)]) =
       _$BuiltClubAndAudience;
+
+  String toJson() {
+    return json.encode(
+        serializers.serializeWith(BuiltClubAndAudience.serializer, this));
+  }
+
+  static BuiltClubAndAudience fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        BuiltClubAndAudience.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<BuiltClubAndAudience> get serializer =>
+      _$builtClubAndAudienceSerializer;
 }
 
 abstract class AudienceData
     implements Built<AudienceData, AudienceDataBuilder> {
+  // fields go here
+
   bool get isBlocked;
   bool get isParticipant;
   bool get joinRequested;
@@ -240,6 +256,18 @@ abstract class AudienceData
   AudienceData._();
 
   factory AudienceData([updates(AudienceDataBuilder b)]) = _$AudienceData;
+
+  String toJson() {
+    return json
+        .encode(serializers.serializeWith(AudienceData.serializer, this));
+  }
+
+  static AudienceData fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        AudienceData.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<AudienceData> get serializer => _$audienceDataSerializer;
 }
 
 abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {

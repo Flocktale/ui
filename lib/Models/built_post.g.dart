@@ -20,6 +20,10 @@ Serializer<BuiltUser> _$builtUserSerializer = new _$BuiltUserSerializer();
 Serializer<BuiltProfileImage> _$builtProfileImageSerializer =
     new _$BuiltProfileImageSerializer();
 Serializer<BuiltFollow> _$builtFollowSerializer = new _$BuiltFollowSerializer();
+Serializer<BuiltClubAndAudience> _$builtClubAndAudienceSerializer =
+    new _$BuiltClubAndAudienceSerializer();
+Serializer<AudienceData> _$audienceDataSerializer =
+    new _$AudienceDataSerializer();
 Serializer<BuiltClub> _$builtClubSerializer = new _$BuiltClubSerializer();
 Serializer<SummaryUser> _$summaryUserSerializer = new _$SummaryUserSerializer();
 Serializer<BuiltSearchUsers> _$builtSearchUsersSerializer =
@@ -747,6 +751,163 @@ class _$BuiltFollowSerializer implements StructuredSerializer<BuiltFollow> {
         case 'followerName':
           result.followerName = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$BuiltClubAndAudienceSerializer
+    implements StructuredSerializer<BuiltClubAndAudience> {
+  @override
+  final Iterable<Type> types = const [
+    BuiltClubAndAudience,
+    _$BuiltClubAndAudience
+  ];
+  @override
+  final String wireName = 'BuiltClubAndAudience';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, BuiltClubAndAudience object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.club != null) {
+      result
+        ..add('club')
+        ..add(serializers.serialize(object.club,
+            specifiedType: const FullType(BuiltClub)));
+    }
+    if (object.audienceData != null) {
+      result
+        ..add('audienceData')
+        ..add(serializers.serialize(object.audienceData,
+            specifiedType: const FullType(AudienceData)));
+    }
+    if (object.reactionIndexValue != null) {
+      result
+        ..add('reactionIndexValue')
+        ..add(serializers.serialize(object.reactionIndexValue,
+            specifiedType: const FullType(int)));
+    }
+    return result;
+  }
+
+  @override
+  BuiltClubAndAudience deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltClubAndAudienceBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'club':
+          result.club.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltClub)) as BuiltClub);
+          break;
+        case 'audienceData':
+          result.audienceData.replace(serializers.deserialize(value,
+              specifiedType: const FullType(AudienceData)) as AudienceData);
+          break;
+        case 'reactionIndexValue':
+          result.reactionIndexValue = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$AudienceDataSerializer implements StructuredSerializer<AudienceData> {
+  @override
+  final Iterable<Type> types = const [AudienceData, _$AudienceData];
+  @override
+  final String wireName = 'AudienceData';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, AudienceData object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'isBlocked',
+      serializers.serialize(object.isBlocked,
+          specifiedType: const FullType(bool)),
+      'isParticipant',
+      serializers.serialize(object.isParticipant,
+          specifiedType: const FullType(bool)),
+      'joinRequested',
+      serializers.serialize(object.joinRequested,
+          specifiedType: const FullType(bool)),
+      'audience',
+      serializers.serialize(object.audience,
+          specifiedType: const FullType(SummaryUser)),
+    ];
+    if (object.joinRequestAttempts != null) {
+      result
+        ..add('joinRequestAttempts')
+        ..add(serializers.serialize(object.joinRequestAttempts,
+            specifiedType: const FullType(int)));
+    }
+    if (object.invitationId != null) {
+      result
+        ..add('invitationId')
+        ..add(serializers.serialize(object.invitationId,
+            specifiedType: const FullType(String)));
+    }
+    if (object.timestamp != null) {
+      result
+        ..add('timestamp')
+        ..add(serializers.serialize(object.timestamp,
+            specifiedType: const FullType(int)));
+    }
+    return result;
+  }
+
+  @override
+  AudienceData deserialize(Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new AudienceDataBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'isBlocked':
+          result.isBlocked = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'isParticipant':
+          result.isParticipant = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'joinRequested':
+          result.joinRequested = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'joinRequestAttempts':
+          result.joinRequestAttempts = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'audience':
+          result.audience.replace(serializers.deserialize(value,
+              specifiedType: const FullType(SummaryUser)) as SummaryUser);
+          break;
+        case 'invitationId':
+          result.invitationId = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'timestamp':
+          result.timestamp = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -2837,11 +2998,7 @@ class _$BuiltClubAndAudience extends BuiltClubAndAudience {
 
   _$BuiltClubAndAudience._(
       {this.club, this.audienceData, this.reactionIndexValue})
-      : super._() {
-    if (club == null) {
-      throw new BuiltValueNullFieldError('BuiltClubAndAudience', 'club');
-    }
-  }
+      : super._();
 
   @override
   BuiltClubAndAudience rebuild(
@@ -2927,14 +3084,14 @@ class BuiltClubAndAudienceBuilder
     try {
       _$result = _$v ??
           new _$BuiltClubAndAudience._(
-              club: club.build(),
+              club: _club?.build(),
               audienceData: _audienceData?.build(),
               reactionIndexValue: reactionIndexValue);
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'club';
-        club.build();
+        _club?.build();
         _$failedField = 'audienceData';
         _audienceData?.build();
       } catch (e) {
