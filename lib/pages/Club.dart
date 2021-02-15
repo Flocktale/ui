@@ -53,48 +53,23 @@ class _ClubState extends State<Club> {
   bool _isOwner;
 
   void _setParticipantList(event) {
-    final userId = Provider.of<UserData>(context, listen: false).userId;
+    if (event['clubId'] != widget.club.clubId) return;
+
     participantList = [];
-    bool isUserIncluded = false;
     event['participantList'].forEach((e) {
       SummaryUser participant = SummaryUser((r) => r
         ..userId = e['userId']
         ..username = e['username']
         ..avatar = e['avatar']);
       participantList.add(participant);
-
-      if (participant.userId == userId) {
-        isUserIncluded = true;
-
-        if (_isParticipant == false) {
-          // this user is promoted as a participant just now.
-          _joinClubAsPanelist();
-
-          Fluttertoast.showToast(msg: "You are a panelist now");
-        }
-
-        _clubAudience =
-            _clubAudience.rebuild((b) => b..audienceData.isParticipant = true);
-
-        _isParticipant = true;
-      }
     });
 
-    if (_isParticipant == true && isUserIncluded == false) {
-      // this user was participant but now user is not presnt in latest participant list.
-      // this user has been kicked out recently.
-
-      _clubAudience =
-          _clubAudience.rebuild((b) => b..audienceData.isParticipant = false);
-      _isParticipant = false;
-
-      _joinClubAsAudience();
-      Fluttertoast.showToast(msg: "You are now a listener only");
-    }
     setState(() {});
   }
 
   void _setAudienceCount(event) {
+    if (event['clubId'] != widget.club.clubId) return;
+
     _audienceCount = (event['count']);
     print("<<<<<<<<<<<<<<<<");
     print(event);
@@ -102,6 +77,8 @@ class _ClubState extends State<Club> {
   }
 
   void _setReactionCounters(event) {
+    if (event['clubId'] != widget.club.clubId) return;
+
     int count = (event['count']);
     int ind = (event['indexValue']);
     if (ind == 0) {
@@ -115,7 +92,9 @@ class _ClubState extends State<Club> {
     setState(() {});
   }
 
-  void youAreBlocked(event) {
+  void _youAreBlocked(event) {
+    if (event['clubId'] != widget.club.clubId) return;
+
     // block if the current Club is blocked
     if (event['clubId'] == widget.club.clubId) {
       Provider.of<MySocket>(context, listen: false)
@@ -126,7 +105,7 @@ class _ClubState extends State<Club> {
     }
   }
 
-  void youAreMuted(event) {
+  void _youAreMuted(event) {
     if (event['clubId'] != _clubAudience.club.clubId) return;
     Provider.of<AgoraController>(context, listen: false).hardMute();
 
@@ -151,7 +130,7 @@ class _ClubState extends State<Club> {
     // enable play button
   }
 
-  void putNewComment(event) {
+  void _putNewComment(event) {
     print(event);
     Comment cur = new Comment();
     SummaryUser u = SummaryUser((r) => r
@@ -165,11 +144,11 @@ class _ClubState extends State<Club> {
     setState(() {});
   }
 
-  void addOldComments(event) {
+  void _addOldComments(event) {
     int length = (event['oldComments'] as List).length;
 
     for (int i = length - 1; i >= 0; i--) {
-      putNewComment(event['oldComments'][i]);
+      _putNewComment(event['oldComments'][i]);
     }
     setState(() {});
   }
@@ -345,17 +324,66 @@ class _ClubState extends State<Club> {
     setState(() {});
   }
 
+  void _newJRArrived(event) {
+    if (event['clubId'] != widget.club.clubId) return;
+
+    final username = event['username'];
+    if (username != null)
+      Fluttertoast.showToast(msg: '$username wish to become Panelist');
+  }
+
+  void _yourJRAccepted(event) {
+    if (event['clubId'] != widget.club.clubId) return;
+
+    Fluttertoast.showToast(msg: 'You are now a Panelist');
+    _clubAudience = _clubAudience.rebuild((b) => b
+      ..audienceData.isParticipant = true
+      ..audienceData.joinRequested = false);
+    _isParticipant = true;
+    _sentRequest = false;
+
+    _joinClubAsPanelist();
+
+    setState(() {});
+  }
+
+  void _yourJRcancelledByOwner(event) {
+    if (event['clubId'] != widget.club.clubId) return;
+
+    Fluttertoast.showToast(msg: 'You request to speak has been cancelled.');
+    _clubAudience =
+        _clubAudience.rebuild((b) => b..audienceData.joinRequested = false);
+    _sentRequest = false;
+    setState(() {});
+  }
+
+  void _youAreKickedOut(event) {
+    if (event['clubId'] != widget.club.clubId) return;
+    Fluttertoast.showToast(msg: 'You are now a listener only');
+    _clubAudience =
+        _clubAudience.rebuild((b) => b..audienceData.isParticipant = false);
+    _isParticipant = false;
+
+    _joinClubAsAudience();
+    setState(() {});
+  }
+
   void _joinClubInWebsocket() {
     Provider.of<MySocket>(context, listen: false).joinClub(
-        widget.club.clubId,
-        putNewComment,
-        addOldComments,
-        _setReactionCounters,
-        _setParticipantList,
-        _setAudienceCount,
-        _clubStartedByOwner,
-        youAreMuted,
-        youAreBlocked);
+      widget.club.clubId,
+      putNewComment: _putNewComment,
+      addOldComments: _addOldComments,
+      setReactionCounters: _setReactionCounters,
+      setParticipantList: _setParticipantList,
+      setAudienceCount: _setAudienceCount,
+      clubStarted: _clubStartedByOwner,
+      youAreMuted: _youAreMuted,
+      youAreBlocked: _youAreBlocked,
+      newJRArrived: _newJRArrived,
+      yourJRAccepted: _yourJRAccepted,
+      yourJRcancelledByOwner: _yourJRcancelledByOwner,
+      youAreKickedOut: _youAreKickedOut,
+    );
   }
 
   Future<void> _generateAgoraToken() async {
