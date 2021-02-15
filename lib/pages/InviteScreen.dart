@@ -10,20 +10,17 @@ import 'package:built_collection/built_collection.dart';
 
 class InviteScreen extends StatefulWidget {
   final BuiltClub club;
-  final sponsorId;
 
   /// set [forPanelist] to true only when inviting panelist.
   final bool forPanelist;
-  const InviteScreen(
-      {@required this.club,
-      @required this.sponsorId,
-      this.forPanelist = false});
+  const InviteScreen({@required this.club, this.forPanelist = false});
   @override
   _InviteScreenState createState() => _InviteScreenState();
 }
 
 class _InviteScreenState extends State<InviteScreen> {
   String type;
+  String _sponsorId;
 
   // it retains list of followers, even if user is searching
   // when user clear his/her searches, it will show already loaded data.
@@ -47,7 +44,7 @@ class _InviteScreenState extends State<InviteScreen> {
   Future<void> _fetchRelationData() async {
     relationMap['data'] = (await Provider.of<DatabaseApiService>(context,
                 listen: false)
-            .getRelations(widget.club.creator.userId, type,
+            .getRelations(_sponsorId, type,
                 (relationMap['data'] as BuiltSearchUsers)?.lastevaluatedkey))
         .body;
     relationMap['isLoading'] = false;
@@ -85,7 +82,7 @@ class _InviteScreenState extends State<InviteScreen> {
     Response response;
     if (all) {
       response = await service.inviteAllFollowers(
-          widget.club.clubId, widget.sponsorId,
+          widget.club.clubId, _sponsorId,
           authorization: authToken);
     } else {
       BuiltList<String> list = BuiltList<String>([]);
@@ -93,7 +90,7 @@ class _InviteScreenState extends State<InviteScreen> {
       builder.addAll(_selectedUserIds.keys);
       response = await service.inviteUsers(
           widget.club.clubId,
-          widget.sponsorId,
+          _sponsorId,
           BuiltInviteFormat((b) => b
             ..invitee = builder
             ..type = widget.forPanelist ? 'participant' : 'audience'),
@@ -206,6 +203,7 @@ class _InviteScreenState extends State<InviteScreen> {
   @override
   void initState() {
     this.type = widget.forPanelist ? 'friends' : 'followers';
+    this._sponsorId = Provider.of<UserData>(context, listen: false).userId;
     super.initState();
     _fetchRelationData();
   }

@@ -5,15 +5,22 @@ import 'package:mootclub_app/Models/built_post.dart';
 class AgoraController {
   AgoraHandler _agoraHandler;
   bool _isClubMuted;
-  bool _isMicMuted;
+
+  bool isMicMuted;
+
   BuiltClub club;
+
   AgoraController create() {
+    if (_agoraHandler != null) return this;
+
     _agoraHandler = AgoraHandler();
     _isClubMuted = false;
-    _isMicMuted = true;
+    isMicMuted = true;
     _agoraHandler.init();
     return this;
   }
+
+  bool get isPlaying => club != null;
 
   Future<void> joinAsAudience({
     @required String clubId,
@@ -32,7 +39,10 @@ class AgoraController {
   }
 
   Future<void> stop() async {
-    await _agoraHandler.leaveClub();
+    if (club != null) {
+      await _agoraHandler.leaveClub();
+      club = null;
+    }
   }
 
   Future<void> toggleClubMute() async {
@@ -41,17 +51,18 @@ class AgoraController {
   }
 
   Future<void> toggleMicMute() async {
-    _isMicMuted = !_isMicMuted;
-    await _agoraHandler.muteSwitchMic(_isMicMuted);
+    isMicMuted = !isMicMuted;
+    await _agoraHandler.muteSwitchMic(isMicMuted);
   }
 
   Future<void> dispose() async {
-    await _agoraHandler.dispose();
     club = null;
+    await _agoraHandler.dispose();
+    _agoraHandler = null;
   }
 
-  Future<void> hardMute() async{
-    _isMicMuted = true;
-    await _agoraHandler.muteSwitchMic(_isMicMuted);
+  Future<void> hardMute() async {
+    isMicMuted = true;
+    await _agoraHandler.muteSwitchMic(isMicMuted);
   }
 }
