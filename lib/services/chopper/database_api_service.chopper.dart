@@ -431,6 +431,21 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<dynamic>> muteParticipant(
+      String clubId, String who, String participantId,
+      {String authorization}) {
+    final $url = '/clubs/$clubId/mute/';
+    final $params = <String, dynamic>{
+      'who': who,
+      'participantId': participantId
+    };
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<dynamic>> inviteAllFollowers(String clubId, String sponsorId,
       {String authorization}) {
     final $url = '/clubs/$clubId/invite/all-followers';

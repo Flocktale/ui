@@ -271,6 +271,14 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
+  @Post(path: '/clubs/{clubId}/mute/')
+  Future<Response> muteParticipant(
+    @Path() String clubId,
+    @Query() String who,
+    @Query() String participantId, {
+    @required @Header() String authorization,
+  });
+
   // -------------- Inviting APIs----------------
 
   @Post(path: '/clubs/{clubId}/invite/all-followers')

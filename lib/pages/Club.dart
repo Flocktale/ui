@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'package:mootclub_app/Carousel.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/comment.dart';
 import 'package:mootclub_app/pages/InviteScreen.dart';
@@ -11,7 +10,6 @@ import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'ProfilePage.dart';
 import 'ClubJoinRequests.dart';
@@ -24,7 +22,7 @@ class Club extends StatefulWidget {
 }
 
 class _ClubState extends State<Club> {
-  bool _isPlaying = false;
+  bool _isPlaying;
 
   bool _sentRequest = false;
 
@@ -168,7 +166,11 @@ class _ClubState extends State<Club> {
   }
 
   void addOldComments(event) {
-    event['oldComments'].forEach((e) => putNewComment(e));
+    int length = (event['oldComments'] as List).length;
+
+    for (int i = length - 1; i >= 0; i--) {
+      putNewComment(event['oldComments'][i]);
+    }
     setState(() {});
   }
 
@@ -1041,7 +1043,16 @@ class _ClubState extends State<Club> {
                             size: size,
                             participantList: participantList,
                             isOwner: _isOwner,
-                            muteParticipant: null,
+                            muteParticipant: (String panelistId) async {
+                              await Provider.of<DatabaseApiService>(context,
+                                      listen: false)
+                                  .muteParticipant(widget.club.clubId,
+                                      'participant', panelistId);
+                              Future.delayed(Duration(seconds: 1), () {
+                                Fluttertoast.showToast(
+                                    msg: 'Panelist is muted');
+                              });
+                            },
                             removeParticipant: null,
                             blockParticipant: null,
                           ),
