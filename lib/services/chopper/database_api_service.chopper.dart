@@ -427,7 +427,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> kickAudienceId(
+  Future<Response<dynamic>> kickOutParticipant(
       {String clubId, String audienceId, String authorization}) {
     final $url = '/clubs/$clubId/kick/';
     final $params = <String, dynamic>{'audienceId': audienceId};
@@ -438,7 +438,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> blockPanelist(
+  Future<Response<dynamic>> blockAudience(
       {String clubId, String audienceId, String authorization}) {
     final $url = '/clubs/$clubId/block';
     final $params = <String, dynamic>{'audienceId': audienceId};

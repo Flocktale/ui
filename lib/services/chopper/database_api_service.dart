@@ -325,14 +325,14 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   @Post(path: '/clubs/{clubId}/kick/')
-  Future<Response> kickAudienceId({
+  Future<Response> kickOutParticipant({
     @required @Path() String clubId,
     @required @Query() String audienceId,
     @required @Header() String authorization,
   });
 
   @Post(path: '/clubs/{clubId}/block')
-  Future<Response> blockPanelist({
+  Future<Response> blockAudience({
     @required @Path() String clubId,
     @required @Query() String audienceId,
     @required @Header() String authorization,

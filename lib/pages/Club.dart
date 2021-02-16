@@ -239,16 +239,40 @@ class _ClubState extends State<Club> {
         .clubs;
   }
 
+  void _muteParticpant(String userId) async {
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    await Provider.of<DatabaseApiService>(context, listen: false)
+        .muteParticipant(
+      clubId: widget.club.clubId,
+      who: 'participant',
+      participantId: userId,
+      authorization: authToken,
+    );
+    Fluttertoast.showToast(msg: 'Panelist is muted');
+  }
+
   void _kickParticpant(String userId) async {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     await Provider.of<DatabaseApiService>(context, listen: false)
-        .kickAudienceId(
+        .kickOutParticipant(
       clubId: widget.club.clubId,
       audienceId: userId,
       authorization: authToken,
     );
-    Fluttertoast.showToast(msg: 'Action successful');
+    Fluttertoast.showToast(msg: 'Removed panelist');
+  }
+
+  void _blockUser(String userId) async {
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    await Provider.of<DatabaseApiService>(context, listen: false).blockAudience(
+      clubId: widget.club.clubId,
+      audienceId: userId,
+      authorization: authToken,
+    );
+    Fluttertoast.showToast(msg: 'Blocked user');
   }
 
   _sendJoinRequest() async {
@@ -1096,21 +1120,9 @@ class _ClubState extends State<Club> {
                             size: size,
                             participantList: participantList,
                             isOwner: _isOwner,
-                            muteParticipant: (String panelistId) async {
-                              await Provider.of<DatabaseApiService>(context,
-                                      listen: false)
-                                  .muteParticipant(
-                                clubId: widget.club.clubId,
-                                who: 'participant',
-                                participantId: panelistId,
-                              );
-                              Future.delayed(Duration(seconds: 1), () {
-                                Fluttertoast.showToast(
-                                    msg: 'Panelist is muted');
-                              });
-                            },
-                            removeParticipant: null,
-                            blockParticipant: null,
+                            muteParticipant: _muteParticpant,
+                            removeParticipant: _kickParticpant,
+                            blockParticipant: _blockUser,
                           ),
                       ],
                     )
