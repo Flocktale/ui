@@ -178,9 +178,12 @@ class _ClubState extends State<Club> {
     }
 
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    service.postReaction(widget.club.clubId,
-        Provider.of<UserData>(context, listen: false).user.userId, 2,
-        authorization: null);
+    service.postReaction(
+      clubId: widget.club.clubId,
+      audienceId: Provider.of<UserData>(context, listen: false).user.userId,
+      indexValue: 2,
+      authorization: null,
+    );
     _resetReactionValueInClubAudience(2);
   }
 
@@ -195,9 +198,12 @@ class _ClubState extends State<Club> {
     }
 
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    service.postReaction(widget.club.clubId,
-        Provider.of<UserData>(context, listen: false).user.userId, 1,
-        authorization: null);
+    service.postReaction(
+      clubId: widget.club.clubId,
+      audienceId: Provider.of<UserData>(context, listen: false).user.userId,
+      indexValue: 1,
+      authorization: null,
+    );
     _resetReactionValueInClubAudience(1);
   }
 
@@ -212,17 +218,23 @@ class _ClubState extends State<Club> {
     }
 
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    service.postReaction(widget.club.clubId,
-        Provider.of<UserData>(context, listen: false).user.userId, 0,
-        authorization: null);
+    service.postReaction(
+      clubId: widget.club.clubId,
+      audienceId: Provider.of<UserData>(context, listen: false).user.userId,
+      indexValue: 0,
+      authorization: null,
+    );
     _resetReactionValueInClubAudience(0);
   }
 
-  _fetchAllClubs() async {
+  _fetchAllOwnerClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    Clubs = (await service.getMyOrganizedClubs(widget.club.creator.userId,
-            authorization: authToken))
+    Clubs = (await service.getMyOrganizedClubs(
+      userId: widget.club.creator.userId,
+      lastevaluatedkey: null,
+      authorization: authToken,
+    ))
         .body
         .clubs;
   }
@@ -232,8 +244,8 @@ class _ClubState extends State<Club> {
 
     await Provider.of<DatabaseApiService>(context, listen: false)
         .kickAudienceId(
-      widget.club.clubId,
-      userId,
+      clubId: widget.club.clubId,
+      audienceId: userId,
       authorization: authToken,
     );
     Fluttertoast.showToast(msg: 'Action successful');
@@ -243,8 +255,11 @@ class _ClubState extends State<Club> {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
-    await service.sendJoinRequest(cuser.userId, widget.club.clubId,
-        authorization: authToken);
+    await service.sendJoinRequest(
+      clubId: widget.club.clubId,
+      userId: cuser.userId,
+      authorization: authToken,
+    );
     Fluttertoast.showToast(msg: "Join Request Sent");
   }
 
@@ -252,8 +267,11 @@ class _ClubState extends State<Club> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
-    await service.deleteJoinRequet(cuser.userId, widget.club.clubId,
-        authorization: authToken);
+    await service.deleteJoinRequet(
+      clubId: widget.club.clubId,
+      userId: cuser.userId,
+      authorization: authToken,
+    );
     Fluttertoast.showToast(msg: "Join Request Cancelled");
   }
 
@@ -288,8 +306,11 @@ class _ClubState extends State<Club> {
     final userId = Provider.of<UserData>(context, listen: false).userId;
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    final resp = await service.getClubByClubId(widget.club.clubId,
-        userId: userId, authorization: authToken);
+    final resp = await service.getClubByClubId(
+      clubId: widget.club.clubId,
+      userId: userId,
+      authorization: authToken,
+    );
 
     if (resp.isSuccessful == false) {
       // 403 means user is blocked
@@ -391,8 +412,8 @@ class _ClubState extends State<Club> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final data = await service.generateAgoraTokenForClub(
-      widget.club.clubId,
-      userId,
+      clubId: widget.club.clubId,
+      userId: userId,
       authorization: authToken,
     );
     print(data.body['agoraToken']);
@@ -617,7 +638,11 @@ class _ClubState extends State<Club> {
     _enterClub();
 
     Provider.of<DatabaseApiService>(context, listen: false)
-        .getActiveJoinRequests(widget.club.clubId, null, authorization: null);
+        .getActiveJoinRequests(
+      clubId: widget.club.clubId,
+      lastevaluatedkey: null,
+      authorization: null,
+    );
   }
 
   @override
@@ -1047,7 +1072,7 @@ class _ClubState extends State<Club> {
 
                               SizedBox(height: size.height / 50),
                               // FutureBuilder(
-                              //     future: _fetchAllClubs(),
+                              //     future: _fetchAllOwnerClubs(),
                               //     builder: (context, snapshot) {
                               //       if (snapshot.connectionState ==
                               //           ConnectionState.waiting) {
@@ -1074,8 +1099,11 @@ class _ClubState extends State<Club> {
                             muteParticipant: (String panelistId) async {
                               await Provider.of<DatabaseApiService>(context,
                                       listen: false)
-                                  .muteParticipant(widget.club.clubId,
-                                      'participant', panelistId);
+                                  .muteParticipant(
+                                clubId: widget.club.clubId,
+                                who: 'participant',
+                                participantId: panelistId,
+                              );
                               Future.delayed(Duration(seconds: 1), () {
                                 Fluttertoast.showToast(
                                     msg: 'Panelist is muted');

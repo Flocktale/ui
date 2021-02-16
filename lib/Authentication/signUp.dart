@@ -75,8 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       Fluttertoast.showToast(msg: 'USER NAME length must be between 3 to 25');
       return;
     }
-    if (_nameController.text.length < 3 ||
-        _nameController.text.length > 25) {
+    if (_nameController.text.length < 3 || _nameController.text.length > 25) {
       Fluttertoast.showToast(msg: 'NAME length must be between 3 to 25');
       return;
     }
@@ -91,7 +90,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final _storage = SecureStorage();
     final email = await _storage.getEmail();
 
-
     final newUser = BuiltUser((b) => b
       ..userId = userId
       ..name = _nameController.text.trim()
@@ -99,8 +97,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ..username = _usernameController.text.trim());
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    final response =
-        await service.createNewUser(newUser, authorization: authToken);
+    final response = await service.createNewUser(
+      body: newUser,
+      authorization: authToken,
+    );
 
     if (response.isSuccessful) {
       Fluttertoast.showToast(msg: 'Your registration is successfull!');
@@ -112,8 +112,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         final newImage = BuiltProfileImage((b) => b..image = imageInBase64);
 
-        final resp = await service.uploadAvatar(userId, newImage,
-            authorization: authToken);
+        final resp = await service.uploadAvatar(
+          userId: userId,
+          image: newImage,
+          authorization: authToken,
+        );
         if (resp.isSuccessful) {
           Fluttertoast.showToast(msg: "Profile Image Uploaded");
         } else {
@@ -127,8 +130,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       // sending device token to backend to get notifications for this user on current device.
       Provider.of<DatabaseApiService>(context, listen: false).registerFCMToken(
-          userId, BuiltFCMToken((b) => b..deviceToken = fcmToken),
-          authorization: authToken);
+        userId: userId,
+        body: BuiltFCMToken((b) => b..deviceToken = fcmToken),
+        authorization: authToken,
+      );
 
       Provider.of<UserData>(context, listen: false).updateUser = newUser;
 
@@ -228,7 +233,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     borderSide: BorderSide(color: Colors.red))),
                             validator: (val) {
                               if (val.isEmpty) return 'Please fill this field';
-                              if (val.length<3) return 'Minimum length should be 3';
+                              if (val.length < 3)
+                                return 'Minimum length should be 3';
 
                               return null;
                             },
@@ -246,7 +252,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     borderSide: BorderSide(color: Colors.red))),
                             validator: (val) {
                               if (val.isEmpty) return 'Please fill this field';
-                              if (val.length<3) return 'Minimum length should be 3';
+                              if (val.length < 3)
+                                return 'Minimum length should be 3';
 
                               return null;
                             },

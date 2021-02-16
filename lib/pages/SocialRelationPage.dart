@@ -32,10 +32,11 @@ class _SocialRelationPageState extends State<SocialRelationPage>
     relationMap[type]['data'] =
         (await Provider.of<DatabaseApiService>(context, listen: false)
                 .getRelations(
-                    widget.user.userId,
-                    type,
-                    (relationMap[type]['data'] as BuiltSearchUsers)
-                        ?.lastevaluatedkey))
+      userId: widget.user.userId,
+      socialRelation: type,
+      lastevaluatedkey:
+          (relationMap[type]['data'] as BuiltSearchUsers)?.lastevaluatedkey,
+    ))
             .body;
     relationMap[type]['isLoading'] = false;
 
@@ -55,10 +56,11 @@ class _SocialRelationPageState extends State<SocialRelationPage>
       relationMap[type]['data'] =
           (await Provider.of<DatabaseApiService>(context, listen: false)
                   .getRelations(
-                      widget.user.userId,
-                      type,
-                      (relationMap[type]['data'] as BuiltSearchUsers)
-                          ?.lastevaluatedkey))
+        userId: widget.user.userId,
+        socialRelation: type,
+        lastevaluatedkey:
+            (relationMap[type]['data'] as BuiltSearchUsers)?.lastevaluatedkey,
+      ))
               .body;
     } else {
       await Future.delayed(Duration(milliseconds: 200));

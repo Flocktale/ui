@@ -72,8 +72,11 @@ class _ImagePageState extends State<ImagePage> {
       ..category = widget.category);
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    final resp = await service.createNewClub(newClub, widget.userId,
-        authorization: authToken);
+    final resp = await service.createNewClub(
+      body: newClub,
+      creatorId: widget.userId,
+      authorization: authToken,
+    );
     print("!!!!!!!!!!!!!!!!!!!!!!!");
     print(resp.body);
     if (resp.isSuccessful && image != null) {
@@ -83,12 +86,17 @@ class _ImagePageState extends State<ImagePage> {
         imageInBase64 = base64Encode(pickedImage);
         final newImage = BuiltProfileImage((b) => b..image = imageInBase64);
         final response = await service.updateClubAvatar(
-            resp.body['clubId'], newImage,
-            authorization: authToken);
+          clubId: resp.body['clubId'],
+          image: newImage,
+          authorization: authToken,
+        );
         print("!!!!!!!!!!!!!!!!!!!!!!!");
         print(response.isSuccessful);
-        BuiltClub newClub = (await service.getClubByClubId(resp.body['clubId'],
-                authorization: authToken))
+        BuiltClub newClub = (await service.getClubByClubId(
+          userId: widget.userId,
+          clubId: resp.body['clubId'],
+          authorization: authToken,
+        ))
             .body
             ?.club;
         Navigator.of(context).push(MaterialPageRoute(

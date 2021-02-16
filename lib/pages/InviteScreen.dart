@@ -42,11 +42,15 @@ class _InviteScreenState extends State<InviteScreen> {
   Map<String, bool> _selectedUserIds = {};
 
   Future<void> _fetchRelationData() async {
-    relationMap['data'] = (await Provider.of<DatabaseApiService>(context,
-                listen: false)
-            .getRelations(_sponsorId, type,
-                (relationMap['data'] as BuiltSearchUsers)?.lastevaluatedkey))
-        .body;
+    relationMap['data'] =
+        (await Provider.of<DatabaseApiService>(context, listen: false)
+                .getRelations(
+      userId: _sponsorId,
+      socialRelation: type,
+      lastevaluatedkey:
+          (relationMap['data'] as BuiltSearchUsers)?.lastevaluatedkey,
+    ))
+            .body;
     relationMap['isLoading'] = false;
     setState(() {});
   }
@@ -82,19 +86,22 @@ class _InviteScreenState extends State<InviteScreen> {
     Response response;
     if (all) {
       response = await service.inviteAllFollowers(
-          widget.club.clubId, _sponsorId,
-          authorization: authToken);
+        clubId: widget.club.clubId,
+        sponsorId: _sponsorId,
+        authorization: authToken,
+      );
     } else {
       BuiltList<String> list = BuiltList<String>([]);
       var builder = list.toBuilder();
       builder.addAll(_selectedUserIds.keys);
       response = await service.inviteUsers(
-          widget.club.clubId,
-          _sponsorId,
-          BuiltInviteFormat((b) => b
-            ..invitee = builder
-            ..type = widget.forPanelist ? 'participant' : 'audience'),
-          authorization: authToken);
+        clubId: widget.club.clubId,
+        sponsorId: _sponsorId,
+        invite: BuiltInviteFormat((b) => b
+          ..invitee = builder
+          ..type = widget.forPanelist ? 'participant' : 'audience'),
+        authorization: authToken,
+      );
     }
     if (response.isSuccessful) {
       Fluttertoast.showToast(msg: 'Invitations sent successfully');

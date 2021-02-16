@@ -61,8 +61,11 @@ class _ProfileImagePageState extends State<ProfileImagePage> {
     imageInBase64 = base64Encode(pickedImage);
     final newImage = BuiltProfileImage((b) => b..image = imageInBase64);
 
-    final resp =
-        await service.uploadAvatar(userId, newImage, authorization: authToken);
+    final resp = await service.uploadAvatar(
+      userId: userId,
+      image: newImage,
+      authorization: authToken,
+    );
     if (resp.isSuccessful) {
       Fluttertoast.showToast(msg: "Profile Image Uploaded");
       Navigator.of(context).pop();

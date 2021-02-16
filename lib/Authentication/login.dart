@@ -72,8 +72,10 @@ class _LoginState extends State<Login> {
 
 // sending device token to backend to get notifications for this user on current device.
     Provider.of<DatabaseApiService>(context, listen: false).registerFCMToken(
-        userId, BuiltFCMToken((b) => b..deviceToken = fcmToken),
-        authorization: authToken);
+      userId: userId,
+      body: BuiltFCMToken((b) => b..deviceToken = fcmToken),
+      authorization: authToken,
+    );
 
     // final _prefs = await SharedPreferences.getInstance();
     // final _storage = new FlutterSecureStorage();

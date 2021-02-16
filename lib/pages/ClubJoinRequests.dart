@@ -19,8 +19,10 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     String lastevaluatedkey;
     joinRequests = (await service.getActiveJoinRequests(
-            widget.club.clubId, lastevaluatedkey,
-            authorization: authToken))
+      clubId: widget.club.clubId,
+      lastevaluatedkey: lastevaluatedkey,
+      authorization: authToken,
+    ))
         .body;
     setState(() {});
   }
@@ -28,8 +30,12 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
   acceptJoinRequest(String audienceId) async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    await service.respondToJoinRequest(widget.club.clubId, "accept", audienceId,
-        authorization: authToken);
+    await service.respondToJoinRequest(
+      clubId: widget.club.clubId,
+      action: "accept",
+      audienceId: audienceId,
+      authorization: authToken,
+    );
     Fluttertoast.showToast(msg: "Join Request Accepted");
     setState(() {});
   }
