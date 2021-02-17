@@ -190,13 +190,20 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   //---------------------------------------------------------------------------------------------
-  //                          Generate Agora Token to start club
+  //                           Start club for first time, Conclude Club
   //---------------------------------------------------------------------------------------------
 
-  @Post(path: '/clubs/{clubId}/agora/token/create/')
-  Future<Response> generateAgoraTokenForClub({
+  @Post(path: '/clubs/{clubId}/start/')
+  Future<Response> startClub({
     @required @Path() String clubId,
     @required @Query() String userId,
+    @required @Header() String authorization,
+  });
+
+  @Post(path: '/clubs/{clubId}/conclude/')
+  Future<Response> concludeClub({
+    @required @Path() String clubId,
+    @required @Query() String creatorId,
     @required @Header() String authorization,
   });
 

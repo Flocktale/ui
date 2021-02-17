@@ -240,10 +240,21 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> generateAgoraTokenForClub(
+  Future<Response<dynamic>> startClub(
       {String clubId, String userId, String authorization}) {
-    final $url = '/clubs/$clubId/agora/token/create/';
+    final $url = '/clubs/$clubId/start/';
     final $params = <String, dynamic>{'userId': userId};
+    final $headers = {'authorization': authorization};
+    final $request = Request('POST', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> concludeClub(
+      {String clubId, String creatorId, String authorization}) {
+    final $url = '/clubs/$clubId/conclude/';
+    final $params = <String, dynamic>{'creatorId': creatorId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);

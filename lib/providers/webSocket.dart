@@ -65,6 +65,9 @@ class MySocket with ChangeNotifier {
         } else if (what == "JR#Resp#cancel") {
           Fluttertoast.showToast(
               msg: 'You request to speak has been cancelled.');
+        } else if (what == "clubConcluded") {
+          agoraController.stop();
+          Fluttertoast.showToast(msg: "This Club is concluded now");
         }
       }
     });
@@ -94,6 +97,7 @@ class MySocket with ChangeNotifier {
     Function yourJRAccepted,
     Function yourJRcancelledByOwner,
     Function youAreKickedOut,
+    Function clubConcludedByOwner,
   }) {
     channel.sink.add(jsonEncode({
       "action": "club-subscription",
@@ -116,6 +120,8 @@ class MySocket with ChangeNotifier {
     funcs["JR#Resp#cancel"] = yourJRcancelledByOwner;
 
     funcs["kickedOut"] = youAreKickedOut;
+
+    funcs["clubConcluded"] = clubConcludedByOwner;
   }
 
   void addComment(String message, String clubId, String userId) {
@@ -149,5 +155,7 @@ class MySocket with ChangeNotifier {
     funcs["JR#Resp#cancel"] = null;
 
     funcs["kickedOut"] = null;
+
+    funcs["clubConcluded"] = null;
   }
 }

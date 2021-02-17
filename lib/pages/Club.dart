@@ -27,6 +27,7 @@ class _ClubState extends State<Club> {
   bool _sentRequest = false;
 
   bool _isLive = false;
+  bool _isConcluded = false;
 
   bool _isMuted;
 
@@ -121,13 +122,33 @@ class _ClubState extends State<Club> {
     Fluttertoast.showToast(msg: "This Club is live now");
 
     setState(() {
-      _clubAudience = _clubAudience
-          .rebuild((b) => b..club.agoraToken = event['agoraToken']);
+      _clubAudience = _clubAudience.rebuild((b) => b
+        ..club.agoraToken = event['agoraToken']
+        ..club.isLive = true);
       _isLive = true;
     });
 
     //TODO
     // enable play button
+  }
+
+  void _clubConcludedByOwner(event) async {
+    if (event['clubId'] != _clubAudience.club.clubId) return;
+
+    _clubAudience = _clubAudience.rebuild((b) => b
+      ..club.agoraToken = null
+      ..club.isLive = false
+      ..club.isConcluded = true);
+
+    await Provider.of<AgoraController>(context, listen: false).stop();
+
+    Fluttertoast.showToast(msg: "This Club is concluded now");
+
+    setState(() {
+      _isPlaying = false;
+      _isLive = false;
+      _isConcluded = true;
+    });
   }
 
   void _putNewComment(event) {
@@ -347,8 +368,9 @@ class _ClubState extends State<Club> {
 
     _clubAudience = resp.body;
 
-// setting live status (later to be decided by a dedicated attribute)
-    _isLive = _clubAudience.club.agoraToken != null;
+    // setting live status
+    _isLive = _clubAudience.club.isLive;
+    _isConcluded = _clubAudience.club.isConcluded ?? false;
 
     // now we can join club in websocket also.
     _joinClubInWebsocket();
@@ -428,24 +450,53 @@ class _ClubState extends State<Club> {
       yourJRAccepted: _yourJRAccepted,
       yourJRcancelledByOwner: _yourJRcancelledByOwner,
       youAreKickedOut: _youAreKickedOut,
+      clubConcludedByOwner: _clubConcludedByOwner,
     );
   }
 
-  Future<void> _generateAgoraToken() async {
+  Future<void> _startClub() async {
     final userId = Provider.of<UserData>(context, listen: false).userId;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    final data = await service.generateAgoraTokenForClub(
+    final data = await service.startClub(
       clubId: widget.club.clubId,
       userId: userId,
       authorization: authToken,
     );
     print(data.body['agoraToken']);
-    _clubAudience = _clubAudience
-        .rebuild((b) => b..club.agoraToken = data.body['agoraToken']);
+    _clubAudience = _clubAudience.rebuild(
+      (b) => b
+        ..club.agoraToken = data.body['agoraToken']
+        ..club.isLive = true,
+    );
 
     setState(() {
       _isLive = true;
+    });
+  }
+
+  Future<void> _concludeClub() async {
+    final userId = Provider.of<UserData>(context, listen: false).userId;
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final data = await service.concludeClub(
+      clubId: widget.club.clubId,
+      creatorId: userId,
+      authorization: authToken,
+    );
+    _clubAudience = _clubAudience.rebuild((b) => b
+      ..club.agoraToken = null
+      ..club.isLive = false
+      ..club.isConcluded = true);
+
+    await Provider.of<AgoraController>(context, listen: false).stop();
+
+    Fluttertoast.showToast(msg: 'This club is concluded now.');
+
+    setState(() {
+      _isPlaying = false;
+      _isLive = false;
+      _isConcluded = true;
     });
   }
 
@@ -495,7 +546,7 @@ class _ClubState extends State<Club> {
       //start club
       if (_isLive == false && _isOwner == true) {
         // club is being started by owner for first time.
-        await _generateAgoraToken();
+        await _startClub();
       }
 
       if (_isParticipant) {
@@ -811,7 +862,9 @@ class _ClubState extends State<Club> {
                                                 margin: EdgeInsets.fromLTRB(
                                                     0, 5, 0, 0),
                                                 child: Text(
-                                                  "Scheduled",
+                                                  _isConcluded
+                                                      ? "Concluded"
+                                                      : "Scheduled",
                                                   style: TextStyle(
                                                       fontFamily: 'Lato',
                                                       color: Colors.black54),
@@ -867,71 +920,74 @@ class _ClubState extends State<Club> {
                                         ),
                                       ]),
                                     ),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          child: FloatingActionButton(
-                                            heroTag: "btn1",
-                                            onPressed: () =>
-                                                _playButtonHandler(),
-                                            child: !_isPlaying
-                                                ? Icon(Icons.play_arrow)
-                                                : Icon(Icons.stop),
-                                            backgroundColor: _isLive
-                                                ? !_isPlaying
-                                                    ? Colors.red
-                                                    : Colors.redAccent
-                                                : Colors.grey,
-                                          ),
-                                        ),
-
-                                        // dedicated button for mic
-                                        if (_isParticipant == true)
+                                    // if club is concluded no need to show play, mic and participation button
+                                    if (_isConcluded == false)
+                                      Row(
+                                        children: [
                                           Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                10, 0, 0, 0),
                                             child: FloatingActionButton(
-                                              heroTag: "btn2",
+                                              heroTag: "play btn",
                                               onPressed: () =>
-                                                  _micButtonHandler(),
-                                              child: !_isMuted
-                                                  ? Icon(Icons.mic_none_rounded)
-                                                  : Icon(Icons.mic_off_rounded),
-                                              backgroundColor: !_isPlaying
-                                                  ? Colors.grey
-                                                  : !_sentRequest
-                                                      ? Colors.amber
-                                                      : Colors.grey,
+                                                  _playButtonHandler(),
+                                              child: !_isPlaying
+                                                  ? Icon(Icons.play_arrow)
+                                                  : Icon(Icons.stop),
+                                              backgroundColor: _isLive
+                                                  ? !_isPlaying
+                                                      ? Colors.red
+                                                      : Colors.redAccent
+                                                  : Colors.grey,
                                             ),
                                           ),
 
-                                        // dedicated button for sending join request or stepping down to become only listener
-                                        if (_isOwner == false)
-                                          Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                10, 0, 0, 0),
-                                            child: FloatingActionButton(
-                                              heroTag: "btn3",
-                                              onPressed: () =>
-                                                  _participationButtonHandler(),
-                                              child: _isParticipant
-                                                  ? Icon(
-                                                      Icons.remove_from_queue)
-                                                  : Icon(Icons.person_add),
-                                              backgroundColor: _isParticipant
-                                                  ? Colors.grey
-                                                  : _sentRequest
-                                                      ? Colors.amber
-                                                      : Colors.grey,
+                                          // dedicated button for mic
+                                          if (_isParticipant == true)
+                                            Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  10, 0, 0, 0),
+                                              child: FloatingActionButton(
+                                                heroTag: "mic btn",
+                                                onPressed: () =>
+                                                    _micButtonHandler(),
+                                                child: !_isMuted
+                                                    ? Icon(
+                                                        Icons.mic_none_rounded)
+                                                    : Icon(
+                                                        Icons.mic_off_rounded),
+                                                backgroundColor: !_isPlaying
+                                                    ? Colors.grey
+                                                    : !_sentRequest
+                                                        ? Colors.amber
+                                                        : Colors.grey,
+                                              ),
                                             ),
-                                          )
-                                      ],
-                                    )
+
+                                          // dedicated button for sending join request or stepping down to become only listener
+                                          if (_isOwner == false)
+                                            Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  10, 0, 0, 0),
+                                              child: FloatingActionButton(
+                                                heroTag: "participation btn",
+                                                onPressed: () =>
+                                                    _participationButtonHandler(),
+                                                child: _isParticipant
+                                                    ? Icon(
+                                                        Icons.remove_from_queue)
+                                                    : Icon(Icons.person_add),
+                                                backgroundColor: _isParticipant
+                                                    ? Colors.grey
+                                                    : _sentRequest
+                                                        ? Colors.amber
+                                                        : Colors.grey,
+                                              ),
+                                            )
+                                        ],
+                                      )
                                   ],
                                 ),
                               ),
                               SizedBox(height: size.height / 50),
-                              //SizedBox(height: size.height/20,),
 
                               Container(
                                   height: size.height / 2 + size.height / 30,
