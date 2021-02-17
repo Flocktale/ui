@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:mootclub_app/providers/agoraController.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:provider/provider.dart';
-import 'notificationPilot.dart';
 import 'providers/userData.dart';
 import 'package:logging/logging.dart';
 import 'route_generator.dart';
@@ -71,7 +70,8 @@ class MyApp extends StatelessWidget {
         ),
 
         ChangeNotifierProvider<MySocket>(
-          create: (ctx) => MySocket(),
+          create: (ctx) =>
+              MySocket(Provider.of<AgoraController>(ctx, listen: false)),
         ),
         // Provider(
         // create: (ctx)=> MySocket(Provider.of<UserData>(ctx, listen: false).user.userId),

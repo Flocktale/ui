@@ -35,8 +35,11 @@ class _ProfilePageState extends State<ProfilePage> {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    _userRelations = (await service.getUserProfile(cuser.userId, widget.userId,
-            authorization: authToken))
+    _userRelations = (await service.getUserProfile(
+      primaryUserId: cuser.userId,
+      userId: widget.userId,
+      authorization: authToken,
+    ))
         .body
         .relationIndexObj;
     print("==================");
@@ -59,13 +62,15 @@ class _ProfilePageState extends State<ProfilePage> {
       if (_user.followingCount != null) followingCount = _user.followingCount;
     } else {
       _isMe = false;
-      _user = (await service.getUserProfile(null, widget.userId,
-              authorization: authToken))
-          ?.body
-          ?.user;
+      final fetchedUserData = (await service.getUserProfile(
+        primaryUserId: cuser.userId,
+        userId: widget.userId,
+        authorization: authToken,
+      ))
+          .body;
+      _user = fetchedUserData?.user;
+      _userRelations = fetchedUserData?.relationIndexObj;
     }
-
-    await fetchUserRelations();
 
     if (_user.userId == null) {
       _user = null;
@@ -97,8 +102,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    Clubs = (await service.getMyOrganizedClubs(widget.userId,
-            authorization: authToken))
+    Clubs = (await service.getMyOrganizedClubs(
+      userId: widget.userId,
+      lastevaluatedkey: null,
+      authorization: authToken,
+    ))
         ?.body
         ?.clubs;
     setState(() {});
@@ -114,7 +122,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.follow(cuser.userId, widget.userId, authorization: authToken);
+    await service.follow(
+      userId: cuser.userId,
+      foreignUserId: widget.userId,
+      authorization: authToken,
+    );
     await fetchUserRelations();
     Fluttertoast.showToast(msg: 'Follow Request Sent');
   }
@@ -125,8 +137,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.unfollow(cuser.userId, widget.userId,
-        authorization: authToken);
+    await service.unfollow(
+      userId: cuser.userId,
+      foreignUserId: widget.userId,
+      authorization: authToken,
+    );
     await fetchUserRelations();
     Fluttertoast.showToast(msg: 'User Unfollowed');
   }
@@ -136,8 +151,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.sendFriendRequest(cuser.userId, widget.userId,
-        authorization: authToken);
+    await service.sendFriendRequest(
+      userId: cuser.userId,
+      foreignUserId: widget.userId,
+      authorization: authToken,
+    );
 
     await fetchUserRelations();
 
@@ -149,8 +167,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.deleteFriendRequest(cuser.userId, widget.userId,
-        authorization: authToken);
+    await service.deleteFriendRequest(
+      userId: cuser.userId,
+      foreignUserId: widget.userId,
+      authorization: authToken,
+    );
 
     await fetchUserRelations();
 
@@ -162,8 +183,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.unfriend(cuser.userId, widget.userId,
-        authorization: authToken);
+    await service.unfriend(
+      userId: cuser.userId,
+      foreignUserId: widget.userId,
+      authorization: authToken,
+    );
 
     await fetchUserRelations();
 
@@ -188,88 +212,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     print('isme=$_isMe');
-//    const userId = '264bf27e-2752-4e49-aba0-ca03b101c104';
-//    const clubId = 'MYg7GShERndmORpluy7GK';
-
-    // var service = Provider.of<DatabaseApiService>(context,listen:false);
-    // Provider.of<MySocket>(context,listen: false).currentStatus();
-    // for(int i=0;i<100;i++){
-    // print("${_user.userId}  $i");
-    // }
-    // Getting Reactions
-    // Provider.of<DatabaseApiService>(context,listen: false).getReaction('MYg7GShERndmORpluy7GK').then((value){
-    //   print(value.body);
-    // });
-
-    //Sending Reactions
-    //  Provider.of<DatabaseApiService>(context,listen: false).postReaction('MYg7GShERndmORpluy7GK','9a6a6a6d-7b11-4d40-9ce9-c292b9f451b7',1).then((value){
-
-    //   print(value.statusCode);
-    //   print(value.body);
-    //   print(value.error);
-    // });
-
-    //Reporting club
-    // var a = ReportSummary((r)=>r
-    // ..body = "AA");
-
-    // Provider.of<DatabaseApiService>(context, listen: false).reportClub(
-    //     '9a6a6a6d-7b11-4d40-9ce9-c292b9f451b7',
-    //     a,
-    //     'MYg7GShERndmORpluy7GK').then((value)  {
-    //       print(value.statusCode);
-    //       print(value.body);
-    //       print(value.error);
-    //     });
-
-    //Entering a Club
-    // Provider.of<DatabaseApiService>(context, listen: false)
-    //     .enterClub(clubId, userId)
-    //     .then((value) {
-    //     print("Entering into a club");
-    //   print(value.statusCode);
-    //   print(value.body);
-    //   print(value.error);
-    // });
-
-    //Getting Join Request
-    // Provider.of<DatabaseApiService>(context, listen: false)
-    //     .getActiveJoinRequests(clubId, null).then((value) {
-
-    //         print(value.statusCode);
-    //         print(value.body);
-    //         print(value.error);
-    //     });
-
-    //sending join request
-    // Provider.of<DatabaseApiService>(context, listen: false)
-    //     .sendJoinRequest(userId, clubId)
-    //     .then((value) {
-    //   print(value.statusCode);
-    //   print(value.body);
-    //   print(value.error);
-    // });
-
-    // deleting join request
-    // service.deleteJoinRequet(clubId, userId).then((value)=>checkingResposne(value));
-
-    //accepting join request
-    // service.respondToJoinRequest(clubId,"accept", userId).then((value) => checkingResponse(value));
-
-    //rejecting join request
-    //just replace accept by cancel
-
-    // kicking an audience (currently some problem in backend)
-    // service.kickAudienceId(clubId, userId).then((value) => checkingResponse(value));
-
-    //searching for all
-    // service.unifiedQueryRoutes("Ada", "unified",null).then((value) => checkingResponse(value));
-
-    //searching for clubs
-    // service.unifiedQueryRoutes("Ada", "clubs",null).then((value) => checkingResponse(value));
-
-    //searching for users
-    // service.unifiedQueryRoutes("hola", "users",null).then((value) => checkingResponse(value));
 
     return SafeArea(
       child: Scaffold(

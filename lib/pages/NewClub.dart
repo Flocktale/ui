@@ -55,11 +55,17 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    final resp = await service.createNewClub(newClub, widget.userId,
-        authorization: authToken);
+    final resp = await service.createNewClub(
+      body: newClub,
+      creatorId: widget.userId,
+      authorization: authToken,
+    );
     Fluttertoast.showToast(msg: 'club entry is created');
-    BuiltClub tempClub = (await service.getClubByClubId(resp.body['clubId'],
-            authorization: authToken))
+    BuiltClub tempClub = (await service.getClubByClubId(
+      userId: widget.userId,
+      clubId: resp.body['clubId'],
+      authorization: authToken,
+    ))
         .body
         ?.club;
     Navigator.of(context).push(MaterialPageRoute(

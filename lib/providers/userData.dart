@@ -52,8 +52,11 @@ class UserData with ChangeNotifier {
       _isAuth = true;
 
       if (newRegistration == false) {
-        final response = await _postApiService.getUserProfile(null, userId,
-            authorization: authToken);
+        final response = await _postApiService.getUserProfile(
+          userId: _userId,
+          primaryUserId: _userId,
+          authorization: authToken,
+        );
 
         if (response != null && response.body != null) {
           _builtUser = response.body.user;
@@ -83,8 +86,8 @@ class UserData with ChangeNotifier {
 
     _isAuth = true;
 
-    final response = await _postApiService.getUserProfile(null, _userId,
-        authorization: authToken);
+    final response = await _postApiService.getUserProfile(
+        userId: _userId, primaryUserId: _userId, authorization: authToken);
 
     if (response != null && response.body != null) {
       _builtUser = response.body.user;

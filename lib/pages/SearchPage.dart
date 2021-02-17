@@ -24,10 +24,8 @@ class _SearchPageState extends State<SearchPage> {
     List<BuiltUser> recentSearches = [widget.user, widget.user, widget.user];
     // List<BuiltUser> allSearches = [widget.user];
     return SafeArea(
-      child: Stack(
-        children:
-        [
-          Column(
+      child: Stack(children: [
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(
@@ -57,9 +55,11 @@ class _SearchPageState extends State<SearchPage> {
                     filled: true,
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                        borderSide: BorderSide(color: Colors.black, width: 1.0)),
+                        borderSide:
+                            BorderSide(color: Colors.black, width: 1.0)),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 2.0))),
+                        borderSide:
+                            BorderSide(color: Colors.black, width: 2.0))),
                 onTap: () {
                   showSearch(
                       context: context,
@@ -73,11 +73,8 @@ class _SearchPageState extends State<SearchPage> {
             )
           ],
         ),
-          Positioned(
-              bottom:0,
-              child: MinClub())
-        ]
-      ),
+        Positioned(bottom: 0, child: MinClub())
+      ]),
     );
   }
 }
@@ -128,8 +125,12 @@ class DataSearch extends SearchDelegate<String> {
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    allSearches = (await service.unifiedQueryRoutes(username, "unified", null,
-            authorization: authToken))
+    allSearches = (await service.unifiedQueryRoutes(
+      searchString: username,
+      type: "unified",
+      lastevaluatedkey: null,
+      authorization: authToken,
+    ))
         .body;
     print("===================");
     print(allSearches);
