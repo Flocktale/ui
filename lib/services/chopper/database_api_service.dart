@@ -104,6 +104,7 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Path('userId') String userId,
     @required @Query() String notificationId,
     @required @Header() String authorization,
+    @required @Query() String action,
   });
 
   // ---------------------------------------------------------------------------------------------------------------------
