@@ -322,6 +322,9 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   @nullable
   String get agoraToken;
 
+  @nullable
+  int get estimatedAudience;
+
   BuiltClub._();
 
   factory BuiltClub([updates(BuiltClubBuilder b)]) = _$BuiltClub;

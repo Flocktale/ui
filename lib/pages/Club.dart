@@ -479,7 +479,7 @@ class _ClubState extends State<Club> {
     final userId = Provider.of<UserData>(context, listen: false).userId;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    final data = await service.concludeClub(
+    await service.concludeClub(
       clubId: widget.club.clubId,
       creatorId: userId,
       authorization: authToken,
@@ -539,6 +539,13 @@ class _ClubState extends State<Club> {
     }
 
     if (_isPlaying) {
+      if (_isOwner) {
+        _isLive = false;
+        _isConcluded = true;
+
+        await _concludeClub();
+      }
+
       // stop club
       await Provider.of<AgoraController>(context, listen: false).stop();
       _isPlaying = false;

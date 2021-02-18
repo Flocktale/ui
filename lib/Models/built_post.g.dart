@@ -1029,6 +1029,12 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         ..add(serializers.serialize(object.agoraToken,
             specifiedType: const FullType(String)));
     }
+    if (object.estimatedAudience != null) {
+      result
+        ..add('estimatedAudience')
+        ..add(serializers.serialize(object.estimatedAudience,
+            specifiedType: const FullType(int)));
+    }
     return result;
   }
 
@@ -1112,6 +1118,10 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         case 'agoraToken':
           result.agoraToken = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'estimatedAudience':
+          result.estimatedAudience = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -3344,6 +3354,8 @@ class _$BuiltClub extends BuiltClub {
   final BuiltList<String> tags;
   @override
   final String agoraToken;
+  @override
+  final int estimatedAudience;
 
   factory _$BuiltClub([void Function(BuiltClubBuilder) updates]) =>
       (new BuiltClubBuilder()..update(updates)).build();
@@ -3365,7 +3377,8 @@ class _$BuiltClub extends BuiltClub {
       this.isGlobal,
       this.isPrivate,
       this.tags,
-      this.agoraToken})
+      this.agoraToken,
+      this.estimatedAudience})
       : super._();
 
   @override
@@ -3395,7 +3408,8 @@ class _$BuiltClub extends BuiltClub {
         isGlobal == other.isGlobal &&
         isPrivate == other.isPrivate &&
         tags == other.tags &&
-        agoraToken == other.agoraToken;
+        agoraToken == other.agoraToken &&
+        estimatedAudience == other.estimatedAudience;
   }
 
   @override
@@ -3417,27 +3431,31 @@ class _$BuiltClub extends BuiltClub {
                                                             $jc(
                                                                 $jc(
                                                                     $jc(
-                                                                        0,
-                                                                        clubId
+                                                                        $jc(
+                                                                            0,
+                                                                            clubId
+                                                                                .hashCode),
+                                                                        clubName
                                                                             .hashCode),
-                                                                    clubName
+                                                                    creator
                                                                         .hashCode),
-                                                                creator
+                                                                isLive
                                                                     .hashCode),
-                                                            isLive.hashCode),
-                                                        isConcluded.hashCode),
-                                                    timeWindow.hashCode),
-                                                category.hashCode),
-                                            createdOn.hashCode),
-                                        modifiedOn.hashCode),
-                                    scheduleTime.hashCode),
-                                clubAvatar.hashCode),
-                            description.hashCode),
-                        isLocal.hashCode),
-                    isGlobal.hashCode),
-                isPrivate.hashCode),
-            tags.hashCode),
-        agoraToken.hashCode));
+                                                            isConcluded
+                                                                .hashCode),
+                                                        timeWindow.hashCode),
+                                                    category.hashCode),
+                                                createdOn.hashCode),
+                                            modifiedOn.hashCode),
+                                        scheduleTime.hashCode),
+                                    clubAvatar.hashCode),
+                                description.hashCode),
+                            isLocal.hashCode),
+                        isGlobal.hashCode),
+                    isPrivate.hashCode),
+                tags.hashCode),
+            agoraToken.hashCode),
+        estimatedAudience.hashCode));
   }
 
   @override
@@ -3459,7 +3477,8 @@ class _$BuiltClub extends BuiltClub {
           ..add('isGlobal', isGlobal)
           ..add('isPrivate', isPrivate)
           ..add('tags', tags)
-          ..add('agoraToken', agoraToken))
+          ..add('agoraToken', agoraToken)
+          ..add('estimatedAudience', estimatedAudience))
         .toString();
   }
 }
@@ -3536,6 +3555,11 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
   String get agoraToken => _$this._agoraToken;
   set agoraToken(String agoraToken) => _$this._agoraToken = agoraToken;
 
+  int _estimatedAudience;
+  int get estimatedAudience => _$this._estimatedAudience;
+  set estimatedAudience(int estimatedAudience) =>
+      _$this._estimatedAudience = estimatedAudience;
+
   BuiltClubBuilder();
 
   BuiltClubBuilder get _$this {
@@ -3557,6 +3581,7 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       _isPrivate = _$v.isPrivate;
       _tags = _$v.tags?.toBuilder();
       _agoraToken = _$v.agoraToken;
+      _estimatedAudience = _$v.estimatedAudience;
       _$v = null;
     }
     return this;
@@ -3597,7 +3622,8 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
               isGlobal: isGlobal,
               isPrivate: isPrivate,
               tags: _tags?.build(),
-              agoraToken: agoraToken);
+              agoraToken: agoraToken,
+              estimatedAudience: estimatedAudience);
     } catch (_) {
       String _$failedField;
       try {
