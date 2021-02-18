@@ -28,6 +28,15 @@ class _NotificationPageState extends State<NotificationPage> {
     setState(() {});
   }
 
+  respondNotifications(String notifId) async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final cuser = Provider.of<UserData>(context, listen: false).user;
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    notificationList = (await service.responseToNotification(userId: cuser.userId, notificationId: notifId, authorization: authToken, action: 'accept')).body;
+    setState(() {
+    });
+  }
+
   @override
   void initState() {
     getNotifications();
@@ -122,6 +131,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                 )
                               ],
                             ),
+                            notificationList.notifications[index].opened==false?
                             notificationList.notifications[index].type ==
                                     "FR#new"
                                 ? ButtonTheme(
@@ -140,14 +150,8 @@ class _NotificationPageState extends State<NotificationPage> {
                                                 context,
                                                 listen: false)
                                             .authToken;
-                                        final resp =
-                                            (await service.acceptFriendRequest(
-                                          userId: cuser.userId,
-                                          foreignUserId: notificationList
-                                              .notifications[index]
-                                              .targetResourceId,
-                                          authorization: authToken,
-                                        ));
+                                        final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: "ToBeImplemented", authorization: authToken)
+                                            );
                                         if (resp.isSuccessful) {
                                           hasAccepted = !hasAccepted;
                                           setState(() {});
@@ -207,6 +211,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                           ),
                                         ),
                                       )
+                                    : Container()
                                     : Container(),
                           ],
                         ),

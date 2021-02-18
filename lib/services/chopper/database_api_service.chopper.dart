@@ -124,9 +124,15 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<BuiltNotificationList>> responseToNotification(
-      {String userId, String notificationId, String authorization}) {
+      {String userId,
+      String notificationId,
+      String authorization,
+      String action}) {
     final $url = '/users/$userId/notifications/opened';
-    final $params = <String, dynamic>{'notificationId': notificationId};
+    final $params = <String, dynamic>{
+      'notificationId': notificationId,
+      'action': action
+    };
     final $headers = {'authorization': authorization};
     final $request = Request('GET', $url, client.baseUrl,
         parameters: $params, headers: $headers);

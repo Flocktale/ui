@@ -57,7 +57,7 @@ class _MinClubState extends State<MinClub> {
               child: IconButton(
                 iconSize: size.width/10,
                   icon: Icon(Icons.stop),
-                  onPressed: stopClub()
+                  onPressed: (){stopClub();}
               )
           )
         ]
