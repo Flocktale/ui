@@ -74,6 +74,9 @@ class _$NotificationDataSerializer
       'targetResourceId',
       serializers.serialize(object.targetResourceId,
           specifiedType: const FullType(String)),
+      'notificationId',
+      serializers.serialize(object.notificationId,
+          specifiedType: const FullType(String)),
       'opened',
       serializers.serialize(object.opened, specifiedType: const FullType(bool)),
     ];
@@ -116,6 +119,10 @@ class _$NotificationDataSerializer
           break;
         case 'targetResourceId':
           result.targetResourceId = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'notificationId':
+          result.notificationId = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'opened':
@@ -1832,6 +1839,8 @@ class _$NotificationData extends NotificationData {
   @override
   final String targetResourceId;
   @override
+  final String notificationId;
+  @override
   final bool opened;
   @override
   final String secondaryAvatar;
@@ -1846,6 +1855,7 @@ class _$NotificationData extends NotificationData {
       this.avatar,
       this.timestamp,
       this.targetResourceId,
+      this.notificationId,
       this.opened,
       this.secondaryAvatar})
       : super._() {
@@ -1864,6 +1874,9 @@ class _$NotificationData extends NotificationData {
     if (targetResourceId == null) {
       throw new BuiltValueNullFieldError(
           'NotificationData', 'targetResourceId');
+    }
+    if (notificationId == null) {
+      throw new BuiltValueNullFieldError('NotificationData', 'notificationId');
     }
     if (opened == null) {
       throw new BuiltValueNullFieldError('NotificationData', 'opened');
@@ -1887,6 +1900,7 @@ class _$NotificationData extends NotificationData {
         avatar == other.avatar &&
         timestamp == other.timestamp &&
         targetResourceId == other.targetResourceId &&
+        notificationId == other.notificationId &&
         opened == other.opened &&
         secondaryAvatar == other.secondaryAvatar;
   }
@@ -1897,10 +1911,12 @@ class _$NotificationData extends NotificationData {
         $jc(
             $jc(
                 $jc(
-                    $jc($jc($jc(0, type.hashCode), title.hashCode),
-                        avatar.hashCode),
-                    timestamp.hashCode),
-                targetResourceId.hashCode),
+                    $jc(
+                        $jc($jc($jc(0, type.hashCode), title.hashCode),
+                            avatar.hashCode),
+                        timestamp.hashCode),
+                    targetResourceId.hashCode),
+                notificationId.hashCode),
             opened.hashCode),
         secondaryAvatar.hashCode));
   }
@@ -1913,6 +1929,7 @@ class _$NotificationData extends NotificationData {
           ..add('avatar', avatar)
           ..add('timestamp', timestamp)
           ..add('targetResourceId', targetResourceId)
+          ..add('notificationId', notificationId)
           ..add('opened', opened)
           ..add('secondaryAvatar', secondaryAvatar))
         .toString();
@@ -1944,6 +1961,11 @@ class NotificationDataBuilder
   set targetResourceId(String targetResourceId) =>
       _$this._targetResourceId = targetResourceId;
 
+  String _notificationId;
+  String get notificationId => _$this._notificationId;
+  set notificationId(String notificationId) =>
+      _$this._notificationId = notificationId;
+
   bool _opened;
   bool get opened => _$this._opened;
   set opened(bool opened) => _$this._opened = opened;
@@ -1962,6 +1984,7 @@ class NotificationDataBuilder
       _avatar = _$v.avatar;
       _timestamp = _$v.timestamp;
       _targetResourceId = _$v.targetResourceId;
+      _notificationId = _$v.notificationId;
       _opened = _$v.opened;
       _secondaryAvatar = _$v.secondaryAvatar;
       _$v = null;
@@ -1991,6 +2014,7 @@ class NotificationDataBuilder
             avatar: avatar,
             timestamp: timestamp,
             targetResourceId: targetResourceId,
+            notificationId: notificationId,
             opened: opened,
             secondaryAvatar: secondaryAvatar);
     replace(_$result);

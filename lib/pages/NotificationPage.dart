@@ -72,7 +72,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
                       child: ListTile(
                         leading: notificationList
-                                    .notifications[index].secondaryAvatar !=
+                                    .notifications[index].avatar !=
                                 null
                             ? CircleAvatar(
                                 backgroundImage: NetworkImage(notificationList
@@ -82,123 +82,98 @@ class _NotificationPageState extends State<NotificationPage> {
                                     AssetImage("assets/Card1.jpg")),
                         title: Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  notificationList.notifications[index].title,
-                                  style: TextStyle(
-                                    fontFamily: "Lato",
+                            FittedBox(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    notificationList.notifications[index].title,
+                                    style: TextStyle(
+                                      fontFamily: "Lato",
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  DateTime.now()
-                                              .difference(DateTime
-                                                  .fromMillisecondsSinceEpoch(
-                                                      notificationList
-                                                          .notifications[index]
-                                                          .timestamp))
-                                              .inSeconds <
-                                          60
-                                      ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inSeconds ==
-                                              1
-                                          ? DateTime.now()
-                                                  .difference(DateTime.fromMillisecondsSinceEpoch(
-                                                      notificationList
-                                                          .notifications[index]
-                                                          .timestamp))
-                                                  .inSeconds
-                                                  .toString() +
-                                              " s"
-                                          : DateTime.now()
-                                                  .difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp))
-                                                  .inSeconds
-                                                  .toString() +
-                                              " s"
-                                      : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes < 60
-                                          ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes == 1
-                                              ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes.toString() + " m"
-                                              : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes.toString() + " m"
-                                          : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours < 24
-                                              ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours == 1
-                                                  ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours.toString() + " h"
-                                                  : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours.toString() + " h"
-                                              : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inDays == 1
-                                                  ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inDays.toString() + " d"
-                                                  : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inDays.toString() + " d",
-                                  style: TextStyle(
-                                      fontFamily: "Lato", color: Colors.grey),
-                                )
-                              ],
+                                  Text(
+                                    DateTime.now()
+                                                .difference(DateTime
+                                                    .fromMillisecondsSinceEpoch(
+                                                        notificationList
+                                                            .notifications[index]
+                                                            .timestamp))
+                                                .inSeconds <
+                                            60
+                                        ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inSeconds ==
+                                                1
+                                            ? DateTime.now()
+                                                    .difference(DateTime.fromMillisecondsSinceEpoch(
+                                                        notificationList
+                                                            .notifications[index]
+                                                            .timestamp))
+                                                    .inSeconds
+                                                    .toString() +
+                                                " s"
+                                            : DateTime.now()
+                                                    .difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp))
+                                                    .inSeconds
+                                                    .toString() +
+                                                " s"
+                                        : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes < 60
+                                            ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes == 1
+                                                ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes.toString() + " m"
+                                                : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes.toString() + " m"
+                                            : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours < 24
+                                                ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours == 1
+                                                    ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours.toString() + " h"
+                                                    : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours.toString() + " h"
+                                                : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inDays == 1
+                                                    ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inDays.toString() + " d"
+                                                    : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inDays.toString() + " d",
+                                    style: TextStyle(
+                                        fontFamily: "Lato", color: Colors.grey),
+                                  )
+                                ],
+                              ),
                             ),
                             notificationList.notifications[index].opened==false?
-                            notificationList.notifications[index].type ==
-                                    "FR#new"
-                                ? ButtonTheme(
-                                    minWidth: size.width / 3.5,
-                                    child: RaisedButton(
-                                      onPressed: () async {
-                                        final service =
-                                            Provider.of<DatabaseApiService>(
-                                                context,
-                                                listen: false);
-                                        final cuser = Provider.of<UserData>(
-                                                context,
-                                                listen: false)
-                                            .user;
-                                        final authToken = Provider.of<UserData>(
-                                                context,
-                                                listen: false)
-                                            .authToken;
-                                        final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: "ToBeImplemented", authorization: authToken)
-                                            );
-                                        if (resp.isSuccessful) {
-                                          hasAccepted = !hasAccepted;
-                                          setState(() {});
-                                        } else {
-                                          Fluttertoast.showToast(
-                                              msg:
-                                                  "Some error occured ${resp.body}");
-                                        }
-                                      },
-                                      color: hasAccepted == false
-                                          ? Colors.red[600]
-                                          : Colors.grey,
-                                      child: Text(
-                                          hasAccepted == false
-                                              ? 'Accept'
-                                              : 'Accepted',
-                                          style: TextStyle(
-                                            color: hasAccepted == false
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Lato',
-                                          )),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                        //side: BorderSide(color: Colors.red[600]),
-                                      ),
-                                    ),
-                                  )
-                                : notificationList.notifications[index].type ==
-                                            "CLUB#INV#prt" ||
-                                        notificationList
-                                                .notifications[index].type ==
-                                            "CLUB#INV#adc"
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                notificationList.notifications[index].type ==
+                                        "FR#new"
                                     ? ButtonTheme(
+                                        minWidth: size.width / 3.5,
                                         child: RaisedButton(
                                           onPressed: () async {
-                                            hasJoined = !hasJoined;
-                                            setState(() {});
+                                            final service =
+                                                Provider.of<DatabaseApiService>(
+                                                    context,
+                                                    listen: false);
+                                            final cuser = Provider.of<UserData>(
+                                                    context,
+                                                    listen: false)
+                                                .user;
+                                            final authToken = Provider.of<UserData>(
+                                                    context,
+                                                    listen: false)
+                                                .authToken;
+                                            final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: notificationList.notifications[index].notificationId, authorization: authToken, action:"accept"));
+                                            if (resp.isSuccessful) {
+                                              hasAccepted = !hasAccepted;
+                                              setState(() {});
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      "Some error occured ${resp.body}");
+                                            }
                                           },
-                                          color: hasJoined == false
+                                          color: hasAccepted == false
                                               ? Colors.red[600]
                                               : Colors.grey,
-                                          child: Text('Join',
+                                          child: Text(
+                                              hasAccepted == false
+                                                  ? 'Accept'
+                                                  : 'Accepted',
                                               style: TextStyle(
-                                                color: hasJoined == false
+                                                color: hasAccepted == false
                                                     ? Colors.white
                                                     : Colors.black,
                                                 fontWeight: FontWeight.bold,
@@ -211,7 +186,94 @@ class _NotificationPageState extends State<NotificationPage> {
                                           ),
                                         ),
                                       )
-                                    : Container()
+                                    : notificationList.notifications[index].type ==
+                                                "CLUB#INV#prt"
+                                        ? ButtonTheme(
+                                            minWidth: size.width/3.5,
+                                            child: RaisedButton(
+                                              onPressed: () async {
+                                                final service =
+                                                Provider.of<DatabaseApiService>(
+                                                    context,
+                                                    listen: false);
+                                                final cuser = Provider.of<UserData>(
+                                                    context,
+                                                    listen: false)
+                                                    .user;
+                                                final authToken = Provider.of<UserData>(
+                                                    context,
+                                                    listen: false)
+                                                    .authToken;
+                                                final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: notificationList.notifications[index].notificationId, authorization: authToken, action:"accept"));
+                                                if(resp.isSuccessful){
+                                                  hasJoined = !hasJoined;
+                                                  setState(() {});
+                                                }
+                                                else{
+                                                  Fluttertoast.showToast(msg: "Something went wrong");
+                                                }
+                                              },
+                                              color: hasJoined == false
+                                                  ? Colors.red[600]
+                                                  : Colors.grey,
+                                              child: Text('Join',
+                                                  style: TextStyle(
+                                                    color: hasJoined == false
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Lato',
+                                                  )),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                //side: BorderSide(color: Colors.red[600]),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(),
+                                ButtonTheme(
+                                  minWidth: size.width/3.5,
+                                  child: RaisedButton(
+                                    onPressed: () async {
+                                      final service =
+                                      Provider.of<DatabaseApiService>(
+                                          context,
+                                          listen: false);
+                                      final cuser = Provider.of<UserData>(
+                                          context,
+                                          listen: false)
+                                          .user;
+                                      final authToken = Provider.of<UserData>(
+                                          context,
+                                          listen: false)
+                                          .authToken;
+                                      final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: notificationList.notifications[index].notificationId, authorization: authToken, action:"cancel"));
+                                      if(resp.isSuccessful){
+                                        final allNotification = notificationList.notifications.toBuilder();
+                                        allNotification.removeAt(index);
+                                        notificationList = notificationList.rebuild((b) => b..notifications=allNotification);
+                                        setState(() {});
+                                      }
+                                      else{
+                                        Fluttertoast.showToast(msg: "Something went wrong");
+                                      }
+                                    },
+                                    color: Colors.white,
+                                    child: Text('Deny',
+                                        style: TextStyle(
+                                          color:Colors.redAccent,
+                                          fontFamily: 'Lato',
+                                        )),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(5.0),
+                                      //side: BorderSide(color: Colors.red[600]),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
                                     : Container(),
                           ],
                         ),

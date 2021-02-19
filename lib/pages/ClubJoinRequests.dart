@@ -15,6 +15,7 @@ class ClubJoinRequests extends StatefulWidget {
 class _ClubJoinRequestsState extends State<ClubJoinRequests> {
   BuiltActiveJoinRequests joinRequests;
   bool isLoading = false;
+  final searchInput = TextEditingController();
   getJoinRequests() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
@@ -50,6 +51,7 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
       height: 40,
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextField(
+        controller: searchInput,
         decoration: InputDecoration(
             prefixIcon: Icon(
               Icons.search,
@@ -63,6 +65,11 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                 borderSide: BorderSide(color: Colors.black, width: 1.0)),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black, width: 2.0))),
+        onChanged: (val){
+//          joinRequests = joinRequests.rebuild(
+//                  (b) =>
+//                  b..activeJoinRequestUsers = joinRequests.activeJoinRequestUsers.where((val) => val.audience.username==val));
+        },
       ),
     );
   }
@@ -77,35 +84,35 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
     final size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Join Requests',
-          style: TextStyle(
-            fontFamily: 'Lato',
-            color: Colors.black,
+          appBar: AppBar(
+            title: Text(
+              'Join Requests',
+              style: TextStyle(
+                fontFamily: 'Lato',
+                color: Colors.black,
+              ),
+            ),
+            iconTheme: IconThemeData(color: Colors.black),
+            backgroundColor: Colors.white,
           ),
-        ),
-        iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Colors.white,
-      ),
-      body: Column(
-        children: [
-          SizedBox(height: size.height/30,),
-          searchBar(),
-          SizedBox(height: size.height/30,),
-          Expanded(
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification scrollInfo) {
-                if (scrollInfo.metrics.pixels ==
-                    scrollInfo.metrics.maxScrollExtent) {
-                  _fetchMoreJRData();
-                  isLoading = true;
-                }
-                return true;
-              },
-              child: joinRequests != null &&
+          body: Column(
+            children: [
+              SizedBox(height: size.height/30,),
+              searchBar(),
+              SizedBox(height: size.height/30,),
+              Expanded(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (ScrollNotification scrollInfo) {
+                    if (scrollInfo.metrics.pixels ==
+                        scrollInfo.metrics.maxScrollExtent) {
+                      _fetchMoreJRData();
+                      isLoading = true;
+                    }
+                    return true;
+                  },
+                  child: joinRequests != null &&
                       joinRequests.activeJoinRequestUsers != null
-                  ? ListView.builder(
+                      ? ListView.builder(
                       itemCount: joinRequests.activeJoinRequestUsers.length,
                       itemBuilder: (context, index) {
                         return Container(
@@ -118,10 +125,10 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                             ),
                             title: Text(
                               joinRequests?.activeJoinRequestUsers[index]?.audience
-                                          ?.username !=
-                                      null
+                                  ?.username !=
+                                  null
                                   ? joinRequests?.activeJoinRequestUsers[index]
-                                      ?.audience?.username
+                                  ?.audience?.username
                                   : "@Username$index",
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -138,11 +145,11 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                                   Fluttertoast.showToast(
                                       msg: "Join Request Accepted");
                                   final allRequests =
-                                      joinRequests.activeJoinRequestUsers.toBuilder();
+                                  joinRequests.activeJoinRequestUsers.toBuilder();
 
                                   allRequests.removeAt(index);
                                   joinRequests = joinRequests.rebuild(
-                                      (b) => b..activeJoinRequestUsers = allRequests);
+                                          (b) => b..activeJoinRequestUsers = allRequests);
 
                                   setState(() {});
                                 },
@@ -162,11 +169,11 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                           ),
                         );
                       })
-                  : Container(height: 0),
-            ),
+                      : Container(height: 0),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 }

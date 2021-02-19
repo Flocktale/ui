@@ -14,7 +14,7 @@ abstract class NotificationData
   String get avatar;
   int get timestamp;
   String get targetResourceId;
-
+  String get notificationId;
   bool get opened;
 
   @nullable
