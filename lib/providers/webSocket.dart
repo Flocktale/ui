@@ -28,7 +28,7 @@ class MySocket with ChangeNotifier {
   void init(String userId) {
     this.userId = userId;
     this.channel = IOWebSocketChannel.connect(
-      Uri.parse("wss://jpkq996li6.execute-api.us-east-1.amazonaws.com/Dev"),
+      Uri.parse("wss://08oc4tw1hb.execute-api.us-east-1.amazonaws.com/Dev"),
       headers: {"userid": userId},
     );
 

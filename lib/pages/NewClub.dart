@@ -72,9 +72,6 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
         builder: (_) => Club(
               club: tempClub,
             )));
-    Navigator.of(context).popUntil(ModalRoute.withName("/"));
-    print('=========' + resp.body);
-    print(resp.error);
 
     Fluttertoast.showToast(msg: 'club entry is created');
   }
