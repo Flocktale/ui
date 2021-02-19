@@ -219,115 +219,126 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: Colors.redAccent,
           body: _user != null
               ? Column(
-                children: [
-                  _userRelations.B2==false && showRequest==true?
-                      Container(
-                        height: size.height/3,
-                        width: size.width,
-                        child:Column(
-                          children: [
-                            Text(
-                              "${_user.username} has sent you a friend request",
-                              style: TextStyle(
-                                fontFamily: "Lato",
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _userRelations?.B2 == true && showRequest == true
+                        ? Container(
+                            height: size.height / 3,
+                            width: size.width,
+                            child: Column(
                               children: [
-                                ButtonTheme(
-                                  minWidth: size.width / 3.5,
-                                  child: RaisedButton(
-                                    onPressed: () async {
-                                      final service =
-                                      Provider.of<DatabaseApiService>(
-                                          context,
-                                          listen: false);
-                                      final cuser = Provider.of<UserData>(
-                                          context,
-                                          listen: false)
-                                          .user;
-                                      final authToken = Provider.of<UserData>(
-                                          context,
-                                          listen: false)
-                                          .authToken;
-                                      final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: null, authorization: authToken, action:"accept"));
-                                      if (resp.isSuccessful) {
-                                        showRequest = false;
-                                        setState(() {});
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg:
-                                            "Some error occured ${resp.body}");
-                                      }
-                                    },
-                                    color: showRequest == false
-                                        ? Colors.red[600]
-                                        : Colors.grey,
-                                    child: Text(
-                                        showRequest == false
-                                            ? 'Accept'
-                                            : 'Accepted',
-                                        style: TextStyle(
-                                          color: showRequest == false
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Lato',
-                                        )),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(5.0),
-                                      //side: BorderSide(color: Colors.red[600]),
-                                    ),
+                                Text(
+                                  "${_user.username} has sent you a friend request",
+                                  style: TextStyle(
+                                    fontFamily: "Lato",
                                   ),
                                 ),
-                                ButtonTheme(
-                                  minWidth: size.width/3.5,
-                                  child: RaisedButton(
-                                    onPressed: () async {
-                                      final service =
-                                      Provider.of<DatabaseApiService>(
-                                          context,
-                                          listen: false);
-                                      final cuser = Provider.of<UserData>(
-                                          context,
-                                          listen: false)
-                                          .user;
-                                      final authToken = Provider.of<UserData>(
-                                          context,
-                                          listen: false)
-                                          .authToken;
-                                      final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: null, authorization: authToken, action:"cancel"));
-                                      if(resp.isSuccessful){
-                                        setState(() {
-                                          showRequest = false;
-                                        });
-                                      }
-                                      else{
-                                        Fluttertoast.showToast(msg: "Something went wrong");
-                                      }
-                                    },
-                                    color: Colors.white,
-                                    child: Text('Deny',
-                                        style: TextStyle(
-                                          color:Colors.redAccent,
-                                          fontFamily: 'Lato',
-                                        )),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(5.0),
-                                      //side: BorderSide(color: Colors.red[600]),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ButtonTheme(
+                                      minWidth: size.width / 3.5,
+                                      child: RaisedButton(
+                                        onPressed: () async {
+                                          final service =
+                                              Provider.of<DatabaseApiService>(
+                                                  context,
+                                                  listen: false);
+                                          final cuser = Provider.of<UserData>(
+                                                  context,
+                                                  listen: false)
+                                              .user;
+                                          final authToken =
+                                              Provider.of<UserData>(context,
+                                                      listen: false)
+                                                  .authToken;
+                                          final resp = (await service
+                                              .responseToNotification(
+                                                  userId: cuser.userId,
+                                                  notificationId: null,
+                                                  authorization: authToken,
+                                                  action: "accept"));
+                                          if (resp.isSuccessful) {
+                                            showRequest = false;
+                                            setState(() {});
+                                          } else {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    "Some error occured ${resp.body}");
+                                          }
+                                        },
+                                        color: showRequest == false
+                                            ? Colors.red[600]
+                                            : Colors.grey,
+                                        child: Text(
+                                            showRequest == true
+                                                ? 'Accept'
+                                                : 'Accepted',
+                                            style: TextStyle(
+                                              color: showRequest == true
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Lato',
+                                            )),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          //side: BorderSide(color: Colors.red[600]),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    ButtonTheme(
+                                      minWidth: size.width / 3.5,
+                                      child: RaisedButton(
+                                        onPressed: () async {
+                                          final service =
+                                              Provider.of<DatabaseApiService>(
+                                                  context,
+                                                  listen: false);
+                                          final cuser = Provider.of<UserData>(
+                                                  context,
+                                                  listen: false)
+                                              .user;
+                                          final authToken =
+                                              Provider.of<UserData>(context,
+                                                      listen: false)
+                                                  .authToken;
+                                          final resp = (await service
+                                              .responseToNotification(
+                                                  userId: cuser.userId,
+                                                  notificationId: null,
+                                                  authorization: authToken,
+                                                  action: "cancel"));
+                                          if (resp.isSuccessful) {
+                                            setState(() {
+                                              showRequest = false;
+                                            });
+                                          } else {
+                                            Fluttertoast.showToast(
+                                                msg: "Something went wrong");
+                                          }
+                                        },
+                                        color: Colors.white,
+                                        child: Text('Deny',
+                                            style: TextStyle(
+                                              color: Colors.redAccent,
+                                              fontFamily: 'Lato',
+                                            )),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          //side: BorderSide(color: Colors.red[600]),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 )
                               ],
-                            )
-                          ],
-                        )
-                      ):Container(),
-                  Expanded(
-                    child: Stack(fit: StackFit.expand, children: <Widget>[
+                            ))
+                        : Container(),
+                    Expanded(
+                      child: Stack(fit: StackFit.expand, children: <Widget>[
                         Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -382,7 +393,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   SizedBox(height: size.height / 20),
                                   Text(
                                     //  'Caroline Steele',
-                                    _user.name != null ? _user.name : _user.username,
+                                    _user.name != null
+                                        ? _user.name
+                                        : _user.username,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: size.width / 20,
@@ -445,25 +458,33 @@ class _ProfilePageState extends State<ProfilePage> {
                                                       }
                                                       setState(() {});
                                                     },
-                                                    color: _userRelations.B5 == false
+                                                    color: _userRelations.B5 ==
+                                                            false
                                                         ? Colors.red[600]
                                                         : Colors.white,
                                                     child: Text(
-                                                        _userRelations.B5 == false
+                                                        _userRelations.B5 ==
+                                                                false
                                                             ? 'Follow'
                                                             : 'Following',
                                                         style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: _userRelations.B5 ==
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: _userRelations
+                                                                      .B5 ==
                                                                   false
                                                               ? Colors.white
-                                                              : Colors.grey[700],
+                                                              : Colors
+                                                                  .grey[700],
                                                         )),
-                                                    shape: RoundedRectangleBorder(
+                                                    shape:
+                                                        RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(18.0),
+                                                          BorderRadius.circular(
+                                                              18.0),
                                                       side: BorderSide(
-                                                          color: Colors.red[600]),
+                                                          color:
+                                                              Colors.red[600]),
                                                     ),
                                                     elevation: 0.0,
                                                   ),
@@ -472,9 +493,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   minWidth: size.width / 3.5,
                                                   child: RaisedButton(
                                                     onPressed: () async {
-                                                      if (_userRelations.B1 == true) {
+                                                      if (_userRelations.B1 ==
+                                                          true) {
                                                         await unFriend();
-                                                      } else if (_userRelations.B3 ==
+                                                      } else if (_userRelations
+                                                              .B3 ==
                                                           false) {
                                                         await sendFreindRequest();
                                                       } else {
@@ -484,27 +507,36 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     },
                                                     color: Colors.white,
                                                     child: Text(
-                                                        _userRelations.B1 == true
+                                                        _userRelations.B1 ==
+                                                                true
                                                             ? "FRIENDS"
-                                                            : _userRelations.B3 ==
+                                                            : _userRelations
+                                                                        .B3 ==
                                                                     false
                                                                 ? "Add Friend"
                                                                 : "Request Sent",
                                                         style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: _userRelations.B1 ==
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: _userRelations
+                                                                      .B1 ==
                                                                   true
                                                               ? Colors.red
-                                                              : _userRelations.B3 ==
+                                                              : _userRelations
+                                                                          .B3 ==
                                                                       false
                                                                   ? Colors.black
-                                                                  : Colors.black38,
+                                                                  : Colors
+                                                                      .black38,
                                                         )),
-                                                    shape: RoundedRectangleBorder(
+                                                    shape:
+                                                        RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(18.0),
+                                                          BorderRadius.circular(
+                                                              18.0),
                                                       side: BorderSide(
-                                                          color: Colors.red[600]),
+                                                          color:
+                                                              Colors.red[600]),
                                                     ),
                                                     elevation: 0.0,
                                                   ),
@@ -520,7 +552,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                                       builder: (_) =>
                                                           ProfileImagePage(
                                                             name: _user.name,
-                                                            userName: _user.username,
+                                                            userName:
+                                                                _user.username,
                                                           )));
                                             },
                                             color: Colors.white,
@@ -532,30 +565,34 @@ class _ProfilePageState extends State<ProfilePage> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(18.0),
-                                              side:
-                                                  BorderSide(color: Colors.red[600]),
+                                              side: BorderSide(
+                                                  color: Colors.red[600]),
                                             ),
                                             elevation: 0.0,
                                           ),
                                         ),
                                   SizedBox(height: size.height / 30),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     //crossAxisAlignment: CrossAxisAlignment.stretch,
                                     children: <Widget>[
                                       InkWell(
                                         onTap: () {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
-                                                  builder: (_) => SocialRelationPage(
-                                                      initpos: 0, user: _user)));
+                                                  builder: (_) =>
+                                                      SocialRelationPage(
+                                                          initpos: 0,
+                                                          user: _user)));
                                         },
                                         child: Column(
                                           children: <Widget>[
                                             Text(
                                                 _user.friendsCount.toString() !=
                                                         'null'
-                                                    ? _user.friendsCount.toString()
+                                                    ? _user.friendsCount
+                                                        .toString()
                                                     : '0',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -579,15 +616,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                         onTap: () {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
-                                                  builder: (_) => SocialRelationPage(
-                                                      initpos: 1, user: _user)));
+                                                  builder: (_) =>
+                                                      SocialRelationPage(
+                                                          initpos: 1,
+                                                          user: _user)));
                                         },
                                         child: Column(
                                           children: <Widget>[
                                             Text(
-                                                _user.followerCount.toString() !=
+                                                _user.followerCount
+                                                            .toString() !=
                                                         'null'
-                                                    ? _user.followerCount.toString()
+                                                    ? _user.followerCount
+                                                        .toString()
                                                     : '0',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -611,15 +652,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                         onTap: () {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
-                                                  builder: (_) => SocialRelationPage(
-                                                      initpos: 2, user: _user)));
+                                                  builder: (_) =>
+                                                      SocialRelationPage(
+                                                          initpos: 2,
+                                                          user: _user)));
                                         },
                                         child: Column(
                                           children: <Widget>[
                                             Text(
-                                                _user.followingCount.toString() !=
+                                                _user.followingCount
+                                                            .toString() !=
                                                         'null'
-                                                    ? _user.followingCount.toString()
+                                                    ? _user.followingCount
+                                                        .toString()
                                                     : '0',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -671,7 +716,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Clubs != null
                                       ? Carousel(Clubs: Clubs)
                                       : Container(
-                                          margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                          margin:
+                                              EdgeInsets.fromLTRB(0, 20, 0, 0),
                                           child: Center(
                                               child: Text(
                                             "Loading..",
@@ -693,9 +739,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Positioned(bottom: 0, child: MinClub())
                       ]),
-                  ),
-                ],
-              )
+                    ),
+                  ],
+                )
               : Center(
                   child: Container(
                       height: size.height / 10,

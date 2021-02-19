@@ -32,9 +32,13 @@ class _NotificationPageState extends State<NotificationPage> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final cuser = Provider.of<UserData>(context, listen: false).user;
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    notificationList = (await service.responseToNotification(userId: cuser.userId, notificationId: notifId, authorization: authToken, action: 'accept')).body;
-    setState(() {
-    });
+    notificationList = (await service.responseToNotification(
+            userId: cuser.userId,
+            notificationId: notifId,
+            authorization: authToken,
+            action: 'accept'))
+        .body;
+    setState(() {});
   }
 
   @override
@@ -71,8 +75,7 @@ class _NotificationPageState extends State<NotificationPage> {
                     return Container(
                       margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
                       child: ListTile(
-                        leading: notificationList
-                                    .notifications[index].avatar !=
+                        leading: notificationList.notifications[index].avatar !=
                                 null
                             ? CircleAvatar(
                                 backgroundImage: NetworkImage(notificationList
@@ -84,7 +87,8 @@ class _NotificationPageState extends State<NotificationPage> {
                           children: [
                             FittedBox(
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     notificationList.notifications[index].title,
@@ -94,25 +98,25 @@ class _NotificationPageState extends State<NotificationPage> {
                                   ),
                                   Text(
                                     DateTime.now()
-                                                .difference(DateTime
-                                                    .fromMillisecondsSinceEpoch(
-                                                        notificationList
-                                                            .notifications[index]
-                                                            .timestamp))
+                                                .difference(DateTime.fromMillisecondsSinceEpoch(
+                                                    notificationList
+                                                        .notifications[index]
+                                                        .timestamp))
                                                 .inSeconds <
                                             60
                                         ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inSeconds ==
                                                 1
                                             ? DateTime.now()
-                                                    .difference(DateTime.fromMillisecondsSinceEpoch(
-                                                        notificationList
-                                                            .notifications[index]
-                                                            .timestamp))
+                                                    .difference(DateTime.fromMillisecondsSinceEpoch(notificationList
+                                                        .notifications[index]
+                                                        .timestamp))
                                                     .inSeconds
                                                     .toString() +
                                                 " s"
                                             : DateTime.now()
-                                                    .difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp))
+                                                    .difference(
+                                                        DateTime.fromMillisecondsSinceEpoch(
+                                                            notificationList.notifications[index].timestamp))
                                                     .inSeconds
                                                     .toString() +
                                                 " s"
@@ -133,13 +137,145 @@ class _NotificationPageState extends State<NotificationPage> {
                                 ],
                               ),
                             ),
-                            notificationList.notifications[index].opened==false?
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                notificationList.notifications[index].type ==
-                                        "FR#new"
-                                    ? ButtonTheme(
+                            notificationList.notifications[index].opened ==
+                                    false
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      notificationList
+                                                  .notifications[index].type ==
+                                              "FR#new"
+                                          ? ButtonTheme(
+                                              minWidth: size.width / 3.5,
+                                              child: RaisedButton(
+                                                onPressed: () async {
+                                                  final service = Provider.of<
+                                                          DatabaseApiService>(
+                                                      context,
+                                                      listen: false);
+                                                  final cuser =
+                                                      Provider.of<UserData>(
+                                                              context,
+                                                              listen: false)
+                                                          .user;
+                                                  final authToken =
+                                                      Provider.of<UserData>(
+                                                              context,
+                                                              listen: false)
+                                                          .authToken;
+                                                  final resp = (await service
+                                                      .responseToNotification(
+                                                          userId: cuser.userId,
+                                                          notificationId:
+                                                              notificationList
+                                                                  .notifications[
+                                                                      index]
+                                                                  .notificationId,
+                                                          authorization:
+                                                              authToken,
+                                                          action: "accept"));
+                                                  if (resp.isSuccessful) {
+                                                    hasAccepted = !hasAccepted;
+                                                    setState(() {});
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Some error occured ");
+                                                  }
+                                                },
+                                                color: hasAccepted == false
+                                                    ? Colors.red[600]
+                                                    : Colors.grey,
+                                                child: Text(
+                                                    hasAccepted == false
+                                                        ? 'Accept'
+                                                        : 'Accepted',
+                                                    style: TextStyle(
+                                                      color:
+                                                          hasAccepted == false
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontFamily: 'Lato',
+                                                    )),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0),
+                                                  //side: BorderSide(color: Colors.red[600]),
+                                                ),
+                                              ),
+                                            )
+                                          : notificationList
+                                                      .notifications[index]
+                                                      .type ==
+                                                  "CLUB#INV#prt"
+                                              ? ButtonTheme(
+                                                  minWidth: size.width / 3.5,
+                                                  child: RaisedButton(
+                                                    onPressed: () async {
+                                                      final service = Provider
+                                                          .of<DatabaseApiService>(
+                                                              context,
+                                                              listen: false);
+                                                      final cuser =
+                                                          Provider.of<UserData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .user;
+                                                      final authToken =
+                                                          Provider.of<UserData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .authToken;
+                                                      final resp = (await service
+                                                          .responseToNotification(
+                                                              userId:
+                                                                  cuser.userId,
+                                                              notificationId:
+                                                                  notificationList
+                                                                      .notifications[
+                                                                          index]
+                                                                      .notificationId,
+                                                              authorization:
+                                                                  authToken,
+                                                              action:
+                                                                  "accept"));
+                                                      if (resp.isSuccessful) {
+                                                        hasJoined = !hasJoined;
+                                                        setState(() {});
+                                                      } else {
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                                "Something went wrong");
+                                                      }
+                                                    },
+                                                    color: hasJoined == false
+                                                        ? Colors.red[600]
+                                                        : Colors.grey,
+                                                    child: Text('Join',
+                                                        style: TextStyle(
+                                                          color: hasJoined ==
+                                                                  false
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontFamily: 'Lato',
+                                                        )),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5.0),
+                                                      //side: BorderSide(color: Colors.red[600]),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(),
+                                      ButtonTheme(
                                         minWidth: size.width / 3.5,
                                         child: RaisedButton(
                                           onPressed: () async {
@@ -151,32 +287,40 @@ class _NotificationPageState extends State<NotificationPage> {
                                                     context,
                                                     listen: false)
                                                 .user;
-                                            final authToken = Provider.of<UserData>(
-                                                    context,
-                                                    listen: false)
-                                                .authToken;
-                                            final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: notificationList.notifications[index].notificationId, authorization: authToken, action:"accept"));
+                                            final authToken =
+                                                Provider.of<UserData>(context,
+                                                        listen: false)
+                                                    .authToken;
+                                            final resp = (await service
+                                                .responseToNotification(
+                                                    userId: cuser.userId,
+                                                    notificationId:
+                                                        notificationList
+                                                            .notifications[
+                                                                index]
+                                                            .notificationId,
+                                                    authorization: authToken,
+                                                    action: "cancel"));
                                             if (resp.isSuccessful) {
-                                              hasAccepted = !hasAccepted;
+                                              final allNotification =
+                                                  notificationList.notifications
+                                                      .toBuilder();
+                                              allNotification.removeAt(index);
+                                              notificationList =
+                                                  notificationList.rebuild(
+                                                      (b) => b
+                                                        ..notifications =
+                                                            allNotification);
                                               setState(() {});
                                             } else {
                                               Fluttertoast.showToast(
-                                                  msg:
-                                                      "Some error occured ${resp.body}");
+                                                  msg: "Something went wrong");
                                             }
                                           },
-                                          color: hasAccepted == false
-                                              ? Colors.red[600]
-                                              : Colors.grey,
-                                          child: Text(
-                                              hasAccepted == false
-                                                  ? 'Accept'
-                                                  : 'Accepted',
+                                          color: Colors.white,
+                                          child: Text('Deny',
                                               style: TextStyle(
-                                                color: hasAccepted == false
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.bold,
+                                                color: Colors.redAccent,
                                                 fontFamily: 'Lato',
                                               )),
                                           shape: RoundedRectangleBorder(
@@ -186,95 +330,9 @@ class _NotificationPageState extends State<NotificationPage> {
                                           ),
                                         ),
                                       )
-                                    : notificationList.notifications[index].type ==
-                                                "CLUB#INV#prt"
-                                        ? ButtonTheme(
-                                            minWidth: size.width/3.5,
-                                            child: RaisedButton(
-                                              onPressed: () async {
-                                                final service =
-                                                Provider.of<DatabaseApiService>(
-                                                    context,
-                                                    listen: false);
-                                                final cuser = Provider.of<UserData>(
-                                                    context,
-                                                    listen: false)
-                                                    .user;
-                                                final authToken = Provider.of<UserData>(
-                                                    context,
-                                                    listen: false)
-                                                    .authToken;
-                                                final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: notificationList.notifications[index].notificationId, authorization: authToken, action:"accept"));
-                                                if(resp.isSuccessful){
-                                                  hasJoined = !hasJoined;
-                                                  setState(() {});
-                                                }
-                                                else{
-                                                  Fluttertoast.showToast(msg: "Something went wrong");
-                                                }
-                                              },
-                                              color: hasJoined == false
-                                                  ? Colors.red[600]
-                                                  : Colors.grey,
-                                              child: Text('Join',
-                                                  style: TextStyle(
-                                                    color: hasJoined == false
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Lato',
-                                                  )),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5.0),
-                                                //side: BorderSide(color: Colors.red[600]),
-                                              ),
-                                            ),
-                                          )
-                                        : Container(),
-                                ButtonTheme(
-                                  minWidth: size.width/3.5,
-                                  child: RaisedButton(
-                                    onPressed: () async {
-                                      final service =
-                                      Provider.of<DatabaseApiService>(
-                                          context,
-                                          listen: false);
-                                      final cuser = Provider.of<UserData>(
-                                          context,
-                                          listen: false)
-                                          .user;
-                                      final authToken = Provider.of<UserData>(
-                                          context,
-                                          listen: false)
-                                          .authToken;
-                                      final resp = (await service.responseToNotification(userId: cuser.userId, notificationId: notificationList.notifications[index].notificationId, authorization: authToken, action:"cancel"));
-                                      if(resp.isSuccessful){
-                                        final allNotification = notificationList.notifications.toBuilder();
-                                        allNotification.removeAt(index);
-                                        notificationList = notificationList.rebuild((b) => b..notifications=allNotification);
-                                        setState(() {});
-                                      }
-                                      else{
-                                        Fluttertoast.showToast(msg: "Something went wrong");
-                                      }
-                                    },
-                                    color: Colors.white,
-                                    child: Text('Deny',
-                                        style: TextStyle(
-                                          color:Colors.redAccent,
-                                          fontFamily: 'Lato',
-                                        )),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(5.0),
-                                      //side: BorderSide(color: Colors.red[600]),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
-                                    : Container(),
+                                    ],
+                                  )
+                                : Container(),
                           ],
                         ),
 //                trailing: notificationList.notifications[index].type=="FR#new"?

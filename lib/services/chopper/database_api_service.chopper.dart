@@ -123,7 +123,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<BuiltNotificationList>> responseToNotification(
+  Future<Response<dynamic>> responseToNotification(
       {String userId,
       String notificationId,
       String authorization,
@@ -134,9 +134,9 @@ class _$DatabaseApiService extends DatabaseApiService {
       'action': action
     };
     final $headers = {'authorization': authorization};
-    final $request = Request('GET', $url, client.baseUrl,
+    final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);
-    return client.send<BuiltNotificationList, BuiltNotificationList>($request);
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override

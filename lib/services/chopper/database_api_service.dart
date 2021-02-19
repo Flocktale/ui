@@ -99,8 +99,8 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
-  @Get(path: '/users/{userId}/notifications/opened')
-  Future<Response<BuiltNotificationList>> responseToNotification({
+  @Post(path: '/users/{userId}/notifications/opened')
+  Future<Response> responseToNotification({
     @required @Path('userId') String userId,
     @required @Query() String notificationId,
     @required @Header() String authorization,
