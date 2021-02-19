@@ -633,7 +633,7 @@ class _ClubState extends State<Club> {
             IconData iconData,
             Color iconColor}) =>
         Container(
-          margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: LikeButton(
             onTap: (val) async {
               toggler();
@@ -665,24 +665,27 @@ class _ClubState extends State<Club> {
             iconColor: Colors.redAccent),
 
         // like reaction
-        _reactionButton(
-            toggler: toggleClubLike,
-            count: _likeCount,
-            isLiked: _clubAudience.reactionIndexValue == 1,
-            iconData: _clubAudience.reactionIndexValue == 1
-                ? Icons.thumb_up
-                : Icons.thumb_up_outlined,
-            iconColor: Colors.amber),
+//        _reactionButton(
+//            toggler: toggleClubLike,
+//            count: _likeCount,
+//            isLiked: _clubAudience.reactionIndexValue == 1,
+//            iconData: _clubAudience.reactionIndexValue == 1
+//                ? Icons.thumb_up
+//                : Icons.thumb_up_outlined,
+//            iconColor: Colors.amber),
 
         // dislike reaction
-        _reactionButton(
-            toggler: toggleClubDislike,
-            count: _dislikeCount,
-            isLiked: _clubAudience.reactionIndexValue == 0,
-            iconData: _clubAudience.reactionIndexValue == 0
-                ? Icons.thumb_down
-                : Icons.thumb_down_outlined,
-            iconColor: Colors.black),
+        Container(
+          margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+          child: _reactionButton(
+              toggler: toggleClubDislike,
+              count: _dislikeCount,
+              isLiked: _clubAudience.reactionIndexValue == 0,
+              iconData: _clubAudience.reactionIndexValue == 0
+                  ? Icons.thumb_down
+                  : Icons.thumb_down_outlined,
+              iconColor: Colors.black),
+        ),
       ],
     );
   }
@@ -894,102 +897,106 @@ class _ClubState extends State<Club> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) => ProfilePage(
-                                              userId: _clubAudience
-                                                  .club.creator.userId,
+                                    FittedBox(
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (_) => ProfilePage(
+                                                userId: _clubAudience
+                                                    .club.creator.userId,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Row(children: <Widget>[
+                                          CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                _clubAudience
+                                                    .club.creator.avatar),
+                                            radius: size.width / 20,
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.fromLTRB(
+                                                size.width / 30, 0, 0, 0),
+                                            child: Text(
+                                              '@' +
+                                                  _clubAudience
+                                                      .club.creator.username,
+                                              style: TextStyle(
+                                                  fontFamily: 'Lato',
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: size.width / 25),
                                             ),
                                           ),
-                                        );
-                                      },
-                                      child: Row(children: <Widget>[
-                                        CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              _clubAudience
-                                                  .club.creator.avatar),
-                                          radius: size.width / 20,
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.fromLTRB(
-                                              size.width / 30, 0, 0, 0),
-                                          child: Text(
-                                            '@' +
-                                                _clubAudience
-                                                    .club.creator.username,
-                                            style: TextStyle(
-                                                fontFamily: 'Lato',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: size.width / 25),
-                                          ),
-                                        ),
-                                      ]),
+                                        ]),
+                                      ),
                                     ),
                                     // if club is concluded no need to show play, mic and participation button
                                     if (_isConcluded == false)
-                                      Row(
-                                        children: [
-                                          Container(
-                                            child: FloatingActionButton(
-                                              heroTag: "play btn",
-                                              onPressed: () =>
-                                                  _playButtonHandler(),
-                                              child: !_isPlaying
-                                                  ? Icon(Icons.play_arrow)
-                                                  : Icon(Icons.stop),
-                                              backgroundColor: _isLive
-                                                  ? !_isPlaying
-                                                      ? Colors.red
-                                                      : Colors.redAccent
-                                                  : Colors.grey,
-                                            ),
-                                          ),
-
-                                          // dedicated button for mic
-                                          if (_isParticipant == true)
+                                      FittedBox(
+                                        child: Row(
+                                          children: [
                                             Container(
-                                              margin: EdgeInsets.fromLTRB(
-                                                  10, 0, 0, 0),
                                               child: FloatingActionButton(
-                                                heroTag: "mic btn",
+                                                heroTag: "play btn",
                                                 onPressed: () =>
-                                                    _micButtonHandler(),
-                                                child: !_isMuted
-                                                    ? Icon(
-                                                        Icons.mic_none_rounded)
-                                                    : Icon(
-                                                        Icons.mic_off_rounded),
-                                                backgroundColor: !_isPlaying
-                                                    ? Colors.grey
-                                                    : !_sentRequest
-                                                        ? Colors.amber
-                                                        : Colors.grey,
+                                                    _playButtonHandler(),
+                                                child: !_isPlaying
+                                                    ? Icon(Icons.play_arrow)
+                                                    : Icon(Icons.stop),
+                                                backgroundColor: _isLive
+                                                    ? !_isPlaying
+                                                        ? Colors.red
+                                                        : Colors.redAccent
+                                                    : Colors.grey,
                                               ),
                                             ),
 
-                                          // dedicated button for sending join request or stepping down to become only listener
-                                          if (_isOwner == false)
-                                            Container(
-                                              margin: EdgeInsets.fromLTRB(
-                                                  10, 0, 0, 0),
-                                              child: FloatingActionButton(
-                                                heroTag: "participation btn",
-                                                onPressed: () =>
-                                                    _participationButtonHandler(),
-                                                child: _isParticipant
-                                                    ? Icon(
-                                                        Icons.remove_from_queue)
-                                                    : Icon(Icons.person_add),
-                                                backgroundColor: _isParticipant
-                                                    ? Colors.grey
-                                                    : _sentRequest
-                                                        ? Colors.amber
-                                                        : Colors.grey,
+                                            // dedicated button for mic
+                                            if (_isParticipant == true)
+                                              Container(
+                                                margin: EdgeInsets.fromLTRB(
+                                                    10, 0, 0, 0),
+                                                child: FloatingActionButton(
+                                                  heroTag: "mic btn",
+                                                  onPressed: () =>
+                                                      _micButtonHandler(),
+                                                  child: !_isMuted
+                                                      ? Icon(
+                                                          Icons.mic_none_rounded)
+                                                      : Icon(
+                                                          Icons.mic_off_rounded),
+                                                  backgroundColor: !_isPlaying
+                                                      ? Colors.grey
+                                                      : !_sentRequest
+                                                          ? Colors.amber
+                                                          : Colors.grey,
+                                                ),
                                               ),
-                                            )
-                                        ],
+
+                                            // dedicated button for sending join request or stepping down to become only listener
+                                            if (_isOwner == false)
+                                              Container(
+                                                margin: EdgeInsets.fromLTRB(
+                                                    10, 0, 0, 0),
+                                                child: FloatingActionButton(
+                                                  heroTag: "participation btn",
+                                                  onPressed: () =>
+                                                      _participationButtonHandler(),
+                                                  child: _isParticipant
+                                                      ? Icon(
+                                                          Icons.remove_from_queue)
+                                                      : Icon(Icons.person_add),
+                                                  backgroundColor: _isParticipant
+                                                      ? Colors.grey
+                                                      : _sentRequest
+                                                          ? Colors.amber
+                                                          : Colors.grey,
+                                                ),
+                                              )
+                                          ],
+                                        ),
                                       )
                                   ],
                                 ),

@@ -40,6 +40,32 @@ class _NotificationPageState extends State<NotificationPage> {
         .body;
     setState(() {});
   }
+  String _processCommentTimestamp(int timestamp) {
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    final diff = DateTime.now().difference(dateTime);
+
+    final secDiff = diff.inSeconds;
+    final minDiff = diff.inMinutes;
+    final hourDiff = diff.inHours;
+    final daysDiff = diff.inDays;
+
+    String str = '';
+
+    if (secDiff < 60) {
+      str = '$secDiff ' + (secDiff == 1 ? 's' : 's') ;
+    } else if (minDiff < 60) {
+      str = '$minDiff ' + (minDiff == 1 ? 'm' : 'm');
+    } else if (hourDiff < 24) {
+      str = '$hourDiff ' + (hourDiff == 1 ? 'h' : 'h');
+    } else if (daysDiff < 7) {
+      str = '$daysDiff ' + (daysDiff == 1 ? 'd' : 'd') ;
+    } else {
+      final weekDiff = daysDiff / 7;
+      str = '$weekDiff ' + (weekDiff == 1 ? 'w' : 'w') ;
+    }
+
+    return str;
+  }
 
   @override
   void initState() {
@@ -85,56 +111,22 @@ class _NotificationPageState extends State<NotificationPage> {
                                     AssetImage("assets/Card1.jpg")),
                         title: Column(
                           children: [
-                            FittedBox(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    notificationList.notifications[index].title,
+                            RichText(
+                              text: TextSpan(
+                                text: notificationList.notifications[index].title,
+                                style: TextStyle(
+                                  fontFamily: "Lato",
+                                  color: Colors.black
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: _processCommentTimestamp(notificationList.notifications[index].timestamp),
                                     style: TextStyle(
                                       fontFamily: "Lato",
-                                    ),
-                                  ),
-                                  Text(
-                                    DateTime.now()
-                                                .difference(DateTime.fromMillisecondsSinceEpoch(
-                                                    notificationList
-                                                        .notifications[index]
-                                                        .timestamp))
-                                                .inSeconds <
-                                            60
-                                        ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inSeconds ==
-                                                1
-                                            ? DateTime.now()
-                                                    .difference(DateTime.fromMillisecondsSinceEpoch(notificationList
-                                                        .notifications[index]
-                                                        .timestamp))
-                                                    .inSeconds
-                                                    .toString() +
-                                                " s"
-                                            : DateTime.now()
-                                                    .difference(
-                                                        DateTime.fromMillisecondsSinceEpoch(
-                                                            notificationList.notifications[index].timestamp))
-                                                    .inSeconds
-                                                    .toString() +
-                                                " s"
-                                        : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes < 60
-                                            ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes == 1
-                                                ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes.toString() + " m"
-                                                : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inMinutes.toString() + " m"
-                                            : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours < 24
-                                                ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours == 1
-                                                    ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours.toString() + " h"
-                                                    : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inHours.toString() + " h"
-                                                : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inDays == 1
-                                                    ? DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inDays.toString() + " d"
-                                                    : DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(notificationList.notifications[index].timestamp)).inDays.toString() + " d",
-                                    style: TextStyle(
-                                        fontFamily: "Lato", color: Colors.grey),
+                                      color: Colors.grey
+                                    )
                                   )
-                                ],
+                                ]
                               ),
                             ),
                             notificationList.notifications[index].opened ==
