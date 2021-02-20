@@ -84,27 +84,34 @@ class _CarouselState extends State<Carousel> {
                             ),]
                           ),
                         ),
+                       widget.Clubs[index].isLive==true?
                        Positioned(
                         // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
                          bottom: 5,
                             left: 5,
-                            child: Text("12.1K LISTENERS",style: TextStyle(
+                            child: Text("${widget.Clubs[index].estimatedAudience.toString()} LISTENERS",style: TextStyle(
                                fontFamily: "Lato",
                                fontSize: size.width/50,
                                color: Colors.grey
                              ),),
-                       ),
+                       ):Container(),
                              Positioned(
                                bottom: 5,
                                right: 5,
                                child: Container(
-                                 height: 15,
-                                  width: 30,
-                                  color: Colors.red,
+                                  color: widget.Clubs[index].isLive?
+                                  Colors.red:
+                                 widget.Clubs[index].isConcluded?
+                                 Colors.grey:
+                                 Colors.green,
                                   padding: EdgeInsets.all(2),
                                   child: Center(
                                     child: Text(
-                                      "LIVE",
+                                      widget.Clubs[index].isLive==true?
+                                      "LIVE":
+                                      widget.Clubs[index].isConcluded==true?
+                                      "ENDED":
+                                      "SCHEDULED",
                                       style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontWeight: FontWeight.bold,

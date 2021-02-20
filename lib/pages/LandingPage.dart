@@ -111,37 +111,39 @@ class _LandingPageState extends State<LandingPage>
                       SizedBox(
                         height: 20,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 250.0,
-                            height: 80,
-                            child: TypewriterAnimatedTextKit(
-                              isRepeatingAnimation: false,
-                              speed: const Duration(milliseconds: 125),
-                              onTap: () {
-                                print("Tap Event");
-                              },
-                              text: [
-                                'Join your \nfavourite clubs.',
-                              ],
-                              textStyle: TextStyle(
-                                  fontSize: 30.0,
-                                  fontFamily: "Lato",
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.red),
-                              textAlign: TextAlign.start,
+                      FittedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 250.0,
+                              height: 80,
+                              child: TypewriterAnimatedTextKit(
+                                isRepeatingAnimation: false,
+                                speed: const Duration(milliseconds: 125),
+                                onTap: () {
+                                  print("Tap Event");
+                                },
+                                text: [
+                                  'Join your \nfavourite clubs.',
+                                ],
+                                textStyle: TextStyle(
+                                    fontSize: 30.0,
+                                    fontFamily: "Lato",
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.red),
+                                textAlign: TextAlign.start,
+                              ),
                             ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.redAccent, width: 10)),
-                            child: Image.asset("assets/LandingPage.gif",
-                                width: 80, height: 80),
-                          )
-                        ],
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.redAccent, width: 10)),
+                              child: Image.asset("assets/LandingPage.gif",
+                                  width: 80, height: 80),
+                            )
+                          ],
+                        ),
                       ),
                       Clubs != null
                           ? ListView.builder(
