@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/pages/Club.dart';
+import 'package:mootclub_app/pages/ProfilePage.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:mootclub_app/providers/userData.dart';
@@ -13,7 +15,7 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   BuiltNotificationList notificationList;
-
+  BuiltClub club;
   Future getNotifications() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final cuser = Provider.of<UserData>(context, listen: false).user;
@@ -67,6 +69,15 @@ class _NotificationPageState extends State<NotificationPage> {
     return str;
   }
 
+  getClub(String clubId) async{
+    final service = Provider.of<DatabaseApiService>(context,listen: false);
+    final authToken = Provider.of<UserData>(context,listen: false).authToken;
+    final cuserId = Provider.of<UserData>(context,listen:false).userId;
+    club = (await service.getClubByClubId(clubId: clubId, userId: cuserId, authorization: authToken)).body.club;
+    setState(() {
+    });
+  }
+
   @override
   void initState() {
     getNotifications();
@@ -101,6 +112,14 @@ class _NotificationPageState extends State<NotificationPage> {
                     return Container(
                       margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
                       child: ListTile(
+                        onTap:
+                        notificationList.notifications[index].type=="FR#new" || notificationList.notifications[index].type=="FR#accepted" || notificationList.notifications[index].type=="FLW#new"?
+                        (){
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: notificationList.notifications[index].targetResourceId,)));
+                        }:
+                        (){
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Club(club: getClub(notificationList.notifications[index].targetResourceId),)));
+                        },
                         leading: notificationList.notifications[index].avatar !=
                                 null
                             ? CircleAvatar(
@@ -170,6 +189,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                                   if (resp.isSuccessful) {
                                                     hasAccepted = !hasAccepted;
                                                     setState(() {});
+                                                    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: notificationList.notifications[index].targetResourceId,)));
                                                   } else {
                                                     Fluttertoast.showToast(
                                                         msg:
@@ -238,6 +258,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                                       if (resp.isSuccessful) {
                                                         hasJoined = !hasJoined;
                                                         setState(() {});
+                                                        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Club(club: getClub(notificationList.notifications[index].targetResourceId),)));
                                                       } else {
                                                         Fluttertoast.showToast(
                                                             msg:
@@ -310,7 +331,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                             }
                                           },
                                           color: Colors.white,
-                                          child: Text('Deny',
+                                          child: Text('Decline',
                                               style: TextStyle(
                                                 color: Colors.redAccent,
                                                 fontFamily: 'Lato',

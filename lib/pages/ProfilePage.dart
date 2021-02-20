@@ -71,6 +71,11 @@ class _ProfilePageState extends State<ProfilePage> {
           .body;
       _user = fetchedUserData?.user;
       _userRelations = fetchedUserData?.relationIndexObj;
+      setState(() {
+      });
+      print("==================");
+      print(_userRelations);
+      print("==================");
     }
 
     if (_user.userId == null) {
@@ -220,123 +225,6 @@ class _ProfilePageState extends State<ProfilePage> {
           body: _user != null
               ? Column(
                   children: [
-                    _userRelations?.B2 == true && showRequest == true
-                        ? Container(
-                            height: size.height / 3,
-                            width: size.width,
-                            child: Column(
-                              children: [
-                                Text(
-                                  "${_user.username} has sent you a friend request",
-                                  style: TextStyle(
-                                    fontFamily: "Lato",
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ButtonTheme(
-                                      minWidth: size.width / 3.5,
-                                      child: RaisedButton(
-                                        onPressed: () async {
-                                          final service =
-                                              Provider.of<DatabaseApiService>(
-                                                  context,
-                                                  listen: false);
-                                          final cuser = Provider.of<UserData>(
-                                                  context,
-                                                  listen: false)
-                                              .user;
-                                          final authToken =
-                                              Provider.of<UserData>(context,
-                                                      listen: false)
-                                                  .authToken;
-                                          final resp = (await service
-                                              .responseToNotification(
-                                                  userId: cuser.userId,
-                                                  notificationId: null,
-                                                  authorization: authToken,
-                                                  action: "accept"));
-                                          if (resp.isSuccessful) {
-                                            showRequest = false;
-                                            setState(() {});
-                                          } else {
-                                            Fluttertoast.showToast(
-                                                msg:
-                                                    "Some error occured ${resp.body}");
-                                          }
-                                        },
-                                        color: showRequest == false
-                                            ? Colors.red[600]
-                                            : Colors.grey,
-                                        child: Text(
-                                            showRequest == true
-                                                ? 'Accept'
-                                                : 'Accepted',
-                                            style: TextStyle(
-                                              color: showRequest == true
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: 'Lato',
-                                            )),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          //side: BorderSide(color: Colors.red[600]),
-                                        ),
-                                      ),
-                                    ),
-                                    ButtonTheme(
-                                      minWidth: size.width / 3.5,
-                                      child: RaisedButton(
-                                        onPressed: () async {
-                                          final service =
-                                              Provider.of<DatabaseApiService>(
-                                                  context,
-                                                  listen: false);
-                                          final cuser = Provider.of<UserData>(
-                                                  context,
-                                                  listen: false)
-                                              .user;
-                                          final authToken =
-                                              Provider.of<UserData>(context,
-                                                      listen: false)
-                                                  .authToken;
-                                          final resp = (await service
-                                              .responseToNotification(
-                                                  userId: cuser.userId,
-                                                  notificationId: null,
-                                                  authorization: authToken,
-                                                  action: "cancel"));
-                                          if (resp.isSuccessful) {
-                                            setState(() {
-                                              showRequest = false;
-                                            });
-                                          } else {
-                                            Fluttertoast.showToast(
-                                                msg: "Something went wrong");
-                                          }
-                                        },
-                                        color: Colors.white,
-                                        child: Text('Deny',
-                                            style: TextStyle(
-                                              color: Colors.redAccent,
-                                              fontFamily: 'Lato',
-                                            )),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          //side: BorderSide(color: Colors.red[600]),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ))
-                        : Container(),
                     Expanded(
                       child: Stack(fit: StackFit.expand, children: <Widget>[
                         Container(
@@ -442,7 +330,123 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     fontFamily: "Lato",
                                                     color: Colors.black38),
                                               )))
-                                          : Row(
+                                          :
+                                  _userRelations.B2 == true && showRequest == true
+                                      ? Container(
+                                      width: size.width,
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            "${_user.username} has sent you a friend request",
+                                            style: TextStyle(
+                                              fontFamily: "Lato",
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              ButtonTheme(
+                                                minWidth: size.width / 3.5,
+                                                child: RaisedButton(
+                                                  onPressed: () async {
+                                                    final service =
+                                                    Provider.of<DatabaseApiService>(
+                                                        context,
+                                                        listen: false);
+                                                    final cuser = Provider.of<UserData>(
+                                                        context,
+                                                        listen: false)
+                                                        .user;
+                                                    final authToken =
+                                                        Provider.of<UserData>(context,
+                                                            listen: false)
+                                                            .authToken;
+                                                    final resp = (await service
+                                                        .responseToNotification(
+                                                        userId: cuser.userId,
+                                                        notificationId: null,
+                                                        authorization: authToken,
+                                                        action: "accept"));
+                                                    if (resp.isSuccessful) {
+                                                      showRequest = false;
+                                                      setState(() {});
+                                                    } else {
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                          "Some error occured ${resp.body}");
+                                                    }
+                                                  },
+                                                  color: showRequest == true
+                                                      ? Colors.red[600]
+                                                      : Colors.grey,
+                                                  child: Text(
+                                                      showRequest == true
+                                                          ? 'Accept'
+                                                          : 'Accepted',
+                                                      style: TextStyle(
+                                                        color: showRequest == true
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontFamily: 'Lato',
+                                                      )),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                    //side: BorderSide(color: Colors.red[600]),
+                                                  ),
+                                                ),
+                                              ),
+                                              ButtonTheme(
+                                                minWidth: size.width / 3.5,
+                                                child: RaisedButton(
+                                                  onPressed: () async {
+                                                    final service =
+                                                    Provider.of<DatabaseApiService>(
+                                                        context,
+                                                        listen: false);
+                                                    final cuser = Provider.of<UserData>(
+                                                        context,
+                                                        listen: false)
+                                                        .user;
+                                                    final authToken =
+                                                        Provider.of<UserData>(context,
+                                                            listen: false)
+                                                            .authToken;
+                                                    final resp = (await service
+                                                        .responseToNotification(
+                                                        userId: cuser.userId,
+                                                        notificationId: null,
+                                                        authorization: authToken,
+                                                        action: "cancel"));
+                                                    if (resp.isSuccessful) {
+                                                      setState(() {
+                                                        showRequest = false;
+                                                      });
+                                                    } else {
+                                                      Fluttertoast.showToast(
+                                                          msg: "Something went wrong");
+                                                    }
+                                                  },
+                                                  color: Colors.white,
+                                                  child: Text('Decline',
+                                                      style: TextStyle(
+                                                        color: Colors.redAccent,
+                                                        fontFamily: 'Lato',
+                                                      )),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                    //side: BorderSide(color: Colors.red[600]),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ))
+                                      : Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
                                               children: <Widget>[
