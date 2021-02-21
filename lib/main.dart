@@ -82,8 +82,8 @@ class MyApp extends StatelessWidget {
         title: 'Mootclub',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primaryColor: Colors.purple,
-          accentColor: Colors.teal,
+          primaryColor: Colors.red,
+          accentColor: Colors.redAccent,
         ),
       ),
     );

@@ -947,7 +947,7 @@ class _ClubState extends State<Club> {
                                                     : Icon(Icons.stop),
                                                 backgroundColor: _isLive
                                                     ? !_isPlaying
-                                                        ? Colors.red
+                                                        ? Colors.redAccent
                                                         : Colors.redAccent
                                                     : Colors.grey,
                                               ),
@@ -970,7 +970,7 @@ class _ClubState extends State<Club> {
                                                   backgroundColor: !_isPlaying
                                                       ? Colors.grey
                                                       : !_sentRequest
-                                                          ? Colors.amber
+                                                          ? Colors.redAccent
                                                           : Colors.grey,
                                                 ),
                                               ),
@@ -987,12 +987,14 @@ class _ClubState extends State<Club> {
                                                   child: _isParticipant
                                                       ? Icon(
                                                           Icons.remove_from_queue)
-                                                      : Icon(Icons.person_add),
+                                                      : !_sentRequest?
+                                                        Icon(Icons.person_add):
+                                                        Icon(Icons.person_add_disabled,color: Colors.black,),
                                                   backgroundColor: _isParticipant
-                                                      ? Colors.grey
-                                                      : _sentRequest
-                                                          ? Colors.amber
-                                                          : Colors.grey,
+                                                      ? Colors.grey[200]
+                                                      : !_sentRequest
+                                                          ? Colors.redAccent
+                                                          : Colors.grey[200],
                                                 ),
                                               )
                                           ],
