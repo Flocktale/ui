@@ -364,12 +364,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                         Provider.of<UserData>(context,
                                                             listen: false)
                                                             .authToken;
-                                                    final resp = (await service
-                                                        .responseToNotification(
-                                                        userId: cuser.userId,
-                                                        notificationId: null,
-                                                        authorization: authToken,
-                                                        action: "accept"));
+                                                    final resp = (await service.acceptFriendRequest(userId: cuser.userId, foreignUserId: widget.userId, authorization: authToken));
                                                     if (resp.isSuccessful) {
                                                       showRequest = false;
                                                       setState(() {});

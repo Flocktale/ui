@@ -596,7 +596,7 @@ class _ClubState extends State<Club> {
     setState(() {});
   }
 
-  String _processCommentTimestamp(int timestamp) {
+  String _processTimestamp(int timestamp, int type) {
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final diff = DateTime.now().difference(dateTime);
 
@@ -606,18 +606,19 @@ class _ClubState extends State<Club> {
     final daysDiff = diff.inDays;
 
     String str = '';
+    String suff = type==0?" to go":" ago";
 
     if (secDiff < 60) {
-      str = '$secDiff ' + (secDiff == 1 ? 'second' : 'seconds') + ' ago';
+      str = '$secDiff ' + (secDiff == 1 ? 'second' : 'seconds') + suff;
     } else if (minDiff < 60) {
-      str = '$minDiff ' + (minDiff == 1 ? 'minute' : 'minutes') + ' ago';
+      str = '$minDiff ' + (minDiff == 1 ? 'minute' : 'minutes') + suff;
     } else if (hourDiff < 24) {
-      str = '$hourDiff ' + (hourDiff == 1 ? 'hour' : 'hours') + ' ago';
+      str = '$hourDiff ' + (hourDiff == 1 ? 'hour' : 'hours') + suff;
     } else if (daysDiff < 7) {
-      str = '$daysDiff ' + (daysDiff == 1 ? 'day' : 'days') + ' ago';
+      str = '$daysDiff ' + (daysDiff == 1 ? 'day' : 'days') + suff;
     } else {
       final weekDiff = daysDiff / 7;
-      str = '$weekDiff ' + (weekDiff == 1 ? 'week' : 'weeks') + ' ago';
+      str = '$weekDiff ' + (weekDiff == 1 ? 'week' : 'weeks') + suff;
     }
 
     return str;
@@ -870,11 +871,11 @@ class _ClubState extends State<Club> {
                                               )
                                             : Container(
                                                 margin: EdgeInsets.fromLTRB(
-                                                    0, 5, 0, 0),
+                                                    0, size.height/50, 0, 0),
                                                 child: Text(
                                                   _isConcluded
                                                       ? "Concluded"
-                                                      : "Scheduled",
+                                                      : "Scheduled: ${_processTimestamp(widget.club.scheduleTime,0)}",
                                                   style: TextStyle(
                                                       fontFamily: 'Lato',
                                                       color: Colors.black54),
@@ -1068,9 +1069,9 @@ class _ClubState extends State<Club> {
                                                             ),
                                                           ),
                                                           Text(
-                                                            _processCommentTimestamp(
+                                                            _processTimestamp(
                                                                 comments[index]
-                                                                    .timestamp),
+                                                                    .timestamp,1),
                                                             style: TextStyle(
                                                                 fontFamily:
                                                                     'Lato',

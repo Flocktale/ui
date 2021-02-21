@@ -13,7 +13,32 @@ class Carousel extends StatefulWidget {
 
 class _CarouselState extends State<Carousel> {
   List<String> myClubs = ['Card1.jpg', 'Card2.jpg', 'Card3.jpg', 'Card4.jpg'];
+  String _processTimestamp(int timestamp) {
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    final diff = DateTime.now().difference(dateTime);
 
+    final secDiff = diff.inSeconds;
+    final minDiff = diff.inMinutes;
+    final hourDiff = diff.inHours;
+    final daysDiff = diff.inDays;
+
+    String str = '';
+
+    if (secDiff < 60) {
+      str = '$secDiff ' + (secDiff == 1 ? 'second' : 'seconds') + ' to go';
+    } else if (minDiff < 60) {
+      str = '$minDiff ' + (minDiff == 1 ? 'minute' : 'minutes') + ' to go';
+    } else if (hourDiff < 24) {
+      str = '$hourDiff ' + (hourDiff == 1 ? 'hour' : 'hours') + ' to go';
+    } else if (daysDiff < 7) {
+      str = '$daysDiff ' + (daysDiff == 1 ? 'day' : 'days');
+    } else {
+      final weekDiff = daysDiff / 7;
+      str = '$weekDiff ' + (weekDiff == 1 ? 'week' : 'weeks') + ' to go';
+    }
+
+    return str;
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -91,37 +116,51 @@ class _CarouselState extends State<Carousel> {
                             left: 5,
                             child: Text("${widget.Clubs[index].estimatedAudience.toString()} LISTENERS",style: TextStyle(
                                fontFamily: "Lato",
-                               fontSize: size.width/50,
-                               color: Colors.grey
+                               fontSize: size.width/40,
+                               color: Colors.grey[700]
                              ),),
                        ):Container(),
                              Positioned(
                                bottom: 5,
                                right: 5,
-                               child: Container(
-                                  color: widget.Clubs[index].isLive?
-                                  Colors.red:
-                                 widget.Clubs[index].isConcluded?
-                                 Colors.grey:
-                                 Colors.green,
-                                  padding: EdgeInsets.all(2),
-                                  child: Center(
-                                    child: Text(
-                                      widget.Clubs[index].isLive==true?
-                                      "LIVE":
-                                      widget.Clubs[index].isConcluded==true?
-                                      "ENDED":
-                                      "SCHEDULED",
-                                      style: TextStyle(
-                                          fontFamily: 'Lato',
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          letterSpacing: 2.0,
-                                        fontSize: size.width/50
+                               child: Row(
+                                 children: [
+                                   widget.Clubs[index].isLive==false && widget.Clubs[index].isConcluded==false?
+                                   Container(
+                                     padding: EdgeInsets.all(2),
+                                     child: Icon(
+                                       Icons.timer,
+                                       size: size.width/40,
+                                     ),
+                                   ):Container(),
+                                   Container(
+                                      color: widget.Clubs[index].isLive?
+                                      Colors.red:
+                                     widget.Clubs[index].isConcluded?
+                                     Colors.grey:
+                                     Colors.white,
+                                      padding: EdgeInsets.all(2),
+                                      child: Text(
+                                        widget.Clubs[index].isLive==true?
+                                        "LIVE":
+                                        widget.Clubs[index].isConcluded==true?
+                                        "ENDED":
+                                        _processTimestamp(widget.Clubs[index].scheduleTime),
+                                        style: TextStyle(
+                                            fontFamily: 'Lato',
+                                            fontWeight: FontWeight.bold,
+                                            color: widget.Clubs[index].isLive==true?
+                                            Colors.white:
+                                            widget.Clubs[index].isConcluded==true?
+                                            Colors.white:
+                                            Colors.black,
+                                            letterSpacing: 2.0,
+                                          fontSize: size.width/40
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
+                                 ],
+                               ),
                              ),
 
 //                      trailing:  Container(
