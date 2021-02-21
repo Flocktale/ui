@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/pages/ProfilePage.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
@@ -148,53 +149,58 @@ class _SocialRelationPageState extends State<SocialRelationPage>
 
                   final _user = relationUsers[ind];
 
-                  return Container(
-                    key: ValueKey(_user.username),
-                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            _user.avatar,
+                  return InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
+                    },
+                    child: Container(
+                      key: ValueKey(_user.username),
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              _user.avatar,
+                            ),
+                            radius: 30,
                           ),
-                          radius: 30,
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Text(
-                              _user.username,
-                              style: TextStyle(
-                                fontFamily: 'Lato',
+                          Column(
+                            children: <Widget>[
+                              Text(
+                                _user.username,
+                                style: TextStyle(
+                                  fontFamily: 'Lato',
+                                ),
                               ),
-                            ),
-                            Text(
-                              _user.name,
-                              style: TextStyle(
-                                  fontFamily: 'Lato', color: Colors.grey[700]),
-                            )
-                          ],
-                        ),
-                        InkWell(
-                          onTap: () {
-                            // TODO: complete this functionality
-                          },
-                          child: Container(
-                            width: 100,
-                            height: 35,
-                            child: Center(
-                              child: Text(index == 0
-                                  ? 'Remove Friend'
-                                  : index == 1
-                                      ? 'Remove'
-                                      : 'Following'),
-                            ),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[700]),
-                                borderRadius: BorderRadius.circular(12)),
+                              Text(
+                                _user.name,
+                                style: TextStyle(
+                                    fontFamily: 'Lato', color: Colors.grey[700]),
+                              )
+                            ],
                           ),
-                        )
-                      ],
+                          InkWell(
+                            onTap: () {
+                              // TODO: complete this functionality
+                            },
+                            child: Container(
+                              width: 100,
+                              height: 35,
+                              child: Center(
+                                child: Text(index == 0
+                                    ? 'Remove Friend'
+                                    : index == 1
+                                        ? 'Remove'
+                                        : 'Following'),
+                              ),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey[700]),
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   );
                 }),
