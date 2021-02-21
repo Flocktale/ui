@@ -23,6 +23,8 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
+  final _tagLineController = TextEditingController();
+  final _bioController = TextEditingController();
 
   File image;
   final picker = ImagePicker();
@@ -94,7 +96,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ..userId = userId
       ..name = _nameController.text.trim()
       ..email = email
-      ..username = _usernameController.text.trim());
+      ..username = _usernameController.text.trim()
+      ..tagline = _tagLineController?.text?.trim()
+      ..bio = _bioController?.text?.trim()
+    );
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final response = await service.createNewUser(
@@ -155,12 +160,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 60, 0, 0),
+                  padding: EdgeInsets.fromLTRB(size.width/20, size.height/20, 0, 0),
                   child: RichText(
                     text: TextSpan(
-                      text: "Signup",
+                      text: "Register",
                       style: TextStyle(
-                          fontSize: 80.0,
+                          fontSize: size.width/5,
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
                       children: [
@@ -174,22 +179,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 Center(
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    margin: EdgeInsets.fromLTRB(0, size.height/50, 0, 0),
                     child: GestureDetector(
                       onTap: getImage,
                       behavior: HitTestBehavior.deferToChild,
                       child: CircleAvatar(
-                        radius: size.height / 11.7,
+                        radius: size.height / 14.7,
                         backgroundColor: Colors.red,
                         child: CircleAvatar(
-                          radius: size.height / 12,
+                          radius: size.height / 15,
                           backgroundImage:
                               image == null ? null : FileImage(image),
                           backgroundColor: Colors.white,
                           child: image == null
                               ? Icon(
                                   Icons.add_a_photo,
-                                  size: 32,
+                                  size: size.width/15,
                                   color: Colors.black,
                                 )
                               : Align(
@@ -204,7 +209,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       child: Icon(
                                         Icons.cancel,
                                         color: Colors.black,
-                                        size: 32,
+                                        size: size.width/15,
                                       ),
                                     ),
                                   ),
@@ -215,7 +220,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 12.0, left: 20.0, right: 20.0),
+                  padding: EdgeInsets.only(top: size.height/50, left: size.width/20, right: size.width/20),
                   child: Column(children: <Widget>[
                     Form(
                       key: _formKey,
@@ -239,7 +244,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               return null;
                             },
                           ),
-                          SizedBox(height: 10.0),
+                          SizedBox(height: size.height/50),
                           TextFormField(
                             controller: _usernameController,
                             decoration: InputDecoration(
@@ -257,6 +262,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                               return null;
                             },
+                          ),
+                          SizedBox(height: size.height/50),
+                          TextFormField(
+                            controller: _tagLineController,
+                            maxLines: 1,
+                            maxLength: 50,
+                            decoration: InputDecoration(
+                                labelText: 'TAGLINE ',
+                                hintText: "Describe yourself in one line.",
+                                hintStyle: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w200,
+                                  color: Colors.grey[400]
+                                ),
+                                labelStyle: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[400]),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red))),
+                          ),
+                         // SizedBox(height: size.height/100),
+                          TextFormField(
+                            controller: _bioController,
+                            decoration: InputDecoration(
+                                labelText: 'BIO',
+                                hintText: "Tell something about yourself.",
+                                hintStyle: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w200,
+                                    color: Colors.grey[400]
+                                ),
+                                labelStyle: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[400]),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red))),
                           ),
                           SizedBox(height: 50),
                           InkWell(
