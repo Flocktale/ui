@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:built_collection/built_collection.dart';
 
+import 'ProfilePage.dart';
+
 class InviteScreen extends StatefulWidget {
   final BuiltClub club;
 
@@ -156,11 +158,16 @@ class _InviteScreenState extends State<InviteScreen> {
               leading: CircleAvatar(
                 backgroundImage: NetworkImage(_user.avatar),
               ),
-              title: Text(
-                _user.username,
-                textAlign: TextAlign.center,
-                style:
-                    TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+              title: InkWell(
+                onTap: (){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
+                },
+                child: Text(
+                  _user.username,
+                  textAlign: TextAlign.center,
+                  style:
+                      TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                ),
               ),
               trailing: Transform.scale(
                 scale: 1.25,

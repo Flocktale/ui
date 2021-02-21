@@ -4,6 +4,8 @@ import 'package:mootclub_app/providers/userData.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import 'ProfilePage.dart';
+
 class ParticipantsPanel extends StatelessWidget {
   final Size size;
   final List<SummaryUser> participantList;
@@ -74,24 +76,29 @@ class ParticipantsPanel extends StatelessWidget {
                 return Container(
                   child: Stack(
                     children: [
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            radius: size.width / 9.4,
-                            backgroundColor: Color(0xffFDCF09),
-                            child: CircleAvatar(
-                              radius: size.width / 10,
-                              backgroundImage:
-                                  NetworkImage(participantList[index].avatar),
+                      InkWell(
+                        onTap: (){
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: participantList[index].userId,)));
+                        },
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: size.width / 9.4,
+                              backgroundColor: Color(0xffFDCF09),
+                              child: CircleAvatar(
+                                radius: size.width / 10,
+                                backgroundImage:
+                                    NetworkImage(participantList[index].avatar),
+                              ),
                             ),
-                          ),
-                          Text(
-                            participantList[index].username,
-                            style: TextStyle(
-                                fontFamily: "Lato",
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                            Text(
+                              participantList[index].username,
+                              style: TextStyle(
+                                  fontFamily: "Lato",
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
                       // display menu to owner only.
                       if (isOwner && participantId != userId)

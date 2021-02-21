@@ -1050,15 +1050,20 @@ class _ClubState extends State<Club> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(
-                                                            comments[index]
-                                                                .user
-                                                                .username,
-                                                            style: TextStyle(
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                color: Colors
-                                                                    .redAccent),
+                                                          InkWell(
+                                                            onTap: (){
+                                                              Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: comments[index].user.userId,)));
+                                                            },
+                                                            child: Text(
+                                                              comments[index]
+                                                                  .user
+                                                                  .username,
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      "Lato",
+                                                                  color: Colors
+                                                                      .redAccent),
+                                                            ),
                                                           ),
                                                           Text(
                                                             _processCommentTimestamp(

@@ -5,6 +5,8 @@ import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import 'ProfilePage.dart';
+
 class ClubJoinRequests extends StatefulWidget {
   final BuiltClub club;
   const ClubJoinRequests({this.club});
@@ -115,54 +117,59 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                       ? ListView.builder(
                       itemCount: joinRequests.activeJoinRequestUsers.length,
                       itemBuilder: (context, index) {
-                        return Container(
-                          key: ValueKey(joinRequests
-                              .activeJoinRequestUsers[index].audience.userId),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(joinRequests
-                                  ?.activeJoinRequestUsers[index]?.audience?.avatar),
-                            ),
-                            title: Text(
-                              joinRequests?.activeJoinRequestUsers[index]?.audience
-                                  ?.username !=
-                                  null
-                                  ? joinRequests?.activeJoinRequestUsers[index]
-                                  ?.audience?.username
-                                  : "@Username$index",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontFamily: 'Lato', fontWeight: FontWeight.bold),
-                            ),
-                            trailing: ButtonTheme(
-                              minWidth: size.width / 3.5,
-                              child: RaisedButton(
-                                onPressed: () async {
-                                  final resp = await acceptJoinRequest(joinRequests
-                                      ?.activeJoinRequestUsers[index]
-                                      ?.audience
-                                      ?.userId);
-                                  Fluttertoast.showToast(
-                                      msg: "Join Request Accepted");
-                                  final allRequests =
-                                  joinRequests.activeJoinRequestUsers.toBuilder();
+                        return InkWell(
+                          onTap: (){
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: joinRequests.activeJoinRequestUsers[index].audience.userId,)));
+                          },
+                          child: Container(
+                            key: ValueKey(joinRequests
+                                .activeJoinRequestUsers[index].audience.userId),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(joinRequests
+                                    ?.activeJoinRequestUsers[index]?.audience?.avatar),
+                              ),
+                              title: Text(
+                                joinRequests?.activeJoinRequestUsers[index]?.audience
+                                    ?.username !=
+                                    null
+                                    ? joinRequests?.activeJoinRequestUsers[index]
+                                    ?.audience?.username
+                                    : "@Username$index",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                              ),
+                              trailing: ButtonTheme(
+                                minWidth: size.width / 3.5,
+                                child: RaisedButton(
+                                  onPressed: () async {
+                                    final resp = await acceptJoinRequest(joinRequests
+                                        ?.activeJoinRequestUsers[index]
+                                        ?.audience
+                                        ?.userId);
+                                    Fluttertoast.showToast(
+                                        msg: "Join Request Accepted");
+                                    final allRequests =
+                                    joinRequests.activeJoinRequestUsers.toBuilder();
 
-                                  allRequests.removeAt(index);
-                                  joinRequests = joinRequests.rebuild(
-                                          (b) => b..activeJoinRequestUsers = allRequests);
+                                    allRequests.removeAt(index);
+                                    joinRequests = joinRequests.rebuild(
+                                            (b) => b..activeJoinRequestUsers = allRequests);
 
-                                  setState(() {});
-                                },
-                                color: Colors.red[600],
-                                child: Text('Accept',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Lato',
-                                    )),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  //side: BorderSide(color: Colors.red[600]),
+                                    setState(() {});
+                                  },
+                                  color: Colors.red[600],
+                                  child: Text('Accept',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Lato',
+                                      )),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    //side: BorderSide(color: Colors.red[600]),
+                                  ),
                                 ),
                               ),
                             ),
