@@ -7,6 +7,29 @@ import 'package:mootclub_app/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
 
+abstract class RelationActionResponse
+    implements Built<RelationActionResponse, RelationActionResponseBuilder> {
+  @nullable
+  RelationIndexObject get relationIndexObj;
+
+  @nullable
+  int get friendsCount;
+
+  @nullable
+  int get followerCount;
+
+  @nullable
+  int get followingCount;
+
+  RelationActionResponse._();
+
+  factory RelationActionResponse([updates(RelationActionResponseBuilder b)]) =
+      _$RelationActionResponse;
+
+  static Serializer<RelationActionResponse> get serializer =>
+      _$relationActionResponseSerializer;
+}
+
 abstract class NotificationData
     implements Built<NotificationData, NotificationDataBuilder> {
   String get type;

@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/providers/agoraController.dart';
+import 'package:mootclub_app/providers/userData.dart';
 import 'package:web_socket_channel/io.dart';
 
 class MySocket with ChangeNotifier {
   final AgoraController agoraController;
 
-  MySocket(this.agoraController);
+  final UserData userData;
+
+  MySocket(this.agoraController, this.userData);
 
   IOWebSocketChannel channel;
 
@@ -42,7 +45,14 @@ class MySocket with ChangeNotifier {
       final what = event["what"];
       final clubId = event['clubId'];
 
-      if (funcs[what] != null) {
+      if (what == 'socialCounts') {
+        userData.updateUser = userData.user.rebuild((b) => b
+          ..followerCount =
+              event['followerCount'] ?? userData.user.followerCount
+          ..followingCount =
+              event['followingCount'] ?? userData.user.followingCount
+          ..friendsCount = event['friendsCount'] ?? userData.user.friendsCount);
+      } else if (funcs[what] != null) {
         funcs[what](event);
       } else if (agoraController.club?.clubId != null &&
           clubId == agoraController.club.clubId) {

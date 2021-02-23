@@ -125,42 +125,42 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   @Post(path: '/users/{userId}/relations/add?action=follow')
-  Future<Response> follow({
+  Future<Response<RelationActionResponse>> follow({
     @required @Path('userId') String userId,
     @required @Query('foreignUserId') String foreignUserId,
     @required @Header() String authorization,
   });
 
   @Post(path: '/users/{userId}/relations/add?action=send_friend_request')
-  Future<Response> sendFriendRequest({
+  Future<Response<RelationActionResponse>> sendFriendRequest({
     @required @Path('userId') String userId,
     @required @Query('foreignUserId') String foreignUserId,
     @required @Header() String authorization,
   });
 
   @Post(path: '/users/{userId}/relations/add?action=accept_friend_request')
-  Future<Response> acceptFriendRequest({
+  Future<Response<RelationActionResponse>> acceptFriendRequest({
     @required @Path('userId') String userId,
     @required @Query('foreignUserId') String foreignUserId,
     @required @Header() String authorization,
   });
 
   @Post(path: '/users/{userId}/relations/remove?action=unfollow')
-  Future<Response> unfollow({
+  Future<Response<RelationActionResponse>> unfollow({
     @required @Path('userId') String userId,
     @required @Query('foreignUserId') String foreignUserId,
     @required @Header() String authorization,
   });
 
   @Post(path: '/users/{userId}/relations/remove?action=delete_friend_request')
-  Future<Response> deleteFriendRequest({
+  Future<Response<RelationActionResponse>> deleteFriendRequest({
     @required @Path('userId') String userId,
     @required @Query('foreignUserId') String foreignUserId,
     @required @Header() String authorization,
   });
 
   @Post(path: '/users/{userId}/relations/remove?action=unfriend')
-  Future<Response> unfriend({
+  Future<Response<RelationActionResponse>> unfriend({
     @required @Path('userId') String userId,
     @required @Query('foreignUserId') String foreignUserId,
     @required @Header() String authorization,

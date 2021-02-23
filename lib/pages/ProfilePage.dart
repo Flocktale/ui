@@ -22,36 +22,30 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  static BuiltUser _user;
+  BuiltUser _user;
   RelationIndexObject _userRelations;
   bool _isMe;
-  Image image;
-  bool isFollowing = false;
-  bool sentFollowRequest = false;
-  bool sentFriendRequest = false;
-  int followersCount = 0;
-  int followingCount = 0;
-  bool showRequest = true;
-  BuiltList<BuiltClub> Clubs;
-  fetchUserRelations() async {
-    print("==================FetchUserRelations=========================");
-    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
-    final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    _userRelations = (await service.getUserProfile(
-      primaryUserId: cuser.userId,
-      userId: widget.userId,
-      authorization: authToken,
-    ))
-        .body
-        .relationIndexObj;
-    print("==================");
-    print(_userRelations);
-    print("==================");
+
+  bool _showRequest = true;
+  BuiltList<BuiltClub> _Clubs;
+
+  void _updateProfileFromResponse(
+      RelationActionResponse relationActionResponse) {
+    if (relationActionResponse == null) return;
+    _userRelations = relationActionResponse.relationIndexObj;
+
+    _user = _user.rebuild((b) => b
+      ..followerCount =
+          relationActionResponse.followerCount ?? _user.followerCount
+      ..followingCount =
+          relationActionResponse.followingCount ?? _user.followingCount
+      ..friendsCount =
+          relationActionResponse.friendsCount ?? _user.friendsCount);
+
     setState(() {});
   }
 
-  fetchUser() async {
+  void _fetchUser() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
@@ -61,8 +55,6 @@ class _ProfilePageState extends State<ProfilePage> {
         _isMe = true;
         _user = cuser;
       });
-      if (_user.followerCount != null) followersCount = _user.followerCount;
-      if (_user.followingCount != null) followingCount = _user.followingCount;
     } else {
       _isMe = false;
       final fetchedUserData = (await service.getUserProfile(
@@ -73,8 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
           .body;
       _user = fetchedUserData?.user;
       _userRelations = fetchedUserData?.relationIndexObj;
-      setState(() {
-      });
+      setState(() {});
       print("==================");
       print(_userRelations);
       print("==================");
@@ -91,9 +82,6 @@ class _ProfilePageState extends State<ProfilePage> {
           textColor: Colors.white,
           fontSize: 16.0);
       Navigator.pop(context);
-    } else {
-      if (_user.followerCount != null) followersCount = _user.followerCount;
-      if (_user.followingCount != null) followingCount = _user.followingCount;
     }
     setState(() {});
     print(_user.followerCount);
@@ -110,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    Clubs = (await service.getMyOrganizedClubs(
+    _Clubs = (await service.getMyOrganizedClubs(
       userId: widget.userId,
       lastevaluatedkey: null,
       authorization: authToken,
@@ -118,100 +106,115 @@ class _ProfilePageState extends State<ProfilePage> {
         ?.body
         ?.clubs;
     setState(() {});
-    //  print("============LENGTH= ${Clubs.length}");
+    //  print("============LENGTH= ${_Clubs.length}");
 
     //THIS IS RETURNING NULL
     //   setState(() {});
   }
 
-  sendFollow() async {
+  _sendFollow() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.follow(
+    final resp = await service.follow(
       userId: cuser.userId,
       foreignUserId: widget.userId,
       authorization: authToken,
     );
-    await fetchUserRelations();
+
+    _updateProfileFromResponse(resp.body);
+
     Fluttertoast.showToast(msg: 'Follow Request Sent');
   }
 
-  sendUnFollow() async {
+  _sendUnFollow() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.unfollow(
+    final resp = await service.unfollow(
       userId: cuser.userId,
       foreignUserId: widget.userId,
       authorization: authToken,
     );
-    await fetchUserRelations();
+
+    _updateProfileFromResponse(resp.body);
+
     Fluttertoast.showToast(msg: 'User Unfollowed');
   }
 
-  sendFreindRequest() async {
-    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+  _sendFriendRequest() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.sendFriendRequest(
+    final resp = await service.sendFriendRequest(
       userId: cuser.userId,
       foreignUserId: widget.userId,
       authorization: authToken,
     );
-
-    await fetchUserRelations();
+    _updateProfileFromResponse(resp.body);
 
     Fluttertoast.showToast(msg: 'Friend Request Sent');
   }
 
-  cancelFriendRequest() async {
+  Future<void> _acceptFriendRequest() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final cuser = Provider.of<UserData>(context, listen: false).user;
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    final resp = (await service.acceptFriendRequest(
+        userId: cuser.userId,
+        foreignUserId: widget.userId,
+        authorization: authToken));
+
+    if (resp.isSuccessful) {
+      _updateProfileFromResponse(resp.body);
+
+      _showRequest = false;
+      setState(() {});
+    } else {
+      Fluttertoast.showToast(msg: "Some error occured ${resp.body}");
+    }
+  }
+
+  _cancelFriendRequest() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.deleteFriendRequest(
+    final resp = await service.deleteFriendRequest(
       userId: cuser.userId,
       foreignUserId: widget.userId,
       authorization: authToken,
     );
-
-    await fetchUserRelations();
+    _updateProfileFromResponse(resp.body);
 
     Fluttertoast.showToast(msg: 'Friend Request Cancelled');
   }
 
-  unFriend() async {
+  _unFriend() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-    await service.unfriend(
+    final resp = await service.unfriend(
       userId: cuser.userId,
       foreignUserId: widget.userId,
       authorization: authToken,
     );
-
-    await fetchUserRelations();
+    _updateProfileFromResponse(resp.body);
 
     Fluttertoast.showToast(msg: 'Good Bye!');
-  }
-
-  checkingResponse(value) {
-    print(value.statusCode);
-    print(value.body);
-    print(value.error);
   }
 
   @override
   void initState() {
     _user = null;
-    fetchUser();
+    _fetchUser();
     _fetchAllClubs();
     super.initState();
   }
@@ -245,21 +248,18 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
-                        _isMe == false
-                            ? Positioned(
-                                left: 0,
-                                top: 0,
-                                child: IconButton(
-                                  icon: Icon(Icons.arrow_back_outlined),
-                                  color: Colors.white,
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              )
-                            : Container(
-                                height: 0,
-                              ),
+                        if (_isMe == false)
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_back_outlined),
+                              color: Colors.white,
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
                         Positioned(
                           top: ((size.height / 14) +
                               (size.height / 9) -
@@ -332,218 +332,208 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     fontFamily: "Lato",
                                                     color: Colors.black38),
                                               )))
-                                          :
-                                  _userRelations.B2 == true && showRequest == true
-                                      ? Container(
-                                      width: size.width,
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            "${_user.username} has sent you a friend request",
-                                            style: TextStyle(
-                                              fontFamily: "Lato",
-                                            ),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              ButtonTheme(
-                                                minWidth: size.width / 3.5,
-                                                child: RaisedButton(
-                                                  onPressed: () async {
-                                                    final service =
-                                                    Provider.of<DatabaseApiService>(
-                                                        context,
-                                                        listen: false);
-                                                    final cuser = Provider.of<UserData>(
-                                                        context,
-                                                        listen: false)
-                                                        .user;
-                                                    final authToken =
-                                                        Provider.of<UserData>(context,
-                                                            listen: false)
-                                                            .authToken;
-                                                    final resp = (await service.acceptFriendRequest(userId: cuser.userId, foreignUserId: widget.userId, authorization: authToken));
-                                                    if (resp.isSuccessful) {
-                                                      showRequest = false;
-                                                      setState(() {});
-                                                    } else {
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                          "Some error occured ${resp.body}");
-                                                    }
-                                                  },
-                                                  color: showRequest == true
-                                                      ? Colors.red[600]
-                                                      : Colors.grey,
-                                                  child: Text(
-                                                      showRequest == true
-                                                          ? 'Accept'
-                                                          : 'Accepted',
-                                                      style: TextStyle(
-                                                        color: showRequest == true
-                                                            ? Colors.white
-                                                            : Colors.black,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontFamily: 'Lato',
-                                                      )),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(5.0),
-                                                    //side: BorderSide(color: Colors.red[600]),
-                                                  ),
-                                                ),
-                                              ),
-                                              ButtonTheme(
-                                                minWidth: size.width / 3.5,
-                                                child: RaisedButton(
-                                                  onPressed: () async {
-                                                    final service =
-                                                    Provider.of<DatabaseApiService>(
-                                                        context,
-                                                        listen: false);
-                                                    final cuser = Provider.of<UserData>(
-                                                        context,
-                                                        listen: false)
-                                                        .user;
-                                                    final authToken =
-                                                        Provider.of<UserData>(context,
-                                                            listen: false)
-                                                            .authToken;
-                                                    final resp = (await service
-                                                        .responseToNotification(
-                                                        userId: cuser.userId,
-                                                        notificationId: null,
-                                                        authorization: authToken,
-                                                        action: "cancel"));
-                                                    if (resp.isSuccessful) {
-                                                      setState(() {
-                                                        showRequest = false;
-                                                      });
-                                                    } else {
-                                                      Fluttertoast.showToast(
-                                                          msg: "Something went wrong");
-                                                    }
-                                                  },
-                                                  color: Colors.white,
-                                                  child: Text('Decline',
-                                                      style: TextStyle(
-                                                        color: Colors.redAccent,
-                                                        fontFamily: 'Lato',
-                                                      )),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(5.0),
-                                                    //side: BorderSide(color: Colors.red[600]),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          )
-                                        ],
-                                      ))
-                                      : Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: <Widget>[
-                                                ButtonTheme(
-                                                  minWidth: size.width / 3.5,
-                                                  child: RaisedButton(
-                                                    onPressed: () async {
-                                                      if (_userRelations.B5 ==
-                                                          false) {
-                                                        await sendFollow();
-                                                      } else {
-                                                        await sendUnFollow();
-                                                      }
-                                                      setState(() {});
-                                                    },
-                                                    color: _userRelations.B5 ==
-                                                            false
-                                                        ? Colors.red[600]
-                                                        : Colors.white,
-                                                    child: Text(
-                                                        _userRelations.B5 ==
+                                          : _userRelations.B2 == true &&
+                                                  _showRequest == true
+                                              ? Container(
+                                                  width: size.width,
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        "${_user.username} has sent you a friend request",
+                                                        style: TextStyle(
+                                                          fontFamily: "Lato",
+                                                        ),
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        children: [
+                                                          ButtonTheme(
+                                                            minWidth:
+                                                                size.width /
+                                                                    3.5,
+                                                            child: RaisedButton(
+                                                              onPressed: () =>
+                                                                  _acceptFriendRequest(),
+                                                              color: _showRequest ==
+                                                                      true
+                                                                  ? Colors
+                                                                      .red[600]
+                                                                  : Colors.grey,
+                                                              child: Text(
+                                                                  _showRequest ==
+                                                                          true
+                                                                      ? 'Accept'
+                                                                      : 'Accepted',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: _showRequest ==
+                                                                            true
+                                                                        ? Colors
+                                                                            .white
+                                                                        : Colors
+                                                                            .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontFamily:
+                                                                        'Lato',
+                                                                  )),
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5.0),
+                                                                //side: BorderSide(color: Colors.red[600]),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          ButtonTheme(
+                                                            minWidth:
+                                                                size.width /
+                                                                    3.5,
+                                                            child: RaisedButton(
+                                                              onPressed: () =>
+                                                                  _cancelFriendRequest(),
+                                                              color:
+                                                                  Colors.white,
+                                                              child: Text(
+                                                                  'Decline',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .redAccent,
+                                                                    fontFamily:
+                                                                        'Lato',
+                                                                  )),
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5.0),
+                                                                //side: BorderSide(color: Colors.red[600]),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ))
+                                              : Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: <Widget>[
+                                                    ButtonTheme(
+                                                      minWidth:
+                                                          size.width / 3.5,
+                                                      child: RaisedButton(
+                                                        onPressed: () async {
+                                                          if (_userRelations
+                                                                  .B5 ==
+                                                              false) {
+                                                            await _sendFollow();
+                                                          } else {
+                                                            await _sendUnFollow();
+                                                          }
+                                                          setState(() {});
+                                                        },
+                                                        color: _userRelations
+                                                                    .B5 ==
                                                                 false
-                                                            ? 'Follow'
-                                                            : 'Following',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: _userRelations
-                                                                      .B5 ==
-                                                                  false
-                                                              ? Colors.white
-                                                              : Colors
-                                                                  .grey[700],
-                                                        )),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              18.0),
-                                                      side: BorderSide(
-                                                          color:
-                                                              Colors.red[600]),
-                                                    ),
-                                                    elevation: 0.0,
-                                                  ),
-                                                ),
-                                                ButtonTheme(
-                                                  minWidth: size.width / 3.5,
-                                                  child: RaisedButton(
-                                                    onPressed: () async {
-                                                      if (_userRelations.B1 ==
-                                                          true) {
-                                                        await unFriend();
-                                                      } else if (_userRelations
-                                                              .B3 ==
-                                                          false) {
-                                                        await sendFreindRequest();
-                                                      } else {
-                                                        await cancelFriendRequest();
-                                                      }
-                                                      setState(() {});
-                                                    },
-                                                    color: Colors.white,
-                                                    child: Text(
-                                                        _userRelations.B1 ==
-                                                                true
-                                                            ? "FRIENDS"
-                                                            : _userRelations
-                                                                        .B3 ==
+                                                            ? Colors.red[600]
+                                                            : Colors.white,
+                                                        child: Text(
+                                                            _userRelations.B5 ==
                                                                     false
-                                                                ? "Add Friend"
-                                                                : "Request Sent",
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: _userRelations
-                                                                      .B1 ==
-                                                                  true
-                                                              ? Colors.red
-                                                              : _userRelations
-                                                                          .B3 ==
+                                                                ? 'Follow'
+                                                                : 'Following',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: _userRelations
+                                                                          .B5 ==
                                                                       false
-                                                                  ? Colors.black
-                                                                  : Colors
-                                                                      .black38,
-                                                        )),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              18.0),
-                                                      side: BorderSide(
-                                                          color:
-                                                              Colors.red[600]),
+                                                                  ? Colors.white
+                                                                  : Colors.grey[
+                                                                      700],
+                                                            )),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      18.0),
+                                                          side: BorderSide(
+                                                              color: Colors
+                                                                  .red[600]),
+                                                        ),
+                                                        elevation: 0.0,
+                                                      ),
                                                     ),
-                                                    elevation: 0.0,
-                                                  ),
-                                                ),
-                                              ],
-                                            )
+                                                    ButtonTheme(
+                                                      minWidth:
+                                                          size.width / 3.5,
+                                                      child: RaisedButton(
+                                                        onPressed: () async {
+                                                          if (_userRelations
+                                                                  .B1 ==
+                                                              true) {
+                                                            await _unFriend();
+                                                          } else if (_userRelations
+                                                                  .B3 ==
+                                                              false) {
+                                                            await _sendFriendRequest();
+                                                          } else {
+                                                            await _cancelFriendRequest();
+                                                          }
+                                                          setState(() {});
+                                                        },
+                                                        color: Colors.white,
+                                                        child: Text(
+                                                            _userRelations.B1 ==
+                                                                    true
+                                                                ? "FRIENDS"
+                                                                : _userRelations
+                                                                            .B3 ==
+                                                                        false
+                                                                    ? "Add Friend"
+                                                                    : "Request Sent",
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: _userRelations
+                                                                          .B1 ==
+                                                                      true
+                                                                  ? Colors.red
+                                                                  : _userRelations
+                                                                              .B3 ==
+                                                                          false
+                                                                      ? Colors
+                                                                          .black
+                                                                      : Colors
+                                                                          .black38,
+                                                            )),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      18.0),
+                                                          side: BorderSide(
+                                                              color: Colors
+                                                                  .red[600]),
+                                                        ),
+                                                        elevation: 0.0,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
                                       : ButtonTheme(
                                           minWidth: size.width / 1.5,
                                           child: RaisedButton(
@@ -589,12 +579,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         },
                                         child: Column(
                                           children: <Widget>[
-                                            Text(
-                                                _user.friendsCount.toString() !=
-                                                        'null'
-                                                    ? _user.friendsCount
-                                                        .toString()
-                                                    : '0',
+                                            Text('${_user.friendsCount ?? 0}',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.grey[600],
@@ -624,13 +609,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         },
                                         child: Column(
                                           children: <Widget>[
-                                            Text(
-                                                _user.followerCount
-                                                            .toString() !=
-                                                        'null'
-                                                    ? _user.followerCount
-                                                        .toString()
-                                                    : '0',
+                                            Text('${_user.followerCount ?? 0}',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.grey[600],
@@ -660,13 +639,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         },
                                         child: Column(
                                           children: <Widget>[
-                                            Text(
-                                                _user.followingCount
-                                                            .toString() !=
-                                                        'null'
-                                                    ? _user.followingCount
-                                                        .toString()
-                                                    : '0',
+                                            Text('${_user.followingCount ?? 0}',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.grey[600],
@@ -694,7 +667,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Text(
-                                          'My Clubs',
+                                          '_Clubs',
                                           style: TextStyle(
                                               fontSize: 15.0,
                                               fontWeight: FontWeight.bold,
@@ -714,8 +687,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   SizedBox(
                                     height: size.height / 50,
                                   ),
-                                  Clubs != null
-                                      ? Carousel(Clubs: Clubs)
+                                  _Clubs != null
+                                      ? Carousel(Clubs: _Clubs)
                                       : Container(
                                           margin:
                                               EdgeInsets.fromLTRB(0, 20, 0, 0),

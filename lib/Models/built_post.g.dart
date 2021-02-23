@@ -6,6 +6,8 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<RelationActionResponse> _$relationActionResponseSerializer =
+    new _$RelationActionResponseSerializer();
 Serializer<NotificationData> _$notificationDataSerializer =
     new _$NotificationDataSerializer();
 Serializer<BuiltNotificationList> _$builtNotificationListSerializer =
@@ -48,6 +50,84 @@ Serializer<BuiltUnifiedSearchResults> _$builtUnifiedSearchResultsSerializer =
     new _$BuiltUnifiedSearchResultsSerializer();
 Serializer<BuiltInviteFormat> _$builtInviteFormatSerializer =
     new _$BuiltInviteFormatSerializer();
+
+class _$RelationActionResponseSerializer
+    implements StructuredSerializer<RelationActionResponse> {
+  @override
+  final Iterable<Type> types = const [
+    RelationActionResponse,
+    _$RelationActionResponse
+  ];
+  @override
+  final String wireName = 'RelationActionResponse';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, RelationActionResponse object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.relationIndexObj != null) {
+      result
+        ..add('relationIndexObj')
+        ..add(serializers.serialize(object.relationIndexObj,
+            specifiedType: const FullType(RelationIndexObject)));
+    }
+    if (object.friendsCount != null) {
+      result
+        ..add('friendsCount')
+        ..add(serializers.serialize(object.friendsCount,
+            specifiedType: const FullType(int)));
+    }
+    if (object.followerCount != null) {
+      result
+        ..add('followerCount')
+        ..add(serializers.serialize(object.followerCount,
+            specifiedType: const FullType(int)));
+    }
+    if (object.followingCount != null) {
+      result
+        ..add('followingCount')
+        ..add(serializers.serialize(object.followingCount,
+            specifiedType: const FullType(int)));
+    }
+    return result;
+  }
+
+  @override
+  RelationActionResponse deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new RelationActionResponseBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'relationIndexObj':
+          result.relationIndexObj.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(RelationIndexObject))
+              as RelationIndexObject);
+          break;
+        case 'friendsCount':
+          result.friendsCount = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'followerCount':
+          result.followerCount = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'followingCount':
+          result.followingCount = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$NotificationDataSerializer
     implements StructuredSerializer<NotificationData> {
@@ -1824,6 +1904,140 @@ class _$BuiltInviteFormatSerializer
     }
 
     return result.build();
+  }
+}
+
+class _$RelationActionResponse extends RelationActionResponse {
+  @override
+  final RelationIndexObject relationIndexObj;
+  @override
+  final int friendsCount;
+  @override
+  final int followerCount;
+  @override
+  final int followingCount;
+
+  factory _$RelationActionResponse(
+          [void Function(RelationActionResponseBuilder) updates]) =>
+      (new RelationActionResponseBuilder()..update(updates)).build();
+
+  _$RelationActionResponse._(
+      {this.relationIndexObj,
+      this.friendsCount,
+      this.followerCount,
+      this.followingCount})
+      : super._();
+
+  @override
+  RelationActionResponse rebuild(
+          void Function(RelationActionResponseBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  RelationActionResponseBuilder toBuilder() =>
+      new RelationActionResponseBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is RelationActionResponse &&
+        relationIndexObj == other.relationIndexObj &&
+        friendsCount == other.friendsCount &&
+        followerCount == other.followerCount &&
+        followingCount == other.followingCount;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc($jc($jc(0, relationIndexObj.hashCode), friendsCount.hashCode),
+            followerCount.hashCode),
+        followingCount.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('RelationActionResponse')
+          ..add('relationIndexObj', relationIndexObj)
+          ..add('friendsCount', friendsCount)
+          ..add('followerCount', followerCount)
+          ..add('followingCount', followingCount))
+        .toString();
+  }
+}
+
+class RelationActionResponseBuilder
+    implements Builder<RelationActionResponse, RelationActionResponseBuilder> {
+  _$RelationActionResponse _$v;
+
+  RelationIndexObjectBuilder _relationIndexObj;
+  RelationIndexObjectBuilder get relationIndexObj =>
+      _$this._relationIndexObj ??= new RelationIndexObjectBuilder();
+  set relationIndexObj(RelationIndexObjectBuilder relationIndexObj) =>
+      _$this._relationIndexObj = relationIndexObj;
+
+  int _friendsCount;
+  int get friendsCount => _$this._friendsCount;
+  set friendsCount(int friendsCount) => _$this._friendsCount = friendsCount;
+
+  int _followerCount;
+  int get followerCount => _$this._followerCount;
+  set followerCount(int followerCount) => _$this._followerCount = followerCount;
+
+  int _followingCount;
+  int get followingCount => _$this._followingCount;
+  set followingCount(int followingCount) =>
+      _$this._followingCount = followingCount;
+
+  RelationActionResponseBuilder();
+
+  RelationActionResponseBuilder get _$this {
+    if (_$v != null) {
+      _relationIndexObj = _$v.relationIndexObj?.toBuilder();
+      _friendsCount = _$v.friendsCount;
+      _followerCount = _$v.followerCount;
+      _followingCount = _$v.followingCount;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(RelationActionResponse other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$RelationActionResponse;
+  }
+
+  @override
+  void update(void Function(RelationActionResponseBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$RelationActionResponse build() {
+    _$RelationActionResponse _$result;
+    try {
+      _$result = _$v ??
+          new _$RelationActionResponse._(
+              relationIndexObj: _relationIndexObj?.build(),
+              friendsCount: friendsCount,
+              followerCount: followerCount,
+              followingCount: followingCount);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'relationIndexObj';
+        _relationIndexObj?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'RelationActionResponse', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
   }
 }
 

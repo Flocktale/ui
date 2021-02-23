@@ -157,69 +157,75 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> follow(
+  Future<Response<RelationActionResponse>> follow(
       {String userId, String foreignUserId, String authorization}) {
     final $url = '/users/$userId/relations/add?action=follow';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client
+        .send<RelationActionResponse, RelationActionResponse>($request);
   }
 
   @override
-  Future<Response<dynamic>> sendFriendRequest(
+  Future<Response<RelationActionResponse>> sendFriendRequest(
       {String userId, String foreignUserId, String authorization}) {
     final $url = '/users/$userId/relations/add?action=send_friend_request';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client
+        .send<RelationActionResponse, RelationActionResponse>($request);
   }
 
   @override
-  Future<Response<dynamic>> acceptFriendRequest(
+  Future<Response<RelationActionResponse>> acceptFriendRequest(
       {String userId, String foreignUserId, String authorization}) {
     final $url = '/users/$userId/relations/add?action=accept_friend_request';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client
+        .send<RelationActionResponse, RelationActionResponse>($request);
   }
 
   @override
-  Future<Response<dynamic>> unfollow(
+  Future<Response<RelationActionResponse>> unfollow(
       {String userId, String foreignUserId, String authorization}) {
     final $url = '/users/$userId/relations/remove?action=unfollow';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client
+        .send<RelationActionResponse, RelationActionResponse>($request);
   }
 
   @override
-  Future<Response<dynamic>> deleteFriendRequest(
+  Future<Response<RelationActionResponse>> deleteFriendRequest(
       {String userId, String foreignUserId, String authorization}) {
     final $url = '/users/$userId/relations/remove?action=delete_friend_request';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client
+        .send<RelationActionResponse, RelationActionResponse>($request);
   }
 
   @override
-  Future<Response<dynamic>> unfriend(
+  Future<Response<RelationActionResponse>> unfriend(
       {String userId, String foreignUserId, String authorization}) {
     final $url = '/users/$userId/relations/remove?action=unfriend';
     final $params = <String, dynamic>{'foreignUserId': foreignUserId};
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client
+        .send<RelationActionResponse, RelationActionResponse>($request);
   }
 
   @override
