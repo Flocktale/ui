@@ -176,7 +176,7 @@ abstract class DatabaseApiService extends ChopperService {
   //                            Create Club , Upload Club Avatar
   //---------------------------------------------------------------------------------------------
 
-  @Post(path: '/clubs/create/')
+  @Post(path: '/clubs/global/create/')
   Future<Response> createNewClub({
     @required @Body() BuiltClub body,
     @required @Query() String creatorId,
@@ -209,12 +209,17 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   //---------------------------------------------------------------------------------------------
-  //                            Get Clubs, Club by Id, My Clubs (History/Organized)
+  //                            Get Clubs, Club by Id, My Clubs (History/Organized), categoryData
   //                                      Search clubs by clubName
   //---------------------------------------------------------------------------------------------
 
-  @Get(path: '/clubs')
+  @Get(path: '/clubs/global')
   Future<Response<BuiltAllClubsList>> getAllClubs({
+    @required @Header() String authorization,
+  });
+
+  @Get(path: '/clubs/global/category-data')
+  Future<Response> getCategoryData({
     @required @Header() String authorization,
   });
 

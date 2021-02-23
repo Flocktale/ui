@@ -231,7 +231,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   @override
   Future<Response<dynamic>> createNewClub(
       {BuiltClub body, String creatorId, String authorization}) {
-    final $url = '/clubs/create/';
+    final $url = '/clubs/global/create/';
     final $params = <String, dynamic>{'creatorId': creatorId};
     final $headers = {'authorization': authorization};
     final $body = body;
@@ -275,10 +275,18 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<BuiltAllClubsList>> getAllClubs({String authorization}) {
-    final $url = '/clubs';
+    final $url = '/clubs/global';
     final $headers = {'authorization': authorization};
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltAllClubsList, BuiltAllClubsList>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> getCategoryData({String authorization}) {
+    final $url = '/clubs/global/category-data';
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override
