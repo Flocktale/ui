@@ -37,6 +37,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return new Scaffold(
       resizeToAvoidBottomPadding: false,
       body: !_askConfirmCode
@@ -46,19 +47,19 @@ class _RegisterState extends State<Register> {
                 child: Stack(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(size.width/20, size.height/10, 0, 0),
                       child: Text(
                         'Signup',
                         style: TextStyle(
-                            fontSize: 80.0, fontWeight: FontWeight.bold),
+                            fontSize: size.width/5, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(260.0, 125.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(size.width/1.5, size.height/9, 0.0, 0.0),
                       child: Text(
                         '.',
                         style: TextStyle(
-                            fontSize: 80.0,
+                            fontSize: size.width/5,
                             fontWeight: FontWeight.bold,
                             color: Colors.red),
                       ),
@@ -67,7 +68,7 @@ class _RegisterState extends State<Register> {
                 ),
               ),
               Container(
-                  padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
+                  padding: EdgeInsets.only(top: size.height/30, left: 20.0, right: 20.0),
                   child: Column(
                     children: <Widget>[
                       Form(
@@ -98,7 +99,7 @@ class _RegisterState extends State<Register> {
                                 return null;
                               },
                             ),
-                            SizedBox(height: 10.0),
+                            SizedBox(height: size.height/100),
                             TextFormField(
                               controller: _passwordController,
                               decoration: InputDecoration(
@@ -117,7 +118,7 @@ class _RegisterState extends State<Register> {
                               },
                               obscureText: true,
                             ),
-                            SizedBox(height: 10.0),
+                            SizedBox(height: size.height/100),
                             TextFormField(
                               controller: _confirmPasswordController,
                               decoration: InputDecoration(
@@ -142,7 +143,7 @@ class _RegisterState extends State<Register> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 50.0),
+                      SizedBox(height: size.height/20),
                       InkWell(
                         onTap: () async {
                           // for(int i=0;i<100;i++)
@@ -157,7 +158,7 @@ class _RegisterState extends State<Register> {
                           }
                         },
                         child: Container(
-                            height: 40.0,
+                            height: size.height/20,
                             child: Material(
                               borderRadius: BorderRadius.circular(20.0),
                               shadowColor: Colors.redAccent,
@@ -174,9 +175,9 @@ class _RegisterState extends State<Register> {
                               ),
                             )),
                       ),
-                      SizedBox(height: 20.0),
+                      SizedBox(height: size.height/40),
                       Container(
-                        height: 40.0,
+                        height: size.height/20,
                         color: Colors.transparent,
                         child: Container(
                           decoration: BoxDecoration(

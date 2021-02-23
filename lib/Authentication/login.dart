@@ -91,6 +91,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: _loading
@@ -104,32 +105,32 @@ class _LoginState extends State<Login> {
                   child: Stack(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.00, 0.00),
+                        padding: EdgeInsets.fromLTRB(15, size.height/10, 0, 0),
                         child: Text(
                           'Hello',
                           style: TextStyle(
                               fontFamily: 'Lato',
-                              fontSize: 80.0,
+                              fontSize: size.width/5,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.fromLTRB(15.0, 175.0, 0.00, 0.00),
+                        padding: EdgeInsets.fromLTRB(15, size.height/5, 0, 0),
                         child: Text(
                           'There',
                           style: TextStyle(
                               fontFamily: 'Lato',
-                              fontSize: 80.0,
+                              fontSize: size.width/5,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.fromLTRB(225.0, 175.0, 0.00, 0.00),
+                        padding: EdgeInsets.fromLTRB(size.width/1.75, size.height/5, 0, 0),
                         child: Text(
                           '.',
                           style: TextStyle(
                               fontFamily: 'Lato',
-                              fontSize: 80.0,
+                              fontSize: size.width/5,
                               fontWeight: FontWeight.bold,
                               color: Colors.red),
                         ),
@@ -138,7 +139,7 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
+                  padding: EdgeInsets.only(top: size.height/30, left: 20.0, right: 20.0),
                   child: Column(
                     children: <Widget>[
                       TextField(
@@ -153,7 +154,7 @@ class _LoginState extends State<Login> {
                                 borderSide: BorderSide(color: Colors.red))),
                       ),
                       SizedBox(
-                        height: 20.0,
+                        height: size.height/50,
                       ),
                       TextField(
                         controller: _passwordController,
@@ -168,11 +169,11 @@ class _LoginState extends State<Login> {
                         obscureText: true,
                       ),
                       SizedBox(
-                        height: 5.0,
+                        height: size.height/200,
                       ),
                       Container(
                         alignment: Alignment(1.0, 0.0),
-                        padding: EdgeInsets.only(top: 15.0, left: 20.0),
+                        padding: EdgeInsets.only(top: size.height/85, left: 20.0),
                         child: InkWell(
                           child: Text(
                             'Forgot Password',
@@ -185,9 +186,9 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 40.0),
+                      SizedBox(height: size.height/25),
                       Container(
-                        height: 40.0,
+                        height: size.height/20,
                         child: Material(
                           borderRadius: BorderRadius.circular(20.0),
                           shadowColor: Colors.redAccent,
@@ -209,9 +210,9 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20.0),
+                      SizedBox(height: size.height/50),
                       Container(
-                        height: 40.0,
+                        height: size.height/20,
                         color: Colors.transparent,
                         child: Container(
                           decoration: BoxDecoration(
@@ -228,7 +229,7 @@ class _LoginState extends State<Login> {
                                 child: ImageIcon(
                                     AssetImage('assets/images/facebook.png')),
                               ),
-                              SizedBox(width: 10.0),
+                              SizedBox(width: size.height/100),
                               Center(
                                 child: Text('Log in with facebook',
                                     style: TextStyle(
