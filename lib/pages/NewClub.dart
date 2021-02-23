@@ -20,43 +20,36 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   String name;
   String description;
   String category;
-  List categoryList = [
-    'Entrepreneurship',
-    'Education',
-    'Comedy',
-    'Travel',
-    'Society',
-    'Health',
-    'Finance',
-    'Sports',
-    'Other'
-  ];
+  String subCategory;
+  List<String> categoryList = [];
 
-  _createClub() async {
-    if (name == null ||
-        name.isEmpty ||
-        description == null ||
-        description.isEmpty ||
-        category == null ||
-        category.isEmpty) {
+  List<String> subCategoryList = [];
+
+  BuiltClub get _newClubModel {
+    if (name?.isNotEmpty != true ||
+        description?.isNotEmpty != true ||
+        category?.isNotEmpty != true ||
+        subCategory?.isNotEmpty != true) {
       Fluttertoast.showToast(msg: 'Fill all fields');
       print('flll all the fields');
-      return;
+      return null;
     }
-
-    print('sending');
-
-    final service = Provider.of<DatabaseApiService>(context, listen: false);
-
-    final newClub = BuiltClub((b) => b
+    return BuiltClub((b) => b
       ..clubName = name
       ..description = description
-      ..category = category);
+      ..category = category
+      ..subCategory = subCategory);
+  }
+
+  _createClub() async {
+    if (_newClubModel == null) return;
+
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     final resp = await service.createNewClub(
-      body: newClub,
+      body: _newClubModel,
       creatorId: widget.userId,
       authorization: authToken,
     );
@@ -114,37 +107,91 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget _buildCategory() {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 1),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: DropdownButton(
-        hint: Text('Select Category'),
-        dropdownColor: Colors.white,
-        icon: Icon(Icons.arrow_drop_down),
-        underline: SizedBox(),
-        isExpanded: true,
-        style: TextStyle(
-          fontFamily: 'Lato',
-          color: Colors.black,
+  Widget _dropDownWidget(
+          {String hint,
+          Function(String) onChanged,
+          String value,
+          List<String> itemList}) =>
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey, width: 1),
+          borderRadius: BorderRadius.circular(8.0),
         ),
+        child: DropdownButton(
+          hint: Text(hint ?? 'Select Category'),
+          dropdownColor: Colors.white,
+          icon: Icon(Icons.arrow_drop_down),
+          underline: SizedBox(),
+          isExpanded: true,
+          style: TextStyle(
+            fontFamily: 'Lato',
+            color: Colors.black,
+          ),
+          value: value,
+          onChanged: onChanged,
+          items: itemList.map((valueItem) {
+            return DropdownMenuItem(
+              value: valueItem,
+              child: Container(
+                  margin: EdgeInsets.only(left: 10), child: Text(valueItem)),
+            );
+          }).toList(),
+        ),
+      );
+
+  Widget _buildCategory() {
+    return _dropDownWidget(
+        hint: 'Select Category',
+        onChanged: (newValue) {
+          category = newValue;
+
+          subCategoryList = Provider.of<UserData>(context, listen: false)
+              .categoryData[category];
+
+          subCategory = null;
+
+          setState(() {});
+        },
         value: category,
+        itemList: categoryList ?? []);
+  }
+
+  Widget _buildSubCategory() {
+    return _dropDownWidget(
+        hint: 'Select Sub-Category',
         onChanged: (newValue) {
           setState(() {
-            category = newValue;
+            subCategory = newValue;
           });
         },
-        items: categoryList.map((valueItem) {
-          return DropdownMenuItem(
-            value: valueItem,
-            child: Container(
-                margin: EdgeInsets.only(left: 10), child: Text(valueItem)),
-          );
-        }).toList(),
-      ),
-    );
+        value: subCategory,
+        itemList: subCategoryList ?? []);
+  }
+
+  void _initCategoryData() async {
+    final userData = Provider.of<UserData>(context, listen: false);
+
+    if (userData.categoryData == null) {
+      final service = Provider.of<DatabaseApiService>(context, listen: false);
+      final authToken = userData.authToken;
+      final resp = await service.getCategoryData(authorization: authToken);
+
+      if (resp.isSuccessful) {
+        userData.categoryData = (resp.body as Map)
+            .map((k, v) => MapEntry(k as String, v as List<String>));
+      }
+    }
+    categoryList = userData.categoryData['categories'];
+    subCategoryList = userData.categoryData[categoryList.first];
+
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    _initCategoryData();
+
+    super.initState();
   }
 
   @override
@@ -188,6 +235,10 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                       SizedBox(
                         height: size.height / 50,
                       ),
+                      _buildSubCategory(),
+                      SizedBox(
+                        height: size.height / 50,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -199,23 +250,12 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                                   return;
                                 } else {
                                   _formKey.currentState.save();
-                                  if (name == null ||
-                                      name.isEmpty ||
-                                      description == null ||
-                                      description.isEmpty ||
-                                      category == null ||
-                                      category.isEmpty) {
-                                    Fluttertoast.showToast(
-                                        msg: 'Fill all fields');
-                                    print('flll all the fields');
-                                    return;
-                                  }
+
+                                  if (_newClubModel == null) return;
 
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (_) => ImagePage(
-                                            name: name,
-                                            description: description,
-                                            category: category,
+                                            newClub: _newClubModel,
                                             userId: widget.userId,
                                           )));
                                 }

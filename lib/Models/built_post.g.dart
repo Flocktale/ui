@@ -1055,6 +1055,12 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         ..add(serializers.serialize(object.category,
             specifiedType: const FullType(String)));
     }
+    if (object.subCategory != null) {
+      result
+        ..add('subCategory')
+        ..add(serializers.serialize(object.subCategory,
+            specifiedType: const FullType(String)));
+    }
     if (object.createdOn != null) {
       result
         ..add('createdOn')
@@ -1162,6 +1168,10 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
           break;
         case 'category':
           result.category = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'subCategory':
+          result.subCategory = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'createdOn':
@@ -3573,6 +3583,8 @@ class _$BuiltClub extends BuiltClub {
   @override
   final String category;
   @override
+  final String subCategory;
+  @override
   final int createdOn;
   @override
   final int modifiedOn;
@@ -3606,6 +3618,7 @@ class _$BuiltClub extends BuiltClub {
       this.isConcluded,
       this.timeWindow,
       this.category,
+      this.subCategory,
       this.createdOn,
       this.modifiedOn,
       this.scheduleTime,
@@ -3637,6 +3650,7 @@ class _$BuiltClub extends BuiltClub {
         isConcluded == other.isConcluded &&
         timeWindow == other.timeWindow &&
         category == other.category &&
+        subCategory == other.subCategory &&
         createdOn == other.createdOn &&
         modifiedOn == other.modifiedOn &&
         scheduleTime == other.scheduleTime &&
@@ -3670,19 +3684,22 @@ class _$BuiltClub extends BuiltClub {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            0,
-                                                                            clubId
+                                                                            $jc(
+                                                                                0,
+                                                                                clubId
+                                                                                    .hashCode),
+                                                                            clubName
                                                                                 .hashCode),
-                                                                        clubName
+                                                                        creator
                                                                             .hashCode),
-                                                                    creator
+                                                                    isLive
                                                                         .hashCode),
-                                                                isLive
+                                                                isConcluded
                                                                     .hashCode),
-                                                            isConcluded
+                                                            timeWindow
                                                                 .hashCode),
-                                                        timeWindow.hashCode),
-                                                    category.hashCode),
+                                                        category.hashCode),
+                                                    subCategory.hashCode),
                                                 createdOn.hashCode),
                                             modifiedOn.hashCode),
                                         scheduleTime.hashCode),
@@ -3706,6 +3723,7 @@ class _$BuiltClub extends BuiltClub {
           ..add('isConcluded', isConcluded)
           ..add('timeWindow', timeWindow)
           ..add('category', category)
+          ..add('subCategory', subCategory)
           ..add('createdOn', createdOn)
           ..add('modifiedOn', modifiedOn)
           ..add('scheduleTime', scheduleTime)
@@ -3752,6 +3770,10 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
   String _category;
   String get category => _$this._category;
   set category(String category) => _$this._category = category;
+
+  String _subCategory;
+  String get subCategory => _$this._subCategory;
+  set subCategory(String subCategory) => _$this._subCategory = subCategory;
 
   int _createdOn;
   int get createdOn => _$this._createdOn;
@@ -3809,6 +3831,7 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       _isConcluded = _$v.isConcluded;
       _timeWindow = _$v.timeWindow;
       _category = _$v.category;
+      _subCategory = _$v.subCategory;
       _createdOn = _$v.createdOn;
       _modifiedOn = _$v.modifiedOn;
       _scheduleTime = _$v.scheduleTime;
@@ -3851,6 +3874,7 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
               isConcluded: isConcluded,
               timeWindow: timeWindow,
               category: category,
+              subCategory: subCategory,
               createdOn: createdOn,
               modifiedOn: modifiedOn,
               scheduleTime: scheduleTime,

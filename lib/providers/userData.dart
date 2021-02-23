@@ -4,7 +4,6 @@ import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/services/SecureStorage.dart';
 import 'package:mootclub_app/aws/cognito.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData with ChangeNotifier {
   BuiltUser _builtUser;
@@ -12,6 +11,9 @@ class UserData with ChangeNotifier {
   String _userId;
 
   final DatabaseApiService _postApiService;
+
+  /// to store category data in current app instance
+  Map<String, List<String>> categoryData;
 
 // true when necessary actions are loaded (during startup of app)
   bool _loaded = false;

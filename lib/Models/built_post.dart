@@ -316,6 +316,9 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   String get category;
 
   @nullable
+  String get subCategory;
+
+  @nullable
   int get createdOn;
 
   @nullable

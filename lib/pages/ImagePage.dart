@@ -7,17 +7,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/Club.dart';
-import 'package:mootclub_app/pages/LandingPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
 class ImagePage extends StatefulWidget {
-  final String name;
-  final String description;
-  final String category;
   final String userId;
-  ImagePage({this.name, this.description, this.category, this.userId});
+
+  final BuiltClub newClub;
+  ImagePage({this.userId, this.newClub});
   @override
   _ImagePageState createState() => _ImagePageState();
 }
@@ -51,29 +49,13 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   _createClub() async {
-    if (widget.name == null ||
-        widget.name.isEmpty ||
-        widget.description == null ||
-        widget.description.isEmpty ||
-        widget.category == null ||
-        widget.category.isEmpty) {
-      Fluttertoast.showToast(msg: 'Fill all fields');
-      print('flll all the fields');
-      return;
-    }
-
     print('sending');
 
     final service = Provider.of<DatabaseApiService>(context, listen: false);
 
-    final newClub = BuiltClub((b) => b
-      ..clubName = widget.name
-      ..description = widget.description
-      ..category = widget.category);
-
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final resp = await service.createNewClub(
-      body: newClub,
+      body: widget.newClub,
       creatorId: widget.userId,
       authorization: authToken,
     );
@@ -178,10 +160,6 @@ class _ImagePageState extends State<ImagePage> {
                   child: ButtonTheme(
                     child: RaisedButton(
                       onPressed: () {
-                        print(widget.name);
-                        print(widget.description);
-                        print(widget.category);
-                        print(widget.userId);
                         _createClub();
                       },
                       child: Text(
