@@ -178,7 +178,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
 
       if (resp.isSuccessful) {
         userData.categoryData = (resp.body as Map)
-            .map((k, v) => MapEntry(k as String, v as List<String>));
+            .map((k, v) => MapEntry(k as String, (v as List).map((e)=>e as String).toList()));
       }
     }
     categoryList = userData.categoryData['categories'];

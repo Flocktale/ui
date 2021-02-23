@@ -248,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
-                        if (_isMe == false)
+                        _isMe==false?
                           Positioned(
                             left: 0,
                             top: 0,
@@ -259,7 +259,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Navigator.of(context).pop();
                               },
                             ),
-                          ),
+                          ):
+                        Positioned(
+                          right: 10,
+                          top: 0,
+                          child: IconButton(
+                            icon: Icon(Icons.logout),
+                            color: Colors.white,
+                            onPressed: (){
+                              // LOG OUT LOGIC
+                            },
+                          )
+                        ),
                         Positioned(
                           top: ((size.height / 14) +
                               (size.height / 9) -
@@ -667,7 +678,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Text(
-                                          '_Clubs',
+                                          'Clubs',
                                           style: TextStyle(
                                               fontSize: 15.0,
                                               fontWeight: FontWeight.bold,
