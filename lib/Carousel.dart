@@ -136,7 +136,7 @@ class _CarouselState extends State<Carousel> {
                                    Container(
                                       color: widget.Clubs[index].isLive?
                                       Colors.red:
-                                     widget.Clubs[index].isConcluded?
+                                     widget.Clubs[index].isConcluded!=null && widget.Clubs[index].isConcluded?
                                      Colors.grey:
                                      Colors.white,
                                       padding: EdgeInsets.all(2),

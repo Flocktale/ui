@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/ProfilePage.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:provider/provider.dart';
 
 class SocialRelationPage extends StatefulWidget {
@@ -15,6 +16,7 @@ class SocialRelationPage extends StatefulWidget {
 
 class _SocialRelationPageState extends State<SocialRelationPage>
     with SingleTickerProviderStateMixin {
+  BuiltList<JoinRequests> _searchResult;
   List<String> tabs = ['Friends', 'Followers', 'Following'];
   List<String> relations = ['friends', 'followers', 'followings'];
   Map<String, Map<String, dynamic>> relationMap = {
@@ -68,6 +70,22 @@ class _SocialRelationPageState extends State<SocialRelationPage>
     }
     relationMap[type]['isLoading'] = false;
 
+    setState(() {});
+  }
+
+  onSearchTextChanged(String text) async {
+    _searchResult.toList().clear();
+    if (text.isEmpty) {
+      setState(() {});
+      return;
+    }
+//    final _userDetails = joinRequests.activeJoinRequestUsers;
+//    _userDetails.forEach((userDetail) {
+//      if (userDetail.audience.username.contains(text))
+//        _searchResult.toList().add(userDetail);
+//    });
+    print("SEARCH RESULT");
+    print(_searchResult);
     setState(() {});
   }
 

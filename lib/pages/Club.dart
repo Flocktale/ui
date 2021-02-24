@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/comment.dart';
+import 'package:mootclub_app/pages/AudiencePage.dart';
 import 'package:mootclub_app/pages/InviteScreen.dart';
 import 'package:mootclub_app/pages/participantsPanel.dart';
 import 'package:mootclub_app/providers/agoraController.dart';
@@ -513,6 +514,12 @@ class _ClubState extends State<Club> {
                 club: widget.club,
               )));
 
+  Future _navigateToAudienceList() async =>
+      await Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => AudiencePage(
+            club: widget.club,
+          )));
+
   void _handleMenuButtons(String value) {
     switch (value) {
       case 'Show Join Requests':
@@ -520,6 +527,7 @@ class _ClubState extends State<Club> {
         break;
 
       case 'Show Audience':
+        _navigateToAudienceList();
         break;
 
       case 'Invite Panelist':
@@ -696,11 +704,19 @@ class _ClubState extends State<Club> {
         actions: [
           FlatButton(
             child: Text("Accept"),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                _showInvitation = true;
+              });
+            },
           ),
           FlatButton(
             child: Text("Decline"),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                _showInvitation = true;
+              });
+            },
           ),
         ],
       );

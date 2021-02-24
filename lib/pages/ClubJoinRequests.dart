@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:built_collection/built_collection.dart';
 import 'ProfilePage.dart';
 
 class ClubJoinRequests extends StatefulWidget {
@@ -16,6 +16,7 @@ class ClubJoinRequests extends StatefulWidget {
 
 class _ClubJoinRequestsState extends State<ClubJoinRequests> {
   BuiltActiveJoinRequests joinRequests;
+  BuiltList<JoinRequests> _searchResult;
   bool isLoading = false;
   final searchInput = TextEditingController();
   getJoinRequests() async {
@@ -28,6 +29,7 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
       authorization: authToken,
     ))
         .body;
+    _searchResult = joinRequests.activeJoinRequestUsers;
     setState(() {});
   }
 
@@ -47,6 +49,23 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
   _fetchMoreJRData(){
 
   }
+
+  onSearchTextChanged(String text) async {
+    _searchResult.toList().clear();
+    if (text.isEmpty) {
+      setState(() {});
+      return;
+    }
+    final _userDetails = joinRequests.activeJoinRequestUsers;
+    _userDetails.forEach((userDetail) {
+      if (userDetail.audience.username.contains(text))
+        _searchResult.toList().add(userDetail);
+    });
+    print("SEARCH RESULT");
+    print(_searchResult);
+    setState(() {});
+  }
+
 
   Widget searchBar() {
     return Container(
@@ -68,9 +87,7 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black, width: 2.0))),
         onChanged: (val){
-//          joinRequests = joinRequests.rebuild(
-//                  (b) =>
-//                  b..activeJoinRequestUsers = joinRequests.activeJoinRequestUsers.where((val) => val.audience.username==val));
+          onSearchTextChanged(val);
         },
       ),
     );
@@ -112,7 +129,69 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                     }
                     return true;
                   },
-                  child: joinRequests != null &&
+                  child:
+                      _searchResult!=null
+                      ? ListView.builder(
+                          itemCount: _searchResult.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: (){
+                                Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _searchResult[index].audience.userId,)));
+                              },
+                              child: Container(
+                                key: ValueKey(_searchResult[index].audience.userId),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(_searchResult[index]?.audience?.avatar),
+                                  ),
+                                  title: Text(
+                                    _searchResult[index]?.audience?.username !=
+                                        null
+                                        ? _searchResult[index]
+                                        ?.audience?.username
+                                        : "@Username$index",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                                  ),
+                                  trailing: ButtonTheme(
+                                    minWidth: size.width / 3.5,
+                                    child: RaisedButton(
+                                      onPressed: () async {
+                                        final resp = await acceptJoinRequest(_searchResult[index]
+                                            ?.audience
+                                            ?.userId);
+                                        Fluttertoast.showToast(
+                                            msg: "Join Request Accepted");
+                                        final allRequests =
+                                        _searchResult.toBuilder();
+
+                                        allRequests.removeAt(index);
+                                        joinRequests = joinRequests.rebuild(
+                                                (b) => b..activeJoinRequestUsers = allRequests);
+                                        _searchResult = joinRequests.activeJoinRequestUsers;
+
+                                        setState(() {});
+                                      },
+                                      color: Colors.red[600],
+                                      child: Text('Accept',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Lato',
+                                          )),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                        //side: BorderSide(color: Colors.red[600]),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          })
+
+                      : joinRequests != null &&
                       joinRequests.activeJoinRequestUsers != null
                       ? ListView.builder(
                       itemCount: joinRequests.activeJoinRequestUsers.length,
