@@ -109,7 +109,7 @@ abstract class DatabaseApiService extends ChopperService {
 
   // ---------------------------------------------------------------------------------------------------------------------
   //                           ----------Social Relation APIs----------
-  //          Get Relation Data
+  //          Get Relation Data, relation with a user,
   //          Follow, Send Friend Request, Accept Friend Request, Unfollow, Delete Friend Request, Unfriend
   // ---------------------------------------------------------------------------------------------------------------------
 
@@ -121,6 +121,13 @@ abstract class DatabaseApiService extends ChopperService {
         String
             socialRelation, //["followings","followers", "requests_sent", "requests_received","friends"]
     @required @Header('lastevaluatedkey') String lastevaluatedkey,
+    @required @Header() String authorization,
+  });
+
+  @Get(path: '/users/{userId}/relations/object')
+  Future<Response<RelationIndexObject>> getRelationIndexObject({
+    @required @Path('userId') String userId,
+    @required @Query('foreignUserId') String foreignUserId,
     @required @Header() String authorization,
   });
 
@@ -209,12 +216,19 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   //---------------------------------------------------------------------------------------------
-  //                            Get Clubs, Club by Id, My Clubs (History/Organized), categoryData
+  //                            Get All Clubs, Clubs of a category, Club by Id, My Clubs (History/Organized), categoryData
   //                                      Search clubs by clubName
   //---------------------------------------------------------------------------------------------
 
   @Get(path: '/clubs/global')
   Future<Response<BuiltAllClubsList>> getAllClubs({
+    @required @Header() String authorization,
+  });
+
+  @Get(path: '/clubs/global')
+  Future<Response<BuiltSearchClubs>> getClubsOfCategory({
+    @required @Query() String category,
+    @required @Header() String lastevaluatedkey,
     @required @Header() String authorization,
   });
 
@@ -341,6 +355,10 @@ abstract class DatabaseApiService extends ChopperService {
   Future<Response> kickOutParticipant({
     @required @Path() String clubId,
     @required @Query() String audienceId,
+    @required
+    @Query()
+        String
+            isSelf, // true if panelist himself chooses to become listener only.
     @required @Header() String authorization,
   });
 

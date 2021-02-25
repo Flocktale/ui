@@ -157,6 +157,17 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<RelationIndexObject>> getRelationIndexObject(
+      {String userId, String foreignUserId, String authorization}) {
+    final $url = '/users/$userId/relations/object';
+    final $params = <String, dynamic>{'foreignUserId': foreignUserId};
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<RelationIndexObject, RelationIndexObject>($request);
+  }
+
+  @override
   Future<Response<RelationActionResponse>> follow(
       {String userId, String foreignUserId, String authorization}) {
     final $url = '/users/$userId/relations/add?action=follow';
@@ -279,6 +290,20 @@ class _$DatabaseApiService extends DatabaseApiService {
     final $headers = {'authorization': authorization};
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltAllClubsList, BuiltAllClubsList>($request);
+  }
+
+  @override
+  Future<Response<BuiltSearchClubs>> getClubsOfCategory(
+      {String category, String lastevaluatedkey, String authorization}) {
+    final $url = '/clubs/global';
+    final $params = <String, dynamic>{'category': category};
+    final $headers = {
+      'lastevaluatedkey': lastevaluatedkey,
+      'authorization': authorization
+    };
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
   }
 
   @override
@@ -459,9 +484,12 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<dynamic>> kickOutParticipant(
-      {String clubId, String audienceId, String authorization}) {
+      {String clubId, String audienceId, String isSelf, String authorization}) {
     final $url = '/clubs/$clubId/kick/';
-    final $params = <String, dynamic>{'audienceId': audienceId};
+    final $params = <String, dynamic>{
+      'audienceId': audienceId,
+      'isSelf': isSelf
+    };
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,
         parameters: $params, headers: $headers);
