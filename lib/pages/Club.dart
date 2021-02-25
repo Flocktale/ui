@@ -585,7 +585,8 @@ class _ClubState extends State<Club> {
       if(!status.isGranted){
         status = await Permission.microphone.request();
         if(!status.isGranted){
-          
+          Fluttertoast.showToast(msg: 'Please give microphone permissions from the settings')  ;
+          return;
         }
       } 
     }
