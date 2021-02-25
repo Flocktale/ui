@@ -490,7 +490,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> muteParticipant(
+  Future<Response<dynamic>> muteActionOnParticipant(
       {String clubId,
       String who,
       String participantId,

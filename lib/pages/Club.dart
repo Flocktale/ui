@@ -40,8 +40,9 @@ class _ClubState extends State<Club> {
   bool _showInvitation = false;
 
   BuiltList<BuiltClub> Clubs;
-  List<SummaryUser> participantList = [];
-  List<SummaryUser> audienceList = [];
+  List<AudienceData> participantList = [];
+
+  // List<AudienceData> audienceList = [];
   // int likes = -1;
 
   // reaction counts
@@ -67,10 +68,14 @@ class _ClubState extends State<Club> {
 
     participantList = [];
     event['participantList'].forEach((e) {
-      SummaryUser participant = SummaryUser((r) => r
-        ..userId = e['userId']
-        ..username = e['username']
-        ..avatar = e['avatar']);
+      AudienceData participant = AudienceData(
+        (r) => r
+          ..isMuted = e['isMuted']
+          ..audience = SummaryUser((b) => b
+            ..userId = e['userId']
+            ..username = e['username']
+            ..avatar = e['avatar']).toBuilder(),
+      );
       participantList.add(participant);
     });
 
@@ -117,12 +122,49 @@ class _ClubState extends State<Club> {
 
   void _youAreMuted(event) {
     if (event['clubId'] != _clubAudience.club.clubId) return;
-    Provider.of<AgoraController>(context, listen: false).hardMute();
+    final bool isMuted = event['isMuted'];
 
-    this._isMuted =
-        Provider.of<AgoraController>(context, listen: false).isMicMuted;
+    Provider.of<AgoraController>(context, listen: false)
+        .hardMuteAction(isMuted);
 
-    Fluttertoast.showToast(msg: " You are muted");
+    this._isMuted = isMuted;
+
+    Fluttertoast.showToast(msg: " You are ${isMuted ? 'mute' : 'unmute'}d");
+    setState(() {});
+  }
+
+  void _muteActionResponse(event) {
+    if (event['clubId'] != _clubAudience.club.clubId) return;
+
+    final participantIdList = ((event['participantIdList'] ?? []) as List)
+        .map((e) => e as String)
+        .toList();
+
+    final myUserId = Provider.of<UserData>(context, listen: false).userId;
+
+    final bool isMuted = event['isMuted'];
+
+    for (var id in participantIdList) {
+      // if i am affected user
+      if (id == myUserId) {
+        _isMuted = isMuted;
+
+        Provider.of<AgoraController>(context, listen: false)
+            .hardMuteAction(isMuted);
+
+        Fluttertoast.showToast(msg: " You are ${isMuted ? 'mute' : 'unmute'}d");
+      }
+
+      // changing mute status of this participant inside participantList.
+      for (int i = 0; i < participantList.length; i++) {
+        if (participantList[i].audience.userId == id) {
+          participantList[i] =
+              participantList[i].rebuild((b) => b..isMuted = isMuted);
+          break;
+        }
+      }
+    }
+
     setState(() {});
   }
 
@@ -173,18 +215,15 @@ class _ClubState extends State<Club> {
     comments.add(cur);
 
     print('${_controller.position.maxScrollExtent}::::${_controller.offset}');
-    print('${_controller.position.maxScrollExtent -60 < _controller.offset}');
-
+    print('${_controller.position.maxScrollExtent - 60 < _controller.offset}');
 
     if (_controller.position.maxScrollExtent - 60 <= _controller.offset) {
       _controller.jumpTo(_controller.position.maxScrollExtent);
       newMessage = false;
-    }
-    else{
+    } else {
       newMessage = true;
     }
     setState(() {});
-
   }
 
   void _addOldComments(event) {
@@ -194,9 +233,9 @@ class _ClubState extends State<Club> {
       _putNewComment(event['oldComments'][i]);
     }
     setState(() {});
-   
-    Future.delayed(const Duration(seconds: 1),()=> _controller.jumpTo(_controller.position.maxScrollExtent));
 
+    Future.delayed(const Duration(seconds: 1),
+        () => _controller.jumpTo(_controller.position.maxScrollExtent));
   }
 
   void addComment(String message) {
@@ -285,17 +324,50 @@ class _ClubState extends State<Club> {
         .clubs;
   }
 
-  void _muteParticpant(String userId) async {
+  void _toggleMuteOfParticpant(String userId) async {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final myUserId = Provider.of<UserData>(context, listen: false).userId;
+
+    // if user is unmuting himself. (_isMuted is true then till now)
+    if (_isMuted && userId == myUserId) {
+      var status = await Permission.microphone.status;
+      if (!status.isGranted) {
+        status = await Permission.microphone.request();
+        if (!status.isGranted) {
+          Fluttertoast.showToast(
+              msg: 'Please give microphone permissions from the settings');
+          return;
+        }
+      }
+    }
+
+    bool toMute = true;
+
+    for (var participant in participantList) {
+      if (participant.audience.userId == userId) {
+        toMute = !participant.isMuted;
+        break;
+      }
+    }
 
     await Provider.of<DatabaseApiService>(context, listen: false)
-        .muteParticipant(
+        .muteActionOnParticipant(
       clubId: widget.club.clubId,
       who: 'participant',
       participantId: userId,
+      muteAction: toMute ? 'mute' : 'unmute',
       authorization: authToken,
     );
-    Fluttertoast.showToast(msg: 'Panelist is muted');
+
+    if (userId == myUserId) {
+      Provider.of<AgoraController>(context, listen: false)
+          .hardMuteAction(toMute);
+      _isMuted = toMute;
+    }
+
+    Fluttertoast.showToast(msg: toMute ? 'muted' : 'unmuted');
+
+    setState(() {});
   }
 
   void _kickParticpant(String userId) async {
@@ -397,6 +469,9 @@ class _ClubState extends State<Club> {
     _isLive = _clubAudience.club.isLive;
     _isConcluded = _clubAudience.club.isConcluded ?? false;
 
+    // setting current mic status of user.
+    this._isMuted = _clubAudience.audienceData.isMuted;
+
     // now we can join club in websocket also.
     _joinClubInWebsocket();
 
@@ -470,6 +545,7 @@ class _ClubState extends State<Club> {
       setAudienceCount: _setAudienceCount,
       clubStarted: _clubStartedByOwner,
       youAreMuted: _youAreMuted,
+      muteActionResponse: _muteActionResponse,
       youAreBlocked: _youAreBlocked,
       newJRArrived: _newJRArrived,
       yourJRAccepted: _yourJRAccepted,
@@ -596,30 +672,6 @@ class _ClubState extends State<Club> {
 
       _isPlaying = true;
     }
-
-    setState(() {});
-  }
-
-  void _micButtonHandler() async {
-    _isMuted = Provider.of<AgoraController>(context, listen: false).isMicMuted;
-
-    if (!_isMuted) {
-      var status = await Permission.microphone.status;
-      if (!status.isGranted) {
-        status = await Permission.microphone.request();
-        if (!status.isGranted) {
-          Fluttertoast.showToast(
-              msg: 'Please give microphone permissions from the settings');
-          return;
-        }
-      }
-    }
-
-    await Provider.of<AgoraController>(context, listen: false).toggleMicMute();
-    _isMuted = Provider.of<AgoraController>(context, listen: false).isMicMuted;
-
-    final msg = _isMuted ? 'Muted' : 'Unmuted';
-    Fluttertoast.showToast(msg: msg);
 
     setState(() {});
   }
@@ -768,10 +820,6 @@ class _ClubState extends State<Club> {
     this._isPlaying =
         Provider.of<AgoraController>(context, listen: false).club?.clubId ==
             widget.club.clubId;
-
-// setting current mic status of user.
-    this._isMuted =
-        Provider.of<AgoraController>(context, listen: false).isMicMuted;
 
     super.initState();
 
@@ -1016,7 +1064,11 @@ class _ClubState extends State<Club> {
                                                 child: FloatingActionButton(
                                                   heroTag: "mic btn",
                                                   onPressed: () =>
-                                                      _micButtonHandler(),
+                                                      _toggleMuteOfParticpant(
+                                                          Provider.of<UserData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .userId),
                                                   child: !_isMuted
                                                       ? Icon(Icons
                                                           .mic_none_rounded)
@@ -1107,9 +1159,8 @@ class _ClubState extends State<Club> {
                                                     // Duration(milliseconds: 300),
                                                     // () => _controller
                                                     //     .jumpTo(_controller.position.maxScrollExtent));
-                                                 
-                                                    var a =  ListTile(
-                                                      
+
+                                                    var a = ListTile(
                                                       leading: CircleAvatar(
                                                         backgroundImage:
                                                             NetworkImage(
@@ -1163,7 +1214,7 @@ class _ClubState extends State<Club> {
                                                             fontFamily: "Lato"),
                                                       ),
                                                     );
-                                                    return a; 
+                                                    return a;
                                                   }),
                                             ),
                                             Container(
@@ -1276,7 +1327,7 @@ class _ClubState extends State<Club> {
                             size: size,
                             participantList: participantList,
                             isOwner: _isOwner,
-                            muteParticipant: _muteParticpant,
+                            muteParticipant: _toggleMuteOfParticpant,
                             removeParticipant: _kickParticpant,
                             blockParticipant: _blockUser,
                           ),

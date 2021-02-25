@@ -7,7 +7,6 @@ class AgoraController {
   bool _isClubMuted;
 
   bool isMicMuted;
-
   BuiltClub club;
 
   AgoraController create() {
@@ -50,19 +49,16 @@ class AgoraController {
     await _agoraHandler.muteSwitchClub(_isClubMuted);
   }
 
-  Future<void> toggleMicMute() async {
-    isMicMuted = !isMicMuted;
-    await _agoraHandler.muteSwitchMic(isMicMuted);
-  }
-
   Future<void> dispose() async {
     club = null;
     await _agoraHandler.dispose();
     _agoraHandler = null;
   }
 
-  Future<void> hardMute() async {
-    isMicMuted = true;
-    await _agoraHandler.muteSwitchMic(isMicMuted);
+  Future<void> hardMuteAction(bool muteAction) async {
+    assert(muteAction != null);
+
+    isMicMuted = muteAction;
+    await _agoraHandler.muteSwitchMic(muteAction);
   }
 }
