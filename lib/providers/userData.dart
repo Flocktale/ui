@@ -125,4 +125,14 @@ class UserData with ChangeNotifier {
   set cognitoSession(CognitoUserSession session) {
     _currentSession = session;
   }
+
+  void clearData() {
+    _builtUser = null;
+    _currentSession = null;
+    _loaded = false;
+    _isAuth = false;
+    categoryData = null;
+    // notifyListeners();
+    initiate();
+  }
 }
