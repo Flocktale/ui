@@ -6,6 +6,8 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<BuiltAudienceList> _$builtAudienceListSerializer =
+    new _$BuiltAudienceListSerializer();
 Serializer<RelationActionResponse> _$relationActionResponseSerializer =
     new _$RelationActionResponseSerializer();
 Serializer<NotificationData> _$notificationDataSerializer =
@@ -50,6 +52,62 @@ Serializer<BuiltUnifiedSearchResults> _$builtUnifiedSearchResultsSerializer =
     new _$BuiltUnifiedSearchResultsSerializer();
 Serializer<BuiltInviteFormat> _$builtInviteFormatSerializer =
     new _$BuiltInviteFormatSerializer();
+
+class _$BuiltAudienceListSerializer
+    implements StructuredSerializer<BuiltAudienceList> {
+  @override
+  final Iterable<Type> types = const [BuiltAudienceList, _$BuiltAudienceList];
+  @override
+  final String wireName = 'BuiltAudienceList';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, BuiltAudienceList object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.audience != null) {
+      result
+        ..add('audience')
+        ..add(serializers.serialize(object.audience,
+            specifiedType: const FullType(
+                BuiltList, const [const FullType(AudienceData)])));
+    }
+    if (object.lastevaluatedkey != null) {
+      result
+        ..add('lastevaluatedkey')
+        ..add(serializers.serialize(object.lastevaluatedkey,
+            specifiedType: const FullType(String)));
+    }
+    return result;
+  }
+
+  @override
+  BuiltAudienceList deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltAudienceListBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'audience':
+          result.audience.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(AudienceData)]))
+              as BuiltList<Object>);
+          break;
+        case 'lastevaluatedkey':
+          result.lastevaluatedkey = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$RelationActionResponseSerializer
     implements StructuredSerializer<RelationActionResponse> {
@@ -936,6 +994,12 @@ class _$AudienceDataSerializer implements StructuredSerializer<AudienceData> {
       serializers.serialize(object.audience,
           specifiedType: const FullType(SummaryUser)),
     ];
+    if (object.isMuted != null) {
+      result
+        ..add('isMuted')
+        ..add(serializers.serialize(object.isMuted,
+            specifiedType: const FullType(bool)));
+    }
     if (object.joinRequestAttempts != null) {
       result
         ..add('joinRequestAttempts')
@@ -978,6 +1042,10 @@ class _$AudienceDataSerializer implements StructuredSerializer<AudienceData> {
           break;
         case 'joinRequested':
           result.joinRequested = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'isMuted':
+          result.isMuted = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
           break;
         case 'joinRequestAttempts':
@@ -1914,6 +1982,110 @@ class _$BuiltInviteFormatSerializer
     }
 
     return result.build();
+  }
+}
+
+class _$BuiltAudienceList extends BuiltAudienceList {
+  @override
+  final BuiltList<AudienceData> audience;
+  @override
+  final String lastevaluatedkey;
+
+  factory _$BuiltAudienceList(
+          [void Function(BuiltAudienceListBuilder) updates]) =>
+      (new BuiltAudienceListBuilder()..update(updates)).build();
+
+  _$BuiltAudienceList._({this.audience, this.lastevaluatedkey}) : super._();
+
+  @override
+  BuiltAudienceList rebuild(void Function(BuiltAudienceListBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltAudienceListBuilder toBuilder() =>
+      new BuiltAudienceListBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltAudienceList &&
+        audience == other.audience &&
+        lastevaluatedkey == other.lastevaluatedkey;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, audience.hashCode), lastevaluatedkey.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltAudienceList')
+          ..add('audience', audience)
+          ..add('lastevaluatedkey', lastevaluatedkey))
+        .toString();
+  }
+}
+
+class BuiltAudienceListBuilder
+    implements Builder<BuiltAudienceList, BuiltAudienceListBuilder> {
+  _$BuiltAudienceList _$v;
+
+  ListBuilder<AudienceData> _audience;
+  ListBuilder<AudienceData> get audience =>
+      _$this._audience ??= new ListBuilder<AudienceData>();
+  set audience(ListBuilder<AudienceData> audience) =>
+      _$this._audience = audience;
+
+  String _lastevaluatedkey;
+  String get lastevaluatedkey => _$this._lastevaluatedkey;
+  set lastevaluatedkey(String lastevaluatedkey) =>
+      _$this._lastevaluatedkey = lastevaluatedkey;
+
+  BuiltAudienceListBuilder();
+
+  BuiltAudienceListBuilder get _$this {
+    if (_$v != null) {
+      _audience = _$v.audience?.toBuilder();
+      _lastevaluatedkey = _$v.lastevaluatedkey;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltAudienceList other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltAudienceList;
+  }
+
+  @override
+  void update(void Function(BuiltAudienceListBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltAudienceList build() {
+    _$BuiltAudienceList _$result;
+    try {
+      _$result = _$v ??
+          new _$BuiltAudienceList._(
+              audience: _audience?.build(), lastevaluatedkey: lastevaluatedkey);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'audience';
+        _audience?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuiltAudienceList', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
   }
 }
 
@@ -3391,6 +3563,8 @@ class _$AudienceData extends AudienceData {
   @override
   final bool joinRequested;
   @override
+  final bool isMuted;
+  @override
   final int joinRequestAttempts;
   @override
   final SummaryUser audience;
@@ -3406,6 +3580,7 @@ class _$AudienceData extends AudienceData {
       {this.isBlocked,
       this.isParticipant,
       this.joinRequested,
+      this.isMuted,
       this.joinRequestAttempts,
       this.audience,
       this.invitationId,
@@ -3439,6 +3614,7 @@ class _$AudienceData extends AudienceData {
         isBlocked == other.isBlocked &&
         isParticipant == other.isParticipant &&
         joinRequested == other.joinRequested &&
+        isMuted == other.isMuted &&
         joinRequestAttempts == other.joinRequestAttempts &&
         audience == other.audience &&
         invitationId == other.invitationId &&
@@ -3451,8 +3627,12 @@ class _$AudienceData extends AudienceData {
         $jc(
             $jc(
                 $jc(
-                    $jc($jc($jc(0, isBlocked.hashCode), isParticipant.hashCode),
-                        joinRequested.hashCode),
+                    $jc(
+                        $jc(
+                            $jc($jc(0, isBlocked.hashCode),
+                                isParticipant.hashCode),
+                            joinRequested.hashCode),
+                        isMuted.hashCode),
                     joinRequestAttempts.hashCode),
                 audience.hashCode),
             invitationId.hashCode),
@@ -3465,6 +3645,7 @@ class _$AudienceData extends AudienceData {
           ..add('isBlocked', isBlocked)
           ..add('isParticipant', isParticipant)
           ..add('joinRequested', joinRequested)
+          ..add('isMuted', isMuted)
           ..add('joinRequestAttempts', joinRequestAttempts)
           ..add('audience', audience)
           ..add('invitationId', invitationId)
@@ -3491,6 +3672,10 @@ class AudienceDataBuilder
   set joinRequested(bool joinRequested) =>
       _$this._joinRequested = joinRequested;
 
+  bool _isMuted;
+  bool get isMuted => _$this._isMuted;
+  set isMuted(bool isMuted) => _$this._isMuted = isMuted;
+
   int _joinRequestAttempts;
   int get joinRequestAttempts => _$this._joinRequestAttempts;
   set joinRequestAttempts(int joinRequestAttempts) =>
@@ -3516,6 +3701,7 @@ class AudienceDataBuilder
       _isBlocked = _$v.isBlocked;
       _isParticipant = _$v.isParticipant;
       _joinRequested = _$v.joinRequested;
+      _isMuted = _$v.isMuted;
       _joinRequestAttempts = _$v.joinRequestAttempts;
       _audience = _$v.audience?.toBuilder();
       _invitationId = _$v.invitationId;
@@ -3547,6 +3733,7 @@ class AudienceDataBuilder
               isBlocked: isBlocked,
               isParticipant: isParticipant,
               joinRequested: joinRequested,
+              isMuted: isMuted,
               joinRequestAttempts: joinRequestAttempts,
               audience: audience.build(),
               invitationId: invitationId,

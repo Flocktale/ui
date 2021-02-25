@@ -361,6 +361,27 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<BuiltList<AudienceData>>> getParticipantList(
+      {String clubId, String authorization}) {
+    final $url = '/clubs/$clubId/participants/';
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client.send<BuiltList<AudienceData>, AudienceData>($request);
+  }
+
+  @override
+  Future<Response<BuiltAudienceList>> getAudienceList(
+      {String clubId, String lastevaluatedkey, String authorization}) {
+    final $url = '/clubs/$clubId/audience/';
+    final $headers = {
+      'lastevaluatedkey': lastevaluatedkey,
+      'authorization': authorization
+    };
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client.send<BuiltAudienceList, BuiltAudienceList>($request);
+  }
+
+  @override
   Future<Response<dynamic>> postReaction(
       {String clubId,
       String audienceId,
@@ -470,11 +491,16 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<dynamic>> muteParticipant(
-      {String clubId, String who, String participantId, String authorization}) {
+      {String clubId,
+      String who,
+      String participantId,
+      String muteAction,
+      String authorization}) {
     final $url = '/clubs/$clubId/mute/';
     final $params = <String, dynamic>{
       'who': who,
-      'participantId': participantId
+      'participantId': participantId,
+      'muteAction': muteAction
     };
     final $headers = {'authorization': authorization};
     final $request = Request('POST', $url, client.baseUrl,

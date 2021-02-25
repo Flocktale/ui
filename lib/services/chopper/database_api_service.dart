@@ -265,6 +265,23 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   //---------------------------------------------------------------------------------------------
+  //                    Get Participant list and audience list
+  //---------------------------------------------------------------------------------------------
+
+  @Get(path: '/clubs/{clubId}/participants/')
+  Future<Response<BuiltList<AudienceData>>> getParticipantList({
+    @required @Path() String clubId,
+    @required @Header() String authorization,
+  });
+
+  @Get(path: '/clubs/{clubId}/audience/')
+  Future<Response<BuiltAudienceList>> getAudienceList({
+    @required @Path() String clubId,
+    @required @Header() String lastevaluatedkey,
+    @required @Header() String authorization,
+  });
+
+  //---------------------------------------------------------------------------------------------
   //                    Post Reaction , Fetch Reactions for club
   //---------------------------------------------------------------------------------------------
 
@@ -348,6 +365,7 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Path() String clubId,
     @required @Query() String who, // ['all' or 'participant']
     @required @Query() String participantId,
+    @required @Query() String muteAction, // ['mute' or 'unmute']
     @required @Header() String authorization,
   });
 
