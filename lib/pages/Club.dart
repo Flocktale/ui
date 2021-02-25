@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mootclub_app/Models/built_post.dart';
@@ -24,8 +26,9 @@ class Club extends StatefulWidget {
 }
 
 class _ClubState extends State<Club> {
+  ScrollController _controller = ScrollController();
   bool _isPlaying;
-
+  bool newMessage = false;
   bool _sentRequest = false;
 
   bool _isLive = false;
@@ -55,6 +58,10 @@ class _ClubState extends State<Club> {
   BuiltClubAndAudience _clubAudience;
 
   bool _isOwner;
+
+  void scrollToBottom() {
+    _controller.jumpTo(_controller.position.maxScrollExtent);
+  }
 
   void _setParticipantList(event) {
     if (event['clubId'] != widget.club.clubId) return;
@@ -206,6 +213,16 @@ class _ClubState extends State<Club> {
     cur.timestamp = event['timestamp'];
     cur.body = event['body'];
     comments.add(cur);
+
+    print('${_controller.position.maxScrollExtent}::::${_controller.offset}');
+    print('${_controller.position.maxScrollExtent - 60 < _controller.offset}');
+
+    if (_controller.position.maxScrollExtent - 60 <= _controller.offset) {
+      _controller.jumpTo(_controller.position.maxScrollExtent);
+      newMessage = false;
+    } else {
+      newMessage = true;
+    }
     setState(() {});
   }
 
@@ -216,6 +233,9 @@ class _ClubState extends State<Club> {
       _putNewComment(event['oldComments'][i]);
     }
     setState(() {});
+
+    Future.delayed(const Duration(seconds: 1),
+        () => _controller.jumpTo(_controller.position.maxScrollExtent));
   }
 
   void addComment(String message) {
@@ -1132,9 +1152,15 @@ class _ClubState extends State<Club> {
                                               color: Colors.white,
                                               child: ListView.builder(
                                                   itemCount: comments.length,
+                                                  controller: _controller,
                                                   itemBuilder:
                                                       (context, index) {
-                                                    return ListTile(
+                                                    // Timer(
+                                                    // Duration(milliseconds: 300),
+                                                    // () => _controller
+                                                    //     .jumpTo(_controller.position.maxScrollExtent));
+
+                                                    var a = ListTile(
                                                       leading: CircleAvatar(
                                                         backgroundImage:
                                                             NetworkImage(
@@ -1188,6 +1214,7 @@ class _ClubState extends State<Club> {
                                                             fontFamily: "Lato"),
                                                       ),
                                                     );
+                                                    return a;
                                                   }),
                                             ),
                                             Container(
