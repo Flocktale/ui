@@ -76,7 +76,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
     );
     if (resp.isSuccessful) {
       setState(() {
-        hasSentJoinRequest = true;
+        hasSentJoinRequest = false;
       });
       Fluttertoast.showToast(msg: "Join Request Cancelled");
     } else
@@ -100,6 +100,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final userId = Provider.of<UserData>(context, listen: false).userId;
     final cuser = Provider.of<UserData>(context, listen: false).user;
     return SlidingUpPanel(
@@ -127,7 +128,8 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
             height: widget.size.height / 50,
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
+            width: size.width/3.5,
+            margin: EdgeInsets.fromLTRB(size.width/15, 10, 0, 0),
             child: Stack(
               children: [
                 InkWell(
@@ -138,6 +140,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                             )));
                   },
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CircleAvatar(
                         radius: widget.size.width / 9.4,
@@ -156,6 +159,14 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                     ],
                   ),
                 ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: Icon(Icons.mic_none_outlined,color: Colors.redAccent,),
+                    color: Colors.black,
+                  ),
+                )
               ],
             ),
           ),
@@ -194,14 +205,13 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3),
                 itemBuilder: (context, index) {
-                  final participantId =
-                      widget.participantList[index].audience.userId;
                   return index !=
                           widget.participantList
                               .where((element) =>
                                   element.audience.userId != cuser.userId)
                               .length
                       ? Container(
+                          width: size.width/3.5,
                           child: Stack(
                             children: [
                               InkWell(
@@ -215,6 +225,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                           )));
                                 },
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     CircleAvatar(
                                       radius: widget.size.width / 9.4,
@@ -238,12 +249,12 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                 ),
                               ),
                               // display menu to owner only.
-                              if (widget.isOwner && participantId != userId)
+                              if (widget.isOwner && widget.participantList[index].audience.userId != userId)
                                 Positioned(
                                   right: 10,
                                   child: PopupMenuButton<String>(
                                     onSelected: (val) =>
-                                        _handleMenuButtons(val, participantId),
+                                        _handleMenuButtons(val, widget.participantList[index].audience.userId),
                                     itemBuilder: (BuildContext context) {
                                       return {
                                         'Mute',
@@ -257,38 +268,66 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                       }).toList();
                                     },
                                   ),
-                                )
+                                ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: IconButton(
+                                  icon: Icon(Icons.mic_none_outlined,color: Colors.redAccent,),
+                                  color: Colors.black,
+                                ),
+                              )
                             ],
                           ),
                         )
-                      : !isParticipant(cuser.userId)
-                          ? InkWell(
-                              onTap: () {
-                                widget.isOwner
-                                    ? Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (_) => InviteScreen(
-                                                club: widget.club)))
-                                    : !hasSentJoinRequest
-                                        ? _sendJoinRequest()
-                                        : _deleteJoinRequest();
-                              },
-                              child: Container(
-                                margin: EdgeInsets.all(widget.size.width / 20),
-                                child: Icon(
-                                  !hasSentJoinRequest
-                                      ? Icons.person_add
-                                      : Icons.person_add_disabled,
-                                  color: Colors.redAccent,
-                                  size: widget.size.width / 10,
+                      : !isParticipant(cuser.userId) || widget.isOwner
+                          ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    widget.isOwner
+                                        ? Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) => InviteScreen(
+                                                    club: widget.club)))
+                                        : !hasSentJoinRequest
+                                            ? _sendJoinRequest()
+                                            : _deleteJoinRequest();
+                                  },
+                                  child: Container(
+                            //        margin: EdgeInsets.fromLTRB(10,10,10,5),
+                                    height:widget.size.width / 5,
+                                    width: widget.size.width / 5,
+                                    child: Icon(
+                                      widget.isOwner?
+                                          Icons.person_add:
+                                      !hasSentJoinRequest
+                                          ? Icons.person_add
+                                          : Icons.person_add_disabled,
+                                      color: Colors.redAccent,
+                                      size: widget.size.width / 10,
+                                    ),
+                                    decoration: new BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            color: Colors.redAccent, width: 2)),
+                                  ),
                                 ),
-                                decoration: new BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: Colors.redAccent, width: 2)),
-                              ),
-                            )
+                                Text(
+                                  widget.isOwner?
+                                      "Invite Panelists":
+                                  !hasSentJoinRequest?
+                                  "Ask to join":
+                                  "Cancel join request",
+                                  style: TextStyle(
+                                    fontFamily: "Lato",
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                )
+                            ],
+                          )
                           : Container();
                 },
               ),
