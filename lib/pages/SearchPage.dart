@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/ProfilePage.dart';
+import 'package:mootclub_app/pages/SearchAllUsersPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
 import '../MinClub.dart';
 import 'Club.dart';
+import 'SearchAllClubsPage.dart';
 
 class SearchPage extends StatefulWidget {
   BuiltUser user;
@@ -185,7 +187,7 @@ class DataSearch extends SearchDelegate<String> {
                 return Center(child: CircularProgressIndicator());
               }
               return Container(
-                margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                margin: EdgeInsets.fromLTRB(10, 0, 10, 30),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -206,12 +208,16 @@ class DataSearch extends SearchDelegate<String> {
                           fontSize: size.width / 20),
                     ),
                     //SizedBox(height: size.height/50),
-                    Expanded(
-                      child: SizedBox(
-                        height: 200.0,
+                    Flexible(
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(0, size.height/50, 0, size.height/50),
                         child: ListView.builder(
+                          shrinkWrap: true,
                             itemCount: allSearches.users != null
-                                ? allSearches.users.length
+                                ?
+                            allSearches.users.length<3
+                                ?allSearches.users.length
+                                :3
                                 : 0,
                             itemBuilder: (builder, index) {
                               return ListTile(
@@ -247,7 +253,11 @@ class DataSearch extends SearchDelegate<String> {
                       ),
                     ),
                     InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SearchAllUsers(query: query,)));
+                      },
                         child: Container(
+                          width: size.width,
                             child: Text(
                       "See all users",
                       style: TextStyle(
@@ -256,7 +266,7 @@ class DataSearch extends SearchDelegate<String> {
                           fontSize: size.width / 25),
                     ))),
                     SizedBox(
-                      height: size.height / 50,
+                      height: size.height / 30,
                     ),
                     // SizedBox(height: size.height/30),
                     Text(
@@ -266,12 +276,15 @@ class DataSearch extends SearchDelegate<String> {
                           fontWeight: FontWeight.w500,
                           fontSize: size.width / 20),
                     ),
-                    SizedBox(height: size.height / 50),
-                    Expanded(
-                      child: SizedBox(
-                        height: 300.0,
+                    Flexible(
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(0, size.height/50, 0, size.height/50),
                         child: ListView.builder(
-                          itemCount: allSearches.clubs.length,
+                          shrinkWrap: true,
+                          itemCount:
+                          allSearches.clubs.length<3
+                          ?allSearches.clubs.length
+                          :3,
                           itemBuilder: (builder, index) {
                             return ListTile(
                               leading:
@@ -298,6 +311,9 @@ class DataSearch extends SearchDelegate<String> {
                       ),
                     ),
                     InkWell(
+                        onTap: (){
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SearchAllClubs(query: query,)));
+                        },
                         child: Container(
                             child: Text(
                       "See all clubs",

@@ -1,0 +1,139 @@
+import 'package:flutter/material.dart';
+import 'package:mootclub_app/Models/built_post.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:mootclub_app/providers/userData.dart';
+import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:provider/provider.dart';
+
+import 'ProfilePage.dart';
+class SearchAllClubs extends StatefulWidget {
+  final String query;
+  SearchAllClubs({this.query});
+  @override
+  _SearchAllClubsState createState() => _SearchAllClubsState();
+}
+
+class _SearchAllClubsState extends State<SearchAllClubs> {
+  Map<String, dynamic> searchClubsMap = {
+    'data': null,
+    'isLoading': true,
+  };
+
+  getClubs() async {
+    String username = widget.query;
+    final service = Provider.of<DatabaseApiService>(context);
+    //allSearches = (await service.getUserbyUsername(username)).body;
+
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+
+    searchClubsMap['data'] = (await service.unifiedQueryRoutes(
+      searchString: username,
+      type: "clubs",
+      lastevaluatedkey: (searchClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey,
+      authorization: authToken,
+    )).body.clubs;
+    searchClubsMap['isLoading'] = false;
+    setState(() {
+    });
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    print(searchClubsMap['data']);
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  }
+
+  getMoreClubs()async{
+    if (searchClubsMap['isLoading'] == true) return;
+    setState(() {});
+
+    final lastevaulatedkey =
+        (searchClubsMap['data'] as BuiltSearchUsers)?.lastevaluatedkey;
+
+    if (lastevaulatedkey != null) {
+      await getClubs();
+    } else {
+      await Future.delayed(Duration(milliseconds: 200));
+      searchClubsMap['isLoading'] = false;
+    }
+
+    setState(() {});
+  }
+
+  Widget showClubs(){
+
+    final relationUsers = (searchClubsMap['data'] as BuiltSearchUsers)?.users;
+
+    final bool isLoading = searchClubsMap['isLoading'];
+
+    final listLength = (relationUsers?.length ?? 0) + 1;
+
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+          searchClubsMap['isLoading'] = true;
+          getMoreClubs();
+        }
+        return true;
+      },
+      child: ListView.builder(
+          itemBuilder: (context,index){
+            if (index == listLength - 1) {
+              if (isLoading)
+                return Container(
+                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              else
+                return Container();
+            }
+            final _user = relationUsers[index];
+
+            return Container(
+                key: ValueKey(_user.username),
+                margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(_user.avatar),
+                  ),
+                  title: InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
+                    },
+                    child: Text(
+                      _user.username,
+                      style:
+                      TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                )
+            );
+
+          }),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getClubs();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+            color: Colors.black
+        ),
+        title: Text(
+          "\"${widget.query}\" in Clubs",
+          style: TextStyle(
+              fontFamily: "Lato",
+              fontWeight: FontWeight.bold,
+              color: Colors.black
+          ),
+        ),
+      ),
+      //    body: showClubs(),
+    );
+  }
+}
