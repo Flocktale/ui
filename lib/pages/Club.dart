@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mootclub_app/Models/built_post.dart';
@@ -24,8 +26,9 @@ class Club extends StatefulWidget {
 }
 
 class _ClubState extends State<Club> {
+  ScrollController _controller = ScrollController();
   bool _isPlaying;
-
+  bool newMessage = false;
   bool _sentRequest = false;
 
   bool _isLive = false;
@@ -54,6 +57,10 @@ class _ClubState extends State<Club> {
   BuiltClubAndAudience _clubAudience;
 
   bool _isOwner;
+
+  void scrollToBottom() {
+    _controller.jumpTo(_controller.position.maxScrollExtent);
+  }
 
   void _setParticipantList(event) {
     if (event['clubId'] != widget.club.clubId) return;
@@ -164,7 +171,20 @@ class _ClubState extends State<Club> {
     cur.timestamp = event['timestamp'];
     cur.body = event['body'];
     comments.add(cur);
+
+    print('${_controller.position.maxScrollExtent}::::${_controller.offset}');
+    print('${_controller.position.maxScrollExtent -60 < _controller.offset}');
+
+
+    if (_controller.position.maxScrollExtent - 60 <= _controller.offset) {
+      _controller.jumpTo(_controller.position.maxScrollExtent);
+      newMessage = false;
+    }
+    else{
+      newMessage = true;
+    }
     setState(() {});
+
   }
 
   void _addOldComments(event) {
@@ -174,6 +194,9 @@ class _ClubState extends State<Club> {
       _putNewComment(event['oldComments'][i]);
     }
     setState(() {});
+   
+    Future.delayed(const Duration(seconds: 1),()=> _controller.jumpTo(_controller.position.maxScrollExtent));
+
   }
 
   void addComment(String message) {
@@ -518,8 +541,8 @@ class _ClubState extends State<Club> {
   Future _navigateToAudienceList() async =>
       await Navigator.of(context).push(MaterialPageRoute(
           builder: (_) => AudiencePage(
-            club: widget.club,
-          )));
+                club: widget.club,
+              )));
 
   void _handleMenuButtons(String value) {
     switch (value) {
@@ -578,17 +601,18 @@ class _ClubState extends State<Club> {
   }
 
   void _micButtonHandler() async {
-     _isMuted = Provider.of<AgoraController>(context, listen: false).isMicMuted;
+    _isMuted = Provider.of<AgoraController>(context, listen: false).isMicMuted;
 
-    if(!_isMuted){
+    if (!_isMuted) {
       var status = await Permission.microphone.status;
-      if(!status.isGranted){
+      if (!status.isGranted) {
         status = await Permission.microphone.request();
-        if(!status.isGranted){
-          Fluttertoast.showToast(msg: 'Please give microphone permissions from the settings')  ;
+        if (!status.isGranted) {
+          Fluttertoast.showToast(
+              msg: 'Please give microphone permissions from the settings');
           return;
         }
-      } 
+      }
     }
 
     await Provider.of<AgoraController>(context, listen: false).toggleMicMute();
@@ -628,7 +652,7 @@ class _ClubState extends State<Club> {
     final daysDiff = diff.inDays;
 
     String str = '';
-    String suff = type==0?" to go":" ago";
+    String suff = type == 0 ? " to go" : " ago";
 
     if (secDiff < 60) {
       str = '$secDiff ' + (secDiff == 1 ? 'second' : 'seconds') + suff;
@@ -901,11 +925,11 @@ class _ClubState extends State<Club> {
                                               )
                                             : Container(
                                                 margin: EdgeInsets.fromLTRB(
-                                                    0, size.height/50, 0, 0),
+                                                    0, size.height / 50, 0, 0),
                                                 child: Text(
                                                   _isConcluded
                                                       ? "Concluded"
-                                                      : "Scheduled: ${_processTimestamp(widget.club.scheduleTime,0)}",
+                                                      : "Scheduled: ${_processTimestamp(widget.club.scheduleTime, 0)}",
                                                   style: TextStyle(
                                                       fontFamily: 'Lato',
                                                       color: Colors.black54),
@@ -994,10 +1018,10 @@ class _ClubState extends State<Club> {
                                                   onPressed: () =>
                                                       _micButtonHandler(),
                                                   child: !_isMuted
-                                                      ? Icon(
-                                                          Icons.mic_none_rounded)
-                                                      : Icon(
-                                                          Icons.mic_off_rounded),
+                                                      ? Icon(Icons
+                                                          .mic_none_rounded)
+                                                      : Icon(Icons
+                                                          .mic_off_rounded),
                                                   backgroundColor: !_isPlaying
                                                       ? Colors.grey
                                                       : !_sentRequest
@@ -1016,16 +1040,24 @@ class _ClubState extends State<Club> {
                                                   onPressed: () =>
                                                       _participationButtonHandler(),
                                                   child: _isParticipant
-                                                      ? Icon(
-                                                          Icons.remove_from_queue)
-                                                      : !_sentRequest?
-                                                        Icon(Icons.person_add):
-                                                        Icon(Icons.person_add_disabled,color: Colors.black,),
-                                                  backgroundColor: _isParticipant
-                                                      ? Colors.grey[200]
+                                                      ? Icon(Icons
+                                                          .remove_from_queue)
                                                       : !_sentRequest
-                                                          ? Colors.redAccent
-                                                          : Colors.grey[200],
+                                                          ? Icon(
+                                                              Icons.person_add)
+                                                          : Icon(
+                                                              Icons
+                                                                  .person_add_disabled,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                  backgroundColor:
+                                                      _isParticipant
+                                                          ? Colors.grey[200]
+                                                          : !_sentRequest
+                                                              ? Colors.redAccent
+                                                              : Colors
+                                                                  .grey[200],
                                                 ),
                                               )
                                           ],
@@ -1068,9 +1100,16 @@ class _ClubState extends State<Club> {
                                               color: Colors.white,
                                               child: ListView.builder(
                                                   itemCount: comments.length,
+                                                  controller: _controller,
                                                   itemBuilder:
                                                       (context, index) {
-                                                    return ListTile(
+                                                    // Timer(
+                                                    // Duration(milliseconds: 300),
+                                                    // () => _controller
+                                                    //     .jumpTo(_controller.position.maxScrollExtent));
+                                                 
+                                                    var a =  ListTile(
+                                                      
                                                       leading: CircleAvatar(
                                                         backgroundImage:
                                                             NetworkImage(
@@ -1084,8 +1123,14 @@ class _ClubState extends State<Club> {
                                                                 .spaceBetween,
                                                         children: [
                                                           InkWell(
-                                                            onTap: (){
-                                                              Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: comments[index].user.userId,)));
+                                                            onTap: () {
+                                                              Navigator.of(context).push(
+                                                                  MaterialPageRoute(
+                                                                      builder: (_) =>
+                                                                          ProfilePage(
+                                                                            userId:
+                                                                                comments[index].user.userId,
+                                                                          )));
                                                             },
                                                             child: Text(
                                                               comments[index]
@@ -1101,7 +1146,8 @@ class _ClubState extends State<Club> {
                                                           Text(
                                                             _processTimestamp(
                                                                 comments[index]
-                                                                    .timestamp,1),
+                                                                    .timestamp,
+                                                                1),
                                                             style: TextStyle(
                                                                 fontFamily:
                                                                     'Lato',
@@ -1117,6 +1163,7 @@ class _ClubState extends State<Club> {
                                                             fontFamily: "Lato"),
                                                       ),
                                                     );
+                                                    return a; 
                                                   }),
                                             ),
                                             Container(
