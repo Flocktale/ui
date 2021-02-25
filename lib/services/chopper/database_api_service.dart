@@ -361,7 +361,7 @@ abstract class DatabaseApiService extends ChopperService {
   //---------------------------------------------------------------------------------------------
 
   @Post(path: '/clubs/{clubId}/mute/')
-  Future<Response> muteParticipant({
+  Future<Response> muteActionOnParticipant({
     @required @Path() String clubId,
     @required @Query() String who, // ['all' or 'participant']
     @required @Query() String participantId,

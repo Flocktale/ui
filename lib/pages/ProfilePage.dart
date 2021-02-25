@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/Authentication/login.dart';
-import 'package:mootclub_app/Authentication/register.dart';
-import 'package:mootclub_app/Authentication/signUp.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/SocialRelationPage.dart';
 import 'package:mootclub_app/providers/userData.dart';

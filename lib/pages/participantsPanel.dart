@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -13,7 +12,7 @@ import 'ProfilePage.dart';
 
 class ParticipantsPanel extends StatefulWidget {
   final Size size;
-  final List<SummaryUser> participantList;
+  final List<AudienceData> participantList;
   final bool isOwner;
   final Function(String) muteParticipant;
   final Function(String) removeParticipant;
@@ -35,17 +34,17 @@ class ParticipantsPanel extends StatefulWidget {
 
 class _ParticipantsPanelState extends State<ParticipantsPanel> {
   bool hasSentJoinRequest = false;
-  bool isParticipant(String userId){
-    if(userId == widget.club.creator.userId)
+  bool isParticipant(String userId) {
+    if (userId == widget.club.creator.userId)
       return false;
-    else{
-      for(int i=0;i<widget.participantList.length;i++){
-        if(widget.participantList[i].userId==userId)
-          return true;
+    else {
+      for (int i = 0; i < widget.participantList.length; i++) {
+        if (widget.participantList[i].audience.userId == userId) return true;
       }
     }
     return false;
   }
+
   _sendJoinRequest() async {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
@@ -55,16 +54,17 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
       userId: cuser.userId,
       authorization: authToken,
     );
-    if(resp.isSuccessful){
+    if (resp.isSuccessful) {
       setState(() {
         hasSentJoinRequest = true;
       });
       Fluttertoast.showToast(msg: "Join Request Sent");
-    }
-    else{
-      Fluttertoast.showToast(msg: "Some error occurred. Please try again later");
+    } else {
+      Fluttertoast.showToast(
+          msg: "Some error occurred. Please try again later");
     }
   }
+
   _deleteJoinRequest() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
@@ -74,15 +74,14 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
       userId: cuser.userId,
       authorization: authToken,
     );
-    if(resp.isSuccessful){
+    if (resp.isSuccessful) {
       setState(() {
         hasSentJoinRequest = true;
       });
       Fluttertoast.showToast(msg: "Join Request Cancelled");
-    }
-    else
-      Fluttertoast.showToast(msg: "Some Error Occurred. Please try again later.");
-
+    } else
+      Fluttertoast.showToast(
+          msg: "Some Error Occurred. Please try again later.");
   }
 
   void _handleMenuButtons(String value, String panelistId) {
@@ -102,7 +101,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
   @override
   Widget build(BuildContext context) {
     final userId = Provider.of<UserData>(context, listen: false).userId;
-    final cuser = Provider.of<UserData>(context,listen: false).user;
+    final cuser = Provider.of<UserData>(context, listen: false).user;
     return SlidingUpPanel(
       minHeight: widget.size.height / 20,
       maxHeight: widget.size.height / 1.5,
@@ -132,8 +131,11 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
             child: Stack(
               children: [
                 InkWell(
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: widget.club.creator.userId,)));
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => ProfilePage(
+                              userId: widget.club.creator.userId,
+                            )));
                   },
                   child: Column(
                     children: [
@@ -143,14 +145,13 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                         child: CircleAvatar(
                           radius: widget.size.width / 10,
                           backgroundImage:
-                          NetworkImage(widget.club.creator.avatar),
+                              NetworkImage(widget.club.creator.avatar),
                         ),
                       ),
                       Text(
                         widget.club.creator.username,
                         style: TextStyle(
-                            fontFamily: "Lato",
-                            fontWeight: FontWeight.bold),
+                            fontFamily: "Lato", fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -176,92 +177,119 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
             child: Container(
               margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
               child: GridView.builder(
-                itemCount: widget.participantList.where((element) => element.userId!=cuser.userId).length<9?
-                widget.participantList.where((element) => element.userId!=cuser.userId).length+1:
-                widget.participantList.where((element) => element.userId!=cuser.userId).length,
-                gridDelegate:
-                    SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+                itemCount: widget.participantList
+                            .where((element) =>
+                                element.audience.userId != cuser.userId)
+                            .length <
+                        9
+                    ? widget.participantList
+                            .where((element) =>
+                                element.audience.userId != cuser.userId)
+                            .length +
+                        1
+                    : widget.participantList
+                        .where((element) =>
+                            element.audience.userId != cuser.userId)
+                        .length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3),
                 itemBuilder: (context, index) {
-                  final participantId = widget.participantList[index].userId;
-                  return index!=widget.participantList.where((element) => element.userId!=cuser.userId).length?
-                  Container(
-                    child: Stack(
-                      children: [
-                        InkWell(
-                          onTap: (){
-                            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: widget.participantList[index].userId,)));
-                          },
-                          child: Column(
+                  final participantId =
+                      widget.participantList[index].audience.userId;
+                  return index !=
+                          widget.participantList
+                              .where((element) =>
+                                  element.audience.userId != cuser.userId)
+                              .length
+                      ? Container(
+                          child: Stack(
                             children: [
-                              CircleAvatar(
-                                radius: widget.size.width / 9.4,
-                                backgroundColor: Color(0xffFDCF09),
-                                child: CircleAvatar(
-                                  radius: widget.size.width / 10,
-                                  backgroundImage:
-                                      NetworkImage(widget.participantList[index].avatar),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => ProfilePage(
+                                            userId: widget
+                                                .participantList[index]
+                                                .audience
+                                                .userId,
+                                          )));
+                                },
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: widget.size.width / 9.4,
+                                      backgroundColor: Color(0xffFDCF09),
+                                      child: CircleAvatar(
+                                        radius: widget.size.width / 10,
+                                        backgroundImage: NetworkImage(widget
+                                            .participantList[index]
+                                            .audience
+                                            .avatar),
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.participantList[index].audience
+                                          .username,
+                                      style: TextStyle(
+                                          fontFamily: "Lato",
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                widget.participantList[index].username,
-                                style: TextStyle(
-                                    fontFamily: "Lato",
-                                    fontWeight: FontWeight.bold),
-                              ),
+                              // display menu to owner only.
+                              if (widget.isOwner && participantId != userId)
+                                Positioned(
+                                  right: 10,
+                                  child: PopupMenuButton<String>(
+                                    onSelected: (val) =>
+                                        _handleMenuButtons(val, participantId),
+                                    itemBuilder: (BuildContext context) {
+                                      return {
+                                        'Mute',
+                                        'Remove',
+                                        'Block',
+                                      }.map((String choice) {
+                                        return PopupMenuItem<String>(
+                                          value: choice,
+                                          child: Text(choice),
+                                        );
+                                      }).toList();
+                                    },
+                                  ),
+                                )
                             ],
                           ),
-                        ),
-                        // display menu to owner only.
-                        if (widget.isOwner && participantId != userId)
-                          Positioned(
-                            right: 10,
-                            child: PopupMenuButton<String>(
-                              onSelected: (val) =>
-                                  _handleMenuButtons(val, participantId),
-                              itemBuilder: (BuildContext context) {
-                                return {
-                                  'Mute',
-                                  'Remove',
-                                  'Block',
-                                }.map((String choice) {
-                                  return PopupMenuItem<String>(
-                                    value: choice,
-                                    child: Text(choice),
-                                  );
-                                }).toList();
+                        )
+                      : !isParticipant(cuser.userId)
+                          ? InkWell(
+                              onTap: () {
+                                widget.isOwner
+                                    ? Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (_) => InviteScreen(
+                                                club: widget.club)))
+                                    : !hasSentJoinRequest
+                                        ? _sendJoinRequest()
+                                        : _deleteJoinRequest();
                               },
-                            ),
-                          )
-                      ],
-                    ),
-                  ):
-                  !isParticipant(cuser.userId)?
-                  InkWell(
-                    onTap: (){
-                      widget.isOwner?
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>InviteScreen(club: widget.club))):
-                          !hasSentJoinRequest?
-                          _sendJoinRequest():
-                          _deleteJoinRequest();
-
-                    },
-                    child: Container(
-                      margin: EdgeInsets.all(widget.size.width/20),
-                      child: Icon(
-                        !hasSentJoinRequest?
-                        Icons.person_add:
-                        Icons.person_add_disabled,
-                        color: Colors.redAccent,
-                        size: widget.size.width/10,
-                      ),
-                      decoration: new BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                        border: Border.all(color: Colors.redAccent,width: 2)
-                      ),
-                    ),
-                  ):
-                  Container();
+                              child: Container(
+                                margin: EdgeInsets.all(widget.size.width / 20),
+                                child: Icon(
+                                  !hasSentJoinRequest
+                                      ? Icons.person_add
+                                      : Icons.person_add_disabled,
+                                  color: Colors.redAccent,
+                                  size: widget.size.width / 10,
+                                ),
+                                decoration: new BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: Colors.redAccent, width: 2)),
+                              ),
+                            )
+                          : Container();
                 },
               ),
             ),
