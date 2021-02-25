@@ -7,6 +7,23 @@ import 'package:mootclub_app/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
 
+abstract class BuiltAudienceList
+    implements Built<BuiltAudienceList, BuiltAudienceListBuilder> {
+  @nullable
+  BuiltList<AudienceData> get audience;
+
+  @nullable
+  String get lastevaluatedkey;
+
+  BuiltAudienceList._();
+
+  factory BuiltAudienceList([updates(BuiltAudienceListBuilder b)]) =
+      _$BuiltAudienceList;
+
+  static Serializer<BuiltAudienceList> get serializer =>
+      _$builtAudienceListSerializer;
+}
+
 abstract class RelationActionResponse
     implements Built<RelationActionResponse, RelationActionResponseBuilder> {
   @nullable
@@ -264,6 +281,9 @@ abstract class AudienceData
   bool get isBlocked;
   bool get isParticipant;
   bool get joinRequested;
+
+  @nullable
+  bool get isMuted;
 
   @nullable
   int get joinRequestAttempts;

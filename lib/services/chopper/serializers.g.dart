@@ -10,6 +10,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(AudienceData.serializer)
       ..add(BuiltActiveJoinRequests.serializer)
       ..add(BuiltAllClubsList.serializer)
+      ..add(BuiltAudienceList.serializer)
       ..add(BuiltClub.serializer)
       ..add(BuiltClubAndAudience.serializer)
       ..add(BuiltFCMToken.serializer)
@@ -31,6 +32,9 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(RelationIndexObject.serializer)
       ..add(ReportSummary.serializer)
       ..add(SummaryUser.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(AudienceData)]),
+          () => new ListBuilder<AudienceData>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(BuiltClub)]),
           () => new ListBuilder<BuiltClub>())

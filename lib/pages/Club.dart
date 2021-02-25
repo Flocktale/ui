@@ -1272,6 +1272,7 @@ class _ClubState extends State<Club> {
                         )),
                         if (MediaQuery.of(context).viewInsets.bottom == 0)
                           ParticipantsPanel(
+                            club: widget.club,
                             size: size,
                             participantList: participantList,
                             isOwner: _isOwner,

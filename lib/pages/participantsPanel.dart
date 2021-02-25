@@ -1,20 +1,26 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/pages/InviteScreen.dart';
 import 'package:mootclub_app/providers/userData.dart';
+import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'ProfilePage.dart';
 
-class ParticipantsPanel extends StatelessWidget {
+class ParticipantsPanel extends StatefulWidget {
   final Size size;
   final List<SummaryUser> participantList;
   final bool isOwner;
   final Function(String) muteParticipant;
   final Function(String) removeParticipant;
   final Function(String) blockParticipant;
+  final BuiltClub club;
   const ParticipantsPanel({
+    @required this.club,
     @required this.size,
     @required this.participantList,
     @required this.isOwner,
@@ -23,16 +29,72 @@ class ParticipantsPanel extends StatelessWidget {
     @required this.blockParticipant,
   });
 
+  @override
+  _ParticipantsPanelState createState() => _ParticipantsPanelState();
+}
+
+class _ParticipantsPanelState extends State<ParticipantsPanel> {
+  bool hasSentJoinRequest = false;
+  bool isParticipant(String userId){
+    if(userId == widget.club.creator.userId)
+      return false;
+    else{
+      for(int i=0;i<widget.participantList.length;i++){
+        if(widget.participantList[i].userId==userId)
+          return true;
+      }
+    }
+    return false;
+  }
+  _sendJoinRequest() async {
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    final resp = await service.sendJoinRequest(
+      clubId: widget.club.clubId,
+      userId: cuser.userId,
+      authorization: authToken,
+    );
+    if(resp.isSuccessful){
+      setState(() {
+        hasSentJoinRequest = true;
+      });
+      Fluttertoast.showToast(msg: "Join Request Sent");
+    }
+    else{
+      Fluttertoast.showToast(msg: "Some error occurred. Please try again later");
+    }
+  }
+  _deleteJoinRequest() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
+    final resp = await service.deleteJoinRequet(
+      clubId: widget.club.clubId,
+      userId: cuser.userId,
+      authorization: authToken,
+    );
+    if(resp.isSuccessful){
+      setState(() {
+        hasSentJoinRequest = true;
+      });
+      Fluttertoast.showToast(msg: "Join Request Cancelled");
+    }
+    else
+      Fluttertoast.showToast(msg: "Some Error Occurred. Please try again later.");
+
+  }
+
   void _handleMenuButtons(String value, String panelistId) {
     switch (value) {
       case 'Mute':
-        muteParticipant(panelistId);
+        widget.muteParticipant(panelistId);
         break;
       case 'Remove':
-        removeParticipant(panelistId);
+        widget.removeParticipant(panelistId);
         break;
       case 'Block':
-        blockParticipant(panelistId);
+        widget.blockParticipant(panelistId);
         break;
     }
   }
@@ -42,8 +104,8 @@ class ParticipantsPanel extends StatelessWidget {
     final userId = Provider.of<UserData>(context, listen: false).userId;
     final cuser = Provider.of<UserData>(context,listen: false).user;
     return SlidingUpPanel(
-      minHeight: size.height / 20,
-      maxHeight: size.height / 1.5,
+      minHeight: widget.size.height / 20,
+      maxHeight: widget.size.height / 1.5,
       backdropEnabled: true,
       borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24), topRight: Radius.circular(24)),
@@ -52,18 +114,18 @@ class ParticipantsPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: size.height / 30,
+            height: widget.size.height / 30,
           ),
           Center(
             child: Text("Host",
                 style: TextStyle(
                     fontFamily: 'Lato',
                     fontWeight: FontWeight.bold,
-                    fontSize: size.width / 20,
+                    fontSize: widget.size.width / 20,
                     color: Colors.redAccent)),
           ),
           SizedBox(
-            height: size.height / 50,
+            height: widget.size.height / 50,
           ),
           Container(
             margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
@@ -71,21 +133,21 @@ class ParticipantsPanel extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: userId,)));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: widget.club.creator.userId,)));
                   },
                   child: Column(
                     children: [
                       CircleAvatar(
-                        radius: size.width / 9.4,
+                        radius: widget.size.width / 9.4,
                         backgroundColor: Color(0xffFDCF09),
                         child: CircleAvatar(
-                          radius: size.width / 10,
+                          radius: widget.size.width / 10,
                           backgroundImage:
-                          NetworkImage(cuser.avatar),
+                          NetworkImage(widget.club.creator.avatar),
                         ),
                       ),
                       Text(
-                        cuser.username,
+                        widget.club.creator.username,
                         style: TextStyle(
                             fontFamily: "Lato",
                             fontWeight: FontWeight.bold),
@@ -97,49 +159,51 @@ class ParticipantsPanel extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: size.height / 30,
+            height: widget.size.height / 30,
           ),
           Center(
             child: Text("Panelists",
                 style: TextStyle(
                     fontFamily: 'Lato',
                     fontWeight: FontWeight.bold,
-                    fontSize: size.width / 20,
+                    fontSize: widget.size.width / 20,
                     color: Colors.redAccent)),
           ),
           SizedBox(
-            height: size.height / 50,
+            height: widget.size.height / 50,
           ),
           Expanded(
             child: Container(
               margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
               child: GridView.builder(
-                itemCount: participantList.where((element) => element.userId!=cuser.userId).length+1,
+                itemCount: widget.participantList.where((element) => element.userId!=cuser.userId).length<9?
+                widget.participantList.where((element) => element.userId!=cuser.userId).length+1:
+                widget.participantList.where((element) => element.userId!=cuser.userId).length,
                 gridDelegate:
                     SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
                 itemBuilder: (context, index) {
-                  final participantId = participantList[index].userId;
-                  return index!=participantList.where((element) => element.userId!=cuser.userId).length?
+                  final participantId = widget.participantList[index].userId;
+                  return index!=widget.participantList.where((element) => element.userId!=cuser.userId).length?
                   Container(
                     child: Stack(
                       children: [
                         InkWell(
                           onTap: (){
-                            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: participantList[index].userId,)));
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: widget.participantList[index].userId,)));
                           },
                           child: Column(
                             children: [
                               CircleAvatar(
-                                radius: size.width / 9.4,
+                                radius: widget.size.width / 9.4,
                                 backgroundColor: Color(0xffFDCF09),
                                 child: CircleAvatar(
-                                  radius: size.width / 10,
+                                  radius: widget.size.width / 10,
                                   backgroundImage:
-                                      NetworkImage(participantList[index].avatar),
+                                      NetworkImage(widget.participantList[index].avatar),
                                 ),
                               ),
                               Text(
-                                participantList[index].username,
+                                widget.participantList[index].username,
                                 style: TextStyle(
                                     fontFamily: "Lato",
                                     fontWeight: FontWeight.bold),
@@ -148,7 +212,7 @@ class ParticipantsPanel extends StatelessWidget {
                           ),
                         ),
                         // display menu to owner only.
-                        if (isOwner && participantId != userId)
+                        if (widget.isOwner && participantId != userId)
                           Positioned(
                             right: 10,
                             child: PopupMenuButton<String>(
@@ -171,15 +235,24 @@ class ParticipantsPanel extends StatelessWidget {
                       ],
                     ),
                   ):
+                  !isParticipant(cuser.userId)?
                   InkWell(
                     onTap: (){
+                      widget.isOwner?
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>InviteScreen(club: widget.club))):
+                          !hasSentJoinRequest?
+                          _sendJoinRequest():
+                          _deleteJoinRequest();
+
                     },
                     child: Container(
-                      margin: EdgeInsets.all(size.width/20),
+                      margin: EdgeInsets.all(widget.size.width/20),
                       child: Icon(
-                        Icons.person_add,
+                        !hasSentJoinRequest?
+                        Icons.person_add:
+                        Icons.person_add_disabled,
                         color: Colors.redAccent,
-                        size: size.width/10,
+                        size: widget.size.width/10,
                       ),
                       decoration: new BoxDecoration(
                         shape: BoxShape.circle,
@@ -187,7 +260,8 @@ class ParticipantsPanel extends StatelessWidget {
                         border: Border.all(color: Colors.redAccent,width: 2)
                       ),
                     ),
-                  );
+                  ):
+                  Container();
                 },
               ),
             ),
