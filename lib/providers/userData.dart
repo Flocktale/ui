@@ -125,4 +125,6 @@ class UserData with ChangeNotifier {
   set cognitoSession(CognitoUserSession session) {
     _currentSession = session;
   }
+
+  
 }

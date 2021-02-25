@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Authentication/login.dart';
 import 'package:mootclub_app/Authentication/register.dart';
@@ -6,6 +7,7 @@ import 'package:mootclub_app/Authentication/signUp.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/SocialRelationPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
+import 'package:mootclub_app/services/SecureStorage.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
@@ -249,29 +251,37 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
-                        _isMe==false?
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            child: IconButton(
-                              icon: Icon(Icons.arrow_back_outlined),
-                              color: Colors.white,
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ):
-                        Positioned(
-                          right: 10,
-                          top: 0,
-                          child: IconButton(
-                            icon: Icon(Icons.logout),
-                            color: Colors.white,
-                            onPressed: (){
-                              // LOG OUT LOGIC
-                            },
-                          )
-                        ),
+                        _isMe == false
+                            ? Positioned(
+                                left: 0,
+                                top: 0,
+                                child: IconButton(
+                                  icon: Icon(Icons.arrow_back_outlined),
+                                  color: Colors.white,
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              )
+                            : Positioned(
+                                right: 10,
+                                top: 0,
+                                child: IconButton(
+                                  icon: Icon(Icons.logout),
+                                  color: Colors.white,
+                                  onPressed: () async {
+                                    // LOG OUT LOGIC
+                                    final _storage = SecureStorage();
+                                    await _storage.logout();
+                                    Provider.of<DatabaseApiService>(context,
+                                            listen: false)
+                                        .deleteFCMToken(
+                                      userId: _user.userId,
+                                      authorization: null,
+                                    );
+                                    Phoenix.rebirth(context);
+                                  },
+                                )),
                         Positioned(
                           top: ((size.height / 14) +
                               (size.height / 9) -

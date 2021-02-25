@@ -12,6 +12,7 @@ import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'ProfilePage.dart';
 import 'ClubJoinRequests.dart';
 
@@ -577,6 +578,19 @@ class _ClubState extends State<Club> {
   }
 
   void _micButtonHandler() async {
+     _isMuted = Provider.of<AgoraController>(context, listen: false).isMicMuted;
+
+    if(!_isMuted){
+      var status = await Permission.microphone.status;
+      if(!status.isGranted){
+        status = await Permission.microphone.request();
+        if(!status.isGranted){
+          Fluttertoast.showToast(msg: 'Please give microphone permissions from the settings')  ;
+          return;
+        }
+      } 
+    }
+
     await Provider.of<AgoraController>(context, listen: false).toggleMicMute();
     _isMuted = Provider.of<AgoraController>(context, listen: false).isMicMuted;
 

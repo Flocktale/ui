@@ -37,4 +37,8 @@ class SecureStorage {
     return pass;
   }
 
+  Future logout()async{
+    await _storage.deleteAll();
+  }
+
 }
