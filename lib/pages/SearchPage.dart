@@ -23,7 +23,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    List<BuiltUser> recentSearches = [widget.user, widget.user, widget.user];
+    List<BuiltUser> recentSearches = [];
     // List<BuiltUser> allSearches = [widget.user];
     return SafeArea(
       child: Stack(children: [

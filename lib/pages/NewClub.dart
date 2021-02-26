@@ -4,6 +4,7 @@ import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:provider/provider.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import '../MinClub.dart';
 import 'Club.dart';
 import 'ImagePage.dart';
@@ -21,6 +22,11 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   String description;
   String category;
   String subCategory;
+  String scheduleDate;
+  bool scheduleClub = false;
+  TextEditingController _controller1;
+  TextEditingController _controller2;
+  TextEditingController _controller3;
   List<String> categoryList = [];
 
   List<String> subCategoryList = [];
@@ -34,11 +40,13 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       print('flll all the fields');
       return null;
     }
+    scheduleClub = scheduleClub ?? DateTime.now().toString();
     return BuiltClub((b) => b
       ..clubName = name
       ..description = description
       ..category = category
-      ..subCategory = subCategory);
+      ..subCategory = subCategory
+    );
   }
 
   _createClub() async {
@@ -99,7 +107,6 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
         ),
         border: OutlineInputBorder(),
       ),
-      maxLength: 100,
       maxLines: 3,
       onChanged: (String value) {
         description = value;
@@ -168,6 +175,52 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
         itemList: subCategoryList ?? []);
   }
 
+  Widget dateTimePicker(){
+    return DateTimePicker(
+      type: DateTimePickerType.dateTimeSeparate,
+      controller: _controller1,
+      //initialValue: _initialValue,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+      icon: Icon(Icons.event),
+      dateLabelText: 'Date',
+      timeLabelText: "Hour",
+      use24HourFormat: true,
+      onSaved: (val){
+        setState(() {
+          scheduleDate = val;
+        });
+      },
+    );
+  }
+  Widget _scheduleClub(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          "Schedule for later",
+          style: TextStyle(
+            fontFamily: "Lato",
+          ),
+        ),
+        Switch(
+          activeColor: Colors.red,
+          value: scheduleClub,
+          onChanged: (val){
+            if(val){
+              scheduleClub = true;
+            }
+            else{
+              scheduleClub = false;
+            }
+            setState(() {
+            });
+          },
+        )
+      ],
+    );
+  }
+
   void _initCategoryData() async {
     final userData = Provider.of<UserData>(context, listen: false);
 
@@ -189,6 +242,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
 
   @override
   void initState() {
+    _controller1 = TextEditingController(text: DateTime.now().toString());
     _initCategoryData();
 
     super.initState();
@@ -198,125 +252,132 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     super.build(context);
-    return Scaffold(
-        body: SafeArea(
-      child: Stack(children: [
-        Container(
-          margin:
-              EdgeInsets.only(left: size.width / 50, right: size.width / 50),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: size.height / 50),
-              Text(
-                'Create a new club',
-                style: TextStyle(
-                  fontFamily: 'Lato',
-                  fontWeight: FontWeight.bold,
-                  fontSize: size.height / 25,
-                ),
-              ),
-              SizedBox(
-                height: size.height / 50,
-              ),
-              Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      _buildName(),
-                      SizedBox(
-                        height: size.height / 50,
-                      ),
-                      _buildDescription(),
-                      SizedBox(
-                        height: size.height / 50,
-                      ),
-                      _buildCategory(),
-                      SizedBox(
-                        height: size.height / 50,
-                      ),
-                      _buildSubCategory(),
-                      SizedBox(
-                        height: size.height / 50,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ButtonTheme(
-                            minWidth: size.width / 3.5,
-                            child: RaisedButton(
-                              onPressed: () {
-                                if (!_formKey.currentState.validate()) {
-                                  return;
-                                } else {
-                                  _formKey.currentState.save();
+    return SafeArea(
+      child: Scaffold(
+          body: Stack(children: [
+            Container(
+              margin:
+                  EdgeInsets.only(left: size.width / 50, right: size.width / 50),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: size.height / 50),
+                  Text(
+                    'Create a new club',
+                    style: TextStyle(
+                      fontFamily: 'Lato',
+                      fontWeight: FontWeight.bold,
+                      fontSize: size.height / 25,
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.height / 50,
+                  ),
+                  Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+                          _buildName(),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          _buildDescription(),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          _buildCategory(),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          _buildSubCategory(),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          _scheduleClub(),
+                          scheduleClub?
+                              dateTimePicker():
+                              Container(),
+                          SizedBox(
+                            height: size.height / 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ButtonTheme(
+                                minWidth: size.width / 3.5,
+                                child: RaisedButton(
+                                  onPressed: () {
+                                    if (!_formKey.currentState.validate()) {
+                                      return;
+                                    } else {
+                                      _formKey.currentState.save();
 
-                                  if (_newClubModel == null) return;
+                                      if (_newClubModel == null) return;
 
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (_) => ImagePage(
-                                            newClub: _newClubModel,
-                                            userId: widget.userId,
-                                          )));
-                                }
-                              },
-                              color: Colors.white,
-                              child: Text('Select an image',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w200,
-                                    fontFamily: 'Lato',
-                                  )),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                                //side: BorderSide(color: Colors.red[600]),
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (_) => ImagePage(
+                                                newClub: _newClubModel,
+                                                userId: widget.userId,
+                                              )));
+                                    }
+                                  },
+                                  color: Colors.white,
+                                  child: Text('Select an image',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w200,
+                                        fontFamily: 'Lato',
+                                      )),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    //side: BorderSide(color: Colors.red[600]),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          Text(
-                            "OR",
-                            style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.bold),
-                          ),
-                          ButtonTheme(
-                            minWidth: size.width / 3.5,
-                            child: RaisedButton(
-                              onPressed: () {
-                                if (!_formKey.currentState.validate()) {
-                                  return;
-                                } else {
-                                  _formKey.currentState.save();
-                                  print(name);
-                                  print(description);
-                                  print(category);
+                              Text(
+                                "OR",
+                                style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              ButtonTheme(
+                                minWidth: size.width / 3.5,
+                                child: RaisedButton(
+                                  onPressed: () {
+                                    if (!_formKey.currentState.validate()) {
+                                      return;
+                                    } else {
+                                      _formKey.currentState.save();
+                                      print(name);
+                                      print(description);
+                                      print(category);
 //                                Navigator.of(context).pushNamed('/imagePage');
-                                  _createClub();
-                                }
-                              },
-                              color: Colors.red[600],
-                              child: Text('Skip and Submit',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Lato',
-                                  )),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                                //side: BorderSide(color: Colors.red[600]),
+                                      _createClub();
+                                    }
+                                  },
+                                  color: Colors.red[600],
+                                  child: Text('Skip and Submit',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Lato',
+                                      )),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    //side: BorderSide(color: Colors.red[600]),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                            ],
+                          )
                         ],
-                      )
-                    ],
-                  ))
-            ],
-          ),
-        ),
-        Positioned(bottom: 0, child: MinClub())
-      ]),
-    ));
+                      ))
+                ],
+              ),
+            ),
+            Positioned(bottom: 0, child: MinClub())
+          ])),
+    );
   }
 
   @override
