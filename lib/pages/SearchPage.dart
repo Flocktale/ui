@@ -254,7 +254,7 @@ class DataSearch extends SearchDelegate<String> {
                     ),
                     InkWell(
                       onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SearchAllUsers(query: query,)));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SearchAllUsers(users: allSearches.users,query: query,)));
                       },
                         child: Container(
                           width: size.width,
@@ -312,7 +312,7 @@ class DataSearch extends SearchDelegate<String> {
                     ),
                     InkWell(
                         onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SearchAllClubs(query: query,)));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SearchAllClubs(clubs: allSearches.clubs,query: query,)));
                         },
                         child: Container(
                             child: Text(
