@@ -12,20 +12,26 @@ import 'ProfilePage.dart';
 
 class ParticipantsPanel extends StatefulWidget {
   final Size size;
+  final bool hasSentJoinRequest;
   final List<AudienceData> participantList;
   final bool isOwner;
   final Function(String) muteParticipant;
   final Function(String) removeParticipant;
   final Function(String) blockParticipant;
+  final Function() sendJoinRequest;
+  final Function() deleteJoinRequest;
   final BuiltClub club;
   const ParticipantsPanel({
     @required this.club,
     @required this.size,
     @required this.participantList,
     @required this.isOwner,
+    @required this.hasSentJoinRequest,
     @required this.muteParticipant,
     @required this.removeParticipant,
     @required this.blockParticipant,
+    @required this.sendJoinRequest,
+    @required this.deleteJoinRequest,
   });
 
   @override
@@ -33,7 +39,6 @@ class ParticipantsPanel extends StatefulWidget {
 }
 
 class _ParticipantsPanelState extends State<ParticipantsPanel> {
-  bool hasSentJoinRequest = false;
   bool isParticipant(String userId) {
     if (userId == widget.club.creator.userId)
       return false;
@@ -43,45 +48,6 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
       }
     }
     return false;
-  }
-
-  _sendJoinRequest() async {
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    final service = Provider.of<DatabaseApiService>(context, listen: false);
-    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
-    final resp = await service.sendJoinRequest(
-      clubId: widget.club.clubId,
-      userId: cuser.userId,
-      authorization: authToken,
-    );
-    if (resp.isSuccessful) {
-      setState(() {
-        hasSentJoinRequest = true;
-      });
-      Fluttertoast.showToast(msg: "Join Request Sent");
-    } else {
-      Fluttertoast.showToast(
-          msg: "Some error occurred. Please try again later");
-    }
-  }
-
-  _deleteJoinRequest() async {
-    final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
-    final resp = await service.deleteJoinRequet(
-      clubId: widget.club.clubId,
-      userId: cuser.userId,
-      authorization: authToken,
-    );
-    if (resp.isSuccessful) {
-      setState(() {
-        hasSentJoinRequest = false;
-      });
-      Fluttertoast.showToast(msg: "Join Request Cancelled");
-    } else
-      Fluttertoast.showToast(
-          msg: "Some Error Occurred. Please try again later.");
   }
 
   void _handleMenuButtons(String value, String panelistId) {
@@ -98,6 +64,14 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
     }
   }
 
+  bool isOwnerMuted(){
+    for(int i=0;i<widget.participantList.length;i++){
+      if(widget.participantList[i].audience.userId==widget.club.creator.userId){
+        return widget.participantList[i].isMuted;
+      }
+    }
+    return false;
+  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -164,7 +138,9 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                   right: 0,
                   child: IconButton(
                     icon: Icon(
-                      Icons.mic_none_outlined,
+                      isOwnerMuted()==false?
+                      Icons.mic_none_outlined:
+                      Icons.mic_off_outlined,
                       color: Colors.redAccent,
                     ),
                     color: Colors.black,
@@ -208,11 +184,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3),
                 itemBuilder: (context, index) {
-                  return index !=
-                          widget.participantList
-                              .where((element) =>
-                                  element.audience.userId != cuser.userId)
-                              .length
+                  return index != widget.participantList.length
                       ? Container(
                           width: size.width / 3.5,
                           child: Stack(
@@ -278,14 +250,15 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                   ),
                                 ),
                               Positioned(
-                                bottom: 0,
-                                right: 0,
+                                bottom: 10,
+                                right: 10,
                                 child: IconButton(
                                   icon: Icon(
-                                    Icons.mic_none_outlined,
+                                    !widget.participantList[index].isMuted?
+                                    Icons.mic_none_outlined:
+                                    Icons.mic_off_outlined,
                                     color: Colors.redAccent,
                                   ),
-                                  color: Colors.black,
                                 ),
                               )
                             ],
@@ -302,9 +275,9 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                             MaterialPageRoute(
                                                 builder: (_) => InviteScreen(
                                                     club: widget.club)))
-                                        : !hasSentJoinRequest
-                                            ? _sendJoinRequest()
-                                            : _deleteJoinRequest();
+                                        : !widget.hasSentJoinRequest
+                                            ? widget.sendJoinRequest()
+                                            : widget.deleteJoinRequest();
                                   },
                                   child: Container(
                                     //        margin: EdgeInsets.fromLTRB(10,10,10,5),
@@ -313,7 +286,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                     child: Icon(
                                       widget.isOwner
                                           ? Icons.person_add
-                                          : !hasSentJoinRequest
+                                          : !widget.hasSentJoinRequest
                                               ? Icons.person_add
                                               : Icons.person_add_disabled,
                                       color: Colors.redAccent,
@@ -329,7 +302,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                 Text(
                                   widget.isOwner
                                       ? "Invite Panelists"
-                                      : !hasSentJoinRequest
+                                      : !widget.hasSentJoinRequest
                                           ? "Ask to join"
                                           : "Cancel join request",
                                   style: TextStyle(

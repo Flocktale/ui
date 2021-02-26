@@ -38,6 +38,8 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     print(searchUsersMap['data']);
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    setState(() {
+    });
   }
 
   getMoreUsers()async{
@@ -113,7 +115,12 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies(){
     getUsers();
+    super.didChangeDependencies();
   }
 
   @override
@@ -133,7 +140,7 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
           ),
         ),
       ),
-  //    body: showUsers(),
+      body: showUsers(),
     );
   }
 }

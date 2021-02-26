@@ -1328,11 +1328,14 @@ class _ClubState extends State<Club> {
                           ParticipantsPanel(
                             club: widget.club,
                             size: size,
-                            participantList: participantList,
+                            participantList: participantList.where((element) => element.audience.userId!=widget.club.creator.userId).toList(),
                             isOwner: _isOwner,
+                            hasSentJoinRequest: _sentRequest,
                             muteParticipant: _toggleMuteOfParticpant,
                             removeParticipant: _kickParticpant,
                             blockParticipant: _blockUser,
+                            sendJoinRequest: _sendJoinRequest,
+                            deleteJoinRequest: _deleteJoinRequest,
                           ),
                       ],
                     )
