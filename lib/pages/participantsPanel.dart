@@ -128,8 +128,8 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
             height: widget.size.height / 50,
           ),
           Container(
-            width: size.width/3.5,
-            margin: EdgeInsets.fromLTRB(size.width/15, 10, 0, 0),
+            width: size.width / 3.5,
+            margin: EdgeInsets.fromLTRB(size.width / 15, 10, 0, 0),
             child: Stack(
               children: [
                 InkWell(
@@ -163,7 +163,10 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                   bottom: 0,
                   right: 0,
                   child: IconButton(
-                    icon: Icon(Icons.mic_none_outlined,color: Colors.redAccent,),
+                    icon: Icon(
+                      Icons.mic_none_outlined,
+                      color: Colors.redAccent,
+                    ),
                     color: Colors.black,
                   ),
                 )
@@ -211,7 +214,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                   element.audience.userId != cuser.userId)
                               .length
                       ? Container(
-                          width: size.width/3.5,
+                          width: size.width / 3.5,
                           child: Stack(
                             children: [
                               InkWell(
@@ -249,12 +252,17 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                 ),
                               ),
                               // display menu to owner only.
-                              if (widget.isOwner && widget.participantList[index].audience.userId != userId)
+                              if (widget.isOwner &&
+                                  widget.participantList[index].audience
+                                          .userId !=
+                                      userId)
                                 Positioned(
                                   right: 10,
                                   child: PopupMenuButton<String>(
-                                    onSelected: (val) =>
-                                        _handleMenuButtons(val, widget.participantList[index].audience.userId),
+                                    onSelected: (val) => _handleMenuButtons(
+                                        val,
+                                        widget.participantList[index].audience
+                                            .userId),
                                     itemBuilder: (BuildContext context) {
                                       return {
                                         'Mute',
@@ -273,7 +281,10 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                 bottom: 0,
                                 right: 0,
                                 child: IconButton(
-                                  icon: Icon(Icons.mic_none_outlined,color: Colors.redAccent,),
+                                  icon: Icon(
+                                    Icons.mic_none_outlined,
+                                    color: Colors.redAccent,
+                                  ),
                                   color: Colors.black,
                                 ),
                               )
@@ -282,9 +293,9 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                         )
                       : !isParticipant(cuser.userId) || widget.isOwner
                           ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              InkWell(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                InkWell(
                                   onTap: () {
                                     widget.isOwner
                                         ? Navigator.of(context).push(
@@ -296,15 +307,15 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                             : _deleteJoinRequest();
                                   },
                                   child: Container(
-                            //        margin: EdgeInsets.fromLTRB(10,10,10,5),
-                                    height:widget.size.width / 5,
+                                    //        margin: EdgeInsets.fromLTRB(10,10,10,5),
+                                    height: widget.size.width / 5,
                                     width: widget.size.width / 5,
                                     child: Icon(
-                                      widget.isOwner?
-                                          Icons.person_add:
-                                      !hasSentJoinRequest
+                                      widget.isOwner
                                           ? Icons.person_add
-                                          : Icons.person_add_disabled,
+                                          : !hasSentJoinRequest
+                                              ? Icons.person_add
+                                              : Icons.person_add_disabled,
                                       color: Colors.redAccent,
                                       size: widget.size.width / 10,
                                     ),
@@ -316,18 +327,17 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                   ),
                                 ),
                                 Text(
-                                  widget.isOwner?
-                                      "Invite Panelists":
-                                  !hasSentJoinRequest?
-                                  "Ask to join":
-                                  "Cancel join request",
+                                  widget.isOwner
+                                      ? "Invite Panelists"
+                                      : !hasSentJoinRequest
+                                          ? "Ask to join"
+                                          : "Cancel join request",
                                   style: TextStyle(
-                                    fontFamily: "Lato",
-                                    fontWeight: FontWeight.bold
-                                  ),
+                                      fontFamily: "Lato",
+                                      fontWeight: FontWeight.bold),
                                 )
-                            ],
-                          )
+                              ],
+                            )
                           : Container();
                 },
               ),

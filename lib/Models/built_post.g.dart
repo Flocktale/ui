@@ -981,19 +981,28 @@ class _$AudienceDataSerializer implements StructuredSerializer<AudienceData> {
   Iterable<Object> serialize(Serializers serializers, AudienceData object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'isBlocked',
-      serializers.serialize(object.isBlocked,
-          specifiedType: const FullType(bool)),
-      'isParticipant',
-      serializers.serialize(object.isParticipant,
-          specifiedType: const FullType(bool)),
-      'joinRequested',
-      serializers.serialize(object.joinRequested,
-          specifiedType: const FullType(bool)),
       'audience',
       serializers.serialize(object.audience,
           specifiedType: const FullType(SummaryUser)),
     ];
+    if (object.isBlocked != null) {
+      result
+        ..add('isBlocked')
+        ..add(serializers.serialize(object.isBlocked,
+            specifiedType: const FullType(bool)));
+    }
+    if (object.isParticipant != null) {
+      result
+        ..add('isParticipant')
+        ..add(serializers.serialize(object.isParticipant,
+            specifiedType: const FullType(bool)));
+    }
+    if (object.joinRequested != null) {
+      result
+        ..add('joinRequested')
+        ..add(serializers.serialize(object.joinRequested,
+            specifiedType: const FullType(bool)));
+    }
     if (object.isMuted != null) {
       result
         ..add('isMuted')
@@ -3586,15 +3595,6 @@ class _$AudienceData extends AudienceData {
       this.invitationId,
       this.timestamp})
       : super._() {
-    if (isBlocked == null) {
-      throw new BuiltValueNullFieldError('AudienceData', 'isBlocked');
-    }
-    if (isParticipant == null) {
-      throw new BuiltValueNullFieldError('AudienceData', 'isParticipant');
-    }
-    if (joinRequested == null) {
-      throw new BuiltValueNullFieldError('AudienceData', 'joinRequested');
-    }
     if (audience == null) {
       throw new BuiltValueNullFieldError('AudienceData', 'audience');
     }

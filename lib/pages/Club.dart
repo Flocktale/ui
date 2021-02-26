@@ -72,12 +72,14 @@ class _ClubState extends State<Club> {
         (r) => r
           ..isMuted = e['isMuted']
           ..audience = SummaryUser((b) => b
-            ..userId = e['userId']
-            ..username = e['username']
-            ..avatar = e['avatar']).toBuilder(),
+            ..userId = e['audience']['userId']
+            ..username = e['audience']['username']
+            ..avatar = e['audience']['avatar']).toBuilder(),
       );
       participantList.add(participant);
     });
+
+    print('list of it: $participantList');
 
     setState(() {});
   }
@@ -344,6 +346,7 @@ class _ClubState extends State<Club> {
     bool toMute = true;
 
     for (var participant in participantList) {
+      print(participant);
       if (participant.audience.userId == userId) {
         toMute = !participant.isMuted;
         break;

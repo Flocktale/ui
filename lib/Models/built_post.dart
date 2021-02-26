@@ -277,9 +277,11 @@ abstract class BuiltClubAndAudience
 abstract class AudienceData
     implements Built<AudienceData, AudienceDataBuilder> {
   // fields go here
-
+  @nullable
   bool get isBlocked;
+  @nullable
   bool get isParticipant;
+  @nullable
   bool get joinRequested;
 
   @nullable
