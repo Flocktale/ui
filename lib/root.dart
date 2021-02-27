@@ -2,6 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Authentication/signUp.dart';
 import 'package:mootclub_app/pages/HomePage.dart';
+import 'package:mootclub_app/pages/PhoneLogIn.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:provider/provider.dart';
@@ -20,9 +21,10 @@ class RootPage extends StatelessWidget {
 
         if (userData.loaded) {
           if (userData.isAuth == false)
-            widget = Login();
+            widget = PhoneLogin();
           else if (userData.user == null) {
-            widget = SignUpScreen();
+           // widget = SignUpScreen();
+            widget = PhoneLogin();
           } else {
             widget = HomePage();
           }

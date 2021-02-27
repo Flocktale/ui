@@ -11,7 +11,7 @@ class PhoneLogin extends StatefulWidget {
 
 class _PhoneLoginState extends State<PhoneLogin> {
   TextEditingController _controller;
-  String _otpController;
+  TextEditingController _otpController;
   bool hasError = false;
   bool phoneNumberSubmitted = false;
   String phoneNumber;
@@ -62,92 +62,83 @@ class _PhoneLoginState extends State<PhoneLogin> {
             SizedBox(
               height: size.height/10,
             ),
-            !phoneNumberSubmitted?
             FittedBox(
               child: Container(
                 margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(
                   children: [
                     Container(
-                      child: CountryCodePicker(
+                      child: !phoneNumberSubmitted?
+                      CountryCodePicker(
                         showDropDownButton: true,
                         initialSelection: 'IN',
-                      ),
+                      ):Container(),
                     ),
                     SizedBox(
                       width: size.width/20,
                     ),
                     Container(
-                        width: size.width/1.5,
-                        child: TextFormField(
+                        width: !phoneNumberSubmitted?size.width/1.5:size.width,
+                        child: !phoneNumberSubmitted?
+                        Form(
                           key: _formKey,
-                          controller: _controller,
-                          keyboardType: TextInputType.number,
-                          initialValue: phoneNumber,
-                          decoration: new InputDecoration(
-                              hintText: "Phone number",
-                              hintStyle: TextStyle(
+                          child:
+                          TextFormField(
+                            controller: _controller,
+                            keyboardType: TextInputType.number,
+                            initialValue: phoneNumber,
+                            decoration: new InputDecoration(
+                                hintText: "Phone number",
+                                hintStyle: TextStyle(
+                                  fontFamily: "Lato",
+                                ),
+                                labelText: "Phone Number for login",
+                              labelStyle: TextStyle(
                                 fontFamily: "Lato",
                               ),
-                              labelText: "Phone Number for login",
-                            labelStyle: TextStyle(
+                            ),
+                            style: TextStyle(
                               fontFamily: "Lato",
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 2.0
+                            ),
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
+                            validator: (value){
+                              if(value.isEmpty){
+                                Fluttertoast.showToast(msg: 'Please enter your phone number');
+                                return "This field cannot be empty";
+                              }
+                              else if(value.length!=10){
+                                return "Phone number should be of 10 digits";
+                              }
+                              return null;
+                            },
+                          )):
+                          FittedBox(
+                            child: PinCodeTextField(
+                              maxLength: 6,
+                              controller: _otpController,
+                              hasError: hasError,
+                              onDone: (value){
+                                if(value.length==6){
+                                  setState(() {
+                                    hasError = false;
+                                  });
+                                }
+                                else{
+                                  setState(() {
+                                    hasError = true;
+                                  });
+                                  Fluttertoast.showToast(msg: 'OTP should have six digits');
+                                }
+                              },
                             ),
                           ),
-                          style: TextStyle(
-                            fontFamily: "Lato",
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0
-                          ),
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
-                          onChanged: (val){
-                            setState(() {
-                              phoneNumber = val;
-                            });
-                          },
-                          onSaved: (value){
-                            phoneNumber = value;
-                          },
-                          validator: (value){
-                            if(_controller.text.isEmpty){
-                              Fluttertoast.showToast(msg: 'Please enter your phone number');
-                              return "This field cannot be empty";
-                            }
-                            else if(_controller.text.length!=10){
-                              return "Phone number should be of 10 digits";
-                            }
-                            return null;
-                          },
-                        )
                     )
                   ],
                 ),
               ),
-            ):
-            FittedBox(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: PinCodeTextField(
-                  key: _formKey,
-                  maxLength: 6,
-                  hasError: hasError,
-                  onDone: (value){
-                    if(value.length==6){
-                      setState(() {
-                        hasError = false;
-                        _otpController = value;
-                      });
-                    }
-                    else{
-                      setState(() {
-                        hasError = true;
-                      });
-                      Fluttertoast.showToast(msg: 'OTP should have six digits');
-                    }
-                  },
-                ),
-              )
             ),
             phoneNumberSubmitted?
             SizedBox(
@@ -181,14 +172,15 @@ class _PhoneLoginState extends State<PhoneLogin> {
                 minWidth: size.width / 3.5,
                 child: RaisedButton(
                   onPressed: () {
-                    if (phoneNumber==null||phoneNumber.length!=10) {
+                    if (!_formKey.currentState.validate()) {
                       Fluttertoast.showToast(msg: 'Please enter a valid phone number');
                       print("@@@@@@");
-                      print(phoneNumber);
+                      print(_controller?.text);
                       return;
                     } else {
-                  //    _formKey.currentState.save();
+                      _formKey.currentState.save();
                       setState(() {
+                        phoneNumber = _controller?.text;
                         phoneNumberSubmitted = true;
                       });
                     }

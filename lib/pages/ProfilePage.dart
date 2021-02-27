@@ -558,17 +558,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                           minWidth: size.width / 1.5,
                                           child: RaisedButton(
                                             onPressed: () {
-//                                              Navigator.of(context).push(
-//                                                  MaterialPageRoute(
-//                                                      builder: (_) =>
-//                                                          ProfileImagePage(
-//                                                            name: _user.name,
-//                                                            userName:
-//                                                                _user.username,
-//                                                          )));
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(builder: (_)=>PhoneLogin())
-                                                );
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          ProfileImagePage(
+                                                            name: _user.name,
+                                                            userName:
+                                                                _user.username,
+                                                          )));
                                             },
                                             color: Colors.white,
                                             child: Text('EDIT PROFILE',
