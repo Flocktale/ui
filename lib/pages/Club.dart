@@ -17,6 +17,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'ProfilePage.dart';
 import 'ClubJoinRequests.dart';
+import 'package:intl/intl.dart';
 
 class Club extends StatefulWidget {
   final BuiltClub club;
@@ -697,6 +698,12 @@ class _ClubState extends State<Club> {
     setState(() {});
   }
 
+  String _processScheduledTimestamp(int timestamp){
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    String formattedDate2 = DateFormat.MMMd().add_Hm().format(dateTime) + " Hrs";
+    return formattedDate2;
+  }
+
   String _processTimestamp(int timestamp, int type) {
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final diff = DateTime.now().difference(dateTime);
@@ -708,7 +715,6 @@ class _ClubState extends State<Club> {
 
     String str = '';
     String suff = type == 0 ? " to go" : " ago";
-
     if (secDiff < 60) {
       str = '$secDiff ' + (secDiff == 1 ? 'second' : 'seconds') + suff;
     } else if (minDiff < 60) {
@@ -980,7 +986,9 @@ class _ClubState extends State<Club> {
                                                 child: Text(
                                                   _isConcluded
                                                       ? "Concluded"
-                                                      : "Scheduled: ${_processTimestamp(widget.club.scheduleTime, 0)}",
+                                                      : DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(widget.club.scheduleTime))<0?
+                                                  "Scheduled: ${_processScheduledTimestamp(widget.club.scheduleTime)}"
+                                                  :"Waiting for start",
                                                   style: TextStyle(
                                                       fontFamily: 'Lato',
                                                       color: Colors.black54),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/Club.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:intl/intl.dart';
 
 class Carousel extends StatefulWidget {
   final Color shadow = Color(0xFF191818);
@@ -12,16 +13,19 @@ class Carousel extends StatefulWidget {
 }
 
 class _CarouselState extends State<Carousel> {
-  List<String> myClubs = ['Card1.jpg', 'Card2.jpg', 'Card3.jpg', 'Card4.jpg'];
+ // List<String> myClubs = ['Card1.jpg', 'Card2.jpg', 'Card3.jpg', 'Card4.jpg'];
   String _processTimestamp(int timestamp) {
+    if(DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(timestamp))>0)
+      return "Waiting for start";
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    final diff = DateTime.now().difference(dateTime);
+    var diff = DateTime.now().difference(dateTime).abs();
 
+    String formattedDate2 = DateFormat.MMMd().add_Hm().format(dateTime) + " Hrs";
+    return formattedDate2;
     final secDiff = diff.inSeconds;
     final minDiff = diff.inMinutes;
     final hourDiff = diff.inHours;
     final daysDiff = diff.inDays;
-
     String str = '';
 
     if (secDiff < 60) {
@@ -154,7 +158,7 @@ class _CarouselState extends State<Carousel> {
                                             widget.Clubs[index].isConcluded==true?
                                             Colors.white:
                                             Colors.black,
-                                            letterSpacing: 2.0,
+                                         //   letterSpacing: 2.0,
                                           fontSize: size.width/40
                                         ),
                                       ),
