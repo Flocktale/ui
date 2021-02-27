@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/pages/PhoneLogIn.dart';
 import 'package:mootclub_app/pages/SocialRelationPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/SecureStorage.dart';
@@ -557,14 +558,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                           minWidth: size.width / 1.5,
                                           child: RaisedButton(
                                             onPressed: () {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          ProfileImagePage(
-                                                            name: _user.name,
-                                                            userName:
-                                                                _user.username,
-                                                          )));
+//                                              Navigator.of(context).push(
+//                                                  MaterialPageRoute(
+//                                                      builder: (_) =>
+//                                                          ProfileImagePage(
+//                                                            name: _user.name,
+//                                                            userName:
+//                                                                _user.username,
+//                                                          )));
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(builder: (_)=>PhoneLogin())
+                                                );
                                             },
                                             color: Colors.white,
                                             child: Text('EDIT PROFILE',

@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +10,7 @@ import 'package:date_time_picker/date_time_picker.dart';
 import '../MinClub.dart';
 import 'Club.dart';
 import 'ImagePage.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class NewClub extends StatefulWidget {
   final String userId;
@@ -28,6 +31,34 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   List<String> categoryList = [];
 
   List<String> subCategoryList = [];
+  //File image;
+  final picker = ImagePicker();
+
+  getImage() async {
+    final selectedImage = await picker.getImage(source: ImageSource.gallery);
+    if (selectedImage != null) {
+      final croppedImage = await ImageCropper.cropImage(
+          cropStyle: CropStyle.circle,
+          sourcePath: selectedImage.path,
+          aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+          compressQuality: 50,
+          maxHeight: 400,
+          maxWidth: 400,
+          compressFormat: ImageCompressFormat.jpg,
+          androidUiSettings: AndroidUiSettings(
+              statusBarColor: Colors.redAccent,
+              cropFrameColor: Colors.grey[600],
+              backgroundColor: Colors.white,
+              toolbarColor: Colors.white));
+      setState(() {
+        if (croppedImage != null) {
+   //       image = File(croppedImage.path);
+        } else {
+          print("Picture not selected.");
+        }
+      });
+    }
+  }
 
   BuiltClub get _newClubModel {
     if (name?.isNotEmpty != true ||
