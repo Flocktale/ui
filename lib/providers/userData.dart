@@ -120,9 +120,14 @@ class UserData with ChangeNotifier {
   bool get isAuth => _isAuth;
 
   BuiltUser get user => _builtUser;
-
-  String get userId =>
-      _authUser?.cognitoSession?.idToken?.payload['cognito:username'];
+  String get userId {
+    if (_authUser?.cognitoSession?.idToken?.payload != null)
+      return _authUser?.cognitoSession?.idToken?.payload['cognito:username'];
+    else
+      return null;
+  }
+  // String get userId =>
+  // _authUser?.cognitoSession?.idToken?.payload['cognito:username'];
 
   String get phoneNumber => _authUser?.cognitoUser?.username;
 
