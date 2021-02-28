@@ -1,5 +1,5 @@
-import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/services/SecureStorage.dart';
 import 'package:mootclub_app/aws/cognito.dart';
@@ -7,8 +7,8 @@ import 'package:mootclub_app/services/chopper/database_api_service.dart';
 
 class UserData with ChangeNotifier {
   BuiltUser _builtUser;
-  CognitoUserSession _currentSession;
-  String _userId;
+
+  final AuthUser _authUser = AuthUser();
 
   final DatabaseApiService _postApiService;
 
@@ -32,31 +32,15 @@ class UserData with ChangeNotifier {
     final email = await _storage.getEmail();
     final password = await _storage.getPassword();
 
-    // final email = _prefs.containsKey(SharedPrefKeys.EMAIL)
-    //     ? _prefs.getString(SharedPrefKeys.EMAIL)
-    //     : null;
-
-    // final password = _prefs.containsKey(SharedPrefKeys.PASSWORD)
-    //     ? _prefs.getString(SharedPrefKeys.PASSWORD)
-    //     : null;
-
-    if (email != null && password != null) {
-      await startSession(
-          email: email,
-          password: password,
-          callback: (String id, CognitoUserSession session) {
-            _userId = id;
-            _currentSession = session;
-          });
-    }
+    if (email != null && password != null) {}
 
     if (userId != null) {
       _isAuth = true;
 
       if (newRegistration == false) {
         final response = await _postApiService.getUserProfile(
-          userId: _userId,
-          primaryUserId: _userId,
+          userId: userId,
+          primaryUserId: userId,
           authorization: authToken,
         );
 
@@ -84,12 +68,12 @@ class UserData with ChangeNotifier {
 
   /// when user is logged in only then this method can be used
   Future<void> fetchUserFromBackend() async {
-    if (userId == null || _currentSession == null) return;
+    if (userId == null || _authUser?.cognitoSession == null) return;
 
     _isAuth = true;
 
     final response = await _postApiService.getUserProfile(
-        userId: _userId, primaryUserId: _userId, authorization: authToken);
+        userId: userId, primaryUserId: userId, authorization: authToken);
 
     if (response != null && response.body != null) {
       _builtUser = response.body.user;
@@ -102,15 +86,45 @@ class UserData with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> sendOTP(String dialCode, String phoneNumber) async {
+    assert(dialCode != null);
+    assert(phoneNumber != null);
+
+    final phone = dialCode + phoneNumber;
+    final response = await _authUser.sendOTP(phone);
+    if (response == true) {
+      return true;
+    } else if (response == 'UserLambdaValidationException') {
+      // user hasn't signed up yet. so sign up the user
+      final signUpResponse = await _authUser.signUpWithCognito(phone);
+      return signUpResponse;
+    } else if (response == false) {
+      Fluttertoast.showToast(msg: 'Unknown error, please contact the support');
+      return false;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> submitOTP(String code) async {
+    assert(code != null);
+    final resp = await _authUser.confirmOTP(code);
+    if (resp == true) {
+      _isAuth = true;
+    }
+    notifyListeners();
+  }
+
   bool get loaded => _loaded;
 
   bool get isAuth => _isAuth;
 
   BuiltUser get user => _builtUser;
 
-  String get userId => _userId;
+  String get userId =>
+      _authUser?.cognitoSession?.idToken?.payload['cognito:username'];
 
-  set userId(String id) => {_userId = id};
+  String get phoneNumber => _authUser?.cognitoUser?.username;
 
   set updateUser(BuiltUser user) {
     _isAuth = true;
@@ -120,11 +134,9 @@ class UserData with ChangeNotifier {
     notifyListeners();
   }
 
-  String get authToken => _currentSession?.idToken?.jwtToken;
+  String get authToken => _authUser?.cognitoSession?.idToken?.jwtToken;
 
-  set cognitoSession(CognitoUserSession session) {
-    _currentSession = session;
-  }
-
-  
+  // set cognitoSession(CognitoUserSession session) {
+  //   _currentSession = session;
+  // }
 }

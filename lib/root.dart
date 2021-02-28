@@ -7,8 +7,6 @@ import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 
-import 'Authentication/login.dart';
-
 class RootPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,8 +21,8 @@ class RootPage extends StatelessWidget {
           if (userData.isAuth == false)
             widget = PhoneLogin();
           else if (userData.user == null) {
-           // widget = SignUpScreen();
-            widget = PhoneLogin();
+            // isAuth is true
+            widget = SignUpScreen();
           } else {
             widget = HomePage();
           }

@@ -2,152 +2,66 @@ import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-const _userPoolId = "us-east-1_VpvKQXRiL";
-const _clientId = "4ljsccr0qt5asjmc8ufla661il";
+class AuthUser {
+  static const _userPoolId = "us-east-1_NzvonVIcv";
+  static const _clientId = "64hd534ts80kbm5oibc8lshh3o";
+// static const _region = 'us-east-1';
 
-// const _region = 'us-east-1';
+  static final _userPool =
+      CognitoUserPool(_userPoolId, _clientId, storage: CognitoMemoryStorage());
 
-final userPool =
-    CognitoUserPool(_userPoolId, _clientId, storage: CognitoMemoryStorage());
+  CognitoUser cognitoUser;
 
-signUpWithCognito({String email, String password}) async {
-  final userAttributes = [
-    AttributeArg(name: 'email', value: email),
-  ];
+  CognitoUserSession cognitoSession;
 
-  try {
-    final data =
-        await userPool.signUp(email, password, userAttributes: userAttributes);
-    print('successfull: ${data.toString()}');
-    Fluttertoast.showToast(msg: 'Succesfully registered');
+  Future<bool> signUpWithCognito(String phone) async {
+    final password = DateTime.now().toString();
+    try {
+      final data = await _userPool.signUp(phone, password);
 
-    return true;
-  } on CognitoClientException catch (e) {
-    Fluttertoast.showToast(msg: e.message, gravity: ToastGravity.CENTER);
-    print('catched error : ${e.toString()}');
-    return false;
-  }
-}
+      print('successfull: ${data.toString()}');
+      Fluttertoast.showToast(msg: 'Succesfully registered');
 
-confirmUserCognito({String email, String code}) async {
-  final cognitoUser = CognitoUser(email, userPool);
-
-  try {
-    await cognitoUser.confirmRegistration(code);
-
-    return true;
-  } catch (e) {
-    print(e);
-    return false;
-  }
-}
-
-reSendConfirmationCode(String email) async {
-  final cognitoUser = CognitoUser(email, userPool);
-  var status;
-  try {
-    status = await cognitoUser.resendConfirmationCode();
-    Fluttertoast.showToast(msg: 'Code is resent to $email');
-  } on CognitoClientException catch (e) {
-    print(e);
-  }
-  print('status:$status');
-}
-
-startSession(
-    {@required String email,
-    @required String password,
-    @required Function(String, CognitoUserSession) callback}) async {
-  final cognitoUser =
-      CognitoUser(email, userPool, storage: CognitoMemoryStorage());
-  final authDetails = AuthenticationDetails(
-    username: email,
-    password: password,
-  );
-
-  CognitoUserSession session;
-  try {
-    session = await cognitoUser.authenticateUser(authDetails);
-
-    // print(session.getIdToken().getJwtToken());
-
-    // print(session.getAccessToken().getJwtToken());
-
-    print(cognitoUser.username);
-
-    callback(cognitoUser.username, session);
-    return null;
-  } on CognitoClientException catch (e) {
-    Fluttertoast.showToast(msg: e.message, gravity: ToastGravity.CENTER);
-
-    print('error');
-    print(e);
-
-    return e.code;
-  }
-}
-
-getUserAttributes() async {
-  final session = await startSession(
-    email: 'first@sign.com',
-    password: 'noneMatters',
-  );
-
-  final cognitoUser =
-      CognitoUser('first@sign.com', userPool, signInUserSession: session);
-  List<CognitoUserAttribute> attributes;
-  try {
-    attributes = await cognitoUser.getUserAttributes();
-
-    attributes.forEach((attribute) {
-      print(' ${attribute.getName()}:  ${attribute.getValue()}');
-    });
-
-    return attributes;
-  } catch (e) {
-    print(e);
-  }
-}
-
-updateUserAttributes() async {
-  final session = await startSession(
-    email: 'first@sign.com',
-    password: 'noneMatters',
-  );
-
-  final cognitoUser =
-      CognitoUser('first@sign.com', userPool, signInUserSession: session);
-
-  List<CognitoUserAttribute> attributes = [];
-  attributes.add(CognitoUserAttribute(name: 'nickname', value: "my nick !"));
-
-  try {
-    final result = await cognitoUser.updateAttributes(attributes);
-    print(result);
-  } catch (e) {
-    print(e);
-  }
-}
-
-forgotPassword() async {
-  final cognitoUser = CognitoUser('first@sign.com', userPool);
-  var data;
-  try {
-    data = await cognitoUser.forgotPassword();
-  } catch (e) {
-    print(e);
+      return true;
+    } on CognitoClientException catch (e) {
+      Fluttertoast.showToast(msg: e.message, gravity: ToastGravity.CENTER);
+      print('catched error : ${e.toString()}');
+      return false;
+    }
   }
 
-  print('code sent to :');
-  print(data);
-}
-
-confirmPassword(String code, CognitoUser user, String newPassword) async {
-  bool result = false;
-  try {
-    result = await user.confirmPassword(code, newPassword);
-  } catch (e) {
-    print(e);
+  Future<bool> confirmOTP(String code) async {
+    try {
+      cognitoSession = await cognitoUser.sendCustomChallengeAnswer(code);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
-  return result;
+
+  Future sendOTP(String phone) async {
+    cognitoUser =
+        CognitoUser(phone, _userPool, storage: CognitoMemoryStorage());
+
+    try {
+      await cognitoUser.initiateAuth(AuthenticationDetails(authParameters: []));
+      return false;
+    } on CognitoUserCustomChallengeException catch (e) {
+      // the package (amazon_cognito_identity_dart_2) generates this error for custom_challenge
+      // but there is no problem in that because we need to send custom challenge answer.
+      // and then we get the CognitoUserSession.
+      return true;
+    } on CognitoClientException catch (e) {
+      Fluttertoast.showToast(msg: e.message, gravity: ToastGravity.CENTER);
+      print('error');
+      print(e);
+      return e.code;
+    } catch (e) {
+      print('--------------------');
+      print(e);
+      print('--------------------');
+      return e.code;
+    }
+  }
 }

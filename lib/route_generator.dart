@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Authentication/signUp.dart';
 import 'package:mootclub_app/pages/HomePage.dart';
-import 'package:mootclub_app/Authentication/login.dart';
-import 'package:mootclub_app/Authentication/register.dart';
 import 'package:mootclub_app/pages/ImagePage.dart';
 import 'package:mootclub_app/pages/NotificationPage.dart';
 import 'package:mootclub_app/root.dart';
@@ -16,8 +13,6 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => RootPage());
       case '/home':
         return MaterialPageRoute(builder: (_) => HomePage());
-      case '/register':
-        return MaterialPageRoute(builder: (_) => Register());
       case '/notificationPage':
         return MaterialPageRoute(builder: (_) => NotificationPage());
       case '/imagePage':

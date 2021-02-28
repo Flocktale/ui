@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mootclub_app/services/SecureStorage.dart';
 import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/pages/ProfileImagePage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
@@ -86,19 +84,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final userId = Provider.of<UserData>(context, listen: false).userId;
+    final phoneNumber =
+        Provider.of<UserData>(context, listen: false).phoneNumber;
 
     final _prefs = await SharedPreferences.getInstance();
 
-    final _storage = SecureStorage();
-    final email = await _storage.getEmail();
-
-    final newUser = BuiltUser((b) => b
-      ..userId = userId
-      ..name = _nameController.text.trim()
-      ..email = email
-      ..username = _usernameController.text.trim()
-      ..tagline = _tagLineController?.text?.trim()
-      ..bio = _bioController?.text?.trim()
+    final newUser = BuiltUser(
+      (b) => b
+        ..userId = userId
+        ..name = _nameController.text.trim()
+        ..phone = phoneNumber
+        ..username = _usernameController.text.trim()
+        ..tagline = _tagLineController?.text?.trim()
+        ..bio = _bioController?.text?.trim(),
     );
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
@@ -160,12 +158,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.fromLTRB(size.width/20, size.height/20, 0, 0),
+                  padding: EdgeInsets.fromLTRB(
+                      size.width / 20, size.height / 20, 0, 0),
                   child: RichText(
                     text: TextSpan(
                       text: "Register",
                       style: TextStyle(
-                          fontSize: size.width/5,
+                          fontSize: size.width / 5,
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
                       children: [
@@ -179,7 +178,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 Center(
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(0, size.height/50, 0, 0),
+                    margin: EdgeInsets.fromLTRB(0, size.height / 50, 0, 0),
                     child: GestureDetector(
                       onTap: getImage,
                       behavior: HitTestBehavior.deferToChild,
@@ -194,7 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: image == null
                               ? Icon(
                                   Icons.add_a_photo,
-                                  size: size.width/15,
+                                  size: size.width / 15,
                                   color: Colors.black,
                                 )
                               : Align(
@@ -209,7 +208,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       child: Icon(
                                         Icons.cancel,
                                         color: Colors.black,
-                                        size: size.width/15,
+                                        size: size.width / 15,
                                       ),
                                     ),
                                   ),
@@ -220,7 +219,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: size.height/50, left: size.width/20, right: size.width/20),
+                  padding: EdgeInsets.only(
+                      top: size.height / 50,
+                      left: size.width / 20,
+                      right: size.width / 20),
                   child: Column(children: <Widget>[
                     Form(
                       key: _formKey,
@@ -244,7 +246,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               return null;
                             },
                           ),
-                          SizedBox(height: size.height/50),
+                          SizedBox(height: size.height / 50),
                           TextFormField(
                             controller: _usernameController,
                             decoration: InputDecoration(
@@ -263,7 +265,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               return null;
                             },
                           ),
-                          SizedBox(height: size.height/50),
+                          SizedBox(height: size.height / 50),
                           TextFormField(
                             controller: _tagLineController,
                             maxLines: 1,
@@ -272,10 +274,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 labelText: 'TAGLINE ',
                                 hintText: "Describe yourself in one line.",
                                 hintStyle: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontWeight: FontWeight.w200,
-                                  color: Colors.grey[400]
-                                ),
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w200,
+                                    color: Colors.grey[400]),
                                 labelStyle: TextStyle(
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.bold,
@@ -283,7 +284,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 focusedBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.red))),
                           ),
-                         // SizedBox(height: size.height/100),
+                          // SizedBox(height: size.height/100),
                           TextFormField(
                             controller: _bioController,
                             decoration: InputDecoration(
@@ -292,8 +293,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 hintStyle: TextStyle(
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.w200,
-                                    color: Colors.grey[400]
-                                ),
+                                    color: Colors.grey[400]),
                                 labelStyle: TextStyle(
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.bold,
