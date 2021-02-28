@@ -18,7 +18,7 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
   BuiltActiveJoinRequests joinRequests;
   BuiltList<JoinRequests> _searchResult;
   bool isLoading = false;
-  final searchInput = TextEditingController();
+  final searchInput = new TextEditingController();
   getJoinRequests() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
@@ -192,7 +192,7 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                           })
 
                       : joinRequests != null &&
-                      joinRequests.activeJoinRequestUsers != null
+                      joinRequests.activeJoinRequestUsers != null && searchInput.text.isEmpty
                       ? ListView.builder(
                       itemCount: joinRequests.activeJoinRequestUsers.length,
                       itemBuilder: (context, index) {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -29,16 +31,15 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   bool scheduleClub = false;
   TextEditingController _controller1;
   List<String> categoryList = [];
-
+  File image;
   List<String> subCategoryList = [];
-  //File image;
   final picker = ImagePicker();
 
   getImage() async {
     final selectedImage = await picker.getImage(source: ImageSource.gallery);
     if (selectedImage != null) {
       final croppedImage = await ImageCropper.cropImage(
-          cropStyle: CropStyle.circle,
+          cropStyle: CropStyle.rectangle,
           sourcePath: selectedImage.path,
           aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
           compressQuality: 50,
@@ -52,7 +53,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
               toolbarColor: Colors.white));
       setState(() {
         if (croppedImage != null) {
-   //       image = File(croppedImage.path);
+          image = File(croppedImage.path);
         } else {
           print("Picture not selected.");
         }
@@ -93,20 +94,53 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       creatorId: widget.userId,
       authorization: authToken,
     );
-    Fluttertoast.showToast(msg: 'club entry is created');
-    BuiltClub tempClub = (await service.getClubByClubId(
-      userId: widget.userId,
-      clubId: resp.body['clubId'],
-      authorization: authToken,
-    ))
-        .body
-        ?.club;
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => Club(
-              club: tempClub,
+    if (resp.isSuccessful && image != null) {
+      String imageInBase64;
+      if (image != null) {
+        var pickedImage = await image.readAsBytes();
+        imageInBase64 = base64Encode(pickedImage);
+        final newImage = BuiltProfileImage((b) => b..image = imageInBase64);
+        final response = await service.updateClubAvatar(
+          clubId: resp.body['clubId'],
+          image: newImage,
+          authorization: authToken,
+        );
+        print("!!!!!!!!!!!!!!!!!!!!!!!");
+        print(response.isSuccessful);
+        BuiltClub newClub = (await service.getClubByClubId(
+          userId: widget.userId,
+          clubId: resp.body['clubId'],
+          authorization: authToken,
+        ))
+            .body
+            ?.club;
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => Club(
+              club: newClub,
             )));
-
-    Fluttertoast.showToast(msg: 'club entry is created');
+        Fluttertoast.showToast(msg: 'club entry is created');
+      }
+    }
+    else{
+      print('=========${resp.body}');
+      print(resp.error);
+      Fluttertoast.showToast(msg: 'club entry is created');
+      BuiltClub tempClub = (await service.getClubByClubId(
+        userId: widget.userId,
+        clubId: resp.body['clubId'],
+        authorization: authToken,
+      ))
+          .body
+          ?.club;
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => Club(
+            club: tempClub,
+          )));
+      _formKey.currentState.reset();
+      setState(() {
+        image = null;
+      });
+    }
   }
 
   Widget _buildName() {
@@ -306,6 +340,70 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                     SizedBox(
                       height: size.height / 50,
                     ),
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(0, size.height / 50, 0, 0),
+                        child: GestureDetector(
+                          onTap: getImage,
+                          behavior: HitTestBehavior.deferToChild,
+                          child: Container(
+                            height: size.height /6,
+                            width: size.width / 3,
+                            color: Colors.red,
+                            child: Container(
+                              height: size.height / 6,
+                              width: size.width / 3,
+                              child:
+                              image == null ? Column(
+                                children: [
+                                  SizedBox(
+                                    height: size.height/20,
+                                  ),
+                                  Icon(
+                                    Icons.add_a_photo,
+                                    size: size.width / 15,
+                                    color: Colors.black,
+                                    semanticLabel: "Add a photo",
+                                  ),
+                                  Text(
+                                    "Add a club avatar",
+                                    style: TextStyle(
+                                      fontFamily: "Lato",
+                                      fontWeight: FontWeight.w400
+                                    ),
+                                  )
+                                ],
+                              ) : Stack(
+                                children: [
+                                  Image.file(image),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        image = null;
+                                        setState(() {});
+                                      },
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.transparent,
+                                        child: Icon(
+                                          Icons.cancel,
+                                          color: Colors.black,
+                                          size: size.width / 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height / 50,
+                    ),
                     Form(
                         key: _formKey,
                         child: Column(
@@ -331,77 +429,35 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                                 dateTimePicker():
                                 Container(),
                             SizedBox(
-                              height: size.height / 10,
+                              height: size.height / 30,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                ButtonTheme(
-                                  minWidth: size.width / 3.5,
-                                  child: RaisedButton(
-                                    onPressed: () {
-                                      if (!_formKey.currentState.validate()) {
-                                        return;
-                                      } else {
-                                        _formKey.currentState.save();
-
-                                        if (_newClubModel == null) return;
-
-                                        Navigator.of(context).push(MaterialPageRoute(
-                                            builder: (_) => ImagePage(
-                                                  newClub: _newClubModel,
-                                                  userId: widget.userId,
-                                                )));
-                                      }
-                                    },
-                                    color: Colors.white,
-                                    child: Text('Select an image',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w200,
-                                          fontFamily: 'Lato',
-                                        )),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      //side: BorderSide(color: Colors.red[600]),
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  "OR",
-                                  style: TextStyle(
-                                      fontFamily: 'Lato',
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                ButtonTheme(
-                                  minWidth: size.width / 3.5,
-                                  child: RaisedButton(
-                                    onPressed: () {
-                                      if (!_formKey.currentState.validate()) {
-                                        return;
-                                      } else {
-                                        _formKey.currentState.save();
-                                        print(name);
-                                        print(description);
-                                        print(category);
+                            ButtonTheme(
+                              minWidth: size.width / 3.5,
+                              child: RaisedButton(
+                                onPressed: () {
+                                  if (!_formKey.currentState.validate()) {
+                                    return;
+                                  } else {
+                                    _formKey.currentState.save();
+                                    print(name);
+                                    print(description);
+                                    print(category);
 //                                Navigator.of(context).pushNamed('/imagePage');
-                                        _createClub();
-                                      }
-                                    },
-                                    color: Colors.red[600],
-                                    child: Text('Skip and Submit',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Lato',
-                                        )),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18.0),
-                                      //side: BorderSide(color: Colors.red[600]),
-                                    ),
-                                  ),
+                                    _createClub();
+                                  }
+                                },
+                                color: Colors.red[600],
+                                child: Text('Submit',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Lato',
+                                    )),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                  //side: BorderSide(color: Colors.red[600]),
                                 ),
-                              ],
+                              ),
                             )
                           ],
                         ))
