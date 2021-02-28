@@ -39,7 +39,7 @@ class _ClubState extends State<Club> {
 
   bool _isParticipant = false;
   bool _showInvitation = false;
-
+  bool once = false;
   BuiltList<BuiltClub> Clubs;
   List<AudienceData> participantList = [];
 
@@ -221,7 +221,9 @@ class _ClubState extends State<Club> {
     print('${_controller.position.maxScrollExtent - 60 < _controller.offset}');
 
     if (_controller.position.maxScrollExtent - 60 <= _controller.offset) {
-      _controller.jumpTo(_controller.position.maxScrollExtent);
+      // _controller.jumpTo(_controller.position.maxScrollExtent);
+      Future.delayed(const Duration(seconds: 1),
+          () => _controller.jumpTo(_controller.position.maxScrollExtent));
       newMessage = false;
     } else {
       newMessage = true;
@@ -698,9 +700,10 @@ class _ClubState extends State<Club> {
     setState(() {});
   }
 
-  String _processScheduledTimestamp(int timestamp){
+  String _processScheduledTimestamp(int timestamp) {
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String formattedDate2 = DateFormat.MMMd().add_Hm().format(dateTime) + " Hrs";
+    String formattedDate2 =
+        DateFormat.MMMd().add_Hm().format(dateTime) + " Hrs";
     return formattedDate2;
   }
 
@@ -820,6 +823,17 @@ class _ClubState extends State<Club> {
         ],
       );
 
+
+  void hola()async{
+     while (true) {
+      await Future.delayed(
+        const Duration(seconds: 30),
+        () => {if (this.mounted == true) setState(() {})},
+      );
+    }
+  }
+
+
   @override
   void initState() {
     this._isOwner = Provider.of<UserData>(context, listen: false).userId ==
@@ -834,6 +848,7 @@ class _ClubState extends State<Club> {
 
     _enterClub();
 
+   
     Provider.of<DatabaseApiService>(context, listen: false)
         .getActiveJoinRequests(
       clubId: widget.club.clubId,
@@ -846,6 +861,10 @@ class _ClubState extends State<Club> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    if(!once){
+      once = true;
+      hola();
+    }
     return WillPopScope(
       onWillPop: () async {
         Provider.of<MySocket>(context, listen: false)
@@ -986,9 +1005,14 @@ class _ClubState extends State<Club> {
                                                 child: Text(
                                                   _isConcluded
                                                       ? "Concluded"
-                                                      : DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(widget.club.scheduleTime))<0?
-                                                  "Scheduled: ${_processScheduledTimestamp(widget.club.scheduleTime)}"
-                                                  :"Waiting for start",
+                                                      : DateTime.now().compareTo(
+                                                                  DateTime.fromMillisecondsSinceEpoch(
+                                                                      widget
+                                                                          .club
+                                                                          .scheduleTime)) <
+                                                              0
+                                                          ? "Scheduled: ${_processScheduledTimestamp(widget.club.scheduleTime)}"
+                                                          : "Waiting for start",
                                                   style: TextStyle(
                                                       fontFamily: 'Lato',
                                                       color: Colors.black54),
@@ -1336,7 +1360,11 @@ class _ClubState extends State<Club> {
                           ParticipantsPanel(
                             club: widget.club,
                             size: size,
-                            participantList: participantList.where((element) => element.audience.userId!=widget.club.creator.userId).toList(),
+                            participantList: participantList
+                                .where((element) =>
+                                    element.audience.userId !=
+                                    widget.club.creator.userId)
+                                .toList(),
                             isOwner: _isOwner,
                             hasSentJoinRequest: _sentRequest,
                             muteParticipant: _toggleMuteOfParticpant,
