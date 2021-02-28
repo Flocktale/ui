@@ -8,6 +8,8 @@ import 'package:mootclub_app/services/chopper/database_api_service.dart';
 class UserData with ChangeNotifier {
   BuiltUser _builtUser;
 
+  final _storage = SecureStorage();
+
   final AuthUser _authUser = AuthUser();
 
   final DatabaseApiService _postApiService;
@@ -27,34 +29,31 @@ class UserData with ChangeNotifier {
 
   /// set newRegistration to true when new user has registered
   /// (in above case, user has login credentials, email and password, but no entry in database)
-  initiate({bool newRegistration = false}) async {
-    final _storage = SecureStorage();
-    final email = await _storage.getEmail();
-    final password = await _storage.getPassword();
+  initiate() async {
+    final idToken = await _storage.getIdToken();
+    final accessToken = await _storage.getAccessToken();
+    final refreshToken = await _storage.getRefreshToken();
 
-    if (email != null && password != null) {}
+    await _authUser.initCachedSession(
+        idToken: idToken, accessToken: accessToken, refreshToken: refreshToken);
 
     if (userId != null) {
       _isAuth = true;
 
-      if (newRegistration == false) {
-        final response = await _postApiService.getUserProfile(
-          userId: userId,
-          primaryUserId: userId,
-          authorization: authToken,
-        );
+      final response = await _postApiService.getUserProfile(
+        userId: userId,
+        primaryUserId: userId,
+        authorization: authToken,
+      );
 
-        if (response != null && response.body != null) {
-          _builtUser = response.body.user;
-        } else {
-          // this case can arrive if user don't have internt connection.
-          // then we can load some trivial info like name,username etc from sharedPreferences
-        }
-
-        if (_builtUser?.userId == null) {
-          _builtUser = null;
-        }
+      if (response != null && response.body != null) {
+        _builtUser = response.body.user;
       } else {
+        // this case can arrive if user don't have internt connection.
+        // then we can load some trivial info like name,username etc from sharedPreferences
+      }
+
+      if (_builtUser?.userId == null) {
         _builtUser = null;
       }
     } else {
@@ -111,6 +110,14 @@ class UserData with ChangeNotifier {
     final resp = await _authUser.confirmOTP(code);
     if (resp == true) {
       _isAuth = true;
+
+      await _storage.setIdToken(_authUser.cognitoSession.idToken.jwtToken);
+      await _storage
+          .setAccessToken(_authUser.cognitoSession.accessToken.jwtToken);
+      await _storage
+          .setRefreshToken(_authUser.cognitoSession.refreshToken.token);
+
+      await fetchUserFromBackend();
     }
     notifyListeners();
   }
@@ -121,10 +128,18 @@ class UserData with ChangeNotifier {
 
   BuiltUser get user => _builtUser;
 
-  String get userId =>
-      _authUser?.cognitoSession?.idToken?.payload['cognito:username'];
+  String get userId {
+    if (_authUser?.cognitoSession?.idToken?.payload != null)
+      return _authUser?.cognitoSession?.idToken?.payload['sub'];
+    else
+      return null;
+  }
 
-  String get phoneNumber => _authUser?.cognitoUser?.username;
+  String get phoneNumber {
+    if (_authUser?.cognitoSession?.idToken?.payload == null) return null;
+
+    return _authUser?.cognitoSession?.idToken?.payload['phone_number'];
+  }
 
   set updateUser(BuiltUser user) {
     _isAuth = true;

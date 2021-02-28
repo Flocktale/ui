@@ -1,13 +1,18 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage {
-  static const String EMAIL = 'email';
-  static const String PASSWORD = 'password';
+  static const String PHONE = 'phone';
+  static const String USERID = 'userId';
+
+  static const String IDTOKEN = 'idToken';
+  static const String REFRESHTOKEN = 'refreshToken';
+  static const String ACCESSTOKEN = 'accessToken';
 
   static const String NAME = 'name';
   static const String USERNAME = 'username';
   static const String BIO = 'bio';
   static final _storage = FlutterSecureStorage();
+
   Future writeSecureData(String key, String value) async {
     var writeData = await _storage.write(key: key, value: value);
     return writeData;
@@ -18,27 +23,57 @@ class SecureStorage {
     return readData;
   }
 
-  Future<String> getEmail()async{
-    var email = await getAttribute(SecureStorage.EMAIL);
-    return email;
-  }
-  Future setEmail(String val)async{
-    var email = await writeSecureData(SecureStorage.EMAIL,val);
-    return email;
+  Future<String> getPhoneNumber() async {
+    var phone = await getAttribute(SecureStorage.PHONE);
+    return phone;
   }
 
-   Future<String> getPassword()async{
-    var password = await getAttribute(SecureStorage.PASSWORD);
-    return password;
+  Future setPhoneNumber(String val) async {
+    var phone = await writeSecureData(SecureStorage.PHONE, val);
+    return phone;
   }
 
-  Future setPassword(String val)async{
-    var pass = await writeSecureData(SecureStorage.PASSWORD,val);
-    return pass;
+  Future<String> getUserId() async {
+    var userId = await getAttribute(SecureStorage.USERID);
+    return userId;
   }
 
-  Future logout()async{
+  Future setUserId(String val) async {
+    var userId = await writeSecureData(SecureStorage.USERID, val);
+    return userId;
+  }
+
+  Future<String> getIdToken() async {
+    var idToken = await getAttribute(SecureStorage.IDTOKEN);
+    return idToken;
+  }
+
+  Future setIdToken(String val) async {
+    var idToken = await writeSecureData(SecureStorage.IDTOKEN, val);
+    return idToken;
+  }
+
+  Future<String> getAccessToken() async {
+    var accessToken = await getAttribute(SecureStorage.ACCESSTOKEN);
+    return accessToken;
+  }
+
+  Future setAccessToken(String val) async {
+    var accessToken = await writeSecureData(SecureStorage.ACCESSTOKEN, val);
+    return accessToken;
+  }
+
+  Future<String> getRefreshToken() async {
+    var refreshToken = await getAttribute(SecureStorage.REFRESHTOKEN);
+    return refreshToken;
+  }
+
+  Future setRefreshToken(String val) async {
+    var refreshToken = await writeSecureData(SecureStorage.REFRESHTOKEN, val);
+    return refreshToken;
+  }
+
+  Future logout() async {
     await _storage.deleteAll();
   }
-
 }
