@@ -323,6 +323,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                         color: Colors.grey[400]),
                                   ),
                                   SizedBox(
+                                    height: size.height / 130,
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      _user.tagline != null?_user.tagline:'',
+                                      style: TextStyle(
+                                          fontFamily: "Lato",
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
                                     height: size.height / 50,
                                   ),
                                   Container(
