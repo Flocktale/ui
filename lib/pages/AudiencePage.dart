@@ -63,6 +63,7 @@ class _AudiencePageState extends State<AudiencePage> {
           onNotification: (ScrollNotification scrollInfo) {
             if (scrollInfo.metrics.pixels ==
                 scrollInfo.metrics.maxScrollExtent) {
+              _fetchMoreAudienceData();
               audienceMap['isLoading'] = true;
             }
             return true;
