@@ -8,6 +8,7 @@ import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'ClubsByCategory.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -157,13 +158,51 @@ class _LandingPageState extends State<LandingPage>
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
                                           SizedBox(height: size.height / 30),
-                                          Text(
-                                            Clubs[index].category,
-                                            style: TextStyle(
-                                              fontFamily: 'Lato',
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: size.width / 15,
-                                            ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              ClubsByCategory(
+                                                                category: Clubs[
+                                                                        index]
+                                                                    .category,
+                                                              )));
+                                                },
+                                                child: Text(
+                                                  Clubs[index].category,
+                                                  style: TextStyle(
+                                                    fontFamily: 'Lato',
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: size.width / 15,
+                                                  ),
+                                                ),
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              ClubsByCategory(
+                                                                category: Clubs[
+                                                                        index]
+                                                                    .category,
+                                                              )));
+                                                },
+                                                child: Text(
+                                                  'View All',
+                                                  style: TextStyle(
+                                                    fontSize: size.width / 30,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                           SizedBox(height: size.height / 50),
                                           Carousel(Clubs: Clubs[index].clubs),

@@ -234,12 +234,12 @@ class DataSearch extends SearchDelegate<String> {
                                   style: TextStyle(color: Colors.grey)
                                 )]
                               ),),*/
-                                    allSearches.users[index].name != null
-                                        ? Text(allSearches.users[index].name)
+                                    allSearches.users[index].username != null
+                                        ? Text(allSearches.users[index].username)
                                         : null,
-                                subtitle: allSearches.users[index].username !=
+                                subtitle: allSearches.users[index].tagline !=
                                         null
-                                    ? Text(allSearches.users[index].username)
+                                    ? Text(allSearches.users[index].tagline)
                                     : null,
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(

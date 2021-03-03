@@ -8,7 +8,7 @@ import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/SecureStorage.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
-
+import 'ClubsByUser.dart';
 import '../Carousel.dart';
 import 'package:built_collection/built_collection.dart';
 import 'ProfileImagePage.dart';
@@ -321,6 +321,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                     style: TextStyle(
                                         fontSize: size.width / 26,
                                         color: Colors.grey[400]),
+                                  ),
+                                  SizedBox(
+                                    height: size.height / 130,
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      _user.tagline != null
+                                          ? _user.tagline
+                                          : '',
+                                      style: TextStyle(
+                                          fontFamily: "Lato",
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey),
+                                    ),
                                   ),
                                   SizedBox(
                                     height: size.height / 50,
@@ -693,12 +707,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                               fontWeight: FontWeight.bold,
                                               color: Colors.redAccent),
                                         ),
-                                        Text(
-                                          'View All',
-                                          style: TextStyle(
-                                            fontSize: 15.0,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[600],
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (_) => ClubsByUser(
+                                                        userId: _user.userId)));
+                                          },
+                                          child: Text(
+                                            'View All',
+                                            style: TextStyle(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[600],
+                                            ),
                                           ),
                                         ),
                                       ],
