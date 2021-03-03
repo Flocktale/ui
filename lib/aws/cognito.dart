@@ -15,7 +15,7 @@ class AuthUser {
 
   CognitoUserSession cognitoSession;
 
-  Future<bool> initCachedSession(
+  Future<void> initCachedSession(
       {@required String idToken,
       @required String accessToken,
       @required String refreshToken}) async {
@@ -27,25 +27,29 @@ class AuthUser {
 
     cognitoSession = CognitoUserSession(
         CognitoIdToken(idToken), CognitoAccessToken(accessToken),
-        refreshToken: CognitoRefreshToken(refreshToken));
+        refreshToken: CognitoRefreshToken(refreshToken), clockDrift: 0);
 
     _cognitoUser = CognitoUser(
         cognitoSession.idToken.payload['phone_number'], _userPool,
         storage: CognitoMemoryStorage());
 
     if (cognitoSession.isValid() == false) {
-      // using refresh token to initiate new Session
-
-      cognitoSession =
-          await _cognitoUser.refreshSession(cognitoSession.refreshToken);
-
-      final _storage = SecureStorage();
-      await _storage.setIdToken(cognitoSession.idToken.jwtToken);
-      await _storage.setAccessToken(cognitoSession.accessToken.jwtToken);
-      await _storage.setRefreshToken(cognitoSession.refreshToken.token);
+      await refreshSession();
     }
+  }
 
-    if (cognitoSession.isValid() == false) {
+  Future<void> refreshSession() async {
+    if (cognitoSession == null || cognitoSession?.isValid() == true) return;
+
+    cognitoSession =
+        await _cognitoUser.refreshSession(cognitoSession.refreshToken);
+
+    final _storage = SecureStorage();
+    await _storage.setIdToken(cognitoSession.idToken.jwtToken);
+    await _storage.setAccessToken(cognitoSession.accessToken.jwtToken);
+    await _storage.setRefreshToken(cognitoSession.refreshToken.token);
+
+    if (cognitoSession?.isValid() != true) {
       // user has to login again.
       cognitoSession = null;
       _cognitoUser = null;
