@@ -36,12 +36,8 @@ class _HomePageState extends State<HomePage> {
     MySocket a = Provider.of<MySocket>(context, listen: false);
 
     String userId = Provider.of<UserData>(context, listen: false).user.userId;
-    // DeviceStorage().fetchList(userId,context);
     DBHelper.fetchList(userId, context);
 
-    // for(int i=0;i<100;i++){
-    // print("$userId $i");
-    // }
     if (a.userId != userId) a.update(userId);
   }
 

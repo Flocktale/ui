@@ -7,7 +7,6 @@ import 'package:mootclub_app/pages/SocialRelationPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/SecureStorage.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
-import 'package:mootclub_app/services/deviceStorage.dart';
 import 'package:provider/provider.dart';
 import 'ClubsByUser.dart';
 import '../Carousel.dart';
@@ -126,8 +125,6 @@ class _ProfilePageState extends State<ProfilePage> {
       authorization: authToken,
     );
     
-    final deviceStorage = DeviceStorage();
-    deviceStorage.addFollowing(cuser.userId);
 
     _updateProfileFromResponse(resp.body);
 
