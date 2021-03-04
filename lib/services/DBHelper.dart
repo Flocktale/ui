@@ -21,19 +21,14 @@ class DBHelper {
   }
 
   static Future<bool> fetchFollowingsFromLocalStorage() async {
-    // if (_followings == null) 
-    await getData();
-    return (_followings != null && _followings.length!=0);
+    if (_followings == null) await getData();
+    return (_followings != null && _followings.length != 0);
   }
 
   static void fetchList(String userId, BuildContext context) async {
     final db = await DBHelper.database();
     print(_followings);
-    if ((await fetchFollowingsFromLocalStorage()) == false)
-     {
-      for(int i=0;i<100;i++){
-        print(i);
-      }
+    if ((await fetchFollowingsFromLocalStorage()) == false) {
       String lastevaluatedkey;
       _followings = {};
       await db.delete(followingTable);
@@ -52,9 +47,7 @@ class DBHelper {
         });
         lastevaluatedkey = u.lastevaluatedkey;
       } while (lastevaluatedkey != null);
-
     }
-    for (int i = 0; i < 100; i++) print('$i$_followings');
   }
 
   static Future<void> addFollowing(String userId) async {
@@ -68,7 +61,6 @@ class DBHelper {
     );
   }
 
-
   static Future<int> deleteFollowing(String userId) async {
     _followings.remove(userId);
     final db = await DBHelper.database();
@@ -80,7 +72,6 @@ class DBHelper {
     return _followings.contains(userId);
   }
 
-
   static Future getData({String table = followingTable}) async {
     final db = await DBHelper.database();
     final res = await db.query(table);
@@ -88,10 +79,5 @@ class DBHelper {
     res.forEach((element) {
       _followings.add(element['userId']);
     });
-
-  }
-
-  static void printCurData(){
-    print(_followings);
   }
 }
