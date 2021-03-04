@@ -124,7 +124,6 @@ class _ProfilePageState extends State<ProfilePage> {
       foreignUserId: widget.userId,
       authorization: authToken,
     );
-    
 
     _updateProfileFromResponse(resp.body);
 

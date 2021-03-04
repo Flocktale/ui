@@ -14,7 +14,7 @@ class DBHelper {
   static Future<Database> database() async {
     if (db != null) return db;
     final dbPath = await sql.getDatabasesPath();
-    return sql.openDatabase(path.join(dbPath, 'notesflix.db'),
+    return sql.openDatabase(path.join(dbPath, 'flocktale.db'),
         onCreate: (db, version) async {
       return db.execute('CREATE TABLE followings(userId TEXT PRIMARY KEY)');
     }, version: 1);

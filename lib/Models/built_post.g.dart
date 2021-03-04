@@ -985,23 +985,11 @@ class _$AudienceDataSerializer implements StructuredSerializer<AudienceData> {
       serializers.serialize(object.audience,
           specifiedType: const FullType(SummaryUser)),
     ];
-    if (object.isBlocked != null) {
+    if (object.status != null) {
       result
-        ..add('isBlocked')
-        ..add(serializers.serialize(object.isBlocked,
-            specifiedType: const FullType(bool)));
-    }
-    if (object.isParticipant != null) {
-      result
-        ..add('isParticipant')
-        ..add(serializers.serialize(object.isParticipant,
-            specifiedType: const FullType(bool)));
-    }
-    if (object.joinRequested != null) {
-      result
-        ..add('joinRequested')
-        ..add(serializers.serialize(object.joinRequested,
-            specifiedType: const FullType(bool)));
+        ..add('status')
+        ..add(serializers.serialize(object.status,
+            specifiedType: const FullType(String)));
     }
     if (object.isMuted != null) {
       result
@@ -1041,17 +1029,9 @@ class _$AudienceDataSerializer implements StructuredSerializer<AudienceData> {
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
-        case 'isBlocked':
-          result.isBlocked = serializers.deserialize(value,
-              specifiedType: const FullType(bool)) as bool;
-          break;
-        case 'isParticipant':
-          result.isParticipant = serializers.deserialize(value,
-              specifiedType: const FullType(bool)) as bool;
-          break;
-        case 'joinRequested':
-          result.joinRequested = serializers.deserialize(value,
-              specifiedType: const FullType(bool)) as bool;
+        case 'status':
+          result.status = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
         case 'isMuted':
           result.isMuted = serializers.deserialize(value,
@@ -3566,11 +3546,7 @@ class BuiltClubAndAudienceBuilder
 
 class _$AudienceData extends AudienceData {
   @override
-  final bool isBlocked;
-  @override
-  final bool isParticipant;
-  @override
-  final bool joinRequested;
+  final String status;
   @override
   final bool isMuted;
   @override
@@ -3586,9 +3562,7 @@ class _$AudienceData extends AudienceData {
       (new AudienceDataBuilder()..update(updates)).build();
 
   _$AudienceData._(
-      {this.isBlocked,
-      this.isParticipant,
-      this.joinRequested,
+      {this.status,
       this.isMuted,
       this.joinRequestAttempts,
       this.audience,
@@ -3611,9 +3585,7 @@ class _$AudienceData extends AudienceData {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is AudienceData &&
-        isBlocked == other.isBlocked &&
-        isParticipant == other.isParticipant &&
-        joinRequested == other.joinRequested &&
+        status == other.status &&
         isMuted == other.isMuted &&
         joinRequestAttempts == other.joinRequestAttempts &&
         audience == other.audience &&
@@ -3626,13 +3598,7 @@ class _$AudienceData extends AudienceData {
     return $jf($jc(
         $jc(
             $jc(
-                $jc(
-                    $jc(
-                        $jc(
-                            $jc($jc(0, isBlocked.hashCode),
-                                isParticipant.hashCode),
-                            joinRequested.hashCode),
-                        isMuted.hashCode),
+                $jc($jc($jc(0, status.hashCode), isMuted.hashCode),
                     joinRequestAttempts.hashCode),
                 audience.hashCode),
             invitationId.hashCode),
@@ -3642,9 +3608,7 @@ class _$AudienceData extends AudienceData {
   @override
   String toString() {
     return (newBuiltValueToStringHelper('AudienceData')
-          ..add('isBlocked', isBlocked)
-          ..add('isParticipant', isParticipant)
-          ..add('joinRequested', joinRequested)
+          ..add('status', status)
           ..add('isMuted', isMuted)
           ..add('joinRequestAttempts', joinRequestAttempts)
           ..add('audience', audience)
@@ -3658,19 +3622,9 @@ class AudienceDataBuilder
     implements Builder<AudienceData, AudienceDataBuilder> {
   _$AudienceData _$v;
 
-  bool _isBlocked;
-  bool get isBlocked => _$this._isBlocked;
-  set isBlocked(bool isBlocked) => _$this._isBlocked = isBlocked;
-
-  bool _isParticipant;
-  bool get isParticipant => _$this._isParticipant;
-  set isParticipant(bool isParticipant) =>
-      _$this._isParticipant = isParticipant;
-
-  bool _joinRequested;
-  bool get joinRequested => _$this._joinRequested;
-  set joinRequested(bool joinRequested) =>
-      _$this._joinRequested = joinRequested;
+  String _status;
+  String get status => _$this._status;
+  set status(String status) => _$this._status = status;
 
   bool _isMuted;
   bool get isMuted => _$this._isMuted;
@@ -3698,9 +3652,7 @@ class AudienceDataBuilder
 
   AudienceDataBuilder get _$this {
     if (_$v != null) {
-      _isBlocked = _$v.isBlocked;
-      _isParticipant = _$v.isParticipant;
-      _joinRequested = _$v.joinRequested;
+      _status = _$v.status;
       _isMuted = _$v.isMuted;
       _joinRequestAttempts = _$v.joinRequestAttempts;
       _audience = _$v.audience?.toBuilder();
@@ -3730,9 +3682,7 @@ class AudienceDataBuilder
     try {
       _$result = _$v ??
           new _$AudienceData._(
-              isBlocked: isBlocked,
-              isParticipant: isParticipant,
-              joinRequested: joinRequested,
+              status: status,
               isMuted: isMuted,
               joinRequestAttempts: joinRequestAttempts,
               audience: audience.build(),

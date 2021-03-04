@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/Models/comment.dart';
+import 'package:mootclub_app/Models/enums.dart';
 import 'package:mootclub_app/pages/AudiencePage.dart';
 import 'package:mootclub_app/pages/InviteScreen.dart';
 import 'package:mootclub_app/pages/participantsPanel.dart';
@@ -484,11 +485,13 @@ class _ClubState extends State<Club> {
     Provider.of<AgoraController>(context, listen: false).create();
 
     // if user is participant till the time of fetching this club data.
-    this._isParticipant = _clubAudience.audienceData.isParticipant ?? false;
+    this._isParticipant = _clubAudience.audienceData.status ==
+        enumToString(AudienceStatus.Participant);
     // later it will be decided by participant list fetched by websocket.
 
     // if user has sent a join request already till the time of fetching this club.
-    this._sentRequest = _clubAudience.audienceData.joinRequested ?? false;
+    this._sentRequest = _clubAudience.audienceData.status ==
+        enumToString(AudienceStatus.ActiveJoinRequest);
 
     var invitation = _clubAudience.audienceData.invitationId;
     if (invitation != null) {
@@ -509,9 +512,9 @@ class _ClubState extends State<Club> {
     if (event['clubId'] != widget.club.clubId) return;
 
     Fluttertoast.showToast(msg: 'You are now a Panelist');
-    _clubAudience = _clubAudience.rebuild((b) => b
-      ..audienceData.isParticipant = true
-      ..audienceData.joinRequested = false);
+    _clubAudience = _clubAudience.rebuild((b) =>
+        b..audienceData.status = enumToString(AudienceStatus.Participant));
+
     _isParticipant = true;
     _sentRequest = false;
 
@@ -524,8 +527,7 @@ class _ClubState extends State<Club> {
     if (event['clubId'] != widget.club.clubId) return;
 
     Fluttertoast.showToast(msg: 'You request to speak has been cancelled.');
-    _clubAudience =
-        _clubAudience.rebuild((b) => b..audienceData.joinRequested = false);
+    _clubAudience = _clubAudience.rebuild((b) => b..audienceData.status = null);
     _sentRequest = false;
     setState(() {});
   }
@@ -533,8 +535,7 @@ class _ClubState extends State<Club> {
   void _youAreKickedOut(event) {
     if (event['clubId'] != widget.club.clubId) return;
     Fluttertoast.showToast(msg: 'You are now a listener only');
-    _clubAudience =
-        _clubAudience.rebuild((b) => b..audienceData.isParticipant = false);
+    _clubAudience = _clubAudience.rebuild((b) => b..audienceData.status = null);
     _isParticipant = false;
 
     _joinClubAsAudience();
@@ -823,16 +824,14 @@ class _ClubState extends State<Club> {
         ],
       );
 
-
-  void hola()async{
-     while (true) {
+  void hola() async {
+    while (true) {
       await Future.delayed(
         const Duration(seconds: 30),
         () => {if (this.mounted == true) setState(() {})},
       );
     }
   }
-
 
   @override
   void initState() {
@@ -848,7 +847,6 @@ class _ClubState extends State<Club> {
 
     _enterClub();
 
-   
     Provider.of<DatabaseApiService>(context, listen: false)
         .getActiveJoinRequests(
       clubId: widget.club.clubId,
@@ -861,7 +859,7 @@ class _ClubState extends State<Club> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    if(!once){
+    if (!once) {
       once = true;
       hola();
     }

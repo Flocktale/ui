@@ -97,7 +97,6 @@ class _PhoneLoginState extends State<PhoneLogin> {
                             ? TextFormField(
                                 controller: _controller,
                                 keyboardType: TextInputType.number,
-                                initialValue: phoneNumber,
                                 decoration: InputDecoration(
                                   hintText: "Phone number",
                                   hintStyle: TextStyle(

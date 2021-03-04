@@ -8,7 +8,6 @@ import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/providers/webSocket.dart';
 import 'package:mootclub_app/services/DBHelper.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
-import 'package:mootclub_app/services/deviceStorage.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,7 +35,9 @@ class _HomePageState extends State<HomePage> {
     MySocket a = Provider.of<MySocket>(context, listen: false);
 
     String userId = Provider.of<UserData>(context, listen: false).user.userId;
-    DBHelper.fetchList(userId, context);
+
+    // TODO: UNCOMMENT THIS
+    // DBHelper.fetchList(userId, context);
 
     if (a.userId != userId) a.update(userId);
   }
