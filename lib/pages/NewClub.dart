@@ -70,7 +70,8 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       print('flll all the fields');
       return null;
     }
-    var parsedDate = DateTime.parse(scheduleDate);
+    var parsedDate =
+        DateTime.parse(scheduleDate ?? DateTime.now().toIso8601String());
 
     int scheduleDateTime = parsedDate.millisecondsSinceEpoch;
     return BuiltClub((b) => b
