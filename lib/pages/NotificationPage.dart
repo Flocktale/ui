@@ -26,7 +26,40 @@ class _NotificationPageState extends State<NotificationPage> {
       lastevaluatedkey: lastEvalustedKey,
       authorization: authToken,
     ))
-        .body;
+        .body;  
+
+    var z = notificationList.notifications[0];
+    List<NotificationData> temp = [
+    ];
+    int curTime = DateTime.now().millisecondsSinceEpoch - Duration.microsecondsPerMinute * 30;
+
+    notificationList.notifications.forEach((e) { 
+      temp.add(e);
+    });      
+
+
+    temp.sort((a,b){
+      var t1 = (a.timestamp>=curTime && (a.type=="CLUB#INV#prt" || a.type=="CLUB#INV#adc"));
+      var t2 = (b.timestamp>=curTime && (b.type=="CLUB#INV#prt" || b.type=="CLUB#INV#adc"));
+      print('${a.type} :: $t1 :: ${b.type} :: $t2');
+      var res = (t1!=t2?t1==true:a.timestamp>b.timestamp);
+      if(res){
+        return -1;
+      }
+      else return 1;
+    });
+
+
+    String lastevaluatedkey = notificationList.lastevaluatedkey;
+    notificationList = notificationList.rebuild((b){
+      b.notifications.clear();
+      temp.forEach((element) {
+        b.notifications.add(element);
+      });
+      b.lastevaluatedkey = lastevaluatedkey;
+    });
+
+    
     setState(() {});
   }
 
