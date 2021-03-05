@@ -1117,6 +1117,7 @@ class _ClubState extends State<Club> {
 
                                             // dedicated button for sending join request or stepping down to become only listener
                                             if (_isOwner == false)
+                                              _isPlaying?
                                               Container(
                                                 margin: EdgeInsets.fromLTRB(
                                                     10, 0, 0, 0),
@@ -1124,7 +1125,8 @@ class _ClubState extends State<Club> {
                                                   heroTag: "participation btn",
                                                   onPressed: () =>
                                                       _participationButtonHandler(),
-                                                  child: _isParticipant
+                                                  child:
+                                                  _isParticipant
                                                       ? Icon(Icons
                                                           .remove_from_queue)
                                                       : !_sentRequest
@@ -1144,7 +1146,7 @@ class _ClubState extends State<Club> {
                                                               : Colors
                                                                   .grey[200],
                                                 ),
-                                              )
+                                              ):Container()
                                           ],
                                         ),
                                       )
