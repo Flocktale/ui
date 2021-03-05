@@ -57,6 +57,7 @@ class _AudiencePageState extends State<AudiencePage> {
         (audienceMap['data'] as BuiltAudienceList)?.audience;
     final bool isLoading = audienceMap['isLoading'];
     final listLength = (audienceListUsers?.length ?? 0) + 1;
+    final _user = Provider.of<UserData>(context,listen: false).user;
     return Container(
         margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: NotificationListener<ScrollNotification>(
@@ -119,7 +120,9 @@ class _AudiencePageState extends State<AudiencePage> {
                         ),
                       ),
                     ),
-                    trailing: ButtonTheme(
+                    trailing:
+                        widget.club.creator.userId == _user.userId?
+                    ButtonTheme(
                       minWidth: size.width / 3.5,
                       child: RaisedButton(
                         onPressed: () async {
@@ -153,7 +156,7 @@ class _AudiencePageState extends State<AudiencePage> {
                           //side: BorderSide(color: Colors.red[600]),
                         ),
                       ),
-                    ),
+                    ):SizedBox(width: 0,),
                   ),
                 );
               }),

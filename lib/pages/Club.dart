@@ -1073,11 +1073,12 @@ class _ClubState extends State<Club> {
                                       FittedBox(
                                         child: Row(
                                           children: [
+                                            DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(widget.club.scheduleTime))>=0?
                                             Container(
                                               child: FloatingActionButton(
                                                 heroTag: "play btn",
                                                 onPressed: () =>
-                                                    _playButtonHandler(),
+                                                  _playButtonHandler(),
                                                 child: !_isPlaying
                                                     ? Icon(Icons.play_arrow)
                                                     : Icon(Icons.stop),
@@ -1087,10 +1088,10 @@ class _ClubState extends State<Club> {
                                                         : Colors.redAccent
                                                     : Colors.grey,
                                               ),
-                                            ),
+                                            ):Container(),
 
                                             // dedicated button for mic
-                                            if (_isParticipant == true)
+                                            if (_isParticipant == true && _isLive)
                                               Container(
                                                 margin: EdgeInsets.fromLTRB(
                                                     10, 0, 0, 0),
