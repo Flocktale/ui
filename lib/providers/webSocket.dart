@@ -61,7 +61,7 @@ class MySocket with ChangeNotifier {
       final what = event["what"];
       final clubId = event['clubId'];
 
-      if (what == 'listOfWhat') {
+      if (what == 'ListOfWhat') {
         final List eventList = event['list'];
         for (var element in eventList) {
           final elementWhat = element['what'];

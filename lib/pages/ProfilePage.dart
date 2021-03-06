@@ -211,6 +211,28 @@ class _ProfilePageState extends State<ProfilePage> {
 
     Fluttertoast.showToast(msg: 'Good Bye!');
   }
+  _logOutUser() async{
+    final _storage = SecureStorage();
+    await _storage.logout();
+    Provider.of<DatabaseApiService>(context,
+        listen: false)
+        .deleteFCMToken(
+      userId: _user.userId,
+      authorization: null,
+    );
+    Phoenix.rebirth(context);
+  }
+
+  void _handleMenuButtons(String value) {
+    switch (value) {
+      case 'Settings':
+        break;
+
+      case 'Log Out':
+        _logOutUser();
+        break;
+    }
+  }
 
   @override
   void initState() {
@@ -262,24 +284,24 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               )
                             : Positioned(
-                                right: 10,
-                                top: 0,
-                                child: IconButton(
-                                  icon: Icon(Icons.logout),
-                                  color: Colors.white,
-                                  onPressed: () async {
-                                    // LOG OUT LOGIC
-                                    final _storage = SecureStorage();
-                                    await _storage.logout();
-                                    Provider.of<DatabaseApiService>(context,
-                                            listen: false)
-                                        .deleteFCMToken(
-                                      userId: _user.userId,
-                                      authorization: null,
-                                    );
-                                    Phoenix.rebirth(context);
+                              right: 10,
+                              top: 0,
+                              child: PopupMenuButton<String>(
+                                icon: Icon(Icons.menu_sharp,color: Colors.white,),
+                                  onSelected: _handleMenuButtons,
+                                  itemBuilder: (BuildContext context) {
+                                  return {
+                                  'Settings',
+                                  'Log Out'
+                                  }.map((String choice) {
+                                  return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                  );
+                                  }).toList();
                                   },
-                                )),
+                                ),
+                            ),
                         Positioned(
                           top: ((size.height / 14) +
                               (size.height / 9) -
