@@ -199,6 +199,9 @@ class _ClubState extends State<Club> {
 
     Fluttertoast.showToast(msg: "This Club is concluded now");
 
+//sending websocket message to indicate about club stopped event
+    Provider.of<MySocket>(context, listen: false).stopClub(widget.club.clubId);
+
     setState(() {
       _isPlaying = false;
       _isLive = false;
@@ -601,6 +604,9 @@ class _ClubState extends State<Club> {
 
     Fluttertoast.showToast(msg: 'This club is concluded now.');
 
+//sending websocket message to indicate about club stopped event
+    Provider.of<MySocket>(context, listen: false).stopClub(widget.club.clubId);
+
     setState(() {
       _isPlaying = false;
       _isLive = false;
@@ -661,6 +667,10 @@ class _ClubState extends State<Club> {
         await _concludeClub();
       }
 
+      //sending websocket message to indicate about club stopped event
+      Provider.of<MySocket>(context, listen: false)
+          .stopClub(widget.club.clubId);
+
       // stop club
       await Provider.of<AgoraController>(context, listen: false).stop();
       _isPlaying = false;
@@ -677,6 +687,9 @@ class _ClubState extends State<Club> {
         await _joinClubAsAudience();
       }
 
+      //sending websocket message to indicate about club being played event
+      Provider.of<MySocket>(context, listen: false)
+          .playClub(widget.club.clubId);
       _isPlaying = true;
     }
 
@@ -1073,25 +1086,32 @@ class _ClubState extends State<Club> {
                                       FittedBox(
                                         child: Row(
                                           children: [
-                                            DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(widget.club.scheduleTime))>=0?
-                                            Container(
-                                              child: FloatingActionButton(
-                                                heroTag: "play btn",
-                                                onPressed: () =>
-                                                  _playButtonHandler(),
-                                                child: !_isPlaying
-                                                    ? Icon(Icons.play_arrow)
-                                                    : Icon(Icons.stop),
-                                                backgroundColor: _isLive
-                                                    ? !_isPlaying
-                                                        ? Colors.redAccent
-                                                        : Colors.redAccent
-                                                    : Colors.grey,
-                                              ),
-                                            ):Container(),
+                                            DateTime.now().compareTo(DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                            widget.club
+                                                                .scheduleTime)) >=
+                                                    0
+                                                ? Container(
+                                                    child: FloatingActionButton(
+                                                      heroTag: "play btn",
+                                                      onPressed: () =>
+                                                          _playButtonHandler(),
+                                                      child: !_isPlaying
+                                                          ? Icon(
+                                                              Icons.play_arrow)
+                                                          : Icon(Icons.stop),
+                                                      backgroundColor: _isLive
+                                                          ? !_isPlaying
+                                                              ? Colors.redAccent
+                                                              : Colors.redAccent
+                                                          : Colors.grey,
+                                                    ),
+                                                  )
+                                                : Container(),
 
                                             // dedicated button for mic
-                                            if (_isParticipant == true && _isLive)
+                                            if (_isParticipant == true &&
+                                                _isLive)
                                               Container(
                                                 margin: EdgeInsets.fromLTRB(
                                                     10, 0, 0, 0),
@@ -1118,36 +1138,41 @@ class _ClubState extends State<Club> {
 
                                             // dedicated button for sending join request or stepping down to become only listener
                                             if (_isOwner == false)
-                                              _isPlaying?
-                                              Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    10, 0, 0, 0),
-                                                child: FloatingActionButton(
-                                                  heroTag: "participation btn",
-                                                  onPressed: () =>
-                                                      _participationButtonHandler(),
-                                                  child:
-                                                  _isParticipant
-                                                      ? Icon(Icons
-                                                          .remove_from_queue)
-                                                      : !_sentRequest
-                                                          ? Icon(
-                                                              Icons.person_add)
-                                                          : Icon(
-                                                              Icons
-                                                                  .person_add_disabled,
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
-                                                  backgroundColor:
-                                                      _isParticipant
-                                                          ? Colors.grey[200]
-                                                          : !_sentRequest
-                                                              ? Colors.redAccent
-                                                              : Colors
-                                                                  .grey[200],
-                                                ),
-                                              ):Container()
+                                              _isPlaying
+                                                  ? Container(
+                                                      margin:
+                                                          EdgeInsets.fromLTRB(
+                                                              10, 0, 0, 0),
+                                                      child:
+                                                          FloatingActionButton(
+                                                        heroTag:
+                                                            "participation btn",
+                                                        onPressed: () =>
+                                                            _participationButtonHandler(),
+                                                        child: _isParticipant
+                                                            ? Icon(Icons
+                                                                .remove_from_queue)
+                                                            : !_sentRequest
+                                                                ? Icon(Icons
+                                                                    .person_add)
+                                                                : Icon(
+                                                                    Icons
+                                                                        .person_add_disabled,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                        backgroundColor:
+                                                            _isParticipant
+                                                                ? Colors
+                                                                    .grey[200]
+                                                                : !_sentRequest
+                                                                    ? Colors
+                                                                        .redAccent
+                                                                    : Colors.grey[
+                                                                        200],
+                                                      ),
+                                                    )
+                                                  : Container()
                                           ],
                                         ),
                                       )

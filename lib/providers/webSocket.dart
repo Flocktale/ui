@@ -28,6 +28,22 @@ class MySocket with ChangeNotifier {
     await this.channel?.sink?.close();
   }
 
+  void playClub(String clubId) async {
+    channel.sink.add(jsonEncode({
+      "action": "club-subscription",
+      "toggleMethod": "play",
+      "clubId": clubId,
+    }));
+  }
+
+  void stopClub(String clubId) async {
+    channel.sink.add(jsonEncode({
+      "action": "club-subscription",
+      "toggleMethod": "stop",
+      "clubId": clubId,
+    }));
+  }
+
   void init(String userId) {
     this.userId = userId;
     this.channel = IOWebSocketChannel.connect(
@@ -45,7 +61,15 @@ class MySocket with ChangeNotifier {
       final what = event["what"];
       final clubId = event['clubId'];
 
-      if (what == 'socialCounts') {
+      if (what == 'listOfWhat') {
+        final List eventList = event['list'];
+        for (var element in eventList) {
+          final elementWhat = element['what'];
+          if (funcs[elementWhat] != null) {
+            funcs[elementWhat](element);
+          }
+        }
+      } else if (what == 'socialCounts') {
         userData.updateUser = userData.user.rebuild((b) => b
           ..followerCount =
               event['followerCount'] ?? userData.user.followerCount
