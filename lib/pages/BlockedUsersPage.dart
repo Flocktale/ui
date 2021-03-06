@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
@@ -8,55 +7,52 @@ import 'package:provider/provider.dart';
 
 import 'ProfilePage.dart';
 
-class AudiencePage extends StatefulWidget {
+class BlockedUsersPage extends StatefulWidget {
   BuiltClub club;
-  AudiencePage({this.club});
+  BlockedUsersPage({this.club});
   @override
-  _AudiencePageState createState() => _AudiencePageState();
+  _BlockedUsersPageState createState() => _BlockedUsersPageState();
 }
 
-class _AudiencePageState extends State<AudiencePage> {
-  Map<String, dynamic> audienceMap = {
+class _BlockedUsersPageState extends State<BlockedUsersPage> {
+  Map<String, dynamic> blockedUsersMap = {
     'data': null,
     'isLoading': true,
   };
 
-  Future<void> _fetchAudienceData() async {
+  Future<void> _fetchBlockedUsersData() async {
     final authToken = (Provider.of<UserData>(context, listen: false).authToken);
-    audienceMap['data'] =
+    blockedUsersMap['data'] =
         (await Provider.of<DatabaseApiService>(context, listen: false)
-                .getAudienceList(
-                    clubId: widget.club.clubId,
-                    lastevaluatedkey: (audienceMap['data'] as BuiltAudienceList)
-                        ?.lastevaluatedkey,
-                    authorization: authToken))
+            .getAllBlockedUsers(
+            clubId: widget.club.clubId,
+            authorization: authToken))
             .body;
-    audienceMap['isLoading'] = false;
+    blockedUsersMap['isLoading'] = false;
     setState(() {});
   }
 
-  void _fetchMoreAudienceData() async {
-    if (audienceMap['isLoading'] == true) return;
+  void _fetchMoreBlockedUserData() async {
+    if (blockedUsersMap['isLoading'] == true) return;
     setState(() {});
-
     final lastEvaluatedKey =
-        (audienceMap['data'] as BuiltAudienceList)?.lastevaluatedkey;
+        (blockedUsersMap['data'] as BuiltActiveJoinRequests)?.lastevaluatedkey;
 
     if (lastEvaluatedKey != null) {
-      await _fetchAudienceData();
+      await _fetchBlockedUsersData();
     } else {
       await Future.delayed(Duration(milliseconds: 200));
-      audienceMap['isLoading'] = false;
+      blockedUsersMap['isLoading'] = false;
     }
     setState(() {});
   }
 
   Widget audienceList() {
     final size = MediaQuery.of(context).size;
-    var audienceListUsers =
-        (audienceMap['data'] as BuiltAudienceList)?.audience;
-    final bool isLoading = audienceMap['isLoading'];
-    final listLength = (audienceListUsers?.length ?? 0) + 1;
+    var blockedUsersList =
+        (blockedUsersMap['data'] as BuiltActiveJoinRequests)?.activeJoinRequestUsers;
+    final bool isLoading = blockedUsersMap['isLoading'];
+    final listLength = (blockedUsersList?.length ?? 0) + 1;
     final _user = Provider.of<UserData>(context,listen: false).user;
     return Container(
         margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -64,8 +60,8 @@ class _AudiencePageState extends State<AudiencePage> {
           onNotification: (ScrollNotification scrollInfo) {
             if (scrollInfo.metrics.pixels ==
                 scrollInfo.metrics.maxScrollExtent) {
-              _fetchMoreAudienceData();
-              audienceMap['isLoading'] = true;
+              _fetchMoreBlockedUserData();
+              blockedUsersMap['isLoading'] = true;
             }
             return true;
           },
@@ -83,7 +79,7 @@ class _AudiencePageState extends State<AudiencePage> {
                     return Container();
                 }
 
-                final _user = audienceListUsers[index].audience;
+                final _user = blockedUsersList[index].audience;
 
                 return Container(
                   key: ValueKey(_user.username),
@@ -95,8 +91,8 @@ class _AudiencePageState extends State<AudiencePage> {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) => ProfilePage(
-                                  userId: _user.userId,
-                                )));
+                              userId: _user.userId,
+                            )));
                       },
                       child: Text(
                         _user.username,
@@ -109,8 +105,8 @@ class _AudiencePageState extends State<AudiencePage> {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) => ProfilePage(
-                                  userId: _user.userId,
-                                )));
+                              userId: _user.userId,
+                            )));
                       },
                       child: Text(
                         _user.tagline != null ? '@${_user.tagline}' : '',
@@ -121,7 +117,7 @@ class _AudiencePageState extends State<AudiencePage> {
                       ),
                     ),
                     trailing:
-                        widget.club.creator.userId == _user.userId?
+                    widget.club.creator.userId == _user.userId?
                     ButtonTheme(
                       minWidth: size.width / 3.5,
                       child: RaisedButton(
@@ -130,22 +126,22 @@ class _AudiencePageState extends State<AudiencePage> {
                               Provider.of<UserData>(context, listen: false)
                                   .authToken;
                           final resp = (await Provider.of<DatabaseApiService>(
-                                  context,
-                                  listen: false)
-                              .blockAudience(
-                                  clubId: widget.club.clubId,
-                                  audienceId: _user.userId,
-                                  authorization: authToken));
+                              context,
+                              listen: false)
+                              .unblockUser(
+                              clubId: widget.club.clubId,
+                              audienceId: _user.userId,
+                              authorization: authToken));
                           if (resp.isSuccessful) {
-                            Fluttertoast.showToast(msg: 'User blocked');
-                            audienceListUsers = audienceListUsers.rebuild((b) => b..removeAt(index));
+                            Fluttertoast.showToast(msg: 'User unblocked');
+                            blockedUsersList = blockedUsersList.rebuild((b) => b.removeAt(index));
                             setState(() {});
                           } else {
                             Fluttertoast.showToast(msg: 'Something went wrong');
                           }
                         },
                         color: Colors.red[600],
-                        child: Text('Kick Out',
+                        child: Text('Unblock',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -166,7 +162,7 @@ class _AudiencePageState extends State<AudiencePage> {
   @override
   void initState() {
     super.initState();
-    _fetchAudienceData();
+    _fetchBlockedUsersData();
   }
 
   @override
@@ -177,7 +173,7 @@ class _AudiencePageState extends State<AudiencePage> {
             backgroundColor: Colors.white,
             iconTheme: IconThemeData(color: Colors.black),
             title: Text(
-              "Audience",
+              "Blocked Users",
               style: TextStyle(
                   fontFamily: "Lato",
                   color: Colors.black,
@@ -187,4 +183,5 @@ class _AudiencePageState extends State<AudiencePage> {
       ),
     );
   }
+
 }
