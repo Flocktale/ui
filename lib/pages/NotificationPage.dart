@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
@@ -155,12 +156,16 @@ class _NotificationPageState extends State<NotificationPage> {
                         },
                         leading: notificationList.notifications[index].avatar !=
                                 null
-                            ? CircleAvatar(
-                                backgroundImage: NetworkImage(notificationList
-                                    .notifications[index].avatar))
+                            ? CachedNetworkImage(
+                          imageUrl: notificationList.notifications[index].avatar+"_thumb",
+                          imageBuilder: (context,imageProvider)=>CircleAvatar(
+                            backgroundImage: imageProvider,
+                          ),
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        )
                             : CircleAvatar(
-                                backgroundImage:
-                                    AssetImage("assets/Card1.jpg")),
+                                backgroundColor: Colors.white,),
                         title: Column(
                           children: [
                             RichText(

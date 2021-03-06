@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/Club.dart';
@@ -19,7 +20,6 @@ class _CarouselState extends State<Carousel> {
       return "Waiting for start";
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     var diff = DateTime.now().difference(dateTime).abs();
-
     String formattedDate2 = DateFormat.MMMd().add_Hm().format(dateTime) + " Hrs";
     return formattedDate2;
     final secDiff = diff.inSeconds;
@@ -73,11 +73,17 @@ class _CarouselState extends State<Carousel> {
                     Container(
                       height: 100,
                       width: size.width,
-                      child: Image.network(
-                        widget.Clubs[index].clubAvatar,
-                //      height: 130,
-                //      width: 200,
+                //       child: Image.network(
+                //         widget.Clubs[index].clubAvatar,
+                // //      height: 130,
+                // //      width: 200,
+                //         fit: BoxFit.fill,
+                //       ),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.Clubs[index].clubAvatar,
                         fit: BoxFit.fill,
+                        placeholder: (context, url) => Container(padding:EdgeInsets.all(40),child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
 
@@ -96,10 +102,15 @@ class _CarouselState extends State<Carousel> {
                           left: 5,
                           child: Row(
                             children: [
-                              CircleAvatar(
-                              backgroundImage: NetworkImage(widget.Clubs[index].creator.avatar),
-                              radius: 10,
+                              CachedNetworkImage(
+                                imageUrl: widget.Clubs[index].creator.avatar+"_thumb",
+                                imageBuilder: (context,imageProvider)=>CircleAvatar(
+                                backgroundImage: imageProvider,
+                                radius: 10,
                             ),
+                                placeholder: (context, url) => CircularProgressIndicator(),
+                                errorWidget: (context, url, error) => Icon(Icons.error),
+                              ),
                               SizedBox(width: 5,),
 
                               Text(

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mootclub_app/Models/built_post.dart';
@@ -972,10 +973,15 @@ class _ClubState extends State<Club> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10.0)),
-                                      child: Image.network(
-                                        _clubAudience.club.clubAvatar,
-                                        fit: BoxFit.cover,
-                                      ),
+                                      // child: Image.network(
+                                      //   _clubAudience.club.clubAvatar,
+                                      //   fit: BoxFit.cover,
+                                      // ),
+                                      child: CachedNetworkImage(
+                                        imageUrl: _clubAudience.club.clubAvatar+"_large",
+                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) => Icon(Icons.error),
+                                      )
                                     ),
                                   ),
                                   Container(
@@ -1071,11 +1077,14 @@ class _ClubState extends State<Club> {
                                           );
                                         },
                                         child: Row(children: <Widget>[
-                                          CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                _clubAudience
-                                                    .club.creator.avatar),
-                                            radius: size.width / 20,
+                                          CachedNetworkImage(
+                                             imageUrl: _clubAudience.club.creator.avatar+"_thumb",
+                                            imageBuilder: (context,imageProvider)=>CircleAvatar(
+                                              backgroundImage: imageProvider,
+                                              radius: size.width / 20,
+                                            ),
+                                            placeholder: (context, url) => CircularProgressIndicator(),
+                                            errorWidget: (context, url, error) => Icon(Icons.error),
                                           ),
                                           Container(
                                             margin: EdgeInsets.fromLTRB(
@@ -1225,12 +1234,11 @@ class _ClubState extends State<Club> {
                                                     //     .jumpTo(_controller.position.maxScrollExtent));
 
                                                     var a = ListTile(
-                                                      leading: CircleAvatar(
-                                                        backgroundImage:
-                                                            NetworkImage(
-                                                                comments[index]
-                                                                    .user
-                                                                    .avatar),
+                                                      leading: CachedNetworkImage(
+                                                        imageUrl: comments[index].user.avatar+"_thumb",
+                                                        imageBuilder: (context,imageProvider)=>CircleAvatar(
+                                                          backgroundImage: imageProvider,
+                                                        ),
                                                       ),
                                                       title: Row(
                                                         mainAxisAlignment:

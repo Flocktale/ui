@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:built_collection/built_collection.dart';
@@ -130,8 +131,13 @@ class _SearchAllClubsState extends State<SearchAllClubs> {
             child: Container(
               margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: ListTile(
-                leading: Image(
-                  image: NetworkImage(widget.clubs[index].clubAvatar),
+                leading: CachedNetworkImage(
+                  imageUrl: widget.clubs[index].clubAvatar+"_thumb",
+                  imageBuilder: (context,imageProvider)=>CircleAvatar(
+                    backgroundImage: imageProvider,
+                  ),
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
                 title: Text(
                   widget.clubs[index].clubName,

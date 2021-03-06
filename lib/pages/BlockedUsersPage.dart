@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
@@ -84,8 +85,13 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                 return Container(
                   key: ValueKey(_user.username),
                   child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(_user.avatar),
+                    leading: CachedNetworkImage(
+                      imageUrl: _user.avatar+"_thumb",
+                      imageBuilder: (context,imageProvider)=>CircleAvatar(
+                        backgroundImage: imageProvider,
+                      ),
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
                     title: InkWell(
                       onTap: () {

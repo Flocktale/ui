@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -116,14 +117,18 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        radius: widget.size.width / 9.4,
-                        backgroundColor: Color(0xffFDCF09),
-                        child: CircleAvatar(
-                          radius: widget.size.width / 10,
-                          backgroundImage:
-                              NetworkImage(widget.club.creator.avatar),
+                      CachedNetworkImage(
+                        imageUrl: widget.club.creator.avatar,
+                        imageBuilder: (context,imageProvider)=>CircleAvatar(
+                          radius: widget.size.width / 9.4,
+                          backgroundColor: Color(0xffFDCF09),
+                          child: CircleAvatar(
+                            radius: widget.size.width / 10,
+                            backgroundImage: imageProvider,
+                          ),
                         ),
+                        placeholder: (context, url) => CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                       Text(
                         widget.club.creator.username,

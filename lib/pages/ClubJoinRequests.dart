@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:provider/provider.dart';
@@ -141,8 +142,13 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                               child: Container(
                                 key: ValueKey(_searchResult[index].audience.userId),
                                 child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(_searchResult[index]?.audience?.avatar),
+                                  leading: CachedNetworkImage(
+                                    imageUrl: _searchResult[index].audience.avatar+"_thumb",
+                                    imageBuilder: (context,imageProvider)=>CircleAvatar(
+                                      backgroundImage: imageProvider,
+                                    ),
+                                    placeholder: (context, url) => CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
                                   ),
                                   title: Text(
                                     _searchResult[index]?.audience?.username !=

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -769,11 +770,20 @@ class _ProfilePageState extends State<ProfilePage> {
                         Positioned(
                           top: size.height / 14,
                           left: ((size.width / 2) - (size.width / 9)),
-                          child: CircleAvatar(
+                          child: CachedNetworkImage(
+                            imageUrl: getImageUrl(),
+                            imageBuilder: (context,imageProvider) => CircleAvatar(
+                              backgroundImage: imageProvider,
                               backgroundColor: Colors.white,
-                              backgroundImage: NetworkImage(getImageUrl()),
-                              //backgroundImage: AssetImage('assets/images/Default-female.png'),
-                              radius: size.height / 18),
+                              radius: size.height/18,
+                            ),
+                            placeholder: (context,url)=>CircularProgressIndicator(),
+                            errorWidget: (context,url,error)=>CircleAvatar(
+                           //   backgroundImage: AssetImage('assets/Card1.jpg'),
+                              backgroundColor: Colors.white,
+                              radius: size.height/18,
+                            ),
+                          ),
                         ),
                         Positioned(bottom: 0, child: MinClub())
                       ]),

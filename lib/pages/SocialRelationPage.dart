@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
@@ -177,11 +178,14 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              _user.avatar,
+                          CachedNetworkImage(
+                            imageUrl: _user.avatar+"_thumb",
+                            imageBuilder: (context,imageProvider)=>CircleAvatar(
+                              backgroundImage: imageProvider,
+                              radius: 30,
                             ),
-                            radius: 30,
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
                           ),
                           Column(
                             children: <Widget>[

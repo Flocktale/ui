@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/pages/ProfilePage.dart';
@@ -162,7 +163,14 @@ class DataSearch extends SearchDelegate<String> {
                       itemCount: recentSearches.length,
                       itemBuilder: (builder, index) {
                         return ListTile(
-                          leading: Image.network(recentSearches[index].avatar),
+                          leading: CachedNetworkImage(
+                            imageUrl: recentSearches[index].avatar+"_thumb",
+                            // imageBuilder: (context,imageProvider)=>CircleAvatar(
+                            //   backgroundImage: imageProvider,
+                            // ),
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
                           title: Text(
                             recentSearches[index].name,
                           ),
