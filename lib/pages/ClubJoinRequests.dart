@@ -17,7 +17,7 @@ class ClubJoinRequests extends StatefulWidget {
 
 class _ClubJoinRequestsState extends State<ClubJoinRequests> {
   BuiltActiveJoinRequests joinRequests;
-  BuiltList<JoinRequests> _searchResult;
+  BuiltActiveJoinRequests joinRequestsFiltered;
   bool isLoading = false;
   final searchInput = new TextEditingController();
   getJoinRequests() async {
@@ -30,7 +30,6 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
       authorization: authToken,
     ))
         .body;
-    _searchResult = joinRequests.activeJoinRequestUsers;
     setState(() {});
   }
 
@@ -51,27 +50,18 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
 
   }
 
-  onSearchTextChanged(String text) async {
-    _searchResult.toList().clear();
-    if (text.isEmpty) {
-      setState(() {});
-      return;
-    }
-    final _userDetails = joinRequests.activeJoinRequestUsers;
-    _userDetails.forEach((userDetail) {
-      if (userDetail.audience.username.contains(text))
-        _searchResult.toList().add(userDetail);
+  searchJoinRequests(String searchString)async{
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    String lastevaluatedkey;
+    joinRequestsFiltered = (await service.searchInActiveJoinRequests(clubId: widget.club.clubId, searchString: searchString, lastevaluatedkey: lastevaluatedkey, authorization: authToken)).body;
+    setState(() {
     });
-    print("SEARCH RESULT");
-    print(_searchResult);
-    setState(() {});
   }
-
 
   Widget searchBar() {
     return Container(
       height: 40,
-      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextField(
         controller: searchInput,
         decoration: InputDecoration(
@@ -88,7 +78,7 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black, width: 2.0))),
         onChanged: (val){
-          onSearchTextChanged(val);
+          searchJoinRequests(val);
         },
       ),
     );
@@ -115,156 +105,90 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
             iconTheme: IconThemeData(color: Colors.black),
             backgroundColor: Colors.white,
           ),
-          body: Column(
-            children: [
-              SizedBox(height: size.height/30,),
-              searchBar(),
-              SizedBox(height: size.height/30,),
-              Expanded(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent) {
-                      _fetchMoreJRData();
-                      isLoading = true;
-                    }
-                    return true;
-                  },
-                  child:
-                      _searchResult!=null
-                      ? ListView.builder(
-                          itemCount: _searchResult.length,
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: (){
-                                Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _searchResult[index].audience.userId,)));
-                              },
-                              child: Container(
-                                key: ValueKey(_searchResult[index].audience.userId),
-                                child: ListTile(
-                                  leading: CachedNetworkImage(
-                                    imageUrl: _searchResult[index].audience.avatar+"_thumb",
-                                    imageBuilder: (context,imageProvider)=>CircleAvatar(
-                                      backgroundImage: imageProvider,
-                                    ),
-                                    placeholder: (context, url) => CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) => Icon(Icons.error),
-                                  ),
-                                  title: Text(
-                                    _searchResult[index]?.audience?.username !=
-                                        null
-                                        ? _searchResult[index]
-                                        ?.audience?.username
-                                        : "@Username$index",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontFamily: 'Lato', fontWeight: FontWeight.bold),
-                                  ),
-                                  trailing: ButtonTheme(
-                                    minWidth: size.width / 3.5,
-                                    child: RaisedButton(
-                                      onPressed: () async {
-                                        final resp = await acceptJoinRequest(_searchResult[index]
-                                            ?.audience
-                                            ?.userId);
-                                        Fluttertoast.showToast(
-                                            msg: "Join Request Accepted");
-                                        final allRequests =
-                                        _searchResult.toBuilder();
-
-                                        allRequests.removeAt(index);
-                                        joinRequests = joinRequests.rebuild(
-                                                (b) => b..activeJoinRequestUsers = allRequests);
-                                        _searchResult = joinRequests.activeJoinRequestUsers;
-
-                                        setState(() {});
-                                      },
-                                      color: Colors.red[600],
-                                      child: Text('Accept',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Lato',
-                                          )),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5.0),
-                                        //side: BorderSide(color: Colors.red[600]),
-                                      ),
-                                    ),
-                                  ),
+          body: Container(
+            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Column(
+              children: [
+                SizedBox(height: size.height/30,),
+                searchBar(),
+                SizedBox(height: size.height/30,),
+                Expanded(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent) {
+                        _fetchMoreJRData();
+                        isLoading = true;
+                      }
+                      return true;
+                    },
+                    child: ListView.builder(
+                        itemCount: searchInput.text.isNotEmpty?joinRequestsFiltered.activeJoinRequestUsers.length:joinRequests.activeJoinRequestUsers.length,
+                        itemBuilder: (context, index) {
+                          BuiltActiveJoinRequests _joinRequests = searchInput.text.isNotEmpty? joinRequestsFiltered:joinRequests;
+                          return InkWell(
+                            onTap: (){
+                              Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _joinRequests.activeJoinRequestUsers[index].audience.userId,)));
+                            },
+                            child: Container(
+                              key: ValueKey(_joinRequests
+                                  .activeJoinRequestUsers[index].audience.userId),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(_joinRequests
+                                      ?.activeJoinRequestUsers[index]?.audience?.avatar),
                                 ),
-                              ),
-                            );
-                          })
+                                title: Text(
+                                  _joinRequests?.activeJoinRequestUsers[index]?.audience
+                                      ?.username !=
+                                      null
+                                      ? _joinRequests?.activeJoinRequestUsers[index]
+                                      ?.audience?.username
+                                      : "@Username$index",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                                ),
+                                trailing: ButtonTheme(
+                                  minWidth: size.width / 3.5,
+                                  child: RaisedButton(
+                                    onPressed: () async {
+                                      final resp = await acceptJoinRequest(_joinRequests
+                                          ?.activeJoinRequestUsers[index]
+                                          ?.audience
+                                          ?.userId);
+                                      Fluttertoast.showToast(
+                                          msg: "Join Request Accepted");
+                                      final allRequests =
+                                      _joinRequests.activeJoinRequestUsers.toBuilder();
 
-                      : joinRequests != null &&
-                      joinRequests.activeJoinRequestUsers != null && searchInput.text.isEmpty
-                      ? ListView.builder(
-                      itemCount: joinRequests.activeJoinRequestUsers.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: (){
-                            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: joinRequests.activeJoinRequestUsers[index].audience.userId,)));
-                          },
-                          child: Container(
-                            key: ValueKey(joinRequests
-                                .activeJoinRequestUsers[index].audience.userId),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage: NetworkImage(joinRequests
-                                    ?.activeJoinRequestUsers[index]?.audience?.avatar),
-                              ),
-                              title: Text(
-                                joinRequests?.activeJoinRequestUsers[index]?.audience
-                                    ?.username !=
-                                    null
-                                    ? joinRequests?.activeJoinRequestUsers[index]
-                                    ?.audience?.username
-                                    : "@Username$index",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontFamily: 'Lato', fontWeight: FontWeight.bold),
-                              ),
-                              trailing: ButtonTheme(
-                                minWidth: size.width / 3.5,
-                                child: RaisedButton(
-                                  onPressed: () async {
-                                    final resp = await acceptJoinRequest(joinRequests
-                                        ?.activeJoinRequestUsers[index]
-                                        ?.audience
-                                        ?.userId);
-                                    Fluttertoast.showToast(
-                                        msg: "Join Request Accepted");
-                                    final allRequests =
-                                    joinRequests.activeJoinRequestUsers.toBuilder();
+                                      allRequests.removeAt(index);
+                                      _joinRequests = _joinRequests.rebuild(
+                                              (b) => b..activeJoinRequestUsers = allRequests);
 
-                                    allRequests.removeAt(index);
-                                    joinRequests = joinRequests.rebuild(
-                                            (b) => b..activeJoinRequestUsers = allRequests);
-
-                                    setState(() {});
-                                  },
-                                  color: Colors.red[600],
-                                  child: Text('Accept',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Lato',
-                                      )),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    //side: BorderSide(color: Colors.red[600]),
+                                      setState(() {});
+                                    },
+                                    color: Colors.red[600],
+                                    child: Text('Accept',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Lato',
+                                        )),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      //side: BorderSide(color: Colors.red[600]),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      })
-                      : Container(height: 0),
+                          );
+                        }),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ));
   }

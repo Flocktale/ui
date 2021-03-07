@@ -58,7 +58,6 @@ class _AudiencePageState extends State<AudiencePage> {
         (audienceMap['data'] as BuiltAudienceList)?.audience;
     final bool isLoading = audienceMap['isLoading'];
     final listLength = (audienceListUsers?.length ?? 0) + 1;
-    final _user = Provider.of<UserData>(context,listen: false).user;
     return Container(
         margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: NotificationListener<ScrollNotification>(
@@ -85,12 +84,12 @@ class _AudiencePageState extends State<AudiencePage> {
                 }
 
                 final _user = audienceListUsers[index]?.audience;
-
+                print("User= ${_user}");
                 return _user!=null?Container(
                   key: ValueKey(_user.username),
                   child: ListTile(
                     leading: CachedNetworkImage(
-                      imageUrl: _user.avatar+"_thumb",
+                      imageUrl: _user.avatar!=null?_user.avatar+"_thumb":"",
                       imageBuilder: (context,imageProvider)=>CircleAvatar(
                         backgroundImage: imageProvider,
                       ),
@@ -105,7 +104,7 @@ class _AudiencePageState extends State<AudiencePage> {
                                 )));
                       },
                       child: Text(
-                        _user.username,
+                        _user.username!=null?_user.username:"",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: 'Lato', fontWeight: FontWeight.bold),
@@ -128,39 +127,63 @@ class _AudiencePageState extends State<AudiencePage> {
                     ),
                     trailing:
                         widget.club.creator.userId == _user.userId?
-                    ButtonTheme(
-                      minWidth: size.width / 3.5,
-                      child: RaisedButton(
-                        onPressed: () async {
-                          final authToken =
-                              Provider.of<UserData>(context, listen: false)
-                                  .authToken;
-                          final resp = (await Provider.of<DatabaseApiService>(
-                                  context,
-                                  listen: false)
-                              .blockAudience(
-                                  clubId: widget.club.clubId,
-                                  audienceId: _user.userId,
-                                  authorization: authToken));
-                          if (resp.isSuccessful) {
-                            Fluttertoast.showToast(msg: 'User blocked');
-                            audienceListUsers = audienceListUsers.rebuild((b) => b..removeAt(index));
-                            setState(() {});
-                          } else {
-                            Fluttertoast.showToast(msg: 'Something went wrong');
-                          }
-                        },
-                        color: Colors.red[600],
-                        child: Text('Kick Out',
-                            style: TextStyle(
+                    FittedBox(
+                      child: Row(
+                        children: [
+                          ButtonTheme(
+                            child: RaisedButton(
+                              onPressed: ()async{
+                              },
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Lato',
-                            )),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          //side: BorderSide(color: Colors.red[600]),
-                        ),
+                              child: Text(
+                                "Invite to speak",
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontFamily: "Lato",
+                                  fontWeight: FontWeight.w200
+                                ),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                side: BorderSide(color: Colors.red[600])
+                              ),
+                            )
+                          ),
+                          ButtonTheme(
+                            child: RaisedButton(
+                              onPressed: () async {
+                                final authToken =
+                                    Provider.of<UserData>(context, listen: false)
+                                        .authToken;
+                                final resp = (await Provider.of<DatabaseApiService>(
+                                        context,
+                                        listen: false)
+                                    .blockAudience(
+                                        clubId: widget.club.clubId,
+                                        audienceId: _user.userId,
+                                        authorization: authToken));
+                                if (resp.isSuccessful) {
+                                  Fluttertoast.showToast(msg: 'User blocked');
+                                  audienceListUsers = audienceListUsers.rebuild((b) => b..removeAt(index));
+                                  setState(() {});
+                                } else {
+                                  Fluttertoast.showToast(msg: 'Something went wrong');
+                                }
+                              },
+                              color: Colors.red[600],
+                              child: Text('Kick Out',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Lato',
+                                  )),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                //side: BorderSide(color: Colors.red[600]),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ):SizedBox(width: 0,),
                   ),
