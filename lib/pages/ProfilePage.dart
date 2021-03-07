@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mootclub_app/Models/built_post.dart';
+import 'package:mootclub_app/pages/ContactsPage.dart';
 import 'package:mootclub_app/pages/PhoneLogIn.dart';
 import 'package:mootclub_app/pages/SocialRelationPage.dart';
 import 'package:mootclub_app/providers/userData.dart';
@@ -224,8 +225,19 @@ class _ProfilePageState extends State<ProfilePage> {
     Phoenix.rebirth(context);
   }
 
+ Future _inviteContacts()async =>
+    await Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (_) =>
+                ContactsPage()));
+
+
   void _handleMenuButtons(String value) {
     switch (value) {
+      case 'Invite contacts':
+        _inviteContacts();
+        break;
+
       case 'Settings':
         break;
 
@@ -292,6 +304,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   onSelected: _handleMenuButtons,
                                   itemBuilder: (BuildContext context) {
                                   return {
+                                  'Invite contacts',
                                   'Settings',
                                   'Log Out'
                                   }.map((String choice) {
