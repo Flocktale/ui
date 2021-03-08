@@ -46,15 +46,42 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
     setState(() {});
   }
 
-  _fetchMoreJRData(){
-
+  fetchMoreJoinRequests()async{
+    if(isLoading==true) return;
+    setState(() {
+    });
+    final lastEvaluatedKey = joinRequests?.lastevaluatedkey;
+    if(lastEvaluatedKey!=null){
+      await getJoinRequests();
+    }
+    else{
+      await Future.delayed(Duration(milliseconds: 200));
+      isLoading = false;
+    }
+    setState(() {
+    });
   }
 
   searchJoinRequests(String searchString)async{
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
-    String lastevaluatedkey;
-    joinRequestsFiltered = (await service.searchInActiveJoinRequests(clubId: widget.club.clubId, searchString: searchString, lastevaluatedkey: lastevaluatedkey, authorization: authToken)).body;
+    joinRequestsFiltered = (await service.searchInActiveJoinRequests(clubId: widget.club.clubId, searchString: joinRequestsFiltered?.lastevaluatedkey, authorization: authToken)).body;
+    setState(() {
+    });
+  }
+
+  searchMoreJoinRequests(String searchString)async{
+    if(isLoading==true) return;
+    setState(() {
+    });
+    final lastEvaluatedKey = joinRequestsFiltered?.lastevaluatedkey;
+    if(lastEvaluatedKey!=null){
+      await searchJoinRequests(searchString);
+    }
+    else{
+      await Future.delayed(Duration(milliseconds: 200));
+      isLoading = false;
+    }
     setState(() {
     });
   }
@@ -117,13 +144,22 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                     onNotification: (ScrollNotification scrollInfo) {
                       if (scrollInfo.metrics.pixels ==
                           scrollInfo.metrics.maxScrollExtent) {
-                        _fetchMoreJRData();
+                        if(searchInput.text.isNotEmpty)
+                          searchMoreJoinRequests(searchInput.text);
+                        else
+                          fetchMoreJoinRequests();
                         isLoading = true;
                       }
                       return true;
                     },
                     child: ListView.builder(
-                        itemCount: searchInput.text.isNotEmpty?joinRequestsFiltered.activeJoinRequestUsers.length:joinRequests.activeJoinRequestUsers.length,
+                        itemCount: searchInput.text.isNotEmpty?
+                        joinRequestsFiltered!=null?
+                            joinRequestsFiltered.activeJoinRequestUsers.length
+                            :0
+                        :joinRequests!=null?
+                            joinRequests.activeJoinRequestUsers.length
+                            :0,
                         itemBuilder: (context, index) {
                           BuiltActiveJoinRequests _joinRequests = searchInput.text.isNotEmpty? joinRequestsFiltered:joinRequests;
                           return InkWell(
