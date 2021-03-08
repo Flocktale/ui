@@ -547,6 +547,18 @@ class _ClubState extends State<Club> {
     setState(() {});
   }
 
+  void _youAreInvited(event) {
+    if (event['clubId'] != widget.club.clubId) return;
+
+    _clubAudience = _clubAudience
+        .rebuild((b) => b..audienceData.invitationId = event['invitationId']);
+    Fluttertoast.showToast(msg: event['message'] ?? '');
+
+    setState(() {
+      _showInvitation = true;
+    });
+  }
+
   void _joinClubInWebsocket() {
     Provider.of<MySocket>(context, listen: false).joinClub(
       widget.club.clubId,
@@ -564,6 +576,7 @@ class _ClubState extends State<Club> {
       yourJRcancelledByOwner: _yourJRcancelledByOwner,
       youAreKickedOut: _youAreKickedOut,
       clubConcludedByOwner: _clubConcludedByOwner,
+      youAreInvited: _youAreInvited,
     );
   }
 
@@ -834,7 +847,7 @@ class _ClubState extends State<Club> {
             child: Text("Accept"),
             onPressed: () {
               setState(() {
-                _showInvitation = true;
+                _showInvitation = false;
               });
             },
           ),
@@ -842,7 +855,7 @@ class _ClubState extends State<Club> {
             child: Text("Decline"),
             onPressed: () {
               setState(() {
-                _showInvitation = true;
+                _showInvitation = false;
               });
             },
           ),
@@ -856,6 +869,21 @@ class _ClubState extends State<Club> {
         () => {if (this.mounted == true) setState(() {})},
       );
     }
+  }
+
+  _showMaterialDialog(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return _invitationAlert;
+        });
+  }
+
+  respondToInvitation(String response)async{
+    final service = Provider.of<DatabaseApiService>(context,listen: false);
+    final authToken = Provider.of<UserData>(context,listen:false).authToken;
+    final cuser = Provider.of<UserData>(context,listen:false).user;
+    await service.responseToNotification(userId: cuser.userId, notificationId: _clubAudience.audienceData.invitationId, authorization: authToken, action: response);
   }
 
   @override
@@ -938,14 +966,90 @@ class _ClubState extends State<Club> {
         ),
         body: SafeArea(
           child: _clubAudience != null
-              ? _showInvitation == false
-                  ? Stack(
+              ?
+          // _showInvitation == false
+          //         ?
+          Stack(
                       children: [
                         Container(
                             //  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: SingleChildScrollView(
                           child: Column(
                             children: <Widget>[
+                              _showInvitation==true?
+                                  Container(
+                                    height: size.height/10,
+                                    width: size.width,
+                                    color: Colors.redAccent,
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.fromLTRB(0,10,0,0),
+                                          child: Text(
+                                              "You have been invited to be a panelist",
+                                            style: TextStyle(
+                                              fontFamily: "Lato",
+                                              color: Colors.white
+                                            ),
+                                          ),
+                                        ),
+                                        FittedBox(
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                                                child: RaisedButton(
+                                                    onPressed: (){
+                                                      _playButtonHandler();
+
+                                                      respondToInvitation('cancel');
+                                                      setState(() {
+                                                        _showInvitation = false;
+                                                        _clubAudience = _clubAudience
+                                                            .rebuild((b) => b..audienceData.invitationId = null);
+                                                      });
+
+                                                    },
+                                                  color: Colors.redAccent,
+                                                  child: Text(
+                                                    "Reject",
+                                                    style: TextStyle(
+                                                      fontFamily: "Lato",
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              RaisedButton(
+                                                onPressed: (){
+                                                  _playButtonHandler();
+                                                  if(_isPlaying){
+                                                    respondToInvitation('accept');
+                                                    setState(() {
+                                                      _showInvitation = false;
+                                                      _clubAudience = _clubAudience
+                                                          .rebuild((b) => b..audienceData.invitationId = null);
+                                                    });
+                                                  }
+                                                },
+                                                color: Colors.white,
+                                                child: Text(
+                                                  "Accept",
+                                                  style: TextStyle(
+                                                      fontFamily: "Lato",
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.redAccent
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        )
+                                      ],
+                                    ),
+                                  ):Container(),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
@@ -1412,11 +1516,11 @@ class _ClubState extends State<Club> {
                           ),
                       ],
                     )
-                  : showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return _invitationAlert;
-                      })
+                  // : showDialog(
+                  //     context: context,
+                  //     builder: (BuildContext context) {
+                  //       return _invitationAlert;
+                  //     })
               : Container(
                   child: Center(child: Text("Loading...")),
                 ),

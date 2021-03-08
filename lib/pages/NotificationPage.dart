@@ -266,48 +266,12 @@ class _NotificationPageState extends State<NotificationPage> {
                                                   minWidth: size.width / 3.5,
                                                   child: RaisedButton(
                                                     onPressed: () async {
-                                                      final service = Provider
-                                                          .of<DatabaseApiService>(
-                                                              context,
-                                                              listen: false);
-                                                      final cuser =
-                                                          Provider.of<UserData>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .user;
-                                                      final authToken =
-                                                          Provider.of<UserData>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .authToken;
-                                                      final resp = (await service
-                                                          .responseToNotification(
-                                                              userId:
-                                                                  cuser.userId,
-                                                              notificationId:
-                                                                  notificationList
-                                                                      .notifications[
-                                                                          index]
-                                                                      .notificationId,
-                                                              authorization:
-                                                                  authToken,
-                                                              action:
-                                                                  "accept"));
-                                                      if (resp.isSuccessful) {
-                                                        hasJoined = !hasJoined;
-                                                        setState(() {});
-                                                        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Club(club: getClub(notificationList.notifications[index].targetResourceId),)));
-                                                        Navigator.of(context).pop();
-                                                      } else {
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                "Something went wrong");
-                                                      }
+                                                      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Club(club: getClub(notificationList.notifications[index].targetResourceId))));
                                                     },
                                                     color: hasJoined == false
                                                         ? Colors.red[600]
                                                         : Colors.grey,
-                                                    child: Text('Join',
+                                                    child: Text('Go to Club',
                                                         style: TextStyle(
                                                           color: hasJoined ==
                                                                   false
@@ -327,7 +291,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                                   ),
                                                 )
                                               : Container(),
-                                      notificationList.notifications[index].type=="FR#new"||notificationList.notifications[index].type=="CLUB#INV#prt"?
+                                      notificationList.notifications[index].type=="FR#new"?
                                       ButtonTheme(
                                         minWidth: size.width / 3.5,
                                         child: RaisedButton(

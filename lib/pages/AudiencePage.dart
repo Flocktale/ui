@@ -6,7 +6,7 @@ import 'package:mootclub_app/Models/built_post.dart';
 import 'package:mootclub_app/providers/userData.dart';
 import 'package:mootclub_app/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
-
+import 'package:built_collection/built_collection.dart';
 import 'ProfilePage.dart';
 
 class AudiencePage extends StatefulWidget {
@@ -50,6 +50,21 @@ class _AudiencePageState extends State<AudiencePage> {
       audienceMap['isLoading'] = false;
     }
     setState(() {});
+  }
+
+  inviteAudience(String userId)async{
+    final service = Provider.of<DatabaseApiService>(context,listen: false);
+    final authToken = Provider.of<UserData>(context,listen:false).authToken;
+    final cuser = Provider.of<UserData>(context,listen:false).user;
+    var inviteeList = new BuiltList<String>([userId]);
+    BuiltInviteFormat invite = BuiltInviteFormat((b)=>b
+      ..type = 'participant'
+    ..invitee = inviteeList.toBuilder());
+    final resp = (await service.inviteUsers(clubId: widget.club.clubId, sponsorId: cuser.userId, invite: invite, authorization: authToken));
+    if(resp.isSuccessful)
+      Fluttertoast.showToast(msg: 'User Invited');
+    else
+      Fluttertoast.showToast(msg: 'Some Error Occurred');
   }
 
   Widget audienceList() {
@@ -133,6 +148,9 @@ class _AudiencePageState extends State<AudiencePage> {
                           ButtonTheme(
                             child: RaisedButton(
                               onPressed: ()async{
+                                inviteAudience(_user.userId);
+                                setState(() {
+                                });
                               },
                               color: Colors.white,
                               child: Text(
