@@ -369,6 +369,9 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   @nullable
   int get estimatedAudience;
 
+  @nullable
+  BuiltSet<String> get participants;
+
   BuiltClub._();
 
   factory BuiltClub([updates(BuiltClubBuilder b)]) = _$BuiltClub;
