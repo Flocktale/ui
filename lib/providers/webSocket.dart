@@ -59,60 +59,57 @@ class MySocket with ChangeNotifier {
       // }
       event = jsonDecode(event);
       final what = event["what"];
-      final clubId = event['clubId'];
 
+      /// when we get list of events in a single websocket message.
       if (what == 'ListOfWhat') {
         final List eventList = event['list'];
         for (var element in eventList) {
           final elementWhat = element['what'];
-          if (funcs[elementWhat] != null) {
-            funcs[elementWhat](element);
-          }
+          executeWhatFunction(elementWhat, element);
         }
-      } else if (what == 'socialCounts') {
-        userData.updateUser = userData.user.rebuild((b) => b
-          ..followerCount =
-              event['followerCount'] ?? userData.user.followerCount
-          ..followingCount =
-              event['followingCount'] ?? userData.user.followingCount
-          ..friendsCount = event['friendsCount'] ?? userData.user.friendsCount);
-      } else if (funcs[what] != null) {
-        funcs[what](event);
-      } else if (agoraController.club?.clubId != null &&
-          clubId == agoraController.club.clubId) {
-        final agoraToken = agoraController.club.agoraToken;
-
-        if (what == "muteAction#") {
-          final bool isMuted = event['isMuted'];
-          agoraController.hardMuteAction(isMuted);
-          Fluttertoast.showToast(
-              msg: " You are ${isMuted ? 'mute' : 'unmute'}d");
-        } else if (what == "JR#Resp#accept") {
-          agoraController.joinAsParticipant(clubId: clubId, token: agoraToken);
-
-          Fluttertoast.showToast(msg: 'You are now a Panelist');
-        } else if (what == "kickedOut") {
-          agoraController.joinAsAudience(clubId: clubId, token: agoraToken);
-
-          Fluttertoast.showToast(msg: 'You are now a listener only');
-        } else if (what == "blocked") {
-          agoraController.stop();
-          Fluttertoast.showToast(msg: "Sorry, You are blocked from this club");
-        } else if (what == "JR#Resp#cancel") {
-          Fluttertoast.showToast(
-              msg: 'You request to speak has been cancelled.');
-        } else if (what == "clubConcluded") {
-          agoraController.stop();
-          Fluttertoast.showToast(msg: "This Club is concluded now");
-        }
-      }
+      } else
+        executeWhatFunction(what, event);
     });
     print("------------initializing websockets----------");
   }
 
-  void currentStatus() {
-    // for (int i = 0; i < 100; i++) print("$userId :100 $i");
-    // print(channel);
+  void executeWhatFunction(String what, Map event) {
+    final clubId = event['clubId'];
+
+    if (what == 'socialCounts') {
+      userData.updateUser = userData.user.rebuild((b) => b
+        ..followerCount = event['followerCount'] ?? userData.user.followerCount
+        ..followingCount =
+            event['followingCount'] ?? userData.user.followingCount
+        ..friendsCount = event['friendsCount'] ?? userData.user.friendsCount);
+    } else if (funcs[what] != null) {
+      funcs[what](event);
+    } else if (agoraController.club?.clubId != null &&
+        clubId == agoraController.club.clubId) {
+      final agoraToken = agoraController.club.agoraToken;
+
+      if (what == "muteAction#") {
+        final bool isMuted = event['isMuted'];
+        agoraController.hardMuteAction(isMuted);
+        Fluttertoast.showToast(msg: " You are ${isMuted ? 'mute' : 'unmute'}d");
+      } else if (what == "JR#Resp#accept") {
+        agoraController.joinAsParticipant(clubId: clubId, token: agoraToken);
+
+        Fluttertoast.showToast(msg: 'You are now a Panelist');
+      } else if (what == "kickedOut") {
+        agoraController.joinAsAudience(clubId: clubId, token: agoraToken);
+
+        Fluttertoast.showToast(msg: 'You are now a listener only');
+      } else if (what == "blocked") {
+        agoraController.stop();
+        Fluttertoast.showToast(msg: "Sorry, You are blocked from this club");
+      } else if (what == "JR#Resp#cancel") {
+        Fluttertoast.showToast(msg: 'You request to speak has been cancelled.');
+      } else if (what == "clubConcluded") {
+        agoraController.stop();
+        Fluttertoast.showToast(msg: "This Club is concluded now");
+      }
+    }
   }
 
   void addFunction(String key, Function func) {
@@ -135,6 +132,7 @@ class MySocket with ChangeNotifier {
     Function yourJRcancelledByOwner,
     Function youAreKickedOut,
     Function clubConcludedByOwner,
+    Function youAreInvited,
   }) {
     channel.sink.add(jsonEncode({
       "action": "club-subscription",
@@ -162,6 +160,8 @@ class MySocket with ChangeNotifier {
     funcs["kickedOut"] = youAreKickedOut;
 
     funcs["clubConcluded"] = clubConcludedByOwner;
+
+    funcs["INV#prt"] = youAreInvited;
   }
 
   void addComment(String message, String clubId, String userId) {
@@ -201,5 +201,7 @@ class MySocket with ChangeNotifier {
     funcs["kickedOut"] = null;
 
     funcs["clubConcluded"] = null;
+
+    funcs["INV#prt"] = null;
   }
 }
