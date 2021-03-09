@@ -4,9 +4,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flocktale/services/SecureStorage.dart';
 
 class AuthUser {
-  static const _userPoolId = "us-east-1_NzvonVIcv";
-  static const _clientId = "64hd534ts80kbm5oibc8lshh3o";
-// static const _region = 'us-east-1';
+  static const _userPoolId = "ap-south-1_VS8RwdWHw";
+  static const _clientId = "584k9d814gf8nftt9svngschf7";
+// static const _region = 'ap-south-1';
 
   static final _userPool =
       CognitoUserPool(_userPoolId, _clientId, storage: CognitoMemoryStorage());
