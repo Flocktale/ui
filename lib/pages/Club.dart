@@ -409,24 +409,41 @@ class _ClubState extends State<Club> {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
-    await service.sendJoinRequest(
+    final resp = await service.sendJoinRequest(
       clubId: widget.club.clubId,
       userId: cuser.userId,
       authorization: authToken,
     );
-    Fluttertoast.showToast(msg: "Join Request Sent");
+    if(resp.isSuccessful){
+      _sentRequest = !_sentRequest;
+      Fluttertoast.showToast(msg: "Join Request Sent");
+      setState(() {
+      });
+    }
+    else{
+      Fluttertoast.showToast(msg: 'Some error occurred');
+    }
   }
 
   _deleteJoinRequest() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
-    await service.deleteJoinRequet(
+    final resp = await service.deleteJoinRequet(
       clubId: widget.club.clubId,
       userId: cuser.userId,
       authorization: authToken,
     );
-    Fluttertoast.showToast(msg: "Join Request Cancelled");
+    if(resp.isSuccessful){
+      _sentRequest = !_sentRequest;
+      Fluttertoast.showToast(msg: "Join Request Cancelled");
+      setState(() {
+      });
+    }
+    else{
+      Fluttertoast.showToast(msg: 'Some Error occurred');
+    }
+
   }
 
 // TODO:
@@ -720,20 +737,35 @@ class _ClubState extends State<Club> {
 
     setState(() {});
   }
-
+  void _leavePanel()async{
+    final service = Provider.of<DatabaseApiService>(context,listen: false);
+    final authToken = Provider.of<UserData>(context,listen:false).authToken;
+    final cuserId = Provider.of<UserData>(context,listen:false).userId;
+    final resp = (await service.kickOutParticipant(clubId: widget.club.clubId, audienceId: cuserId, isSelf: 'true', authorization: authToken));
+    if(resp.isSuccessful)
+      Fluttertoast.showToast(msg: 'You are now an audience');
+    else
+      Fluttertoast.showToast(msg: 'Some Error occurred');
+    setState(() {
+    });
+  }
   void _participationButtonHandler() async {
     if (_isParticipant) {
       //TODO: complete this functionality
       // participant want to become only listener by themselves.
-
+      _leavePanel();
     } else {
       // user is interacting with join request button
       if (!_sentRequest) {
-        await _sendJoinRequest();
-      } else {
+        if(participantList.length<10) {
+          await _sendJoinRequest();
+        }
+        else
+          Fluttertoast.showToast(msg: 'All Panelist slots are filled. Max 9 allowed.');
+      }
+      else {
         await _deleteJoinRequest();
       }
-      _sentRequest = !_sentRequest;
     }
 
     setState(() {});
@@ -1033,15 +1065,23 @@ class _ClubState extends State<Club> {
                                             onPressed: () {
                                               _playButtonHandler();
                                               if (_isPlaying) {
-                                                respondToInvitation('accept');
-                                                setState(() {
-                                                  _showInvitation = false;
-                                                  _clubAudience = _clubAudience
-                                                      .rebuild((b) => b
-                                                        ..audienceData
-                                                                .invitationId =
-                                                            null);
-                                                });
+                                                if(participantList.length<10) {
+                                                  respondToInvitation('accept');
+                                                  setState(() {
+                                                    _showInvitation = false;
+                                                    _clubAudience = _clubAudience
+                                                        .rebuild((b) => b
+                                                      ..audienceData
+                                                          .invitationId =
+                                                      null);
+                                                  });
+                                                }
+                                                else{
+                                                  Fluttertoast.showToast(msg: 'Panelist slots are full. Max 9 allowed.');
+                                                }
+                                              }
+                                              else{
+                                                Fluttertoast.showToast(msg: 'Please let the host start the club.');
                                               }
                                             },
                                             color: Colors.white,
@@ -1294,12 +1334,14 @@ class _ClubState extends State<Club> {
                                                               ),
                                                     backgroundColor:
                                                         _isParticipant
-                                                            ? Colors.grey[200]
+                                                            ? Colors.white
                                                             : !_sentRequest
-                                                                ? Colors
+                                                                ?participantList.length<10?
+                                                                  Colors
                                                                     .redAccent
+                                                                  :Colors.grey
                                                                 : Colors
-                                                                    .grey[200],
+                                                                    .white,
                                                   ),
                                                 )
                                               : Container(),

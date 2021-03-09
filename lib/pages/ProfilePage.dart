@@ -774,7 +774,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           top: size.height / 14,
                           left: ((size.width / 2) - (size.width / 9)),
                           child: CachedNetworkImage(
-                            imageUrl: _user?.avatar,
+                            imageUrl: _user.avatar!=null?_user.avatar:'assets/images/Card1.jpg',
                             imageBuilder: (context, imageProvider) =>
                                 CircleAvatar(
                               backgroundImage: imageProvider,
