@@ -1,8 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:mootclub_app/providers/agoraController.dart';
-import 'package:mootclub_app/providers/webSocket.dart';
+import 'package:flocktale/providers/agoraController.dart';
+import 'package:flocktale/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 import 'providers/userData.dart';
 import 'package:logging/logging.dart';
@@ -14,7 +14,7 @@ void main() async {
 
   _setupLogging();
   _configureFCM();
-  runApp(Phoenix(child:MyApp()));
+  runApp(Phoenix(child: MyApp()));
   // runApp(NotificationTesting());
 }
 
@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         onGenerateRoute: RouteGenerator.generateRoute,
-        title: 'Mootclub',
+        title: 'Flocktale',
         initialRoute: '/',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

@@ -2,13 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/pages/ContactsPage.dart';
-import 'package:mootclub_app/pages/PhoneLogIn.dart';
-import 'package:mootclub_app/pages/SocialRelationPage.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/services/SecureStorage.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/pages/ContactsPage.dart';
+import 'package:flocktale/pages/SocialRelationPage.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/services/SecureStorage.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'ClubsByUser.dart';
 import '../Carousel.dart';
@@ -88,13 +87,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     setState(() {});
     print(_user.followerCount);
-  }
-
-  String getImageUrl() {
-    final requestUrl = (_user == null || _user.avatar == null)
-        ? 'https://mootclub-public.s3.amazonaws.com/userAvatar/${widget.userId}'
-        : _user.avatar;
-    return requestUrl;
   }
 
   _fetchAllClubs() async {
@@ -213,24 +205,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
     Fluttertoast.showToast(msg: 'Good Bye!');
   }
-  _logOutUser() async{
+
+  _logOutUser() async {
     final _storage = SecureStorage();
     await _storage.logout();
-    Provider.of<DatabaseApiService>(context,
-        listen: false)
-        .deleteFCMToken(
+    Provider.of<DatabaseApiService>(context, listen: false).deleteFCMToken(
       userId: _user.userId,
       authorization: null,
     );
     Phoenix.rebirth(context);
   }
 
- Future _inviteContacts()async =>
-    await Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (_) =>
-                ContactsPage()));
-
+  Future _inviteContacts() async => await Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => ContactsPage()));
 
   void _handleMenuButtons(String value) {
     switch (value) {
@@ -297,25 +284,28 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               )
                             : Positioned(
-                              right: 10,
-                              top: 0,
-                              child: PopupMenuButton<String>(
-                                icon: Icon(Icons.menu_sharp,color: Colors.white,),
+                                right: 10,
+                                top: 0,
+                                child: PopupMenuButton<String>(
+                                  icon: Icon(
+                                    Icons.menu_sharp,
+                                    color: Colors.white,
+                                  ),
                                   onSelected: _handleMenuButtons,
                                   itemBuilder: (BuildContext context) {
-                                  return {
-                                  'Invite contacts',
-                                  'Settings',
-                                  'Log Out'
-                                  }.map((String choice) {
-                                  return PopupMenuItem<String>(
-                                  value: choice,
-                                  child: Text(choice),
-                                  );
-                                  }).toList();
+                                    return {
+                                      'Invite contacts',
+                                      'Settings',
+                                      'Log Out'
+                                    }.map((String choice) {
+                                      return PopupMenuItem<String>(
+                                        value: choice,
+                                        child: Text(choice),
+                                      );
+                                    }).toList();
                                   },
                                 ),
-                            ),
+                              ),
                         Positioned(
                           top: ((size.height / 14) +
                               (size.height / 9) -
@@ -784,17 +774,19 @@ class _ProfilePageState extends State<ProfilePage> {
                           top: size.height / 14,
                           left: ((size.width / 2) - (size.width / 9)),
                           child: CachedNetworkImage(
-                            imageUrl: getImageUrl(),
-                            imageBuilder: (context,imageProvider) => CircleAvatar(
+                            imageUrl: _user?.avatar,
+                            imageBuilder: (context, imageProvider) =>
+                                CircleAvatar(
                               backgroundImage: imageProvider,
                               backgroundColor: Colors.white,
-                              radius: size.height/18,
+                              radius: size.height / 18,
                             ),
-                            placeholder: (context,url)=>CircularProgressIndicator(),
-                            errorWidget: (context,url,error)=>CircleAvatar(
-                           //   backgroundImage: AssetImage('assets/Card1.jpg'),
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => CircleAvatar(
+                              //   backgroundImage: AssetImage('assets/Card1.jpg'),
                               backgroundColor: Colors.white,
-                              radius: size.height/18,
+                              radius: size.height / 18,
                             ),
                           ),
                         ),

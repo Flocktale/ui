@@ -1,34 +1,33 @@
 {
   "project_info": {
-    "project_number": "43077743941",
-    "firebase_url": "https://mootclub-4f769.firebaseio.com",
-    "project_id": "mootclub-4f769",
-    "storage_bucket": "mootclub-4f769.appspot.com"
+    "project_number": "601218525684",
+    "project_id": "flocktale",
+    "storage_bucket": "flocktale.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:43077743941:android:e72fa3eeef02ca91cafa2c",
+        "mobilesdk_app_id": "1:601218525684:android:c1dd76d5fa73103e7171a1",
         "android_client_info": {
-          "package_name": "com.example.mootclub_app"
+          "package_name": "com.flocktale.android"
         }
       },
       "oauth_client": [
         {
-          "client_id": "43077743941-j4fl783sgnkihck9pivuuhssh5ea30tu.apps.googleusercontent.com",
+          "client_id": "601218525684-vqltgf0462h2mhn1rc60749i11f2n01j.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBHavF6EP3AExkNsMxz71tvEHTMyi_M2x0"
+          "current_key": "AIzaSyDqnukiK9y_L9jd31KbLxbGbzP9Frnvp7A"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "43077743941-j4fl783sgnkihck9pivuuhssh5ea30tu.apps.googleusercontent.com",
+              "client_id": "601218525684-vqltgf0462h2mhn1rc60749i11f2n01j.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

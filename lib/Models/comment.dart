@@ -1,7 +1,6 @@
+import 'package:flocktale/Models/built_post.dart';
 
-import 'package:mootclub_app/Models/built_post.dart';
-
-class Comment{
+class Comment {
   SummaryUser user;
   String body;
   int timestamp;

@@ -4,14 +4,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/providers/userData.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import '../MinClub.dart';
 import 'Club.dart';
-import 'ImagePage.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class NewClub extends StatefulWidget {

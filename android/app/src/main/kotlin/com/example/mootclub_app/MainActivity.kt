@@ -1,4 +1,4 @@
-package com.example.mootclub_app
+package com.flocktale.android
 
 
 import androidx.annotation.NonNull;

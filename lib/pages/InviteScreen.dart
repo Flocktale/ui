@@ -1,12 +1,11 @@
-import 'package:built_value/built_value.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/providers/userData.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'ProfilePage.dart';
@@ -157,22 +156,25 @@ class _InviteScreenState extends State<InviteScreen> {
             margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
             child: ListTile(
               leading: CachedNetworkImage(
-                imageUrl: _user.avatar+"_thumb",
-                imageBuilder: (context,imageProvider)=>CircleAvatar(
+                imageUrl: _user.avatar + "_thumb",
+                imageBuilder: (context, imageProvider) => CircleAvatar(
                   backgroundImage: imageProvider,
                 ),
                 placeholder: (context, url) => CircularProgressIndicator(),
                 errorWidget: (context, url, error) => Icon(Icons.error),
               ),
               title: InkWell(
-                onTap: (){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => ProfilePage(
+                            userId: _user.userId,
+                          )));
                 },
                 child: Text(
                   _user.username,
                   textAlign: TextAlign.center,
-                  style:
-                      TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontFamily: 'Lato', fontWeight: FontWeight.bold),
                 ),
               ),
               trailing: Transform.scale(

@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
 import 'ProfilePage.dart';
@@ -25,9 +25,8 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
     final authToken = (Provider.of<UserData>(context, listen: false).authToken);
     blockedUsersMap['data'] =
         (await Provider.of<DatabaseApiService>(context, listen: false)
-            .getAllBlockedUsers(
-            clubId: widget.club.clubId,
-            authorization: authToken))
+                .getAllBlockedUsers(
+                    clubId: widget.club.clubId, authorization: authToken))
             .body;
     blockedUsersMap['isLoading'] = false;
     setState(() {});
@@ -50,11 +49,11 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
 
   Widget audienceList() {
     final size = MediaQuery.of(context).size;
-    var blockedUsersList =
-        (blockedUsersMap['data'] as BuiltActiveJoinRequests)?.activeJoinRequestUsers;
+    var blockedUsersList = (blockedUsersMap['data'] as BuiltActiveJoinRequests)
+        ?.activeJoinRequestUsers;
     final bool isLoading = blockedUsersMap['isLoading'];
     final listLength = (blockedUsersList?.length ?? 0) + 1;
-    final _user = Provider.of<UserData>(context,listen: false).user;
+    final _user = Provider.of<UserData>(context, listen: false).user;
     return Container(
         margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: NotificationListener<ScrollNotification>(
@@ -86,19 +85,20 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                   key: ValueKey(_user.username),
                   child: ListTile(
                     leading: CachedNetworkImage(
-                      imageUrl: _user.avatar+"_thumb",
-                      imageBuilder: (context,imageProvider)=>CircleAvatar(
+                      imageUrl: _user.avatar + "_thumb",
+                      imageBuilder: (context, imageProvider) => CircleAvatar(
                         backgroundImage: imageProvider,
                       ),
-                      placeholder: (context, url) => CircularProgressIndicator(),
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
                       errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
                     title: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) => ProfilePage(
-                              userId: _user.userId,
-                            )));
+                                  userId: _user.userId,
+                                )));
                       },
                       child: Text(
                         _user.username,
@@ -111,8 +111,8 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) => ProfilePage(
-                              userId: _user.userId,
-                            )));
+                                  userId: _user.userId,
+                                )));
                       },
                       child: Text(
                         _user.tagline != null ? '@${_user.tagline}' : '',
@@ -122,43 +122,48 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                         ),
                       ),
                     ),
-                    trailing:
-                    widget.club.creator.userId == _user.userId?
-                    ButtonTheme(
-                      minWidth: size.width / 3.5,
-                      child: RaisedButton(
-                        onPressed: () async {
-                          final authToken =
-                              Provider.of<UserData>(context, listen: false)
-                                  .authToken;
-                          final resp = (await Provider.of<DatabaseApiService>(
-                              context,
-                              listen: false)
-                              .unblockUser(
-                              clubId: widget.club.clubId,
-                              audienceId: _user.userId,
-                              authorization: authToken));
-                          if (resp.isSuccessful) {
-                            Fluttertoast.showToast(msg: 'User unblocked');
-                            blockedUsersList = blockedUsersList.rebuild((b) => b.removeAt(index));
-                            setState(() {});
-                          } else {
-                            Fluttertoast.showToast(msg: 'Something went wrong');
-                          }
-                        },
-                        color: Colors.red[600],
-                        child: Text('Unblock',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Lato',
-                            )),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          //side: BorderSide(color: Colors.red[600]),
-                        ),
-                      ),
-                    ):SizedBox(width: 0,),
+                    trailing: widget.club.creator.userId == _user.userId
+                        ? ButtonTheme(
+                            minWidth: size.width / 3.5,
+                            child: RaisedButton(
+                              onPressed: () async {
+                                final authToken = Provider.of<UserData>(context,
+                                        listen: false)
+                                    .authToken;
+                                final resp =
+                                    (await Provider.of<DatabaseApiService>(
+                                            context,
+                                            listen: false)
+                                        .unblockUser(
+                                            clubId: widget.club.clubId,
+                                            audienceId: _user.userId,
+                                            authorization: authToken));
+                                if (resp.isSuccessful) {
+                                  Fluttertoast.showToast(msg: 'User unblocked');
+                                  blockedUsersList = blockedUsersList
+                                      .rebuild((b) => b.removeAt(index));
+                                  setState(() {});
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: 'Something went wrong');
+                                }
+                              },
+                              color: Colors.red[600],
+                              child: Text('Unblock',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Lato',
+                                  )),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                //side: BorderSide(color: Colors.red[600]),
+                              ),
+                            ),
+                          )
+                        : SizedBox(
+                            width: 0,
+                          ),
                   ),
                 );
               }),
@@ -189,5 +194,4 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
       ),
     );
   }
-
 }

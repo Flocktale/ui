@@ -1,16 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Models/built_post.dart';
+import 'package:flocktale/Models/built_post.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
-import 'package:provider/provider.dart';
 
 import 'ProfilePage.dart';
+
 class SearchAllUsers extends StatefulWidget {
   BuiltList<SummaryUser> users;
   final String query;
-  SearchAllUsers({this.users,this.query});
+  SearchAllUsers({this.users, this.query});
   @override
   _SearchAllUsersState createState() => _SearchAllUsersState();
 }
@@ -125,44 +123,43 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
 //    super.didChangeDependencies();
 //  }
 
-  Widget showUsers(){
+  Widget showUsers() {
     return ListView.builder(
-      shrinkWrap: true,
-      itemCount: widget.users.length,
-      itemBuilder: (context,index){
-        return InkWell(
-          onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: widget.users[index].userId,)));
-          },
-          child: Container(
-            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-            child: ListTile(
-              leading: CachedNetworkImage(
-                imageUrl: widget.users[index].avatar+"_thumb",
-                imageBuilder: (context,imageProvider)=>CircleAvatar(
-                  backgroundImage: imageProvider,
+        shrinkWrap: true,
+        itemCount: widget.users.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => ProfilePage(
+                        userId: widget.users[index].userId,
+                      )));
+            },
+            child: Container(
+              margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: ListTile(
+                leading: CachedNetworkImage(
+                  imageUrl: widget.users[index].avatar + "_thumb",
+                  imageBuilder: (context, imageProvider) => CircleAvatar(
+                    backgroundImage: imageProvider,
+                  ),
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                title: Text(
+                  widget.users[index].username,
+                  style: TextStyle(fontFamily: "Lato"),
+                ),
+                subtitle: widget.users[index].name != null
+                    ? Text(
+                        widget.users[index].name,
+                        style: TextStyle(fontFamily: "Lato"),
+                      )
+                    : Container(),
               ),
-              title: Text(
-                widget.users[index].username,
-                style: TextStyle(
-                    fontFamily: "Lato"
-                ),
-              ),
-              subtitle: widget.users[index].name!=null?
-              Text(
-                widget.users[index].name,
-                style: TextStyle(
-                  fontFamily: "Lato"
-                ),
-              ):
-              Container(),
             ),
-          ),
-        );
-      });
+          );
+        });
   }
 
   @override
@@ -170,16 +167,13 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black
-        ),
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           "\"${widget.query}\" in Users",
           style: TextStyle(
-            fontFamily: "Lato",
-            fontWeight: FontWeight.bold,
-            color: Colors.black
-          ),
+              fontFamily: "Lato",
+              fontWeight: FontWeight.bold,
+              color: Colors.black),
         ),
       ),
       body: showUsers(),

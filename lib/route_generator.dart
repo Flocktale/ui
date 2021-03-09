@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/pages/HomePage.dart';
-import 'package:mootclub_app/pages/ImagePage.dart';
-import 'package:mootclub_app/pages/NotificationPage.dart';
-import 'package:mootclub_app/root.dart';
+import 'package:flocktale/pages/HomePage.dart';
+import 'package:flocktale/pages/ImagePage.dart';
+import 'package:flocktale/pages/NotificationPage.dart';
+import 'package:flocktale/root.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {

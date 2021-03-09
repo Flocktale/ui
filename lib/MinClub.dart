@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/pages/Club.dart';
-import 'package:mootclub_app/providers/agoraController.dart';
-import 'package:mootclub_app/providers/webSocket.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/pages/Club.dart';
+import 'package:flocktale/providers/agoraController.dart';
+import 'package:flocktale/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 
 class MinClub extends StatefulWidget {

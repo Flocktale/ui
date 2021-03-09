@@ -1,10 +1,10 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Authentication/signUp.dart';
-import 'package:mootclub_app/pages/HomePage.dart';
-import 'package:mootclub_app/pages/PhoneLogIn.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/providers/webSocket.dart';
+import 'package:flocktale/Authentication/signUp.dart';
+import 'package:flocktale/pages/HomePage.dart';
+import 'package:flocktale/pages/PhoneLogIn.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 
 class RootPage extends StatelessWidget {
@@ -35,7 +35,7 @@ class RootPage extends StatelessWidget {
           child: SizedBox(
             // width: 250.0,
             child: TextLiquidFill(
-              text: 'MOOTCLUB',
+              text: 'FLOCKTALE',
               waveColor: Colors.blueAccent,
               boxBackgroundColor: Colors.redAccent,
               textStyle: TextStyle(

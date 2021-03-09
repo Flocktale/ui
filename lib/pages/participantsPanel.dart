@@ -1,11 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/pages/InviteScreen.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/pages/InviteScreen.dart';
+import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -65,14 +63,16 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
     }
   }
 
-  bool isOwnerMuted(){
-    for(int i=0;i<widget.participantList.length;i++){
-      if(widget.participantList[i].audience.userId==widget.club.creator.userId){
+  bool isOwnerMuted() {
+    for (int i = 0; i < widget.participantList.length; i++) {
+      if (widget.participantList[i].audience.userId ==
+          widget.club.creator.userId) {
         return widget.participantList[i].isMuted;
       }
     }
     return false;
   }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -119,7 +119,7 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                     children: [
                       CachedNetworkImage(
                         imageUrl: widget.club.creator.avatar,
-                        imageBuilder: (context,imageProvider)=>CircleAvatar(
+                        imageBuilder: (context, imageProvider) => CircleAvatar(
                           radius: widget.size.width / 9.4,
                           backgroundColor: Color(0xffFDCF09),
                           child: CircleAvatar(
@@ -127,7 +127,8 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                             backgroundImage: imageProvider,
                           ),
                         ),
-                        placeholder: (context, url) => CircularProgressIndicator(),
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                       Text(
@@ -143,9 +144,9 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                   right: 0,
                   child: IconButton(
                     icon: Icon(
-                      isOwnerMuted()==false?
-                      Icons.mic_none_outlined:
-                      Icons.mic_off_outlined,
+                      isOwnerMuted() == false
+                          ? Icons.mic_none_outlined
+                          : Icons.mic_off_outlined,
                       color: Colors.redAccent,
                     ),
                     color: Colors.black,
@@ -259,9 +260,9 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                 right: 10,
                                 child: IconButton(
                                   icon: Icon(
-                                    !widget.participantList[index].isMuted?
-                                    Icons.mic_none_outlined:
-                                    Icons.mic_off_outlined,
+                                    !widget.participantList[index].isMuted
+                                        ? Icons.mic_none_outlined
+                                        : Icons.mic_off_outlined,
                                     color: Colors.redAccent,
                                   ),
                                 ),

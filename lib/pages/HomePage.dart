@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:mootclub_app/pages/LandingPage.dart';
-import 'package:mootclub_app/pages/NewClub.dart';
-import 'package:mootclub_app/pages/ProfilePage.dart';
-import 'package:mootclub_app/pages/SearchPage.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/providers/webSocket.dart';
-import 'package:mootclub_app/services/DBHelper.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/pages/LandingPage.dart';
+import 'package:flocktale/pages/NewClub.dart';
+import 'package:flocktale/pages/ProfilePage.dart';
+import 'package:flocktale/pages/SearchPage.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {

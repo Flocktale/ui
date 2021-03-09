@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/pages/Club.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/pages/Club.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:intl/intl.dart';
 
@@ -14,13 +14,15 @@ class Carousel extends StatefulWidget {
 }
 
 class _CarouselState extends State<Carousel> {
- // List<String> myClubs = ['Card1.jpg', 'Card2.jpg', 'Card3.jpg', 'Card4.jpg'];
+  // List<String> myClubs = ['Card1.jpg', 'Card2.jpg', 'Card3.jpg', 'Card4.jpg'];
   String _processTimestamp(int timestamp) {
-    if(DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(timestamp))>0)
-      return "Waiting for start";
+    if (DateTime.now()
+            .compareTo(DateTime.fromMillisecondsSinceEpoch(timestamp)) >
+        0) return "Waiting for start";
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     var diff = DateTime.now().difference(dateTime).abs();
-    String formattedDate2 = DateFormat.MMMd().add_Hm().format(dateTime) + " Hrs";
+    String formattedDate2 =
+        DateFormat.MMMd().add_Hm().format(dateTime) + " Hrs";
     return formattedDate2;
     final secDiff = diff.inSeconds;
     final minDiff = diff.inMinutes;
@@ -43,13 +45,14 @@ class _CarouselState extends State<Carousel> {
 
     return str;
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Container(
       margin: EdgeInsets.only(left: size.width / 50, right: size.width / 50),
-    //  height: 250,
+      //  height: 250,
       height: 185,
       child: ListView.builder(
         itemCount: widget.Clubs.length,
@@ -73,110 +76,121 @@ class _CarouselState extends State<Carousel> {
                     Container(
                       height: 100,
                       width: size.width,
-                //       child: Image.network(
-                //         widget.Clubs[index].clubAvatar,
-                // //      height: 130,
-                // //      width: 200,
-                //         fit: BoxFit.fill,
-                //       ),
+                      //       child: Image.network(
+                      //         widget.Clubs[index].clubAvatar,
+                      // //      height: 130,
+                      // //      width: 200,
+                      //         fit: BoxFit.fill,
+                      //       ),
                       child: CachedNetworkImage(
                         imageUrl: widget.Clubs[index].clubAvatar,
                         fit: BoxFit.fill,
-                        placeholder: (context, url) => Container(padding:EdgeInsets.all(40),child: CircularProgressIndicator()),
+                        placeholder: (context, url) => Container(
+                            padding: EdgeInsets.all(40),
+                            child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
 
-                       Positioned(
-                         top: 100,
-                         left: 5,
-                         child: Text(
-                          widget.Clubs[index].clubName,
-                          style: TextStyle(
-                              fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                    Positioned(
+                      top: 100,
+                      left: 5,
+                      child: Text(
+                        widget.Clubs[index].clubName,
+                        style: TextStyle(
+                            fontFamily: 'Lato', fontWeight: FontWeight.bold),
                       ),
-                       ),
+                    ),
 
-                        Positioned(
-                          top: 120,
-                          left: 5,
-                          child: Row(
-                            children: [
-                              CachedNetworkImage(
-                                imageUrl: widget.Clubs[index].creator.avatar+"_thumb",
-                                imageBuilder: (context,imageProvider)=>CircleAvatar(
-                                backgroundImage: imageProvider,
-                                radius: 10,
-                            ),
-                                placeholder: (context, url) => CircularProgressIndicator(),
-                                errorWidget: (context, url, error) => Icon(Icons.error),
-                              ),
-                              SizedBox(width: 5,),
-
-                              Text(
-                                widget.Clubs[index].creator.username,
-                              style: TextStyle(
-                                fontFamily: "Lato",
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10,
-                                color: Colors.redAccent
-                              ),
-                            ),]
+                    Positioned(
+                      top: 120,
+                      left: 5,
+                      child: Row(children: [
+                        CachedNetworkImage(
+                          imageUrl:
+                              widget.Clubs[index].creator.avatar + "_thumb",
+                          imageBuilder: (context, imageProvider) =>
+                              CircleAvatar(
+                            backgroundImage: imageProvider,
+                            radius: 10,
                           ),
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
-                       widget.Clubs[index].isLive==true?
-                       Positioned(
-                        // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                         bottom: 5,
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          widget.Clubs[index].creator.username,
+                          style: TextStyle(
+                              fontFamily: "Lato",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                              color: Colors.redAccent),
+                        ),
+                      ]),
+                    ),
+                    widget.Clubs[index].isLive == true
+                        ? Positioned(
+                            // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                            bottom: 5,
                             left: 5,
-                            child: Text("${widget.Clubs[index].estimatedAudience.toString()} LISTENERS",style: TextStyle(
-                               fontFamily: "Lato",
-                               fontSize: size.width/40,
-                               color: Colors.grey[700]
-                             ),),
-                       ):Container(),
-                             Positioned(
-                               bottom: 5,
-                               right: 5,
-                               child: Row(
-                                 children: [
-                                   widget.Clubs[index].isLive==false && widget.Clubs[index].isConcluded==false?
-                                   Container(
-                                     padding: EdgeInsets.all(2),
-                                     child: Icon(
-                                       Icons.timer,
-                                       size: size.width/40,
-                                     ),
-                                   ):Container(),
-                                   Container(
-                                      color: widget.Clubs[index].isLive?
-                                      Colors.red:
-                                     widget.Clubs[index].isConcluded!=null && widget.Clubs[index].isConcluded?
-                                     Colors.grey:
-                                     Colors.white,
-                                      padding: EdgeInsets.all(2),
-                                      child: Text(
-                                        widget.Clubs[index].isLive==true?
-                                        "LIVE":
-                                        widget.Clubs[index].isConcluded==true?
-                                        "ENDED":
-                                        _processTimestamp(widget.Clubs[index].scheduleTime),
-                                        style: TextStyle(
-                                            fontFamily: 'Lato',
-                                            fontWeight: FontWeight.bold,
-                                            color: widget.Clubs[index].isLive==true?
-                                            Colors.white:
-                                            widget.Clubs[index].isConcluded==true?
-                                            Colors.white:
-                                            Colors.black,
-                                         //   letterSpacing: 2.0,
-                                          fontSize: size.width/40
-                                        ),
-                                      ),
-                                    ),
-                                 ],
-                               ),
-                             ),
+                            child: Text(
+                              "${widget.Clubs[index].estimatedAudience.toString()} LISTENERS",
+                              style: TextStyle(
+                                  fontFamily: "Lato",
+                                  fontSize: size.width / 40,
+                                  color: Colors.grey[700]),
+                            ),
+                          )
+                        : Container(),
+                    Positioned(
+                      bottom: 5,
+                      right: 5,
+                      child: Row(
+                        children: [
+                          widget.Clubs[index].isLive == false &&
+                                  widget.Clubs[index].isConcluded == false
+                              ? Container(
+                                  padding: EdgeInsets.all(2),
+                                  child: Icon(
+                                    Icons.timer,
+                                    size: size.width / 40,
+                                  ),
+                                )
+                              : Container(),
+                          Container(
+                            color: widget.Clubs[index].isLive
+                                ? Colors.red
+                                : widget.Clubs[index].isConcluded != null &&
+                                        widget.Clubs[index].isConcluded
+                                    ? Colors.grey
+                                    : Colors.white,
+                            padding: EdgeInsets.all(2),
+                            child: Text(
+                              widget.Clubs[index].isLive == true
+                                  ? "LIVE"
+                                  : widget.Clubs[index].isConcluded == true
+                                      ? "ENDED"
+                                      : _processTimestamp(
+                                          widget.Clubs[index].scheduleTime),
+                              style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.bold,
+                                  color: widget.Clubs[index].isLive == true
+                                      ? Colors.white
+                                      : widget.Clubs[index].isConcluded == true
+                                          ? Colors.white
+                                          : Colors.black,
+                                  //   letterSpacing: 2.0,
+                                  fontSize: size.width / 40),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
 //                      trailing:  Container(
 //                        color: Colors.red,
@@ -191,7 +205,6 @@ class _CarouselState extends State<Carousel> {
 //                          ),
 //                        ),
 //                      ),
-
                   ],
                 ),
               ),

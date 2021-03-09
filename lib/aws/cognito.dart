@@ -1,7 +1,7 @@
 import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/services/SecureStorage.dart';
+import 'package:flocktale/services/SecureStorage.dart';
 
 class AuthUser {
   static const _userPoolId = "us-east-1_NzvonVIcv";

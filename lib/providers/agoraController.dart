@@ -1,7 +1,7 @@
 import 'package:agora_handler/main.dart';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:mootclub_app/Models/built_post.dart';
+import 'package:flocktale/Models/built_post.dart';
 
 class AgoraController {
   AgoraHandler _agoraHandler;

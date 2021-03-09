@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/services/SecureStorage.dart';
-import 'package:mootclub_app/aws/cognito.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/services/SecureStorage.dart';
+import 'package:flocktale/aws/cognito.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 
 class UserData with ChangeNotifier {
   BuiltUser _builtUser;

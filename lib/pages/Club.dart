@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/Models/comment.dart';
-import 'package:mootclub_app/Models/enums.dart';
-import 'package:mootclub_app/pages/AudiencePage.dart';
-import 'package:mootclub_app/pages/InviteScreen.dart';
-import 'package:mootclub_app/pages/participantsPanel.dart';
-import 'package:mootclub_app/providers/agoraController.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/providers/webSocket.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/Models/comment.dart';
+import 'package:flocktale/Models/enums.dart';
+import 'package:flocktale/pages/AudiencePage.dart';
+import 'package:flocktale/pages/InviteScreen.dart';
+import 'package:flocktale/pages/participantsPanel.dart';
+import 'package:flocktale/providers/agoraController.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/providers/webSocket.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -651,8 +651,8 @@ class _ClubState extends State<Club> {
   Future _navigateToBlockedUsersList() async =>
       await Navigator.of(context).push(MaterialPageRoute(
           builder: (_) => BlockedUsersPage(
-            club: widget.club,
-          )));
+                club: widget.club,
+              )));
 
   void _handleMenuButtons(String value) {
     switch (value) {
@@ -871,7 +871,7 @@ class _ClubState extends State<Club> {
     }
   }
 
-  _showMaterialDialog(){
+  _showMaterialDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -879,11 +879,15 @@ class _ClubState extends State<Club> {
         });
   }
 
-  respondToInvitation(String response)async{
-    final service = Provider.of<DatabaseApiService>(context,listen: false);
-    final authToken = Provider.of<UserData>(context,listen:false).authToken;
-    final cuser = Provider.of<UserData>(context,listen:false).user;
-    await service.responseToNotification(userId: cuser.userId, notificationId: _clubAudience.audienceData.invitationId, authorization: authToken, action: response);
+  respondToInvitation(String response) async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final cuser = Provider.of<UserData>(context, listen: false).user;
+    await service.responseToNotification(
+        userId: cuser.userId,
+        notificationId: _clubAudience.audienceData.invitationId,
+        authorization: authToken,
+        action: response);
   }
 
   @override
@@ -967,461 +971,477 @@ class _ClubState extends State<Club> {
         body: SafeArea(
           child: _clubAudience != null
               ?
-          // _showInvitation == false
-          //         ?
-          Stack(
-                      children: [
-                        Container(
-                            //  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: SingleChildScrollView(
-                          child: Column(
-                            children: <Widget>[
-                              _showInvitation==true?
-                                  Container(
-                                    height: size.height/10,
-                                    width: size.width,
-                                    color: Colors.redAccent,
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.fromLTRB(0,10,0,0),
-                                          child: Text(
-                                              "You have been invited to be a panelist",
-                                            style: TextStyle(
+              // _showInvitation == false
+              //         ?
+              Stack(
+                  children: [
+                    Container(
+                        //  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        child: SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          _showInvitation == true
+                              ? Container(
+                                  height: size.height / 10,
+                                  width: size.width,
+                                  color: Colors.redAccent,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        margin:
+                                            EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                        child: Text(
+                                          "You have been invited to be a panelist",
+                                          style: TextStyle(
                                               fontFamily: "Lato",
-                                              color: Colors.white
-                                            ),
-                                          ),
+                                              color: Colors.white),
                                         ),
-                                        FittedBox(
+                                      ),
+                                      FittedBox(
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                                                child: RaisedButton(
-                                                    onPressed: (){
-                                                      _playButtonHandler();
-
-                                                      respondToInvitation('cancel');
-                                                      setState(() {
-                                                        _showInvitation = false;
-                                                        _clubAudience = _clubAudience
-                                                            .rebuild((b) => b..audienceData.invitationId = null);
-                                                      });
-
-                                                    },
-                                                  color: Colors.redAccent,
-                                                  child: Text(
-                                                    "Reject",
-                                                    style: TextStyle(
-                                                      fontFamily: "Lato",
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.white
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              RaisedButton(
-                                                onPressed: (){
-                                                  _playButtonHandler();
-                                                  if(_isPlaying){
-                                                    respondToInvitation('accept');
-                                                    setState(() {
-                                                      _showInvitation = false;
-                                                      _clubAudience = _clubAudience
-                                                          .rebuild((b) => b..audienceData.invitationId = null);
-                                                    });
-                                                  }
-                                                },
-                                                color: Colors.white,
-                                                child: Text(
-                                                  "Accept",
-                                                  style: TextStyle(
-                                                      fontFamily: "Lato",
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.redAccent
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        )
-                                      ],
-                                    ),
-                                  ):Container(),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                    height: size.height / 5,
-                                    width: size.width / 2.5,
-                                    margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                                    decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.2),
-                                            blurRadius:
-                                                25.0, // soften the shadow
-                                            spreadRadius:
-                                                1.0, //extend the shadow
-                                            offset: Offset(
-                                              0.0,
-                                              15.0, // Move to bottom 10 Vertically
-                                            ),
-                                          )
-                                        ],
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5.0))),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      // child: Image.network(
-                                      //   _clubAudience.club.clubAvatar,
-                                      //   fit: BoxFit.cover,
-                                      // ),
-                                      child: CachedNetworkImage(
-                                        imageUrl: _clubAudience.club.clubAvatar+"_large",
-                                        placeholder: (context, url) => CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) => Icon(Icons.error),
-                                      )
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          width: size.width / 2,
-                                          child: Text(
-                                            _clubAudience.club.clubName,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontFamily: 'Lato',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: size.width / 25),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: size.width / 2,
-                                          child: Text(
-                                            "${_clubAudience.club.description ?? 'There is no description provided for this club'}",
-                                            style: TextStyle(
-                                                fontFamily: 'Lato',
-                                                fontSize: size.width / 30,
-                                                color: Colors.black54),
-                                          ),
-                                        ),
-                                        _isLive
-                                            ? Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    0, 5, 0, 0),
-                                                padding: EdgeInsets.fromLTRB(
-                                                    2, 2, 2, 2),
-                                                color: Colors.red,
-                                                child: Text(
-                                                  "LIVE",
-                                                  style: TextStyle(
-                                                      fontFamily: 'Lato',
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                      letterSpacing: 2.0),
-                                                ),
-                                              )
-                                            : Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    0, size.height / 50, 0, 0),
-                                                child: Text(
-                                                  _isConcluded
-                                                      ? "Concluded"
-                                                      : DateTime.now().compareTo(
-                                                                  DateTime.fromMillisecondsSinceEpoch(
-                                                                      widget
-                                                                          .club
-                                                                          .scheduleTime)) <
-                                                              0
-                                                          ? "Scheduled: ${_processScheduledTimestamp(widget.club.scheduleTime)}"
-                                                          : "Waiting for start",
-                                                  style: TextStyle(
-                                                      fontFamily: 'Lato',
-                                                      color: Colors.black54),
-                                                ),
-                                              ),
-                                        Container(
-                                          margin:
-                                              EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                          child: _reactionWidgetRow(),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                margin: EdgeInsets.fromLTRB(
-                                    15, size.height / 50, 15, 0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    FittedBox(
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) => ProfilePage(
-                                                userId: _clubAudience
-                                                    .club.creator.userId,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        child: Row(children: <Widget>[
-                                          CachedNetworkImage(
-                                             imageUrl: _clubAudience.club.creator.avatar+"_thumb",
-                                            imageBuilder: (context,imageProvider)=>CircleAvatar(
-                                              backgroundImage: imageProvider,
-                                              radius: size.width / 20,
-                                            ),
-                                            placeholder: (context, url) => CircularProgressIndicator(),
-                                            errorWidget: (context, url, error) => Icon(Icons.error),
-                                          ),
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
                                           Container(
                                             margin: EdgeInsets.fromLTRB(
-                                                size.width / 30, 0, 0, 0),
-                                            child: Text(
-                                              '@' +
-                                                  _clubAudience
-                                                      .club.creator.username,
-                                              style: TextStyle(
-                                                  fontFamily: 'Lato',
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: size.width / 25),
+                                                0, 0, 20, 0),
+                                            child: RaisedButton(
+                                              onPressed: () {
+                                                _playButtonHandler();
+
+                                                respondToInvitation('cancel');
+                                                setState(() {
+                                                  _showInvitation = false;
+                                                  _clubAudience = _clubAudience
+                                                      .rebuild((b) => b
+                                                        ..audienceData
+                                                                .invitationId =
+                                                            null);
+                                                });
+                                              },
+                                              color: Colors.redAccent,
+                                              child: Text(
+                                                "Reject",
+                                                style: TextStyle(
+                                                    fontFamily: "Lato",
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              ),
                                             ),
                                           ),
-                                        ]),
-                                      ),
-                                    ),
-                                    // if club is concluded no need to show play, mic and participation button
-                                    if (_isConcluded == false)
-                                      FittedBox(
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              child: FloatingActionButton(
-                                                heroTag: "play btn",
-                                                onPressed: () {
-                                                  DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(widget.club.scheduleTime))>=0?
-                                                  _playButtonHandler():
-                                                      Fluttertoast.showToast(msg: 'The club can be started only when the scheduled time has been reached.');
-                                                },
-                                                child: !_isPlaying
-                                                    ? Icon(Icons.play_arrow)
-                                                    : Icon(Icons.stop),
-                                                backgroundColor: _isLive
-                                                    ? !_isPlaying
-                                                    ? Colors.redAccent
-                                                    : Colors.redAccent
-                                                    : Colors.grey,
-                                              ),
+                                          RaisedButton(
+                                            onPressed: () {
+                                              _playButtonHandler();
+                                              if (_isPlaying) {
+                                                respondToInvitation('accept');
+                                                setState(() {
+                                                  _showInvitation = false;
+                                                  _clubAudience = _clubAudience
+                                                      .rebuild((b) => b
+                                                        ..audienceData
+                                                                .invitationId =
+                                                            null);
+                                                });
+                                              }
+                                            },
+                                            color: Colors.white,
+                                            child: Text(
+                                              "Accept",
+                                              style: TextStyle(
+                                                  fontFamily: "Lato",
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.redAccent),
                                             ),
-
-                                            // dedicated button for mic
-                                            if (_isParticipant == true &&
-                                                _isLive)
-                                              Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    10, 0, 0, 0),
-                                                child: FloatingActionButton(
-                                                  heroTag: "mic btn",
-                                                  onPressed: () =>
-                                                      _toggleMuteOfParticpant(
-                                                          Provider.of<UserData>(
-                                                              context,
-                                                              listen: false)
-                                                              .userId),
-                                                  child: !_isMuted
-                                                      ? Icon(Icons
-                                                      .mic_none_rounded)
-                                                      : Icon(Icons
-                                                      .mic_off_rounded),
-                                                  backgroundColor: !_isPlaying
-                                                      ? Colors.grey
-                                                      : !_sentRequest
-                                                      ? Colors.redAccent
-                                                      : Colors.grey,
-                                                ),
-                                              ),
-
-                                            // dedicated button for sending join request or stepping down to become only listener
-                                            if (_isOwner == false)
-                                              _isPlaying?
-                                              Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    10, 0, 0, 0),
-                                                child: FloatingActionButton(
-                                                  heroTag: "participation btn",
-                                                  onPressed: () =>
-                                                      _participationButtonHandler(),
-                                                  child:
-                                                  _isParticipant
-                                                      ? Icon(Icons
-                                                      .remove_from_queue)
-                                                      : !_sentRequest
-                                                      ? Icon(
-                                                      Icons.person_add)
-                                                      : Icon(
-                                                    Icons
-                                                        .person_add_disabled,
-                                                    color:
-                                                    Colors.black,
-                                                  ),
-                                                  backgroundColor:
-                                                  _isParticipant
-                                                      ? Colors.grey[200]
-                                                      : !_sentRequest
-                                                      ? Colors.redAccent
-                                                      : Colors
-                                                      .grey[200],
-                                                ),
-                                              ):Container(),
-                                          ],
+                                          ),
+                                        ],
+                                      ))
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                height: size.height / 5,
+                                width: size.width / 2.5,
+                                margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 25.0, // soften the shadow
+                                        spreadRadius: 1.0, //extend the shadow
+                                        offset: Offset(
+                                          0.0,
+                                          15.0, // Move to bottom 10 Vertically
                                         ),
                                       )
-                                  ],
-                                ),
+                                    ],
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    // child: Image.network(
+                                    //   _clubAudience.club.clubAvatar,
+                                    //   fit: BoxFit.cover,
+                                    // ),
+                                    child: CachedNetworkImage(
+                                      imageUrl: _clubAudience.club.clubAvatar +
+                                          "_large",
+                                      placeholder: (context, url) =>
+                                          CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
+                                    )),
                               ),
-                              SizedBox(height: size.height / 50),
-
                               Container(
-                                  height: size.height / 2 + size.height / 30,
-                                  width: size.width,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  child: Stack(children: <Widget>[
-                                    Positioned(
-                                      top: 15,
-                                      left: 10,
+                                margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      width: size.width / 2,
                                       child: Text(
-                                        'COMMENTS',
+                                        _clubAudience.club.clubName,
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontFamily: 'Lato',
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: size.width / 25,
-                                            letterSpacing: 2.0),
+                                            fontSize: size.width / 25),
                                       ),
                                     ),
-                                    Positioned(
-                                        top: 45,
-                                        left: 10,
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              height: size.height / 2.5,
-                                              width: size.width - 20,
-                                              color: Colors.white,
-                                              child: ListView.builder(
-                                                  itemCount: comments.length,
-                                                  controller: _controller,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    // Timer(
-                                                    // Duration(milliseconds: 300),
-                                                    // () => _controller
-                                                    //     .jumpTo(_controller.position.maxScrollExtent));
+                                    SizedBox(
+                                      width: size.width / 2,
+                                      child: Text(
+                                        "${_clubAudience.club.description ?? 'There is no description provided for this club'}",
+                                        style: TextStyle(
+                                            fontFamily: 'Lato',
+                                            fontSize: size.width / 30,
+                                            color: Colors.black54),
+                                      ),
+                                    ),
+                                    _isLive
+                                        ? Container(
+                                            margin:
+                                                EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                            padding:
+                                                EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                            color: Colors.red,
+                                            child: Text(
+                                              "LIVE",
+                                              style: TextStyle(
+                                                  fontFamily: 'Lato',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  letterSpacing: 2.0),
+                                            ),
+                                          )
+                                        : Container(
+                                            margin: EdgeInsets.fromLTRB(
+                                                0, size.height / 50, 0, 0),
+                                            child: Text(
+                                              _isConcluded
+                                                  ? "Concluded"
+                                                  : DateTime.now().compareTo(DateTime
+                                                              .fromMillisecondsSinceEpoch(
+                                                                  widget.club
+                                                                      .scheduleTime)) <
+                                                          0
+                                                      ? "Scheduled: ${_processScheduledTimestamp(widget.club.scheduleTime)}"
+                                                      : "Waiting for start",
+                                              style: TextStyle(
+                                                  fontFamily: 'Lato',
+                                                  color: Colors.black54),
+                                            ),
+                                          ),
+                                    Container(
+                                      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                      child: _reactionWidgetRow(),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(
+                                15, size.height / 50, 15, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                FittedBox(
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => ProfilePage(
+                                            userId: _clubAudience
+                                                .club.creator.userId,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Row(children: <Widget>[
+                                      CachedNetworkImage(
+                                        imageUrl:
+                                            _clubAudience.club.creator.avatar +
+                                                "_thumb",
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                CircleAvatar(
+                                          backgroundImage: imageProvider,
+                                          radius: size.width / 20,
+                                        ),
+                                        placeholder: (context, url) =>
+                                            CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.fromLTRB(
+                                            size.width / 30, 0, 0, 0),
+                                        child: Text(
+                                          '@' +
+                                              _clubAudience
+                                                  .club.creator.username,
+                                          style: TextStyle(
+                                              fontFamily: 'Lato',
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: size.width / 25),
+                                        ),
+                                      ),
+                                    ]),
+                                  ),
+                                ),
+                                // if club is concluded no need to show play, mic and participation button
+                                if (_isConcluded == false)
+                                  FittedBox(
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          child: FloatingActionButton(
+                                            heroTag: "play btn",
+                                            onPressed: () {
+                                              DateTime.now().compareTo(DateTime
+                                                          .fromMillisecondsSinceEpoch(
+                                                              widget.club
+                                                                  .scheduleTime)) >=
+                                                      0
+                                                  ? _playButtonHandler()
+                                                  : Fluttertoast.showToast(
+                                                      msg:
+                                                          'The club can be started only when the scheduled time has been reached.');
+                                            },
+                                            child: !_isPlaying
+                                                ? Icon(Icons.play_arrow)
+                                                : Icon(Icons.stop),
+                                            backgroundColor: _isLive
+                                                ? !_isPlaying
+                                                    ? Colors.redAccent
+                                                    : Colors.redAccent
+                                                : Colors.grey,
+                                          ),
+                                        ),
 
-                                                    var a = ListTile(
-                                                      leading: CachedNetworkImage(
-                                                        imageUrl: comments[index].user.avatar+"_thumb",
-                                                        imageBuilder: (context,imageProvider)=>CircleAvatar(
-                                                          backgroundImage: imageProvider,
+                                        // dedicated button for mic
+                                        if (_isParticipant == true && _isLive)
+                                          Container(
+                                            margin: EdgeInsets.fromLTRB(
+                                                10, 0, 0, 0),
+                                            child: FloatingActionButton(
+                                              heroTag: "mic btn",
+                                              onPressed: () =>
+                                                  _toggleMuteOfParticpant(
+                                                      Provider.of<UserData>(
+                                                              context,
+                                                              listen: false)
+                                                          .userId),
+                                              child: !_isMuted
+                                                  ? Icon(Icons.mic_none_rounded)
+                                                  : Icon(Icons.mic_off_rounded),
+                                              backgroundColor: !_isPlaying
+                                                  ? Colors.grey
+                                                  : !_sentRequest
+                                                      ? Colors.redAccent
+                                                      : Colors.grey,
+                                            ),
+                                          ),
+
+                                        // dedicated button for sending join request or stepping down to become only listener
+                                        if (_isOwner == false)
+                                          _isPlaying
+                                              ? Container(
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      10, 0, 0, 0),
+                                                  child: FloatingActionButton(
+                                                    heroTag:
+                                                        "participation btn",
+                                                    onPressed: () =>
+                                                        _participationButtonHandler(),
+                                                    child: _isParticipant
+                                                        ? Icon(Icons
+                                                            .remove_from_queue)
+                                                        : !_sentRequest
+                                                            ? Icon(Icons
+                                                                .person_add)
+                                                            : Icon(
+                                                                Icons
+                                                                    .person_add_disabled,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                    backgroundColor:
+                                                        _isParticipant
+                                                            ? Colors.grey[200]
+                                                            : !_sentRequest
+                                                                ? Colors
+                                                                    .redAccent
+                                                                : Colors
+                                                                    .grey[200],
+                                                  ),
+                                                )
+                                              : Container(),
+                                      ],
+                                    ),
+                                  )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: size.height / 50),
+
+                          Container(
+                              height: size.height / 2 + size.height / 30,
+                              width: size.width,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                              child: Stack(children: <Widget>[
+                                Positioned(
+                                  top: 15,
+                                  left: 10,
+                                  child: Text(
+                                    'COMMENTS',
+                                    style: TextStyle(
+                                        fontFamily: 'Lato',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        fontSize: size.width / 25,
+                                        letterSpacing: 2.0),
+                                  ),
+                                ),
+                                Positioned(
+                                    top: 45,
+                                    left: 10,
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: size.height / 2.5,
+                                          width: size.width - 20,
+                                          color: Colors.white,
+                                          child: ListView.builder(
+                                              itemCount: comments.length,
+                                              controller: _controller,
+                                              itemBuilder: (context, index) {
+                                                // Timer(
+                                                // Duration(milliseconds: 300),
+                                                // () => _controller
+                                                //     .jumpTo(_controller.position.maxScrollExtent));
+
+                                                var a = ListTile(
+                                                  leading: CachedNetworkImage(
+                                                    imageUrl: comments[index]
+                                                            .user
+                                                            .avatar +
+                                                        "_thumb",
+                                                    imageBuilder: (context,
+                                                            imageProvider) =>
+                                                        CircleAvatar(
+                                                      backgroundImage:
+                                                          imageProvider,
+                                                    ),
+                                                  ),
+                                                  title: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.of(context).push(
+                                                              MaterialPageRoute(
+                                                                  builder: (_) =>
+                                                                      ProfilePage(
+                                                                        userId: comments[index]
+                                                                            .user
+                                                                            .userId,
+                                                                      )));
+                                                        },
+                                                        child: Text(
+                                                          comments[index]
+                                                              .user
+                                                              .username,
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  "Lato",
+                                                              color: Colors
+                                                                  .redAccent),
                                                         ),
                                                       ),
-                                                      title: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          InkWell(
-                                                            onTap: () {
-                                                              Navigator.of(context).push(
-                                                                  MaterialPageRoute(
-                                                                      builder: (_) =>
-                                                                          ProfilePage(
-                                                                            userId:
-                                                                                comments[index].user.userId,
-                                                                          )));
-                                                            },
-                                                            child: Text(
-                                                              comments[index]
-                                                                  .user
-                                                                  .username,
-                                                              style: TextStyle(
-                                                                  fontFamily:
-                                                                      "Lato",
-                                                                  color: Colors
-                                                                      .redAccent),
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            _processTimestamp(
-                                                                comments[index]
-                                                                    .timestamp,
-                                                                1),
-                                                            style: TextStyle(
-                                                                fontFamily:
-                                                                    'Lato',
-                                                                fontSize:
-                                                                    size.width /
-                                                                        30),
-                                                          )
-                                                        ],
-                                                      ),
-                                                      subtitle: Text(
-                                                        comments[index].body,
+                                                      Text(
+                                                        _processTimestamp(
+                                                            comments[index]
+                                                                .timestamp,
+                                                            1),
                                                         style: TextStyle(
-                                                            fontFamily: "Lato"),
-                                                      ),
-                                                    );
-                                                    return a;
-                                                  }),
-                                            ),
-                                            Container(
-                                              height: 40,
-                                              margin: EdgeInsets.fromLTRB(
-                                                  0, 10, 0, 10),
-                                              width: size.width - 20,
-                                              child: TextField(
-                                                controller: _commentController,
-                                                decoration: InputDecoration(
-                                                    suffixIcon: IconButton(
-                                                      icon: Icon(
-                                                        Icons.send,
-                                                        color: Colors.redAccent,
-                                                      ),
-                                                      onPressed: () {
-                                                        print("=<<>>><<>>><<>>>=" +
-                                                            _commentController
-                                                                .text);
-                                                        addComment(
-                                                            _commentController
-                                                                .text);
+                                                            fontFamily: 'Lato',
+                                                            fontSize:
+                                                                size.width /
+                                                                    30),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  subtitle: Text(
+                                                    comments[index].body,
+                                                    style: TextStyle(
+                                                        fontFamily: "Lato"),
+                                                  ),
+                                                );
+                                                return a;
+                                              }),
+                                        ),
+                                        Container(
+                                          height: 40,
+                                          margin:
+                                              EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                          width: size.width - 20,
+                                          child: TextField(
+                                            controller: _commentController,
+                                            decoration: InputDecoration(
+                                                suffixIcon: IconButton(
+                                                  icon: Icon(
+                                                    Icons.send,
+                                                    color: Colors.redAccent,
+                                                  ),
+                                                  onPressed: () {
+                                                    print("=<<>>><<>>><<>>>=" +
                                                         _commentController
-                                                            .text = '';
-                                                        //            _sendComment(context);
-                                                      },
-                                                    ),
-                                                    fillColor: Colors.white,
-                                                    hintText: 'Comment',
-                                                    filled: true,
-                                                    enabledBorder: OutlineInputBorder(
+                                                            .text);
+                                                    addComment(
+                                                        _commentController
+                                                            .text);
+                                                    _commentController.text =
+                                                        '';
+                                                    //            _sendComment(context);
+                                                  },
+                                                ),
+                                                fillColor: Colors.white,
+                                                hintText: 'Comment',
+                                                filled: true,
+                                                enabledBorder:
+                                                    OutlineInputBorder(
                                                         borderRadius:
                                                             BorderRadius.all(
                                                                 Radius
@@ -1429,98 +1449,92 @@ class _ClubState extends State<Club> {
                                                                         5.0)),
                                                         borderSide:
                                                             BorderSide(
-                                                                color:
-                                                                    Colors
-                                                                        .black12,
+                                                                color: Colors
+                                                                    .black12,
                                                                 width: 1.0)),
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                            borderSide:
-                                                                BorderSide(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    width:
-                                                                        2.0))),
-                                                //   onSubmitted: (val) => {addComment(val)},
-                                              ),
-                                            )
-                                          ],
-                                        )),
-                                  ])),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: Colors.black,
+                                                            width: 2.0))),
+                                            //   onSubmitted: (val) => {addComment(val)},
+                                          ),
+                                        )
+                                      ],
+                                    )),
+                              ])),
 
-                              SizedBox(height: size.height / 30),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    left: size.width / 50,
-                                    right: size.width / 50),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      'More from @${_clubAudience.club.creator.username}',
-                                      style: TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                    Text(
-                                      'View All',
-                                      style: TextStyle(
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                  ],
+                          SizedBox(height: size.height / 30),
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: size.width / 50, right: size.width / 50),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  'More from @${_clubAudience.club.creator.username}',
+                                  style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
                                 ),
-                              ),
+                                Text(
+                                  'View All',
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
 
-                              SizedBox(height: size.height / 50),
-                              // FutureBuilder(
-                              //     future: _fetchAllOwnerClubs(),
-                              //     builder: (context, snapshot) {
-                              //       if (snapshot.connectionState ==
-                              //           ConnectionState.waiting) {
-                              //         return Center(
-                              //             child: CircularProgressIndicator());
-                              //       }
-                              //       return Clubs != null
-                              //           ? Carousel(
-                              //               Clubs: Clubs.where((club) =>
-                              //                       club.clubId !=
-                              //                       _clubAudience.club.clubId)
-                              //                   .toBuiltList())
-                              //           : Container();
-                              //     }),
-                              SizedBox(height: size.height / 20)
-                            ],
-                          ),
-                        )),
-                        if (MediaQuery.of(context).viewInsets.bottom == 0)
-                          ParticipantsPanel(
-                            club: widget.club,
-                            size: size,
-                            participantList: participantList
-                                .where((element) =>
-                                    element.audience.userId !=
-                                    widget.club.creator.userId)
-                                .toList(),
-                            isOwner: _isOwner,
-                            hasSentJoinRequest: _sentRequest,
-                            muteParticipant: _toggleMuteOfParticpant,
-                            removeParticipant: _kickParticpant,
-                            blockParticipant: _blockUser,
-                            sendJoinRequest: _sendJoinRequest,
-                            deleteJoinRequest: _deleteJoinRequest,
-                          ),
-                      ],
-                    )
-                  // : showDialog(
-                  //     context: context,
-                  //     builder: (BuildContext context) {
-                  //       return _invitationAlert;
-                  //     })
+                          SizedBox(height: size.height / 50),
+                          // FutureBuilder(
+                          //     future: _fetchAllOwnerClubs(),
+                          //     builder: (context, snapshot) {
+                          //       if (snapshot.connectionState ==
+                          //           ConnectionState.waiting) {
+                          //         return Center(
+                          //             child: CircularProgressIndicator());
+                          //       }
+                          //       return Clubs != null
+                          //           ? Carousel(
+                          //               Clubs: Clubs.where((club) =>
+                          //                       club.clubId !=
+                          //                       _clubAudience.club.clubId)
+                          //                   .toBuiltList())
+                          //           : Container();
+                          //     }),
+                          SizedBox(height: size.height / 20)
+                        ],
+                      ),
+                    )),
+                    if (MediaQuery.of(context).viewInsets.bottom == 0)
+                      ParticipantsPanel(
+                        club: widget.club,
+                        size: size,
+                        participantList: participantList
+                            .where((element) =>
+                                element.audience.userId !=
+                                widget.club.creator.userId)
+                            .toList(),
+                        isOwner: _isOwner,
+                        hasSentJoinRequest: _sentRequest,
+                        muteParticipant: _toggleMuteOfParticpant,
+                        removeParticipant: _kickParticpant,
+                        blockParticipant: _blockUser,
+                        sendJoinRequest: _sendJoinRequest,
+                        deleteJoinRequest: _deleteJoinRequest,
+                      ),
+                  ],
+                )
+              // : showDialog(
+              //     context: context,
+              //     builder: (BuildContext context) {
+              //       return _invitationAlert;
+              //     })
               : Container(
                   child: Center(child: Text("Loading...")),
                 ),

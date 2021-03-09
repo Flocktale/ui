@@ -1,17 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Models/built_post.dart';
+import 'package:flocktale/Models/built_post.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:mootclub_app/pages/Club.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
-import 'package:provider/provider.dart';
+import 'package:flocktale/pages/Club.dart';
 
-import 'ProfilePage.dart';
 class SearchAllClubs extends StatefulWidget {
   final BuiltList<BuiltClub> clubs;
   final String query;
-  SearchAllClubs({this.clubs,this.query});
+  SearchAllClubs({this.clubs, this.query});
   @override
   _SearchAllClubsState createState() => _SearchAllClubsState();
 }
@@ -119,21 +115,24 @@ class _SearchAllClubsState extends State<SearchAllClubs> {
 //    getClubs();
 //  }
 
-  Widget showClubs(){
+  Widget showClubs() {
     return ListView.builder(
         shrinkWrap: true,
         itemCount: widget.clubs.length,
-        itemBuilder: (context,index){
+        itemBuilder: (context, index) {
           return InkWell(
-            onTap: (){
-              Navigator.of(context).push(MaterialPageRoute(builder: (_)=>Club(club: widget.clubs[index],)));
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => Club(
+                        club: widget.clubs[index],
+                      )));
             },
             child: Container(
               margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: ListTile(
                 leading: CachedNetworkImage(
-                  imageUrl: widget.clubs[index].clubAvatar+"_thumb",
-                  imageBuilder: (context,imageProvider)=>CircleAvatar(
+                  imageUrl: widget.clubs[index].clubAvatar + "_thumb",
+                  imageBuilder: (context, imageProvider) => CircleAvatar(
                     backgroundImage: imageProvider,
                   ),
                   placeholder: (context, url) => CircularProgressIndicator(),
@@ -141,41 +140,35 @@ class _SearchAllClubsState extends State<SearchAllClubs> {
                 ),
                 title: Text(
                   widget.clubs[index].clubName,
-                  style: TextStyle(
-                      fontFamily: "Lato"
-                  ),
+                  style: TextStyle(fontFamily: "Lato"),
                 ),
-                subtitle: widget.clubs[index].creator!=null?
-                Text(
-                  widget.clubs[index].creator.username,
-                  style: TextStyle(
-                      fontFamily: "Lato"
-                  ),
-                ):
-                Container(),
+                subtitle: widget.clubs[index].creator != null
+                    ? Text(
+                        widget.clubs[index].creator.username,
+                        style: TextStyle(fontFamily: "Lato"),
+                      )
+                    : Container(),
               ),
             ),
           );
         });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-            color: Colors.black
-        ),
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           "\"${widget.query}\" in Clubs",
           style: TextStyle(
               fontFamily: "Lato",
               fontWeight: FontWeight.bold,
-              color: Colors.black
-          ),
+              color: Colors.black),
         ),
       ),
-          body: showClubs(),
+      body: showClubs(),
     );
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Carousel.dart';
-import 'package:mootclub_app/MinClub.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/Carousel.dart';
+import 'package:flocktale/MinClub.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -81,7 +81,7 @@ class _LandingPageState extends State<LandingPage>
                   IconButton(
                       icon: Icon(Icons.camera_alt_outlined), onPressed: null),
                   Text(
-                    'MOOTCLUB',
+                    'Flocktale',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2.0,

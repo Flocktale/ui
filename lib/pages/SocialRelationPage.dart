@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/pages/ProfilePage.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/pages/ProfilePage.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:provider/provider.dart';
 
@@ -169,8 +169,11 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                   final _user = relationUsers[ind];
 
                   return InkWell(
-                    onTap: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => ProfilePage(
+                                userId: _user.userId,
+                              )));
                     },
                     child: Container(
                       key: ValueKey(_user.username),
@@ -179,13 +182,16 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           CachedNetworkImage(
-                            imageUrl: _user.avatar+"_thumb",
-                            imageBuilder: (context,imageProvider)=>CircleAvatar(
+                            imageUrl: _user.avatar + "_thumb",
+                            imageBuilder: (context, imageProvider) =>
+                                CircleAvatar(
                               backgroundImage: imageProvider,
                               radius: 30,
                             ),
-                            placeholder: (context, url) => CircularProgressIndicator(),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
                           ),
                           Column(
                             children: <Widget>[
@@ -198,7 +204,8 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                               Text(
                                 _user.name,
                                 style: TextStyle(
-                                    fontFamily: 'Lato', color: Colors.grey[700]),
+                                    fontFamily: 'Lato',
+                                    color: Colors.grey[700]),
                               )
                             ],
                           ),

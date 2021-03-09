@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/pages/ProfilePage.dart';
-import 'package:mootclub_app/pages/SearchAllUsersPage.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/pages/ProfilePage.dart';
+import 'package:flocktale/pages/SearchAllUsersPage.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
 import '../MinClub.dart';
@@ -164,12 +164,14 @@ class DataSearch extends SearchDelegate<String> {
                       itemBuilder: (builder, index) {
                         return ListTile(
                           leading: CachedNetworkImage(
-                            imageUrl: recentSearches[index].avatar+"_thumb",
+                            imageUrl: recentSearches[index].avatar + "_thumb",
                             // imageBuilder: (context,imageProvider)=>CircleAvatar(
                             //   backgroundImage: imageProvider,
                             // ),
-                            placeholder: (context, url) => CircularProgressIndicator(),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
                           ),
                           title: Text(
                             recentSearches[index].name,
@@ -218,14 +220,14 @@ class DataSearch extends SearchDelegate<String> {
                     //SizedBox(height: size.height/50),
                     Flexible(
                       child: Container(
-                        margin: EdgeInsets.fromLTRB(0, size.height/50, 0, size.height/50),
+                        margin: EdgeInsets.fromLTRB(
+                            0, size.height / 50, 0, size.height / 50),
                         child: ListView.builder(
-                          shrinkWrap: true,
+                            shrinkWrap: true,
                             itemCount: allSearches.users != null
-                                ?
-                            allSearches.users.length<3
-                                ?allSearches.users.length
-                                :3
+                                ? allSearches.users.length < 3
+                                    ? allSearches.users.length
+                                    : 3
                                 : 0,
                             itemBuilder: (builder, index) {
                               return ListTile(
@@ -243,12 +245,13 @@ class DataSearch extends SearchDelegate<String> {
                                 )]
                               ),),*/
                                     allSearches.users[index].username != null
-                                        ? Text(allSearches.users[index].username)
+                                        ? Text(
+                                            allSearches.users[index].username)
                                         : null,
-                                subtitle: allSearches.users[index].tagline !=
-                                        null
-                                    ? Text(allSearches.users[index].tagline)
-                                    : null,
+                                subtitle:
+                                    allSearches.users[index].tagline != null
+                                        ? Text(allSearches.users[index].tagline)
+                                        : null,
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (_) => ProfilePage(
@@ -261,18 +264,22 @@ class DataSearch extends SearchDelegate<String> {
                       ),
                     ),
                     InkWell(
-                      onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SearchAllUsers(users: allSearches.users,query: query,)));
-                      },
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => SearchAllUsers(
+                                    users: allSearches.users,
+                                    query: query,
+                                  )));
+                        },
                         child: Container(
-                          width: size.width,
+                            width: size.width,
                             child: Text(
-                      "See all users",
-                      style: TextStyle(
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.w500,
-                          fontSize: size.width / 25),
-                    ))),
+                              "See all users",
+                              style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: size.width / 25),
+                            ))),
                     SizedBox(
                       height: size.height / 30,
                     ),
@@ -286,13 +293,13 @@ class DataSearch extends SearchDelegate<String> {
                     ),
                     Flexible(
                       child: Container(
-                        margin: EdgeInsets.fromLTRB(0, size.height/50, 0, size.height/50),
+                        margin: EdgeInsets.fromLTRB(
+                            0, size.height / 50, 0, size.height / 50),
                         child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount:
-                          allSearches.clubs.length<3
-                          ?allSearches.clubs.length
-                          :3,
+                          itemCount: allSearches.clubs.length < 3
+                              ? allSearches.clubs.length
+                              : 3,
                           itemBuilder: (builder, index) {
                             return ListTile(
                               leading:
@@ -319,17 +326,21 @@ class DataSearch extends SearchDelegate<String> {
                       ),
                     ),
                     InkWell(
-                        onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SearchAllClubs(clubs: allSearches.clubs,query: query,)));
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => SearchAllClubs(
+                                    clubs: allSearches.clubs,
+                                    query: query,
+                                  )));
                         },
                         child: Container(
                             child: Text(
-                      "See all clubs",
-                      style: TextStyle(
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.w500,
-                          fontSize: size.width / 25),
-                    ))),
+                          "See all clubs",
+                          style: TextStyle(
+                              fontFamily: 'Lato',
+                              fontWeight: FontWeight.w500,
+                              fontSize: size.width / 25),
+                        ))),
                   ],
                 ),
               );

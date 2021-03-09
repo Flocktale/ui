@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/Models/built_post.dart';
-import 'package:mootclub_app/providers/userData.dart';
-import 'package:mootclub_app/services/chopper/database_api_service.dart';
+import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'ProfilePage.dart';
@@ -52,16 +52,20 @@ class _AudiencePageState extends State<AudiencePage> {
     setState(() {});
   }
 
-  inviteAudience(String userId)async{
-    final service = Provider.of<DatabaseApiService>(context,listen: false);
-    final authToken = Provider.of<UserData>(context,listen:false).authToken;
-    final cuser = Provider.of<UserData>(context,listen:false).user;
+  inviteAudience(String userId) async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final cuser = Provider.of<UserData>(context, listen: false).user;
     var inviteeList = new BuiltList<String>([userId]);
-    BuiltInviteFormat invite = BuiltInviteFormat((b)=>b
+    BuiltInviteFormat invite = BuiltInviteFormat((b) => b
       ..type = 'participant'
-    ..invitee = inviteeList.toBuilder());
-    final resp = (await service.inviteUsers(clubId: widget.club.clubId, sponsorId: cuser.userId, invite: invite, authorization: authToken));
-    if(resp.isSuccessful)
+      ..invitee = inviteeList.toBuilder());
+    final resp = (await service.inviteUsers(
+        clubId: widget.club.clubId,
+        sponsorId: cuser.userId,
+        invite: invite,
+        authorization: authToken));
+    if (resp.isSuccessful)
       Fluttertoast.showToast(msg: 'User Invited');
     else
       Fluttertoast.showToast(msg: 'Some Error Occurred');
@@ -100,112 +104,128 @@ class _AudiencePageState extends State<AudiencePage> {
 
                 final _user = audienceListUsers[index]?.audience;
                 print("User= ${_user}");
-                return _user!=null?Container(
-                  key: ValueKey(_user.username),
-                  child: ListTile(
-                    leading: CachedNetworkImage(
-                      imageUrl: _user.avatar!=null?_user.avatar+"_thumb":"",
-                      imageBuilder: (context,imageProvider)=>CircleAvatar(
-                        backgroundImage: imageProvider,
-                      ),
-                      placeholder: (context, url) => CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                    ),
-                    title: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => ProfilePage(
-                                  userId: _user.userId,
-                                )));
-                      },
-                      child: Text(
-                        _user.username!=null?_user.username:"",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'Lato', fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    subtitle: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => ProfilePage(
-                                  userId: _user.userId,
-                                )));
-                      },
-                      child: Text(
-                        _user.tagline != null ? '@${_user.tagline}' : '',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Lato',
-                        ),
-                      ),
-                    ),
-                    trailing:
-                        widget.club.creator.userId == _user.userId?
-                    FittedBox(
-                      child: Row(
-                        children: [
-                          ButtonTheme(
-                            child: RaisedButton(
-                              onPressed: ()async{
-                                inviteAudience(_user.userId);
-                                setState(() {
-                                });
-                              },
-                              color: Colors.white,
-                              child: Text(
-                                "Invite to speak",
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontFamily: "Lato",
-                                  fontWeight: FontWeight.w200
-                                ),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                                side: BorderSide(color: Colors.red[600])
-                              ),
-                            )
+                return _user != null
+                    ? Container(
+                        key: ValueKey(_user.username),
+                        child: ListTile(
+                          leading: CachedNetworkImage(
+                            imageUrl: _user.avatar != null
+                                ? _user.avatar + "_thumb"
+                                : "",
+                            imageBuilder: (context, imageProvider) =>
+                                CircleAvatar(
+                              backgroundImage: imageProvider,
+                            ),
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
                           ),
-                          ButtonTheme(
-                            child: RaisedButton(
-                              onPressed: () async {
-                                final authToken =
-                                    Provider.of<UserData>(context, listen: false)
-                                        .authToken;
-                                final resp = (await Provider.of<DatabaseApiService>(
-                                        context,
-                                        listen: false)
-                                    .blockAudience(
-                                        clubId: widget.club.clubId,
-                                        audienceId: _user.userId,
-                                        authorization: authToken));
-                                if (resp.isSuccessful) {
-                                  Fluttertoast.showToast(msg: 'User blocked');
-                                  audienceListUsers = audienceListUsers.rebuild((b) => b..removeAt(index));
-                                  setState(() {});
-                                } else {
-                                  Fluttertoast.showToast(msg: 'Something went wrong');
-                                }
-                              },
-                              color: Colors.red[600],
-                              child: Text('Kick Out',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Lato',
-                                  )),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                                //side: BorderSide(color: Colors.red[600]),
+                          title: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => ProfilePage(
+                                        userId: _user.userId,
+                                      )));
+                            },
+                            child: Text(
+                              _user.username != null ? _user.username : "",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          subtitle: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => ProfilePage(
+                                        userId: _user.userId,
+                                      )));
+                            },
+                            child: Text(
+                              _user.tagline != null ? '@${_user.tagline}' : '',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Lato',
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ):SizedBox(width: 0,),
-                  ),
-                ):Container();
+                          trailing: widget.club.creator.userId == _user.userId
+                              ? FittedBox(
+                                  child: Row(
+                                    children: [
+                                      ButtonTheme(
+                                          child: RaisedButton(
+                                        onPressed: () async {
+                                          inviteAudience(_user.userId);
+                                          setState(() {});
+                                        },
+                                        color: Colors.white,
+                                        child: Text(
+                                          "Invite to speak",
+                                          style: TextStyle(
+                                              color: Colors.redAccent,
+                                              fontFamily: "Lato",
+                                              fontWeight: FontWeight.w200),
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            side: BorderSide(
+                                                color: Colors.red[600])),
+                                      )),
+                                      ButtonTheme(
+                                        child: RaisedButton(
+                                          onPressed: () async {
+                                            final authToken =
+                                                Provider.of<UserData>(context,
+                                                        listen: false)
+                                                    .authToken;
+                                            final resp = (await Provider.of<
+                                                        DatabaseApiService>(
+                                                    context,
+                                                    listen: false)
+                                                .blockAudience(
+                                                    clubId: widget.club.clubId,
+                                                    audienceId: _user.userId,
+                                                    authorization: authToken));
+                                            if (resp.isSuccessful) {
+                                              Fluttertoast.showToast(
+                                                  msg: 'User blocked');
+                                              audienceListUsers =
+                                                  audienceListUsers.rebuild(
+                                                      (b) =>
+                                                          b..removeAt(index));
+                                              setState(() {});
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg: 'Something went wrong');
+                                            }
+                                          },
+                                          color: Colors.red[600],
+                                          child: Text('Kick Out',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'Lato',
+                                              )),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            //side: BorderSide(color: Colors.red[600]),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : SizedBox(
+                                  width: 0,
+                                ),
+                        ),
+                      )
+                    : Container();
               }),
         ));
   }

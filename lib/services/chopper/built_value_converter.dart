@@ -1,6 +1,6 @@
 import 'package:chopper/chopper.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:mootclub_app/services/chopper/serializers.dart';
+import 'package:flocktale/services/chopper/serializers.dart';
 
 class BuiltValueConverter extends JsonConverter {
   @override

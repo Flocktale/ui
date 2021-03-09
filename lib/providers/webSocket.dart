@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mootclub_app/providers/agoraController.dart';
-import 'package:mootclub_app/providers/userData.dart';
+import 'package:flocktale/providers/agoraController.dart';
+import 'package:flocktale/providers/userData.dart';
 import 'package:web_socket_channel/io.dart';
 
 class MySocket with ChangeNotifier {

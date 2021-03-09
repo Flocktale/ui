@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:mootclub_app/providers/userData.dart';
+import 'package:flocktale/providers/userData.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
