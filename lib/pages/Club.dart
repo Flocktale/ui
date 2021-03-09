@@ -703,19 +703,17 @@ class _ClubState extends State<Club> {
 
     if (_isPlaying) {
       if (_isOwner) {
-        _isLive = false;
-        _isConcluded = true;
-
-        await _concludeClub();
+        _showMaterialDialog();
       }
+      else{
+        //sending websocket message to indicate about club stopped event
+        Provider.of<MySocket>(context, listen: false)
+            .stopClub(widget.club.clubId);
 
-      //sending websocket message to indicate about club stopped event
-      Provider.of<MySocket>(context, listen: false)
-          .stopClub(widget.club.clubId);
-
-      // stop club
-      await Provider.of<AgoraController>(context, listen: false).stop();
-      _isPlaying = false;
+        // stop club
+        await Provider.of<AgoraController>(context, listen: false).stop();
+        _isPlaying = false;
+      }
     } else {
       //start club
       if (_isLive == false && _isOwner == true) {
@@ -873,22 +871,37 @@ class _ClubState extends State<Club> {
   }
 
   AlertDialog get _invitationAlert => AlertDialog(
-        title: Text("You have been invited as a panelist"),
+        title: Text("Do you want to end the club?"),
         actions: [
           FlatButton(
-            child: Text("Accept"),
+            child: Text(
+                "No",
+              style: TextStyle(
+                fontFamily: "Lato",
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold
+              ),
+            ),
             onPressed: () {
-              setState(() {
-                _showInvitation = false;
-              });
+              Navigator.of(context).pop();
             },
           ),
           FlatButton(
-            child: Text("Decline"),
-            onPressed: () {
+            child: Text(
+                "Yes",
+              style: TextStyle(
+                  fontFamily: "Lato",
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+            onPressed: ()async {
+              await _concludeClub();
               setState(() {
-                _showInvitation = false;
+                _isLive = false;
+                _isConcluded = true;
               });
+              Navigator.of(context).pop();
             },
           ),
         ],
@@ -935,13 +948,14 @@ class _ClubState extends State<Club> {
     super.initState();
 
     _enterClub();
-
-    Provider.of<DatabaseApiService>(context, listen: false)
-        .getActiveJoinRequests(
-      clubId: widget.club.clubId,
-      lastevaluatedkey: null,
-      authorization: null,
-    );
+    if(_isOwner){
+      Provider.of<DatabaseApiService>(context, listen: false)
+          .getActiveJoinRequests(
+        clubId: widget.club.clubId,
+        lastevaluatedkey: null,
+        authorization: null,
+      );
+    }
   }
 
   @override

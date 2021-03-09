@@ -29,7 +29,7 @@ class _NotificationPageState extends State<NotificationPage> {
     ))
         .body;
 
-    var z = notificationList.notifications[0];
+  //  var z = notificationList.notifications[0];
     List<NotificationData> temp = [];
     int curTime = DateTime.now().millisecondsSinceEpoch -
         Duration.microsecondsPerMinute * 30;
