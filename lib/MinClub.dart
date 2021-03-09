@@ -62,13 +62,13 @@ class _MinClubState extends State<MinClub> {
                     ],
                   ),
                 ),
-                Container(
-                    child: IconButton(
-                        iconSize: size.width / 10,
-                        icon: Icon(Icons.stop),
-                        onPressed: () {
-                          stopClub();
-                        }))
+                // Container(
+                //     child: IconButton(
+                //         iconSize: size.width / 10,
+                //         icon: Icon(Icons.stop),
+                //         onPressed: () {
+                //           stopClub();
+                //         }))
               ]),
             ),
           )

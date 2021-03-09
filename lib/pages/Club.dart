@@ -878,7 +878,7 @@ class _ClubState extends State<Club> {
                 "No",
               style: TextStyle(
                 fontFamily: "Lato",
-                color: Colors.redAccent,
+                color: Colors.black,
                 fontWeight: FontWeight.bold
               ),
             ),

@@ -4,6 +4,9 @@ import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/Club.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:intl/intl.dart';
+import 'package:flocktale/providers/agoraController.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:provider/provider.dart';
 
 class Carousel extends StatefulWidget {
   final Color shadow = Color(0xFF191818);
@@ -24,32 +27,51 @@ class _CarouselState extends State<Carousel> {
     String formattedDate2 =
         DateFormat.MMMd().add_Hm().format(dateTime) + " Hrs";
     return formattedDate2;
-    final secDiff = diff.inSeconds;
-    final minDiff = diff.inMinutes;
-    final hourDiff = diff.inHours;
-    final daysDiff = diff.inDays;
-    String str = '';
+  }
 
-    if (secDiff < 60) {
-      str = '$secDiff ' + (secDiff == 1 ? 'second' : 'seconds') + ' to go';
-    } else if (minDiff < 60) {
-      str = '$minDiff ' + (minDiff == 1 ? 'minute' : 'minutes') + ' to go';
-    } else if (hourDiff < 24) {
-      str = '$hourDiff ' + (hourDiff == 1 ? 'hour' : 'hours') + ' to go';
-    } else if (daysDiff < 7) {
-      str = '$daysDiff ' + (daysDiff == 1 ? 'day' : 'days');
-    } else {
-      final weekDiff = daysDiff / 7;
-      str = '$weekDiff ' + (weekDiff == 1 ? 'week' : 'weeks') + ' to go';
-    }
-
-    return str;
+  _showMaterialDialog(BuiltClub club) {
+    BuiltClub activeClub = Provider.of<AgoraController>(context, listen: false).club;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Please end the club \"${activeClub.clubName}\" before entering another club."),
+            actions: [
+              FlatButton(
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(
+                  "Ok",
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>Club(club: activeClub,)));
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
+    BuiltClub club = Provider.of<AgoraController>(context, listen: false).club;
     return Container(
       margin: EdgeInsets.only(left: size.width / 50, right: size.width / 50),
       //  height: 250,
@@ -68,8 +90,17 @@ class _CarouselState extends State<Carousel> {
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => Club(club: widget.Clubs[index])));
+                  if(club!=null){
+                    final cuser = Provider.of<UserData>(context,listen: false).user;
+                    if(club.creator.userId==cuser.userId){
+                      _showMaterialDialog(club);
+                    }
+                  }
+                  else{
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => Club(club: widget.Clubs[index])));
+                  }
+
                 },
                 child: Stack(
                   children: <Widget>[
