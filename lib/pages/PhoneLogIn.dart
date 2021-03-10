@@ -194,7 +194,9 @@ class _PhoneLoginState extends State<PhoneLogin> {
                           } else {
                             _formKey.currentState.save();
                             phoneNumber = _controller?.text;
-
+                            setState(() {
+                              phoneNumberSubmitted = true;
+                            });
                             final resp = await Provider.of<UserData>(context,
                                     listen: false)
                                 .sendOTP(_dialCode, phoneNumber);
