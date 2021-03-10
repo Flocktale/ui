@@ -285,6 +285,24 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<BuiltSearchClubs>> getClubsOfFriends(
+      {String userId, String authorization}) {
+    final $url = '/users/$userId/clubs/relation?socialRelation=friend';
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
+  }
+
+  @override
+  Future<Response<BuiltSearchClubs>> getClubsOfFollowings(
+      {String userId, String authorization}) {
+    final $url = '/users/$userId/clubs/relation?socialRelation=following';
+    final $headers = {'authorization': authorization};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
+  }
+
+  @override
   Future<Response<BuiltAllClubsList>> getAllClubs({String authorization}) {
     final $url = '/clubs/global';
     final $headers = {'authorization': authorization};
@@ -534,13 +552,12 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<BuiltActiveJoinRequests>> getAllBlockedUsers(
+  Future<Response<BuiltList<AudienceData>>> getAllBlockedUsers(
       {String clubId, String authorization}) {
     final $url = '/clubs/$clubId/block';
     final $headers = {'authorization': authorization};
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
-    return client
-        .send<BuiltActiveJoinRequests, BuiltActiveJoinRequests>($request);
+    return client.send<BuiltList<AudienceData>, AudienceData>($request);
   }
 
   @override

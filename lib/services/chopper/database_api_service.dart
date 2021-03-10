@@ -220,6 +220,18 @@ abstract class DatabaseApiService extends ChopperService {
   //                                      Search clubs by clubName
   //---------------------------------------------------------------------------------------------
 
+  @Get(path: '/users/{userId}/clubs/relation?socialRelation=friend')
+  Future<Response<BuiltSearchClubs>> getClubsOfFriends({
+    @required @Path() String userId,
+    @required @Header() String authorization,
+  });
+
+  @Get(path: '/users/{userId}/clubs/relation?socialRelation=following')
+  Future<Response<BuiltSearchClubs>> getClubsOfFollowings({
+    @required @Path() String userId,
+    @required @Header() String authorization,
+  });
+
   @Get(path: '/clubs/global')
   Future<Response<BuiltAllClubsList>> getAllClubs({
     @required @Header() String authorization,
@@ -388,7 +400,7 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   @Get(path: '/clubs/{clubId}/block')
-  Future<Response<BuiltActiveJoinRequests>> getAllBlockedUsers({
+  Future<Response<BuiltList<AudienceData>>> getAllBlockedUsers({
     @required @Path() String clubId,
     @required @Header() String authorization,
   });
