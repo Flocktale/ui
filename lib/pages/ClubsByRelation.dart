@@ -6,35 +6,39 @@ import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/Club.dart';
 import 'package:intl/intl.dart';
 
-class ClubsByCategory extends StatefulWidget {
+class ClubsByRelation extends StatefulWidget {
   final Color shadow = Color(0xFF191818);
-  final String category;
-  ClubsByCategory({this.category});
+  final String userId;
+  final int type;
+  ClubsByRelation({this.userId,this.type});
   @override
-  _ClubsByCategoryState createState() => _ClubsByCategoryState();
+  _ClubsByRelationState createState() => _ClubsByRelationState();
 }
 
-class _ClubsByCategoryState extends State<ClubsByCategory> {
+class _ClubsByRelationState extends State<ClubsByRelation> {
   Map<String, dynamic> clubMap = {
     'data': null,
     'isLoading': true,
   };
 
-  Future<void> _fetchClubsByCategory() async {
+  Future<void> _fetchClubsByUser() async {
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
     clubMap['data'] =
+    widget.type==0?
         (await Provider.of<DatabaseApiService>(context, listen: false)
-                .getClubsOfCategory(
-                    category: widget.category,
-                    lastevaluatedkey:
-                        (clubMap['data'] as BuiltSearchClubs)?.lastevaluatedkey,
-                    authorization: authToken))
-            .body;
+            .getClubsOfFriends(
+            userId: widget.userId,
+            authorization: authToken))
+            .body
+        :(await Provider.of<DatabaseApiService>(context,listen: false)
+          .getClubsOfFollowings(userId: widget.userId, authorization: authToken)
+        ).body
+    ;
     clubMap['isLoading'] = false;
     setState(() {});
   }
 
-  Future<void> _fetchMoreClubsByCategory() async {
+  Future<void> _fetchMoreClubsByUser() async {
     if (clubMap['isLoading'] == true) return;
     setState(() {});
 
@@ -42,7 +46,7 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
         (clubMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
 
     if (lastEvaluatedKey != null) {
-      await _fetchClubsByCategory();
+      await _fetchClubsByUser();
     } else {
       await Future.delayed(Duration(milliseconds: 200));
       clubMap['isLoading'] = false;
@@ -52,7 +56,7 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
 
   String _processTimestamp(int timestamp) {
     if (DateTime.now()
-            .compareTo(DateTime.fromMillisecondsSinceEpoch(timestamp)) >
+        .compareTo(DateTime.fromMillisecondsSinceEpoch(timestamp)) >
         0) return "Waiting for start";
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
 
@@ -69,7 +73,7 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
         if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-          _fetchMoreClubsByCategory();
+          _fetchMoreClubsByUser();
           clubMap['isLoading'] = true;
         }
         return true;
@@ -77,7 +81,7 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
       child: GridView.builder(
           shrinkWrap: true,
           gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
           itemCount: listClubs,
           itemBuilder: (context, index) {
             if (index == listClubs - 1) {
@@ -90,7 +94,7 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
                 return Container();
             }
             return Container(
-              margin: EdgeInsets.fromLTRB(20, 15, 20, 0),
+              margin: EdgeInsets.fromLTRB(15, 15, 15, 0),
               //width: 200.0,
               width: 150,
               child: Card(
@@ -129,7 +133,7 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
                         child: Row(children: [
                           CircleAvatar(
                             backgroundImage:
-                                NetworkImage(clubList[index].creator.avatar),
+                            NetworkImage(clubList[index].creator.avatar),
                             radius: 10,
                           ),
                           SizedBox(
@@ -147,17 +151,17 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
                       ),
                       clubList[index].isLive == true
                           ? Positioned(
-                              // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                              bottom: 5,
-                              left: 5,
-                              child: Text(
-                                "${clubList[index].estimatedAudience.toString()} LISTENERS",
-                                style: TextStyle(
-                                    fontFamily: "Lato",
-                                    fontSize: size.width / 40,
-                                    color: Colors.grey[700]),
-                              ),
-                            )
+                        // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                        bottom: 5,
+                        left: 5,
+                        child: Text(
+                          "${clubList[index].estimatedAudience.toString()} LISTENERS",
+                          style: TextStyle(
+                              fontFamily: "Lato",
+                              fontSize: size.width / 40,
+                              color: Colors.grey[700]),
+                        ),
+                      )
                           : Container(),
                       Positioned(
                         bottom: 5,
@@ -165,38 +169,38 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
                         child: Row(
                           children: [
                             clubList[index].isLive == false &&
-                                    clubList[index].isConcluded == false
+                                clubList[index].isConcluded == false
                                 ? Container(
-                                    padding: EdgeInsets.all(2),
-                                    child: Icon(
-                                      Icons.timer,
-                                      size: size.width / 40,
-                                    ),
-                                  )
+                              padding: EdgeInsets.all(2),
+                              child: Icon(
+                                Icons.timer,
+                                size: size.width / 40,
+                              ),
+                            )
                                 : Container(),
                             Container(
                               color: clubList[index].isLive
                                   ? Colors.red
                                   : clubList[index].isConcluded != null &&
-                                          clubList[index].isConcluded
-                                      ? Colors.grey
-                                      : Colors.white,
+                                  clubList[index].isConcluded
+                                  ? Colors.grey
+                                  : Colors.white,
                               padding: EdgeInsets.all(2),
                               child: Text(
                                 clubList[index].isLive == true
                                     ? "LIVE"
                                     : clubList[index].isConcluded == true
-                                        ? "ENDED"
-                                        : _processTimestamp(
-                                            clubList[index].scheduleTime),
+                                    ? "ENDED"
+                                    : _processTimestamp(
+                                    clubList[index].scheduleTime),
                                 style: TextStyle(
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.bold,
                                     color: clubList[index].isLive == true
                                         ? Colors.white
                                         : clubList[index].isConcluded == true
-                                            ? Colors.white
-                                            : Colors.black,
+                                        ? Colors.white
+                                        : Colors.black,
                                     //   letterSpacing: 2.0,
                                     fontSize: size.width / 40),
                               ),
@@ -216,7 +220,7 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
   @override
   void initState() {
     super.initState();
-    _fetchClubsByCategory();
+    _fetchClubsByUser();
   }
 
   @override
@@ -225,7 +229,7 @@ class _ClubsByCategoryState extends State<ClubsByCategory> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          "Clubs in \"${widget.category}\"",
+          "Clubs",
           style: TextStyle(
             fontFamily: "Lato",
             fontWeight: FontWeight.bold,

@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'ClubsByCategory.dart';
+import 'ClubsByRelation.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -18,6 +19,8 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage>
     with AutomaticKeepAliveClientMixin {
   BuiltList<CategoryClubsList> Clubs;
+  BuiltSearchClubs friendsClubs;
+  BuiltSearchClubs followingUsersClubs;
   List<String> Category = [
     'Entrepreneurship',
     'Education',
@@ -52,12 +55,16 @@ class _LandingPageState extends State<LandingPage>
   Future _fetchAllClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final cuser = Provider.of<UserData>(context, listen: false).user;
+    friendsClubs = (await service.getClubsOfFriends(userId: cuser.userId, authorization: authToken)).body;
+    followingUsersClubs = (await service.getClubsOfFollowings(userId: cuser.userId, authorization: authToken)).body;
     Clubs = (await service.getAllClubs(authorization: authToken))
         .body
         .categoryClubs;
     await getNotifications();
     setState(() {});
   }
+
 
   @override
   void initState() {
@@ -146,6 +153,131 @@ class _LandingPageState extends State<LandingPage>
                           ],
                         ),
                       ),
+
+                      friendsClubs!=null && friendsClubs.clubs.isNotEmpty?
+                      ListView.builder(
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: friendsClubs.clubs.length,
+                          itemBuilder: (context, index) {
+                            return  Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(height: size.height / 30),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    ClubsByRelation(
+                                                      userId: Provider.of<UserData>(context,listen:false).userId,
+                                                      type: 0,
+                                                    )));
+                                      },
+                                      child: Text(
+                                        "From your Friends",
+                                        style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: size.width / 15,
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    ClubsByRelation(
+                                                      userId: Provider.of<UserData>(context,listen:false).userId,
+                                                      type: 0,
+                                                    )));
+                                      },
+                                      child: Text(
+                                        'View All',
+                                        style: TextStyle(
+                                          fontSize: size.width / 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(height: size.height / 50),
+                                Carousel(Clubs: friendsClubs.clubs),
+                              ],
+                            );
+                          })
+                      :Container(),
+
+                      followingUsersClubs!=null && followingUsersClubs.clubs.isNotEmpty?
+                      ListView.builder(
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: followingUsersClubs.clubs.length,
+                          itemBuilder: (context, index) {
+                            return  Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(height: size.height / 30),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    ClubsByRelation(
+                                                      userId: Provider.of<UserData>(context,listen:false).userId,
+                                                      type: 1,
+                                                    )));
+                                      },
+                                      child: Text(
+                                        "From the people you follow",
+                                        style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: size.width / 15,
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    ClubsByRelation(
+                                                      userId: Provider.of<UserData>(context,listen:false).userId,
+                                                      type: 1,
+                                                    )));
+                                      },
+                                      child: Text(
+                                        'View All',
+                                        style: TextStyle(
+                                          fontSize: size.width / 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(height: size.height / 50),
+                                Carousel(Clubs: followingUsersClubs.clubs),
+                              ],
+                            );
+                          })
+                      :Container(),
+
                       Clubs != null
                           ? ListView.builder(
                               shrinkWrap: true,
@@ -208,7 +340,18 @@ class _LandingPageState extends State<LandingPage>
                                           Carousel(Clubs: Clubs[index].clubs),
                                         ],
                                       )
-                                    : Container();
+                                    : Container(
+                                  // child: Center(
+                                  //   child: Text(
+                                  //     "No clubs available right now",
+                                  //     style: TextStyle(
+                                  //       fontFamily: "Lato",
+                                  //       fontWeight: FontWeight.bold,
+                                  //       color: Colors.grey
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                );
                               })
                           : Container(
                               child: Center(

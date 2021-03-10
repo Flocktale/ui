@@ -82,6 +82,7 @@ class _CarouselState extends State<Carousel> {
         // children: <Widget>[
         itemBuilder: (context, index) {
           return Container(
+            margin: EdgeInsets.only(right: 10),
             //width: 200.0,
             width: 150,
             child: Card(
