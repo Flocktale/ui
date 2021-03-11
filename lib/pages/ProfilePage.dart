@@ -101,6 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ?.body
         ?.clubs;
     setState(() {});
+
     //  print("============LENGTH= ${_Clubs.length}");
 
     //THIS IS RETURNING NULL
@@ -774,7 +775,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           top: size.height / 14,
                           left: ((size.width / 2) - (size.width / 9)),
                           child: CachedNetworkImage(
-                            imageUrl: _user.avatar!=null?_user.avatar:'assets/images/Card1.jpg',
+                            imageUrl: _user.avatar != null
+                                ? _user.avatar
+                                : 'assets/images/Card1.jpg',
                             imageBuilder: (context, imageProvider) =>
                                 CircleAvatar(
                               backgroundImage: imageProvider,

@@ -35,8 +35,8 @@ class _ClubState extends State<Club> {
   bool newMessage = false;
   bool _sentRequest = false;
 
-  bool _isLive = false;
-  bool _isConcluded = false;
+  // bool _isLive = false;
+  // bool _isConcluded = false;
 
   bool _isMuted;
 
@@ -181,8 +181,7 @@ class _ClubState extends State<Club> {
     setState(() {
       _clubAudience = _clubAudience.rebuild((b) => b
         ..club.agoraToken = event['agoraToken']
-        ..club.isLive = true);
-      _isLive = true;
+        ..club.status = enumToString(ClubStatus.Live));
     });
 
     //TODO
@@ -194,8 +193,7 @@ class _ClubState extends State<Club> {
 
     _clubAudience = _clubAudience.rebuild((b) => b
       ..club.agoraToken = null
-      ..club.isLive = false
-      ..club.isConcluded = true);
+      ..club.status = enumToString(ClubStatus.Concluded));
 
     await Provider.of<AgoraController>(context, listen: false).stop();
 
@@ -206,8 +204,6 @@ class _ClubState extends State<Club> {
 
     setState(() {
       _isPlaying = false;
-      _isLive = false;
-      _isConcluded = true;
     });
   }
 
@@ -414,13 +410,11 @@ class _ClubState extends State<Club> {
       userId: cuser.userId,
       authorization: authToken,
     );
-    if(resp.isSuccessful){
+    if (resp.isSuccessful) {
       _sentRequest = !_sentRequest;
       Fluttertoast.showToast(msg: "Join Request Sent");
-      setState(() {
-      });
-    }
-    else{
+      setState(() {});
+    } else {
       Fluttertoast.showToast(msg: 'Some error occurred');
     }
   }
@@ -434,16 +428,13 @@ class _ClubState extends State<Club> {
       userId: cuser.userId,
       authorization: authToken,
     );
-    if(resp.isSuccessful){
+    if (resp.isSuccessful) {
       _sentRequest = !_sentRequest;
       Fluttertoast.showToast(msg: "Join Request Cancelled");
-      setState(() {
-      });
-    }
-    else{
+      setState(() {});
+    } else {
       Fluttertoast.showToast(msg: 'Some Error occurred');
     }
-
   }
 
 // TODO:
@@ -493,10 +484,6 @@ class _ClubState extends State<Club> {
     }
 
     _clubAudience = resp.body;
-
-    // setting live status
-    _isLive = _clubAudience.club.isLive;
-    _isConcluded = _clubAudience.club.isConcluded ?? false;
 
     // setting current mic status of user.
     this._isMuted = _clubAudience.audienceData.isMuted;
@@ -610,12 +597,10 @@ class _ClubState extends State<Club> {
     _clubAudience = _clubAudience.rebuild(
       (b) => b
         ..club.agoraToken = data.body['agoraToken']
-        ..club.isLive = true,
+        ..club.status = enumToString(ClubStatus.Live),
     );
 
-    setState(() {
-      _isLive = true;
-    });
+    setState(() {});
   }
 
   Future<void> _concludeClub() async {
@@ -627,10 +612,11 @@ class _ClubState extends State<Club> {
       creatorId: userId,
       authorization: authToken,
     );
-    _clubAudience = _clubAudience.rebuild((b) => b
-      ..club.agoraToken = null
-      ..club.isLive = false
-      ..club.isConcluded = true);
+    _clubAudience = _clubAudience.rebuild(
+      (b) => b
+        ..club.agoraToken = null
+        ..club.status = enumToString(ClubStatus.Concluded),
+    );
 
     await Provider.of<AgoraController>(context, listen: false).stop();
 
@@ -641,8 +627,6 @@ class _ClubState extends State<Club> {
 
     setState(() {
       _isPlaying = false;
-      _isLive = false;
-      _isConcluded = true;
     });
   }
 
@@ -695,7 +679,8 @@ class _ClubState extends State<Club> {
   }
 
   void _playButtonHandler() async {
-    if (_isLive == false && _isOwner == false) {
+    if (_clubAudience.club.status != enumToString(ClubStatus.Live) &&
+        _isOwner == false) {
       // non-owner is trying to play the club which is not yet started by owner.
       Fluttertoast.showToast(msg: "The Club has not started yet");
       return;
@@ -704,8 +689,7 @@ class _ClubState extends State<Club> {
     if (_isPlaying) {
       if (_isOwner) {
         _showMaterialDialog();
-      }
-      else{
+      } else {
         //sending websocket message to indicate about club stopped event
         Provider.of<MySocket>(context, listen: false)
             .stopClub(widget.club.clubId);
@@ -716,7 +700,8 @@ class _ClubState extends State<Club> {
       }
     } else {
       //start club
-      if (_isLive == false && _isOwner == true) {
+      if (_clubAudience.club.status != enumToString(ClubStatus.Live) &&
+          _isOwner == true) {
         // club is being started by owner for first time.
         await _startClub();
       }
@@ -735,18 +720,23 @@ class _ClubState extends State<Club> {
 
     setState(() {});
   }
-  void _leavePanel()async{
-    final service = Provider.of<DatabaseApiService>(context,listen: false);
-    final authToken = Provider.of<UserData>(context,listen:false).authToken;
-    final cuserId = Provider.of<UserData>(context,listen:false).userId;
-    final resp = (await service.kickOutParticipant(clubId: widget.club.clubId, audienceId: cuserId, isSelf: 'true', authorization: authToken));
-    if(resp.isSuccessful)
+
+  void _leavePanel() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    final cuserId = Provider.of<UserData>(context, listen: false).userId;
+    final resp = (await service.kickOutParticipant(
+        clubId: widget.club.clubId,
+        audienceId: cuserId,
+        isSelf: 'true',
+        authorization: authToken));
+    if (resp.isSuccessful)
       Fluttertoast.showToast(msg: 'You are now an audience');
     else
       Fluttertoast.showToast(msg: 'Some Error occurred');
-    setState(() {
-    });
+    setState(() {});
   }
+
   void _participationButtonHandler() async {
     if (_isParticipant) {
       //TODO: complete this functionality
@@ -755,13 +745,12 @@ class _ClubState extends State<Club> {
     } else {
       // user is interacting with join request button
       if (!_sentRequest) {
-        if(participantList.length<10) {
+        if (participantList.length < 10) {
           await _sendJoinRequest();
-        }
-        else
-          Fluttertoast.showToast(msg: 'All Panelist slots are filled. Max 9 allowed.');
-      }
-      else {
+        } else
+          Fluttertoast.showToast(
+              msg: 'All Panelist slots are filled. Max 9 allowed.');
+      } else {
         await _deleteJoinRequest();
       }
     }
@@ -875,12 +864,11 @@ class _ClubState extends State<Club> {
         actions: [
           FlatButton(
             child: Text(
-                "No",
+              "No",
               style: TextStyle(
-                fontFamily: "Lato",
-                color: Colors.black,
-                fontWeight: FontWeight.bold
-              ),
+                  fontFamily: "Lato",
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold),
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -888,19 +876,15 @@ class _ClubState extends State<Club> {
           ),
           FlatButton(
             child: Text(
-                "Yes",
+              "Yes",
               style: TextStyle(
                   fontFamily: "Lato",
                   color: Colors.redAccent,
-                  fontWeight: FontWeight.bold
-              ),
+                  fontWeight: FontWeight.bold),
             ),
-            onPressed: ()async {
+            onPressed: () async {
               await _concludeClub();
-              setState(() {
-                _isLive = false;
-                _isConcluded = true;
-              });
+
               Navigator.of(context).pop();
             },
           ),
@@ -948,7 +932,7 @@ class _ClubState extends State<Club> {
     super.initState();
 
     _enterClub();
-    if(_isOwner){
+    if (_isOwner) {
       Provider.of<DatabaseApiService>(context, listen: false)
           .getActiveJoinRequests(
         clubId: widget.club.clubId,
@@ -1079,23 +1063,26 @@ class _ClubState extends State<Club> {
                                             onPressed: () {
                                               _playButtonHandler();
                                               if (_isPlaying) {
-                                                if(participantList.length<10) {
+                                                if (participantList.length <
+                                                    10) {
                                                   respondToInvitation('accept');
                                                   setState(() {
                                                     _showInvitation = false;
                                                     _clubAudience = _clubAudience
                                                         .rebuild((b) => b
-                                                      ..audienceData
-                                                          .invitationId =
-                                                      null);
+                                                          ..audienceData
+                                                                  .invitationId =
+                                                              null);
                                                   });
+                                                } else {
+                                                  Fluttertoast.showToast(
+                                                      msg:
+                                                          'Panelist slots are full. Max 9 allowed.');
                                                 }
-                                                else{
-                                                  Fluttertoast.showToast(msg: 'Panelist slots are full. Max 9 allowed.');
-                                                }
-                                              }
-                                              else{
-                                                Fluttertoast.showToast(msg: 'Please let the host start the club.');
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                    msg:
+                                                        'Please let the host start the club.');
                                               }
                                             },
                                             color: Colors.white,
@@ -1176,7 +1163,8 @@ class _ClubState extends State<Club> {
                                             color: Colors.black54),
                                       ),
                                     ),
-                                    _isLive
+                                    _clubAudience.club.status ==
+                                            enumToString(ClubStatus.Live)
                                         ? Container(
                                             margin:
                                                 EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -1196,7 +1184,9 @@ class _ClubState extends State<Club> {
                                             margin: EdgeInsets.fromLTRB(
                                                 0, size.height / 50, 0, 0),
                                             child: Text(
-                                              _isConcluded
+                                              _clubAudience.club.status ==
+                                                      enumToString(
+                                                          ClubStatus.Concluded)
                                                   ? "Concluded"
                                                   : DateTime.now().compareTo(DateTime
                                                               .fromMillisecondsSinceEpoch(
@@ -1270,7 +1260,8 @@ class _ClubState extends State<Club> {
                                   ),
                                 ),
                                 // if club is concluded no need to show play, mic and participation button
-                                if (_isConcluded == false)
+                                if (_clubAudience.club.status !=
+                                    enumToString(ClubStatus.Concluded))
                                   FittedBox(
                                     child: Row(
                                       children: [
@@ -1291,16 +1282,21 @@ class _ClubState extends State<Club> {
                                             child: !_isPlaying
                                                 ? Icon(Icons.play_arrow)
                                                 : Icon(Icons.stop),
-                                            backgroundColor: _isLive
-                                                ? !_isPlaying
-                                                    ? Colors.redAccent
-                                                    : Colors.redAccent
-                                                : Colors.grey,
+                                            backgroundColor:
+                                                _clubAudience.club.status ==
+                                                        enumToString(
+                                                            ClubStatus.Live)
+                                                    ? !_isPlaying
+                                                        ? Colors.redAccent
+                                                        : Colors.redAccent
+                                                    : Colors.grey,
                                           ),
                                         ),
 
                                         // dedicated button for mic
-                                        if (_isParticipant == true && _isLive)
+                                        if (_isParticipant == true &&
+                                            _clubAudience.club.status ==
+                                                enumToString(ClubStatus.Live))
                                           Container(
                                             margin: EdgeInsets.fromLTRB(
                                                 10, 0, 0, 0),
@@ -1350,12 +1346,14 @@ class _ClubState extends State<Club> {
                                                         _isParticipant
                                                             ? Colors.white
                                                             : !_sentRequest
-                                                                ?participantList.length<10?
-                                                                  Colors
-                                                                    .redAccent
-                                                                  :Colors.grey
-                                                                : Colors
-                                                                    .white,
+                                                                ? participantList
+                                                                            .length <
+                                                                        10
+                                                                    ? Colors
+                                                                        .redAccent
+                                                                    : Colors
+                                                                        .grey
+                                                                : Colors.white,
                                                   ),
                                                 )
                                               : Container(),

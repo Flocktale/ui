@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flocktale/Models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/Club.dart';
@@ -30,12 +31,14 @@ class _CarouselState extends State<Carousel> {
   }
 
   _showMaterialDialog(BuiltClub club) {
-    BuiltClub activeClub = Provider.of<AgoraController>(context, listen: false).club;
+    BuiltClub activeClub =
+        Provider.of<AgoraController>(context, listen: false).club;
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Please end the club \"${activeClub.clubName}\" before entering another club."),
+            title: Text(
+                "Please end the club \"${activeClub.clubName}\" before entering another club."),
             actions: [
               FlatButton(
                 child: Text(
@@ -43,8 +46,7 @@ class _CarouselState extends State<Carousel> {
                   style: TextStyle(
                       fontFamily: "Lato",
                       color: Colors.black,
-                      fontWeight: FontWeight.bold
-                  ),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -56,11 +58,13 @@ class _CarouselState extends State<Carousel> {
                   style: TextStyle(
                       fontFamily: "Lato",
                       color: Colors.redAccent,
-                      fontWeight: FontWeight.bold
-                  ),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>Club(club: activeClub,)));
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (_) => Club(
+                            club: activeClub,
+                          )));
                 },
               ),
             ],
@@ -91,21 +95,20 @@ class _CarouselState extends State<Carousel> {
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () {
-                  if(club!=null){
-                    final cuser = Provider.of<UserData>(context,listen: false).user;
-                    if(club.creator.userId==cuser.userId && club.clubId!=widget.Clubs[index].clubId){
+                  if (club != null) {
+                    final cuser =
+                        Provider.of<UserData>(context, listen: false).user;
+                    if (club.creator.userId == cuser.userId &&
+                        club.clubId != widget.Clubs[index].clubId) {
                       _showMaterialDialog(club);
-                    }
-                    else{
+                    } else {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => Club(club: widget.Clubs[index])));
                     }
-                  }
-                  else{
+                  } else {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (_) => Club(club: widget.Clubs[index])));
                   }
-
                 },
                 child: Stack(
                   children: <Widget>[
@@ -168,7 +171,7 @@ class _CarouselState extends State<Carousel> {
                         ),
                       ]),
                     ),
-                    widget.Clubs[index].isLive == true
+                    widget.Clubs[index].status == enumToString(ClubStatus.Live)
                         ? Positioned(
                             // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
                             bottom: 5,
@@ -187,8 +190,8 @@ class _CarouselState extends State<Carousel> {
                       right: 5,
                       child: Row(
                         children: [
-                          widget.Clubs[index].isLive == false &&
-                                  widget.Clubs[index].isConcluded == false
+                          widget.Clubs[index].status ==
+                                  enumToString(ClubStatus.Waiting)
                               ? Container(
                                   padding: EdgeInsets.all(2),
                                   child: Icon(
@@ -198,26 +201,31 @@ class _CarouselState extends State<Carousel> {
                                 )
                               : Container(),
                           Container(
-                            color: widget.Clubs[index].isLive
+                            color: widget.Clubs[index].status ==
+                                    enumToString(ClubStatus.Live)
                                 ? Colors.red
-                                : widget.Clubs[index].isConcluded != null &&
-                                        widget.Clubs[index].isConcluded
+                                : widget.Clubs[index].status ==
+                                        enumToString(ClubStatus.Concluded)
                                     ? Colors.grey
                                     : Colors.white,
                             padding: EdgeInsets.all(2),
                             child: Text(
-                              widget.Clubs[index].isLive == true
+                              widget.Clubs[index].status ==
+                                      enumToString(ClubStatus.Live)
                                   ? "LIVE"
-                                  : widget.Clubs[index].isConcluded == true
+                                  : widget.Clubs[index].status ==
+                                          enumToString(ClubStatus.Concluded)
                                       ? "ENDED"
                                       : _processTimestamp(
                                           widget.Clubs[index].scheduleTime),
                               style: TextStyle(
                                   fontFamily: 'Lato',
                                   fontWeight: FontWeight.bold,
-                                  color: widget.Clubs[index].isLive == true
+                                  color: widget.Clubs[index].status ==
+                                          enumToString(ClubStatus.Live)
                                       ? Colors.white
-                                      : widget.Clubs[index].isConcluded == true
+                                      : widget.Clubs[index].status ==
+                                              enumToString(ClubStatus.Concluded)
                                           ? Colors.white
                                           : Colors.black,
                                   //   letterSpacing: 2.0,

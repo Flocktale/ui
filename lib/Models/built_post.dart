@@ -322,10 +322,7 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   SummaryUser get creator;
 
   @nullable
-  bool get isLive;
-
-  @nullable
-  bool get isConcluded;
+  String get status;
 
   @nullable
   int get timeWindow;

@@ -1088,17 +1088,11 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         ..add(serializers.serialize(object.creator,
             specifiedType: const FullType(SummaryUser)));
     }
-    if (object.isLive != null) {
+    if (object.status != null) {
       result
-        ..add('isLive')
-        ..add(serializers.serialize(object.isLive,
-            specifiedType: const FullType(bool)));
-    }
-    if (object.isConcluded != null) {
-      result
-        ..add('isConcluded')
-        ..add(serializers.serialize(object.isConcluded,
-            specifiedType: const FullType(bool)));
+        ..add('status')
+        ..add(serializers.serialize(object.status,
+            specifiedType: const FullType(String)));
     }
     if (object.timeWindow != null) {
       result
@@ -1218,13 +1212,9 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
           result.creator.replace(serializers.deserialize(value,
               specifiedType: const FullType(SummaryUser)) as SummaryUser);
           break;
-        case 'isLive':
-          result.isLive = serializers.deserialize(value,
-              specifiedType: const FullType(bool)) as bool;
-          break;
-        case 'isConcluded':
-          result.isConcluded = serializers.deserialize(value,
-              specifiedType: const FullType(bool)) as bool;
+        case 'status':
+          result.status = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
         case 'timeWindow':
           result.timeWindow = serializers.deserialize(value,
@@ -3725,9 +3715,7 @@ class _$BuiltClub extends BuiltClub {
   @override
   final SummaryUser creator;
   @override
-  final bool isLive;
-  @override
-  final bool isConcluded;
+  final String status;
   @override
   final int timeWindow;
   @override
@@ -3766,8 +3754,7 @@ class _$BuiltClub extends BuiltClub {
       {this.clubId,
       this.clubName,
       this.creator,
-      this.isLive,
-      this.isConcluded,
+      this.status,
       this.timeWindow,
       this.category,
       this.subCategory,
@@ -3799,8 +3786,7 @@ class _$BuiltClub extends BuiltClub {
         clubId == other.clubId &&
         clubName == other.clubName &&
         creator == other.creator &&
-        isLive == other.isLive &&
-        isConcluded == other.isConcluded &&
+        status == other.status &&
         timeWindow == other.timeWindow &&
         category == other.category &&
         subCategory == other.subCategory &&
@@ -3838,12 +3824,18 @@ class _$BuiltClub extends BuiltClub {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc($jc(0, clubId.hashCode),
-                                                                                clubName.hashCode),
-                                                                            creator.hashCode),
-                                                                        isLive.hashCode),
-                                                                    isConcluded.hashCode),
-                                                                timeWindow.hashCode),
+                                                                            $jc(
+                                                                                0,
+                                                                                clubId
+                                                                                    .hashCode),
+                                                                            clubName
+                                                                                .hashCode),
+                                                                        creator
+                                                                            .hashCode),
+                                                                    status
+                                                                        .hashCode),
+                                                                timeWindow
+                                                                    .hashCode),
                                                             category.hashCode),
                                                         subCategory.hashCode),
                                                     createdOn.hashCode),
@@ -3866,8 +3858,7 @@ class _$BuiltClub extends BuiltClub {
           ..add('clubId', clubId)
           ..add('clubName', clubName)
           ..add('creator', creator)
-          ..add('isLive', isLive)
-          ..add('isConcluded', isConcluded)
+          ..add('status', status)
           ..add('timeWindow', timeWindow)
           ..add('category', category)
           ..add('subCategory', subCategory)
@@ -3903,13 +3894,9 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       _$this._creator ??= new SummaryUserBuilder();
   set creator(SummaryUserBuilder creator) => _$this._creator = creator;
 
-  bool _isLive;
-  bool get isLive => _$this._isLive;
-  set isLive(bool isLive) => _$this._isLive = isLive;
-
-  bool _isConcluded;
-  bool get isConcluded => _$this._isConcluded;
-  set isConcluded(bool isConcluded) => _$this._isConcluded = isConcluded;
+  String _status;
+  String get status => _$this._status;
+  set status(String status) => _$this._status = status;
 
   int _timeWindow;
   int get timeWindow => _$this._timeWindow;
@@ -3981,8 +3968,7 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       _clubId = _$v.clubId;
       _clubName = _$v.clubName;
       _creator = _$v.creator?.toBuilder();
-      _isLive = _$v.isLive;
-      _isConcluded = _$v.isConcluded;
+      _status = _$v.status;
       _timeWindow = _$v.timeWindow;
       _category = _$v.category;
       _subCategory = _$v.subCategory;
@@ -4025,8 +4011,7 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
               clubId: clubId,
               clubName: clubName,
               creator: _creator?.build(),
-              isLive: isLive,
-              isConcluded: isConcluded,
+              status: status,
               timeWindow: timeWindow,
               category: category,
               subCategory: subCategory,

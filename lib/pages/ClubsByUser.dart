@@ -1,3 +1,4 @@
+import 'package:flocktale/Models/enums.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -63,12 +64,14 @@ class _ClubsByUserState extends State<ClubsByUser> {
   }
 
   _showMaterialDialog() {
-    BuiltClub activeClub = Provider.of<AgoraController>(context, listen: false).club;
+    BuiltClub activeClub =
+        Provider.of<AgoraController>(context, listen: false).club;
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Please end the club \"${activeClub.clubName}\" before entering another club."),
+            title: Text(
+                "Please end the club \"${activeClub.clubName}\" before entering another club."),
             actions: [
               FlatButton(
                 child: Text(
@@ -76,8 +79,7 @@ class _ClubsByUserState extends State<ClubsByUser> {
                   style: TextStyle(
                       fontFamily: "Lato",
                       color: Colors.black,
-                      fontWeight: FontWeight.bold
-                  ),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -89,11 +91,13 @@ class _ClubsByUserState extends State<ClubsByUser> {
                   style: TextStyle(
                       fontFamily: "Lato",
                       color: Colors.redAccent,
-                      fontWeight: FontWeight.bold
-                  ),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>Club(club: activeClub,)));
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (_) => Club(
+                            club: activeClub,
+                          )));
                 },
               ),
             ],
@@ -140,17 +144,17 @@ class _ClubsByUserState extends State<ClubsByUser> {
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
                   onTap: () {
-                    if(club!=null){
-                      final cuser = Provider.of<UserData>(context,listen: false).user;
-                      if(club.creator.userId==cuser.userId && club.clubId!=clubList[index].clubId){
+                    if (club != null) {
+                      final cuser =
+                          Provider.of<UserData>(context, listen: false).user;
+                      if (club.creator.userId == cuser.userId &&
+                          club.clubId != clubList[index].clubId) {
                         _showMaterialDialog();
-                      }
-                      else{
+                      } else {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) => Club(club: clubList[index])));
                       }
-                    }
-                    else{
+                    } else {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => Club(club: clubList[index])));
                     }
@@ -198,7 +202,7 @@ class _ClubsByUserState extends State<ClubsByUser> {
                           ),
                         ]),
                       ),
-                      clubList[index].isLive == true
+                      clubList[index].status == enumToString(ClubStatus.Live)
                           ? Positioned(
                               // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
                               bottom: 5,
@@ -217,8 +221,8 @@ class _ClubsByUserState extends State<ClubsByUser> {
                         right: 5,
                         child: Row(
                           children: [
-                            clubList[index].isLive == false &&
-                                    clubList[index].isConcluded == false
+                            clubList[index].status ==
+                                    enumToString(ClubStatus.Waiting)
                                 ? Container(
                                     padding: EdgeInsets.all(2),
                                     child: Icon(
@@ -228,26 +232,32 @@ class _ClubsByUserState extends State<ClubsByUser> {
                                   )
                                 : Container(),
                             Container(
-                              color: clubList[index].isLive
+                              color: clubList[index].status ==
+                                      enumToString(ClubStatus.Live)
                                   ? Colors.red
-                                  : clubList[index].isConcluded != null &&
-                                          clubList[index].isConcluded
+                                  : clubList[index].status ==
+                                          enumToString(ClubStatus.Concluded)
                                       ? Colors.grey
                                       : Colors.white,
                               padding: EdgeInsets.all(2),
                               child: Text(
-                                clubList[index].isLive == true
+                                clubList[index].status ==
+                                        enumToString(ClubStatus.Live)
                                     ? "LIVE"
-                                    : clubList[index].isConcluded == true
+                                    : clubList[index].status ==
+                                            enumToString(ClubStatus.Concluded)
                                         ? "ENDED"
                                         : _processTimestamp(
                                             clubList[index].scheduleTime),
                                 style: TextStyle(
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.bold,
-                                    color: clubList[index].isLive == true
+                                    color: clubList[index].status ==
+                                            enumToString(ClubStatus.Live)
                                         ? Colors.white
-                                        : clubList[index].isConcluded == true
+                                        : clubList[index].status ==
+                                                enumToString(
+                                                    ClubStatus.Concluded)
                                             ? Colors.white
                                             : Colors.black,
                                     //   letterSpacing: 2.0,
