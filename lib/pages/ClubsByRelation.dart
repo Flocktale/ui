@@ -4,6 +4,7 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/Club.dart';
+import 'package:flocktale/providers/agoraController.dart';
 import 'package:intl/intl.dart';
 
 class ClubsByRelation extends StatefulWidget {
@@ -28,10 +29,16 @@ class _ClubsByRelationState extends State<ClubsByRelation> {
         (await Provider.of<DatabaseApiService>(context, listen: false)
             .getClubsOfFriends(
             userId: widget.userId,
-            authorization: authToken))
+            authorization: authToken,
+            lastevaluatedkey: (clubMap['data'] as BuiltSearchClubs)?.lastevaluatedkey
+        ))
             .body
         :(await Provider.of<DatabaseApiService>(context,listen: false)
-          .getClubsOfFollowings(userId: widget.userId, authorization: authToken)
+          .getClubsOfFollowings(
+        userId: widget.userId,
+        authorization: authToken,
+        lastevaluatedkey: (clubMap['data'] as BuiltSearchClubs)?.lastevaluatedkey
+    )
         ).body
     ;
     clubMap['isLoading'] = false;
@@ -65,11 +72,51 @@ class _ClubsByRelationState extends State<ClubsByRelation> {
     return formattedDate2;
   }
 
+  _showMaterialDialog() {
+    BuiltClub activeClub = Provider.of<AgoraController>(context, listen: false).club;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Please end the club \"${activeClub.clubName}\" before entering another club."),
+            actions: [
+              FlatButton(
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(
+                  "Ok",
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>Club(club: activeClub,)));
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   Widget clubGrid() {
     final size = MediaQuery.of(context).size;
     final clubList = (clubMap['data'] as BuiltSearchClubs)?.clubs;
     final bool isLoading = clubMap['isLoading'];
     final listClubs = (clubList?.length ?? 0) + 1;
+    BuiltClub club = Provider.of<AgoraController>(context, listen: false).club;
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
         if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
@@ -103,8 +150,20 @@ class _ClubsByRelationState extends State<ClubsByRelation> {
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => Club(club: clubList[index])));
+                    if(club!=null){
+                      final cuser = Provider.of<UserData>(context,listen: false).user;
+                      if(club.creator.userId==cuser.userId && club.clubId!=clubList[index].clubId){
+                        _showMaterialDialog();
+                      }
+                      else{
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => Club(club: clubList[index])));
+                      }
+                    }
+                    else{
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => Club(club: clubList[index])));
+                    }
                   },
                   child: Stack(
                     children: <Widget>[

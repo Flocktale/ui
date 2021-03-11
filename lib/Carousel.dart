@@ -93,8 +93,12 @@ class _CarouselState extends State<Carousel> {
                 onTap: () {
                   if(club!=null){
                     final cuser = Provider.of<UserData>(context,listen: false).user;
-                    if(club.creator.userId==cuser.userId){
+                    if(club.creator.userId==cuser.userId && club.clubId!=widget.Clubs[index].clubId){
                       _showMaterialDialog(club);
+                    }
+                    else{
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => Club(club: widget.Clubs[index])));
                     }
                   }
                   else{

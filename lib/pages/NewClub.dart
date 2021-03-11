@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import '../MinClub.dart';
+import 'package:flocktale/providers/agoraController.dart';
 import 'Club.dart';
 import 'package:image_cropper/image_cropper.dart';
 
@@ -171,7 +172,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
         ),
         border: OutlineInputBorder(),
       ),
-      maxLines: 3,
+      maxLines: 2,
       onChanged: (String value) {
         description = value;
       },
@@ -303,6 +304,45 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     setState(() {});
   }
 
+  _showMaterialDialog() {
+    BuiltClub activeClub = Provider.of<AgoraController>(context, listen: false).club;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Please end the club \"${activeClub.clubName}\" before entering another club."),
+            actions: [
+              FlatButton(
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(
+                  "Ok",
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>Club(club: activeClub,)));
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   void initState() {
     _controller1 = TextEditingController(text: DateTime.now().toString());
@@ -314,14 +354,15 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    BuiltClub club = Provider.of<AgoraController>(context, listen: false).club;
+    final cuserId = Provider.of<UserData>(context,listen:false).userId;
     super.build(context);
     return SafeArea(
       child: Scaffold(
           body: SingleChildScrollView(
         child: Stack(children: [
           Container(
-            margin:
-                EdgeInsets.only(left: size.width / 50, right: size.width / 50),
+            margin: EdgeInsets.only(left: size.width / 50, right: size.width / 50),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -430,15 +471,19 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                           minWidth: size.width / 3.5,
                           child: RaisedButton(
                             onPressed: () {
-                              if (!_formKey.currentState.validate()) {
-                                return;
-                              } else {
-                                _formKey.currentState.save();
-                                print(name);
-                                print(description);
-                                print(category);
-//                                Navigator.of(context).pushNamed('/imagePage');
-                                _createClub();
+                              if(club!=null && club.creator.userId==cuserId){
+                                _showMaterialDialog();
+                              }
+                              else{
+                                if (!_formKey.currentState.validate()) {
+                                  return;
+                                } else {
+                                  _formKey.currentState.save();
+                                  print(name);
+                                  print(description);
+                                  print(category);
+                                  _createClub();
+                                }
                               }
                             },
                             color: Colors.red[600],
