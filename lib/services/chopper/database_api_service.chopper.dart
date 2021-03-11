@@ -286,18 +286,24 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<BuiltSearchClubs>> getClubsOfFriends(
-      {String userId, String authorization}) {
+      {String userId, String authorization, String lastevaluatedkey}) {
     final $url = '/users/$userId/clubs/relation?socialRelation=friend';
-    final $headers = {'authorization': authorization};
+    final $headers = {
+      'authorization': authorization,
+      'lastevaluatedkey': lastevaluatedkey
+    };
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
   }
 
   @override
   Future<Response<BuiltSearchClubs>> getClubsOfFollowings(
-      {String userId, String authorization}) {
+      {String userId, String authorization, String lastevaluatedkey}) {
     final $url = '/users/$userId/clubs/relation?socialRelation=following';
-    final $headers = {'authorization': authorization};
+    final $headers = {
+      'authorization': authorization,
+      'lastevaluatedkey': lastevaluatedkey
+    };
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
   }
@@ -363,6 +369,15 @@ class _$DatabaseApiService extends DatabaseApiService {
       'lastevaluatedkey': lastevaluatedkey,
       'authorization': authorization
     };
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
+  }
+
+  @override
+  Future<Response<BuiltSearchClubs>> getMyCurrentAndUpcomingClubs(
+      {String userId, String authorization}) {
+    final $url = '/myclubs/$userId/organized?upcoming=true';
+    final $headers = {'authorization': authorization};
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
   }

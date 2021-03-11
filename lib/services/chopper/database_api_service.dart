@@ -216,7 +216,7 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   //---------------------------------------------------------------------------------------------
-  //                            Get All Clubs, Clubs of a category, Club by Id, My Clubs (History/Organized), categoryData
+  //                            Get All Clubs, Clubs of a category, Club by Id, My Clubs (History/Organized, current/upcoming), categoryData
   //                                      Search clubs by clubName
   //---------------------------------------------------------------------------------------------
 
@@ -224,12 +224,14 @@ abstract class DatabaseApiService extends ChopperService {
   Future<Response<BuiltSearchClubs>> getClubsOfFriends({
     @required @Path() String userId,
     @required @Header() String authorization,
+    @required @Header() String lastevaluatedkey,
   });
 
   @Get(path: '/users/{userId}/clubs/relation?socialRelation=following')
   Future<Response<BuiltSearchClubs>> getClubsOfFollowings({
     @required @Path() String userId,
     @required @Header() String authorization,
+    @required @Header() String lastevaluatedkey,
   });
 
   @Get(path: '/clubs/global')
@@ -267,6 +269,12 @@ abstract class DatabaseApiService extends ChopperService {
   Future<Response<BuiltSearchClubs>> getMyOrganizedClubs({
     @required @Path('userId') String userId,
     @required @Header() String lastevaluatedkey,
+    @required @Header() String authorization,
+  });
+
+  @Get(path: '/myclubs/{userId}/organized?upcoming=true')
+  Future<Response<BuiltSearchClubs>> getMyCurrentAndUpcomingClubs({
+    @required @Path('userId') String userId,
     @required @Header() String authorization,
   });
 
