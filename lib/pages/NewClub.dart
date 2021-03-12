@@ -117,7 +117,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => Club(
                   club: newClub,
-                )));
+                ))).then((value) => (){_formKey.currentState.reset();image=null;setState(() {});});
         Fluttertoast.showToast(msg: 'club entry is created');
       }
     } else {
@@ -134,7 +134,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (_) => Club(
                 club: tempClub,
-              )));
+              ))).then((value) => (){_formKey.currentState.reset();image=null;setState(() {});});
       _formKey.currentState.reset();
       setState(() {
         image = null;

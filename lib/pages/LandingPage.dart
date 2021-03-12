@@ -21,6 +21,7 @@ class _LandingPageState extends State<LandingPage>
   BuiltList<CategoryClubsList> Clubs;
   BuiltSearchClubs friendsClubs;
   BuiltSearchClubs followingUsersClubs;
+  BuiltSearchClubs myCurrentClubs;
   List<String> Category = [
     'Entrepreneurship',
     'Education',
@@ -58,6 +59,7 @@ class _LandingPageState extends State<LandingPage>
     final cuser = Provider.of<UserData>(context, listen: false).user;
     friendsClubs = (await service.getClubsOfFriends(userId: cuser.userId, authorization: authToken)).body;
     followingUsersClubs = (await service.getClubsOfFollowings(userId: cuser.userId, authorization: authToken)).body;
+    myCurrentClubs = (await service.getMyCurrentAndUpcomingClubs(userId: cuser.userId, authorization: authToken)).body;
     Clubs = (await service.getAllClubs(authorization: authToken))
         .body
         .categoryClubs;
@@ -102,7 +104,10 @@ class _LandingPageState extends State<LandingPage>
                             color: Colors.redAccent,
                           ),
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/notificationPage');
+                      hasNewNotifications = false;
+                      setState(() {
+                      });
+                      Navigator.of(context).pushNamed('/notificationPage').then((value) => setState((){}));
                     },
                   ),
                 ],
@@ -154,11 +159,44 @@ class _LandingPageState extends State<LandingPage>
                         ),
                       ),
 
+
+                      myCurrentClubs!=null?
+                      ListView.builder(
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: 1,
+                          itemBuilder: (context, index) {
+                            return  Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(height: size.height / 30),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Your active Clubs",
+                                      style: TextStyle(
+                                        fontFamily: 'Lato',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: size.width / 15,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: size.height / 50),
+                                Carousel(Clubs: myCurrentClubs.clubs),
+                              ],
+                            );
+                          })
+                          :Container(),
+
                       friendsClubs!=null && friendsClubs.clubs.isNotEmpty?
                       ListView.builder(
                           shrinkWrap: true,
                           physics: ScrollPhysics(),
-                          itemCount: friendsClubs.clubs.length,
+                          itemCount: 1,
                           itemBuilder: (context, index) {
                             return  Column(
                               crossAxisAlignment:
@@ -177,7 +215,7 @@ class _LandingPageState extends State<LandingPage>
                                                     ClubsByRelation(
                                                       userId: Provider.of<UserData>(context,listen:false).userId,
                                                       type: 0,
-                                                    )));
+                                                    ))).then((value) => setState((){}));
                                       },
                                       child: Text(
                                         "From your Friends",
@@ -196,7 +234,7 @@ class _LandingPageState extends State<LandingPage>
                                                     ClubsByRelation(
                                                       userId: Provider.of<UserData>(context,listen:false).userId,
                                                       type: 0,
-                                                    )));
+                                                    ))).then((value) => setState((){}));
                                       },
                                       child: Text(
                                         'View All',
@@ -220,7 +258,7 @@ class _LandingPageState extends State<LandingPage>
                       ListView.builder(
                           shrinkWrap: true,
                           physics: ScrollPhysics(),
-                          itemCount: followingUsersClubs.clubs.length,
+                          itemCount: 1,
                           itemBuilder: (context, index) {
                             return  Column(
                               crossAxisAlignment:
@@ -239,7 +277,7 @@ class _LandingPageState extends State<LandingPage>
                                                     ClubsByRelation(
                                                       userId: Provider.of<UserData>(context,listen:false).userId,
                                                       type: 1,
-                                                    )));
+                                                    ))).then((value) => setState((){}));
                                       },
                                       child: Text(
                                         "From the people you follow",
@@ -258,7 +296,7 @@ class _LandingPageState extends State<LandingPage>
                                                     ClubsByRelation(
                                                       userId: Provider.of<UserData>(context,listen:false).userId,
                                                       type: 1,
-                                                    )));
+                                                    ))).then((value) => setState((){}));
                                       },
                                       child: Text(
                                         'View All',
@@ -303,7 +341,7 @@ class _LandingPageState extends State<LandingPage>
                                                                 category: Clubs[
                                                                         index]
                                                                     .category,
-                                                              )));
+                                                              ))).then((value) => setState((){}));
                                                 },
                                                 child: Text(
                                                   Clubs[index].category,
@@ -323,7 +361,7 @@ class _LandingPageState extends State<LandingPage>
                                                                 category: Clubs[
                                                                         index]
                                                                     .category,
-                                                              )));
+                                                              ))).then((value) => setState((){}));
                                                 },
                                                 child: Text(
                                                   'View All',
