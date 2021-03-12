@@ -1,5 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/webSocket.dart';
@@ -18,6 +20,10 @@ void main() async {
   // runApp(NotificationTesting());
 }
 
+void _setupHive() async{
+   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDir.path);
+}
 void _setupLogging() {
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((rec) {

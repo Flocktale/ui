@@ -1,3 +1,4 @@
+import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/pages/LandingPage.dart';
 import 'package:flocktale/pages/NewClub.dart';
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
 
     // TODO: UNCOMMENT THIS
     // DBHelper.fetchList(userId, context);
-
+    FollowingDatabase.fetchList(userId, context);
     if (a.userId != userId) a.update(userId);
   }
 
