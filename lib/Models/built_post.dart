@@ -7,6 +7,22 @@ import 'package:flocktale/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
 
+abstract class UsernameAvailability
+    implements Built<UsernameAvailability, UsernameAvailabilityBuilder> {
+  // fields go here
+
+  @nullable
+  bool get isAvailable;
+
+  UsernameAvailability._();
+
+  factory UsernameAvailability([updates(UsernameAvailabilityBuilder b)]) =
+      _$UsernameAvailability;
+
+  static Serializer<UsernameAvailability> get serializer =>
+      _$usernameAvailabilitySerializer;
+}
+
 abstract class BuiltAudienceList
     implements Built<BuiltAudienceList, BuiltAudienceListBuilder> {
   @nullable

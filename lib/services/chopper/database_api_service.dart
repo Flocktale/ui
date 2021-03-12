@@ -41,7 +41,7 @@ abstract class DatabaseApiService extends ChopperService {
   // ---------------------------------------------------------------------------------------------------------
 
   @Get(path: '/users/username-availability')
-  Future<Response> isThisUsernameAvailable({
+  Future<Response<UsernameAvailability>> isThisUsernameAvailable({
     @required @Query() String username,
     @required @Header() String authorization,
   });
