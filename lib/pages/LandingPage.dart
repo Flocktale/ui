@@ -160,7 +160,7 @@ class _LandingPageState extends State<LandingPage>
                       ),
 
 
-                      myCurrentClubs!=null?
+                      myCurrentClubs!=null && myCurrentClubs.clubs.length>0?
                       ListView.builder(
                           shrinkWrap: true,
                           physics: ScrollPhysics(),

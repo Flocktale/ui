@@ -787,7 +787,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             placeholder: (context, url) =>
                                 CircularProgressIndicator(),
                             errorWidget: (context, url, error) => CircleAvatar(
-                              //   backgroundImage: AssetImage('assets/Card1.jpg'),
+                         //        backgroundImage: AssetImage('assets/Card1.jpg'),
                               backgroundColor: Colors.white,
                               radius: size.height / 18,
                             ),

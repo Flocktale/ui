@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flocktale/services/SecureStorage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -63,6 +65,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       });
     }
+  }
+  _logOutUser() async {
+    final _storage = SecureStorage();
+    await _storage.logout();
+    final _user = Provider.of<UserData>(context,listen:false).user;
+    Provider.of<DatabaseApiService>(context, listen: false).deleteFCMToken(
+      userId: _user.userId,
+      authorization: null,
+    );
+    Phoenix.rebirth(context);
   }
 
   _signUpWithBackend() async {
@@ -258,36 +270,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey[400]),
-                                helperText: _usernameController.text.length>0?
+                                helperText: _usernameController.text.length>3?
                                 usernameAvailable?
 
                                       "Username is available"
                                     : "Username is not available"
-                                    : "",
+                                    : "Minimum length of username is 4",
 
-                                helperStyle: _usernameController.text.length>0?
-                                usernameAvailable?
-                                TextStyle(
-                                  fontFamily: "Lato",
-                                  color: Colors.green
-                                ):
+                                helperStyle:
+                                !usernameAvailable || _usernameController.text.length<=3?
                                 TextStyle(
                                   fontFamily: "Lato",
                                   color: Colors.red
                                 ):
                                 TextStyle(
-                                  fontFamily: "Lato"
+                                  fontFamily: "Lato",
+                                  color: Colors.green
                                 ),
                                 focusedBorder: UnderlineInputBorder(
-                                    borderSide: usernameAvailable?
+                                    borderSide: _usernameController.text.length>3?
+                                    usernameAvailable?
                                     BorderSide(color: Colors.green):
-                                        BorderSide(color: Colors.redAccent)
+                                        BorderSide(color: Colors.redAccent):
+                                        BorderSide(color:Colors.redAccent)
                                 )),
                             onChanged: (val)async{
                               final service = Provider.of<DatabaseApiService>(context,listen:false);
                               final authToken = Provider.of<UserData>(context,listen:false).authToken;
                               UsernameAvailability resp = (await service.isThisUsernameAvailable(username: val, authorization: authToken)).body;
-                              if(resp.isAvailable){
+                              if(resp.isAvailable && _usernameController.text.length>3){
                                 setState(() {
                                   usernameAvailable = true;
                                 });
@@ -357,6 +368,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       'SUBMIT',
                                       style: TextStyle(
                                           color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Lato'),
+                                    ),
+                                  ),
+                                )),
+                          ),
+                          SizedBox(
+                            height: size.height/50,
+                          ),
+                          InkWell(
+                            onTap: ()async{
+                              //TODO
+                              //Progress Indicator here
+                              await _logOutUser();
+                            },
+                            child: Container(
+                                height: size.height/20,
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  shadowColor: Colors.redAccent,
+                                  color: Colors.white,
+                                  elevation: 7.0,
+                                  child: Center(
+                                    child: Text(
+                                      'Log out',
+                                      style: TextStyle(
+                                          color: Colors.redAccent,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Lato'),
                                     ),
