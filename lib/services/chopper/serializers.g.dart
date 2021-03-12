@@ -32,6 +32,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(RelationIndexObject.serializer)
       ..add(ReportSummary.serializer)
       ..add(SummaryUser.serializer)
+      ..add(UsernameAvailability.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(AudienceData)]),
           () => new ListBuilder<AudienceData>())

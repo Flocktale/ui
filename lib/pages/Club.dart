@@ -721,7 +721,7 @@ class _ClubState extends State<Club> {
     }
   }
 
-  void _playButtonHandler() async {
+  _playButtonHandler() async {
     if (_clubAudience.club.status != enumToString(ClubStatus.Live) &&
         _isOwner == false) {
       // non-owner is trying to play the club which is not yet started by owner.
@@ -1079,8 +1079,8 @@ class _ClubState extends State<Club> {
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 20, 0),
                                             child: RaisedButton(
-                                              onPressed: () {
-                                                _playButtonHandler();
+                                              onPressed: ()async {
+                                                 await _playButtonHandler();
 
                                                 respondToInvitation('cancel');
                                                 setState(() {
@@ -1103,8 +1103,8 @@ class _ClubState extends State<Club> {
                                             ),
                                           ),
                                           RaisedButton(
-                                            onPressed: () {
-                                              _playButtonHandler();
+                                            onPressed: ()async {
+                                             await _playButtonHandler();
                                               if (_isPlaying) {
                                                 if (participantList.length <
                                                     10) {

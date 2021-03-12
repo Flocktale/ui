@@ -23,7 +23,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _usernameController = TextEditingController();
   final _tagLineController = TextEditingController();
   final _bioController = TextEditingController();
-
+  bool usernameAvailable = false;
   File image;
   final picker = ImagePicker();
 
@@ -77,6 +77,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
     if (_nameController.text.length < 3 || _nameController.text.length > 25) {
       Fluttertoast.showToast(msg: 'NAME length must be between 3 to 25');
+      return;
+    }
+    if(usernameAvailable==false){
+      Fluttertoast.showToast(msg: 'Please change your username');
       return;
     }
 
@@ -150,7 +154,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return _loading
         ? Center(child: CircularProgressIndicator())
         : Scaffold(
@@ -255,8 +258,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey[400]),
+                                helperText: _usernameController.text.length>0?
+                                usernameAvailable?
+
+                                      "Username is available"
+                                    : "Username is not available"
+                                    : "",
+
+                                helperStyle: _usernameController.text.length>0?
+                                usernameAvailable?
+                                TextStyle(
+                                  fontFamily: "Lato",
+                                  color: Colors.green
+                                ):
+                                TextStyle(
+                                  fontFamily: "Lato",
+                                  color: Colors.red
+                                ):
+                                TextStyle(
+                                  fontFamily: "Lato"
+                                ),
                                 focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red))),
+                                    borderSide: usernameAvailable?
+                                    BorderSide(color: Colors.green):
+                                        BorderSide(color: Colors.redAccent)
+                                )),
+                            onChanged: (val)async{
+                              final service = Provider.of<DatabaseApiService>(context,listen:false);
+                              final authToken = Provider.of<UserData>(context,listen:false).authToken;
+                              UsernameAvailability resp = (await service.isThisUsernameAvailable(username: val, authorization: authToken)).body;
+                              if(resp.isAvailable){
+                                setState(() {
+                                  usernameAvailable = true;
+                                });
+                              }
+                              else{
+                                setState(() {
+                                  usernameAvailable = false;
+                                });
+                              }
+                            },
                             validator: (val) {
                               if (val.isEmpty) return 'Please fill this field';
                               if (val.length < 3)

@@ -37,14 +37,14 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> isThisUsernameAvailable(
+  Future<Response<UsernameAvailability>> isThisUsernameAvailable(
       {String username, String authorization}) {
     final $url = '/users/username-availability';
     final $params = <String, dynamic>{'username': username};
     final $headers = {'authorization': authorization};
     final $request = Request('GET', $url, client.baseUrl,
         parameters: $params, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client.send<UsernameAvailability, UsernameAvailability>($request);
   }
 
   @override

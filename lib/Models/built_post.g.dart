@@ -6,6 +6,8 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<UsernameAvailability> _$usernameAvailabilitySerializer =
+    new _$UsernameAvailabilitySerializer();
 Serializer<BuiltAudienceList> _$builtAudienceListSerializer =
     new _$BuiltAudienceListSerializer();
 Serializer<RelationActionResponse> _$relationActionResponseSerializer =
@@ -52,6 +54,53 @@ Serializer<BuiltUnifiedSearchResults> _$builtUnifiedSearchResultsSerializer =
     new _$BuiltUnifiedSearchResultsSerializer();
 Serializer<BuiltInviteFormat> _$builtInviteFormatSerializer =
     new _$BuiltInviteFormatSerializer();
+
+class _$UsernameAvailabilitySerializer
+    implements StructuredSerializer<UsernameAvailability> {
+  @override
+  final Iterable<Type> types = const [
+    UsernameAvailability,
+    _$UsernameAvailability
+  ];
+  @override
+  final String wireName = 'UsernameAvailability';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, UsernameAvailability object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.isAvailable != null) {
+      result
+        ..add('isAvailable')
+        ..add(serializers.serialize(object.isAvailable,
+            specifiedType: const FullType(bool)));
+    }
+    return result;
+  }
+
+  @override
+  UsernameAvailability deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new UsernameAvailabilityBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'isAvailable':
+          result.isAvailable = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$BuiltAudienceListSerializer
     implements StructuredSerializer<BuiltAudienceList> {
@@ -1984,6 +2033,84 @@ class _$BuiltInviteFormatSerializer
     }
 
     return result.build();
+  }
+}
+
+class _$UsernameAvailability extends UsernameAvailability {
+  @override
+  final bool isAvailable;
+
+  factory _$UsernameAvailability(
+          [void Function(UsernameAvailabilityBuilder) updates]) =>
+      (new UsernameAvailabilityBuilder()..update(updates)).build();
+
+  _$UsernameAvailability._({this.isAvailable}) : super._();
+
+  @override
+  UsernameAvailability rebuild(
+          void Function(UsernameAvailabilityBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  UsernameAvailabilityBuilder toBuilder() =>
+      new UsernameAvailabilityBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is UsernameAvailability && isAvailable == other.isAvailable;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(0, isAvailable.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('UsernameAvailability')
+          ..add('isAvailable', isAvailable))
+        .toString();
+  }
+}
+
+class UsernameAvailabilityBuilder
+    implements Builder<UsernameAvailability, UsernameAvailabilityBuilder> {
+  _$UsernameAvailability _$v;
+
+  bool _isAvailable;
+  bool get isAvailable => _$this._isAvailable;
+  set isAvailable(bool isAvailable) => _$this._isAvailable = isAvailable;
+
+  UsernameAvailabilityBuilder();
+
+  UsernameAvailabilityBuilder get _$this {
+    if (_$v != null) {
+      _isAvailable = _$v.isAvailable;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(UsernameAvailability other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$UsernameAvailability;
+  }
+
+  @override
+  void update(void Function(UsernameAvailabilityBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$UsernameAvailability build() {
+    final _$result =
+        _$v ?? new _$UsernameAvailability._(isAvailable: isAvailable);
+    replace(_$result);
+    return _$result;
   }
 }
 
