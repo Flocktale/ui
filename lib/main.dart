@@ -13,17 +13,18 @@ import 'services/chopper/database_api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  _setupHive();
   _setupLogging();
   _configureFCM();
   runApp(Phoenix(child: MyApp()));
   // runApp(NotificationTesting());
 }
 
-void _setupHive() async{
-   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
+void _setupHive() async {
+  final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
 }
+
 void _setupLogging() {
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((rec) {

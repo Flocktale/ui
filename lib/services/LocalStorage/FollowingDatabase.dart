@@ -33,11 +33,12 @@ class FollowingDatabase {
   }
 	
 
-  static List<String> allFollowings()  {
+  static List allFollowings()  {
 		List res = [];
 		followingBox.values.forEach((element) { 
 				res.add(element);
 		});
+    print(res);
 		return res;
   }
 
@@ -49,6 +50,11 @@ class FollowingDatabase {
 	static void addFollowing(String userId)  {
 		// init();
 		followingBox.put(userId, userId);
+	}
+
+  static void deleteFollowing(String userId)  {
+		// init();
+    followingBox.delete(userId);
 	}
 
 	static void deleteAllData()  {
