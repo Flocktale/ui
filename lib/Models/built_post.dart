@@ -395,6 +395,9 @@ abstract class SummaryUser implements Built<SummaryUser, SummaryUserBuilder> {
   @nullable
   int get online; // this field is, "0" when user is online and represent timestamp when user is offline.
 
+  @nullable 
+  String get phone;
+
   SummaryUser._();
 
   factory SummaryUser([updates(SummaryUserBuilder b)]) = _$SummaryUser;

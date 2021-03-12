@@ -173,6 +173,21 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
+
+  // Contact Sync API
+
+  // @Get(path: '/users/contacts-sync')
+  // Future<Response<SummaryUser>> syncContacts({
+  //   @required @Query('contacts') List<String> contacts
+  // });
+
+  @Post(path: '/users/contacts-sync')
+  Future<Response<SummaryUser>> syncContacts({
+    @required @Body() Map<String,List<String>> body
+  });
+
+
+
   //! ---------------------------------------------------------------------------------------
   //! ---------------------------------------------------------------------------------------
   //!                           Club APIs

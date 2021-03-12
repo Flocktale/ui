@@ -240,6 +240,14 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<SummaryUser>> syncContacts({Map<String, List<String>> body}) {
+    final $url = '/users/contacts-sync';
+    final $body = body;
+    final $request = Request('POST', $url, client.baseUrl, body: $body);
+    return client.send<SummaryUser, SummaryUser>($request);
+  }
+
+  @override
   Future<Response<dynamic>> createNewClub(
       {BuiltClub body, String creatorId, String authorization}) {
     final $url = '/clubs/global/create/';

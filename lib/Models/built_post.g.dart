@@ -1333,6 +1333,12 @@ class _$SummaryUserSerializer implements StructuredSerializer<SummaryUser> {
         ..add(serializers.serialize(object.online,
             specifiedType: const FullType(int)));
     }
+    if (object.phone != null) {
+      result
+        ..add('phone')
+        ..add(serializers.serialize(object.phone,
+            specifiedType: const FullType(String)));
+    }
     return result;
   }
 
@@ -1370,6 +1376,10 @@ class _$SummaryUserSerializer implements StructuredSerializer<SummaryUser> {
         case 'online':
           result.online = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+        case 'phone':
+          result.phone = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
       }
     }
@@ -4062,6 +4072,8 @@ class _$SummaryUser extends SummaryUser {
   final String tagline;
   @override
   final int online;
+  @override
+  final String phone;
 
   factory _$SummaryUser([void Function(SummaryUserBuilder) updates]) =>
       (new SummaryUserBuilder()..update(updates)).build();
@@ -4072,7 +4084,8 @@ class _$SummaryUser extends SummaryUser {
       this.name,
       this.avatar,
       this.tagline,
-      this.online})
+      this.online,
+      this.phone})
       : super._();
 
   @override
@@ -4091,7 +4104,8 @@ class _$SummaryUser extends SummaryUser {
         name == other.name &&
         avatar == other.avatar &&
         tagline == other.tagline &&
-        online == other.online;
+        online == other.online &&
+        phone == other.phone;
   }
 
   @override
@@ -4099,11 +4113,13 @@ class _$SummaryUser extends SummaryUser {
     return $jf($jc(
         $jc(
             $jc(
-                $jc($jc($jc(0, userId.hashCode), username.hashCode),
-                    name.hashCode),
-                avatar.hashCode),
-            tagline.hashCode),
-        online.hashCode));
+                $jc(
+                    $jc($jc($jc(0, userId.hashCode), username.hashCode),
+                        name.hashCode),
+                    avatar.hashCode),
+                tagline.hashCode),
+            online.hashCode),
+        phone.hashCode));
   }
 
   @override
@@ -4114,7 +4130,8 @@ class _$SummaryUser extends SummaryUser {
           ..add('name', name)
           ..add('avatar', avatar)
           ..add('tagline', tagline)
-          ..add('online', online))
+          ..add('online', online)
+          ..add('phone', phone))
         .toString();
   }
 }
@@ -4146,6 +4163,10 @@ class SummaryUserBuilder implements Builder<SummaryUser, SummaryUserBuilder> {
   int get online => _$this._online;
   set online(int online) => _$this._online = online;
 
+  String _phone;
+  String get phone => _$this._phone;
+  set phone(String phone) => _$this._phone = phone;
+
   SummaryUserBuilder();
 
   SummaryUserBuilder get _$this {
@@ -4156,6 +4177,7 @@ class SummaryUserBuilder implements Builder<SummaryUser, SummaryUserBuilder> {
       _avatar = _$v.avatar;
       _tagline = _$v.tagline;
       _online = _$v.online;
+      _phone = _$v.phone;
       _$v = null;
     }
     return this;
@@ -4183,7 +4205,8 @@ class SummaryUserBuilder implements Builder<SummaryUser, SummaryUserBuilder> {
             name: name,
             avatar: avatar,
             tagline: tagline,
-            online: online);
+            online: online,
+            phone: phone);
     replace(_$result);
     return _$result;
   }

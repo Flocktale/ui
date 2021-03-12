@@ -29,21 +29,26 @@ class AgoraController {
   Future<void> joinAsAudience({
     @required String clubId,
     @required String token,
-    @required int intergerUsername,
+    @required int intergerUsername, 
+    @required Function audioVolumeIndication,
   }) async {
     assert(clubId != null && token != null);
     await _agoraHandler.joinClub(clubId, token,
-        integerUsername: intergerUsername ?? 0);
+        integerUsername: intergerUsername ?? 0,audioVolumeIndication: audioVolumeIndication);
+
+        // _agoraHandler._eventHandler.audioVolumeIndication = audioVolumeIndication;
   }
 
   Future<void> joinAsParticipant({
     @required String clubId,
     @required String token,
-    @required int intergerUsername,
+    @required int integerUsername, 
+    @required Function audioVolumeIndication,
   }) async {
+    
     assert(clubId != null && token != null);
     await _agoraHandler.joinClub(clubId, token,
-        isHost: true, integerUsername: intergerUsername ?? 0);
+        isHost: true, integerUsername: integerUsername ?? 0, audioVolumeIndication : audioVolumeIndication);
   }
 
   Future<void> stop() async {
@@ -71,3 +76,4 @@ class AgoraController {
     await _agoraHandler.muteSwitchMic(muteAction);
   }
 }
+

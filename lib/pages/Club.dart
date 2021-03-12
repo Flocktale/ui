@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:agora_rtc_engine/rtc_engine.dart' as RTC;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
@@ -35,6 +36,7 @@ class _ClubState extends State<Club> {
   bool newMessage = false;
   bool _sentRequest = false;
 
+  Map<int, String> integerUsernames = {};
   // bool _isLive = false;
   // bool _isConcluded = false;
 
@@ -62,6 +64,36 @@ class _ClubState extends State<Club> {
   BuiltClubAndAudience _clubAudience;
 
   bool _isOwner;
+  int convertToInt(String username) {
+    int hash = 0;
+    const int p = 53;
+    const int m = 1000000009;
+    int p_pow = 1;
+    username.runes.forEach((c) {
+      hash = (hash + (c - 94 + 1) * p_pow) % m;
+      p_pow = (p_pow * p) % m;
+    });
+    return hash;
+  }
+
+  void getActiveSpeakers(List<RTC.AudioVolumeInfo> speakers, _) {
+    Map<String, int> speakingUsers;
+    speakers.forEach((e) {
+      // speakingUsers[integerUsernames[e.uid]] = e.volume;
+      print(integerUsernames[e.uid]);
+    });
+
+    // print('All Speaking users with their volume  $speakingUsers');
+
+    // TODO
+    // Bhaiya, Is list of speakingUsers me aapko jo bhi bol raha hai unke baare me sab mil jaaega.
+  }
+
+  void _getMostActiveSpeaker(int uid) {
+    String username = integerUsernames[uid];
+
+    // print('$username is the dominating speaker');
+  }
 
   void scrollToBottom() {
     _controller.jumpTo(_controller.position.maxScrollExtent);
@@ -81,6 +113,10 @@ class _ClubState extends State<Club> {
             ..avatar = e['audience']['avatar']).toBuilder(),
       );
       participantList.add(participant);
+      // convertT
+      // print(convertToInt(participant.audience.username));
+      integerUsernames.putIfAbsent(0, () => participant.audience.username);
+      integerUsernames.putIfAbsent(convertToInt(participant.audience.username), () => participant.audience.username);
     });
 
     print('list of it: $participantList');
@@ -441,13 +477,18 @@ class _ClubState extends State<Club> {
   void reportClub() {}
 
   Future<void> _joinClubAsPanelist() async {
+    String username =
+        Provider.of<UserData>(context, listen: false).user.username;
     Provider.of<AgoraController>(context, listen: false).club =
         _clubAudience.club;
-
+    await Provider.of<AgoraController>(context,listen : false).create();
     await Provider.of<AgoraController>(context, listen: false)
         .joinAsParticipant(
-            clubId: _clubAudience.club.clubId,
-            token: _clubAudience.club.agoraToken);
+      clubId: _clubAudience.club.clubId,
+      token: _clubAudience.club.agoraToken,
+      integerUsername: convertToInt(username),
+      audioVolumeIndication: getActiveSpeakers,
+    );
   }
 
   Future<void> _joinClubAsAudience() async {
@@ -456,8 +497,10 @@ class _ClubState extends State<Club> {
           _clubAudience.club;
 
       await Provider.of<AgoraController>(context, listen: false).joinAsAudience(
-          clubId: _clubAudience.club.clubId,
-          token: _clubAudience.club.agoraToken);
+        clubId: _clubAudience.club.clubId,
+        token: _clubAudience.club.agoraToken,
+        audioVolumeIndication: getActiveSpeakers,
+      );
     } else {
       Fluttertoast.showToast(msg: "Club is null error");
     }
