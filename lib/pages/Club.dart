@@ -90,7 +90,7 @@ class _ClubState extends State<Club> {
   }
 
   void _getMostActiveSpeaker(int uid) {
-    String username = integerUsernames[uid];
+    // String username = integerUsernames[uid];
 
     // print('$username is the dominating speaker');
   }
