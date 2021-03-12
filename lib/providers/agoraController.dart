@@ -32,9 +32,11 @@ class AgoraController {
     @required int intergerUsername, 
     @required Function audioVolumeIndication,
   }) async {
+    agoraEventHandler.audioVolumeIndication = audioVolumeIndication;
+
     assert(clubId != null && token != null);
     await _agoraHandler.joinClub(clubId, token,
-        integerUsername: intergerUsername ?? 0,audioVolumeIndication: audioVolumeIndication);
+        integerUsername: intergerUsername ?? 0);
 
         // _agoraHandler._eventHandler.audioVolumeIndication = audioVolumeIndication;
   }
