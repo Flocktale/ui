@@ -1003,6 +1003,7 @@ class _ClubState extends State<Club> {
       onWillPop: () async {
         Provider.of<MySocket>(context, listen: false)
             .leaveClub(widget.club.clubId);
+        Provider.of<AgoraController>(context,listen: false).agoraEventHandler.audioVolumeIndication = null; 
         return true;
       },
       child: Scaffold(
