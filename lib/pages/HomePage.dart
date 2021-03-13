@@ -44,70 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-  //   const userId = '334cca61-58df-47b5-b6a5-c50302qab9d46';
-  //   return Scaffold(
-  //       body: Center(
-  //           child: Container(
-  //     padding: EdgeInsets.all(100),
-  //     child: Column(children: [
-  //       RaisedButton(
-  //         child: Text('Restart App'),
-  //         onPressed: () {
-  //           Phoenix.rebirth(context);
-  //         },
-  //       ),
-  //       RaisedButton(
-  //         child: Text('Fetch List'),
-  //         onPressed: () {
-  //           String userId =
-  //               Provider.of<UserData>(context, listen: false).user.userId;
-  //               InviteBox.getNonSavedPhoneNumbers(context);
-  //           // DBHelper.fetchList(userId, context);
-  //           // Phoenix.rebirth(context);
-  //         },
-  //       ),
-  //       RaisedButton(
-  //         child: Text('Get Data'),
-  //         onPressed: () {
-  //           InviteBox.getData();
-
-  //           // String userId =
-  //           // Provider.of<UserData>(context, listen: false).user.userId;
-  //           // DBHelper.getData();
-  //           // Phoenix.rebirth(context);
-  //         },
-  //       ),
-  //       RaisedButton(
-  //         child: Text('Remove Following'),
-  //         onPressed: () {
-  //           // DBHelper.deleteFollowing(userId);
-  //         },
-  //       ),
-  //       RaisedButton(
-  //         child: Text('Add Following'),
-  //         onPressed: () {
-  //           // DBHelper.addFollowing(userId);
-  //         },
-  //       ),
-  //       RaisedButton(
-  //         child: Text('Check Following'),
-  //         onPressed: () {
-  //           // if(DBHelper.isFollowing(userId)){
-  //           // print("YES");
-  //           // }
-  //           // else print("NO");
-  //         },
-  //       ),
-  //       RaisedButton(
-  //         child: Text('Delete Following'),
-  //         onPressed: () {
-  //           InviteBox.clearContactDatabase();
-
-  //           //  DBHelper.printCurData();
-  //         },
-  //       ),
-  //     ]),
-  //   )));
+ 
       final cuser = Provider.of<UserData>(context, listen: false).user;
       List<Widget> _screens = [
         LandingPage(),
