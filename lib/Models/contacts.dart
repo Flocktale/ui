@@ -1,19 +1,31 @@
-// import 'package:hive/hive.dart';
+import 'package:hive/hive.dart';
+import 'dart:convert';
 
-// part 'contact.g.dart';
 
-// @HiveType()
-// class Contact {
-//   @HiveField(0)
-//   final String userId;
+@HiveType()
+class Contact {
+  @HiveField(0)
+  final String userId;
 
-//   @HiveField(1)
-//   final String userAvatar;
+  @HiveField(1)
+  final String userAvatar;
 
-//   @HiveField(2)
-//   final String phoneNumber;
+  @HiveField(2)
+  final String phoneNo;
 
   
+  dynamic toJson(){
+    Map<String,String> m = {};
+    m['phoneNo'] = phoneNo;
+    m['userid'] = userId;
+    m['userAvatar'] = userAvatar;
+    return json.encode(m);
+  }
 
-//   Contact(this.userId,this.userAvatar,this.phoneNumber);
-// }
+  Contact.fromJson(Map<String, dynamic> json)
+      : userId = json['userId'],
+        userAvatar = json['userAvatar'],
+        phoneNo = json['phoneNo'];
+
+  Contact(this.userId,this.userAvatar,this.phoneNo);
+}

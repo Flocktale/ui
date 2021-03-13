@@ -2047,13 +2047,14 @@ class _$BuiltContactsSerializer implements StructuredSerializer<BuiltContacts> {
   @override
   Iterable<Object> serialize(Serializers serializers, BuiltContacts object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
-      'contacts',
-      serializers.serialize(object.contacts,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(String)])),
-    ];
-
+    final result = <Object>[];
+    if (object.contacts != null) {
+      result
+        ..add('contacts')
+        ..add(serializers.serialize(object.contacts,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(String)])));
+    }
     return result;
   }
 
@@ -5531,11 +5532,7 @@ class _$BuiltContacts extends BuiltContacts {
   factory _$BuiltContacts([void Function(BuiltContactsBuilder) updates]) =>
       (new BuiltContactsBuilder()..update(updates)).build();
 
-  _$BuiltContacts._({this.contacts}) : super._() {
-    if (contacts == null) {
-      throw new BuiltValueNullFieldError('BuiltContacts', 'contacts');
-    }
-  }
+  _$BuiltContacts._({this.contacts}) : super._();
 
   @override
   BuiltContacts rebuild(void Function(BuiltContactsBuilder) updates) =>
@@ -5599,12 +5596,12 @@ class BuiltContactsBuilder
   _$BuiltContacts build() {
     _$BuiltContacts _$result;
     try {
-      _$result = _$v ?? new _$BuiltContacts._(contacts: contacts.build());
+      _$result = _$v ?? new _$BuiltContacts._(contacts: _contacts?.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'contacts';
-        contacts.build();
+        _contacts?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuiltContacts', _$failedField, e.toString());

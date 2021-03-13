@@ -182,7 +182,7 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   @Post(path: '/users/contacts-sync')
-  Future<Response> syncContactsByPost({
+  Future<Response<BuiltList<SummaryUser>>> syncContactsByPost({
     @required @Body() BuiltContacts body
   });
 

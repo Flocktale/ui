@@ -637,18 +637,18 @@ abstract class BuiltContacts implements Built<BuiltContacts, BuiltContactsBuilde
 }
 
 
-@HiveType()
-class Contact {
-  @HiveField(0)
-  final String userId;
+// @HiveType()
+// class Contact {
+//   @HiveField(0)
+//   final String userId;
 
-  @HiveField(1)
-  final String userAvatar;
+//   @HiveField(1)
+//   final String userAvatar;
 
-  @HiveField(2)
-  final String phoneNumber;
+//   @HiveField(2)
+//   final String phoneNumber;
 
   
 
-  Contact(this.userId,this.userAvatar,this.phoneNumber);
-}
+//   Contact(this.userId,this.userAvatar,this.phoneNumber);
+// }

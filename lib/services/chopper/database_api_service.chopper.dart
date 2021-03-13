@@ -248,11 +248,12 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> syncContactsByPost({BuiltContacts body}) {
+  Future<Response<BuiltList<SummaryUser>>> syncContactsByPost(
+      {BuiltContacts body}) {
     final $url = '/users/contacts-sync';
     final $body = body;
     final $request = Request('POST', $url, client.baseUrl, body: $body);
-    return client.send<dynamic, dynamic>($request);
+    return client.send<BuiltList<SummaryUser>, SummaryUser>($request);
   }
 
   @override
