@@ -7,6 +7,7 @@ import '../../Models/built_post.dart';
 part 'serializers.g.dart';
 
 @SerializersFor(const [
+  BuiltContacts,
   UsernameAvailability,
   BuiltAudienceList,
   RelationActionResponse,

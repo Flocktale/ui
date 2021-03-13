@@ -176,14 +176,14 @@ abstract class DatabaseApiService extends ChopperService {
 
   // Contact Sync API
 
-  // @Get(path: '/users/contacts-sync')
-  // Future<Response<SummaryUser>> syncContacts({
-  //   @required @Query('contacts') List<String> contacts
-  // });
+  @Get(path: '/users/contacts-sync')
+  Future<Response<SummaryUser>> syncContacts({
+    @required @Query('contacts') BuiltList<String> contacts
+  });
 
   @Post(path: '/users/contacts-sync')
-  Future<Response<SummaryUser>> syncContacts({
-    @required @Body() Map<String,List<String>> body
+  Future<Response> syncContactsByPost({
+    @required @Body() BuiltContacts body
   });
 
 

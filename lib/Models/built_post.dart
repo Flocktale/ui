@@ -4,6 +4,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:flocktale/services/chopper/serializers.dart';
+import 'package:hive/hive.dart';
 
 part 'built_post.g.dart';
 
@@ -620,4 +621,34 @@ abstract class BuiltInviteFormat
 
   static Serializer<BuiltInviteFormat> get serializer =>
       _$builtInviteFormatSerializer;
+}
+abstract class BuiltContacts implements Built<BuiltContacts, BuiltContactsBuilder> {
+  // fields go here
+  @nullable
+  BuiltList<String> get contacts;
+  
+  BuiltContacts._();
+
+  factory BuiltContacts([updates(BuiltContactsBuilder b)]) = _$BuiltContacts;
+
+ 
+
+  static Serializer<BuiltContacts> get serializer => _$builtContactsSerializer;
+}
+
+
+@HiveType()
+class Contact {
+  @HiveField(0)
+  final String userId;
+
+  @HiveField(1)
+  final String userAvatar;
+
+  @HiveField(2)
+  final String phoneNumber;
+
+  
+
+  Contact(this.userId,this.userAvatar,this.phoneNumber);
 }
