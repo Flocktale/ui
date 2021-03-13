@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -116,6 +117,14 @@ class UserData with ChangeNotifier {
           .setAccessToken(_authUser.cognitoSession.accessToken.jwtToken);
       await _storage
           .setRefreshToken(_authUser.cognitoSession.refreshToken.token);
+
+      final fcmToken = await FirebaseMessaging().getToken();
+
+      await _postApiService.registerFCMToken(
+        userId: userId,
+        body: BuiltFCMToken((b) => b..deviceToken = fcmToken),
+        authorization: authToken,
+      );
 
       await fetchUserFromBackend();
     }

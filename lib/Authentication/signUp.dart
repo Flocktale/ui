@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flocktale/services/SecureStorage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -66,10 +65,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
     }
   }
+
   _logOutUser() async {
     final _storage = SecureStorage();
     await _storage.logout();
-    final _user = Provider.of<UserData>(context,listen:false).user;
+    final _user = Provider.of<UserData>(context, listen: false).user;
     Provider.of<DatabaseApiService>(context, listen: false).deleteFCMToken(
       userId: _user.userId,
       authorization: null,
@@ -91,7 +91,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       Fluttertoast.showToast(msg: 'NAME length must be between 3 to 25');
       return;
     }
-    if(usernameAvailable==false){
+    if (usernameAvailable == false) {
       Fluttertoast.showToast(msg: 'Please change your username');
       return;
     }
@@ -144,15 +144,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           print(resp.body);
         }
       }
-
-      final fcmToken = await FirebaseMessaging().getToken();
-
-      // sending device token to backend to get notifications for this user on current device.
-      Provider.of<DatabaseApiService>(context, listen: false).registerFCMToken(
-        userId: userId,
-        body: BuiltFCMToken((b) => b..deviceToken = fcmToken),
-        authorization: authToken,
-      );
 
       Provider.of<UserData>(context, listen: false).updateUser = newUser;
 
@@ -270,40 +261,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey[400]),
-                                helperText: _usernameController.text.length>3?
-                                usernameAvailable?
-
-                                      "Username is available"
-                                    : "Username is not available"
+                                helperText: _usernameController.text.length > 3
+                                    ? usernameAvailable
+                                        ? "Username is available"
+                                        : "Username is not available"
                                     : "Minimum length of username is 4",
-
-                                helperStyle:
-                                !usernameAvailable || _usernameController.text.length<=3?
-                                TextStyle(
-                                  fontFamily: "Lato",
-                                  color: Colors.red
-                                ):
-                                TextStyle(
-                                  fontFamily: "Lato",
-                                  color: Colors.green
-                                ),
+                                helperStyle: !usernameAvailable ||
+                                        _usernameController.text.length <= 3
+                                    ? TextStyle(
+                                        fontFamily: "Lato", color: Colors.red)
+                                    : TextStyle(
+                                        fontFamily: "Lato",
+                                        color: Colors.green),
                                 focusedBorder: UnderlineInputBorder(
-                                    borderSide: _usernameController.text.length>3?
-                                    usernameAvailable?
-                                    BorderSide(color: Colors.green):
-                                        BorderSide(color: Colors.redAccent):
-                                        BorderSide(color:Colors.redAccent)
-                                )),
-                            onChanged: (val)async{
-                              final service = Provider.of<DatabaseApiService>(context,listen:false);
-                              final authToken = Provider.of<UserData>(context,listen:false).authToken;
-                              UsernameAvailability resp = (await service.isThisUsernameAvailable(username: val, authorization: authToken)).body;
-                              if(resp.isAvailable && _usernameController.text.length>3){
+                                    borderSide: _usernameController
+                                                .text.length >
+                                            3
+                                        ? usernameAvailable
+                                            ? BorderSide(color: Colors.green)
+                                            : BorderSide(
+                                                color: Colors.redAccent)
+                                        : BorderSide(color: Colors.redAccent))),
+                            onChanged: (val) async {
+                              final service = Provider.of<DatabaseApiService>(
+                                  context,
+                                  listen: false);
+                              final authToken =
+                                  Provider.of<UserData>(context, listen: false)
+                                      .authToken;
+                              UsernameAvailability resp =
+                                  (await service.isThisUsernameAvailable(
+                                          username: val,
+                                          authorization: authToken))
+                                      .body;
+                              if (resp.isAvailable &&
+                                  _usernameController.text.length > 3) {
                                 setState(() {
                                   usernameAvailable = true;
                                 });
-                              }
-                              else{
+                              } else {
                                 setState(() {
                                   usernameAvailable = false;
                                 });
@@ -375,16 +371,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 )),
                           ),
                           SizedBox(
-                            height: size.height/50,
+                            height: size.height / 50,
                           ),
                           InkWell(
-                            onTap: ()async{
+                            onTap: () async {
                               //TODO
                               //Progress Indicator here
                               await _logOutUser();
                             },
                             child: Container(
-                                height: size.height/20,
+                                height: size.height / 20,
                                 child: Material(
                                   borderRadius: BorderRadius.circular(20.0),
                                   shadowColor: Colors.redAccent,

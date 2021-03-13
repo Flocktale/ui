@@ -210,7 +210,8 @@ class _ProfilePageState extends State<ProfilePage> {
   _logOutUser() async {
     final _storage = SecureStorage();
     await _storage.logout();
-    Provider.of<DatabaseApiService>(context, listen: false).deleteFCMToken(
+    await Provider.of<DatabaseApiService>(context, listen: false)
+        .deleteFCMToken(
       userId: _user.userId,
       authorization: null,
     );
@@ -787,7 +788,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             placeholder: (context, url) =>
                                 CircularProgressIndicator(),
                             errorWidget: (context, url, error) => CircleAvatar(
-                         //        backgroundImage: AssetImage('assets/Card1.jpg'),
+                              //        backgroundImage: AssetImage('assets/Card1.jpg'),
                               backgroundColor: Colors.white,
                               radius: size.height / 18,
                             ),
