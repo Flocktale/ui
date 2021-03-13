@@ -68,7 +68,8 @@ class AgoraController {
 
   Future<void> dispose() async {
     club = null;
-    await _agoraHandler.dispose();
+    // if(_agoraHandler!=null)
+    await _agoraHandler?.dispose();
     _agoraHandler = null;
   }
 

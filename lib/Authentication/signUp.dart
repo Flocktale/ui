@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:agora_handler/main.dart';
+import 'package:flocktale/providers/agoraController.dart';
+import 'package:flocktale/providers/webSocket.dart';
 import 'package:flocktale/services/SecureStorage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -69,11 +72,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   _logOutUser() async {
     final _storage = SecureStorage();
     await _storage.logout();
-    final _user = Provider.of<UserData>(context, listen: false).user;
-    Provider.of<DatabaseApiService>(context, listen: false).deleteFCMToken(
-      userId: _user.userId,
+    // print(1);
+    final _userId = Provider.of<UserData>(context, listen: false).userId;
+    await Provider.of<DatabaseApiService>(context, listen: false).deleteFCMToken(
+      userId: _userId,
       authorization: null,
     );
+    // await Provider.of<AgoraController>(context,listen: false).dispose();
+    await Provider.of<MySocket>(context,listen:false).closeConnection();
     Phoenix.rebirth(context);
   }
 
