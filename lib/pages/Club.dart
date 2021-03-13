@@ -37,6 +37,7 @@ class _ClubState extends State<Club> {
   bool _sentRequest = false;
 
   Map<int, String> integerUsernames = {};
+  Map<String,int> currentlySpeakingUsers;
   // bool _isLive = false;
   // bool _isConcluded = false;
 
@@ -77,14 +78,19 @@ class _ClubState extends State<Club> {
   }
 
   void getActiveSpeakers(List<RTC.AudioVolumeInfo> speakers, _) {
-    Map<String, int> speakingUsers;
+    var speakingUsers = new Map<String,int>();
     speakers.forEach((e) {
-      // speakingUsers[integerUsernames[e.uid]] = e.volume;
+      //speakingUsers.putIfAbsent(integerUsernames[e.uid], () => e.volume);
+      speakingUsers[integerUsernames[e.uid]] = e.volume;
+      print("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
       print(integerUsernames[e.uid]);
+      print(speakingUsers[integerUsernames[e.uid]]);
     });
 
+    setState(() {
+      currentlySpeakingUsers = speakingUsers;
+    });
     // print('All Speaking users with their volume  $speakingUsers');
-
     // TODO
     // Bhaiya, Is list of speakingUsers me aapko jo bhi bol raha hai unke baare me sab mil jaaega.
   }
@@ -988,7 +994,7 @@ class _ClubState extends State<Club> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    final cuser = Provider.of<UserData>(context,listen:false).user;
     if (!once) {
       once = true;
       hola();
@@ -1271,6 +1277,29 @@ class _ClubState extends State<Club> {
                                       );
                                     },
                                     child: Row(children: <Widget>[
+                                      _isParticipant?
+                                      CachedNetworkImage(
+                                        imageUrl:
+                                        _clubAudience.club.creator.avatar +
+                                            "_thumb",
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                            CircleAvatar(
+                                              radius: size.width / 18,
+                                              backgroundColor: currentlySpeakingUsers!=null
+                                                  && currentlySpeakingUsers[widget.club.creator.username]!=null
+                                                  && currentlySpeakingUsers[widget.club.creator.username]>0
+                                                  ?Colors.redAccent:Color(0xffFDCF09),
+                                              child: CircleAvatar(
+                                                radius: size.width / 20,
+                                                backgroundImage: imageProvider,
+                                              ),
+                                            ),
+                                        placeholder: (context, url) =>
+                                            CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
+                                      ):
                                       CachedNetworkImage(
                                         imageUrl:
                                             _clubAudience.club.creator.avatar +
@@ -1352,13 +1381,11 @@ class _ClubState extends State<Club> {
                                                               listen: false)
                                                           .userId),
                                               child: !_isMuted
-                                                  ? Icon(Icons.mic_none_rounded)
-                                                  : Icon(Icons.mic_off_rounded),
-                                              backgroundColor: !_isPlaying
-                                                  ? Colors.grey
-                                                  : !_sentRequest
-                                                      ? Colors.redAccent
-                                                      : Colors.grey,
+                                                  ? currentlySpeakingUsers!=null&&currentlySpeakingUsers[cuser.username]!=null && currentlySpeakingUsers[cuser.username]>0?
+                                              Icon(Icons.mic_rounded,color: Colors.redAccent,):
+                                                  Icon(Icons.mic_none_rounded,color: Colors.black,)
+                                                  : Icon(Icons.mic_off_rounded,color: Colors.black,),
+                                              backgroundColor: Colors.white
                                             ),
                                           ),
 
@@ -1375,7 +1402,9 @@ class _ClubState extends State<Club> {
                                                         _participationButtonHandler(),
                                                     child: _isParticipant
                                                         ? Icon(Icons
-                                                            .remove_from_queue)
+                                                            .remove_from_queue,
+                                                      color: Colors.redAccent,
+                                                    )
                                                         : !_sentRequest
                                                             ? Icon(Icons
                                                                 .person_add)
@@ -1610,6 +1639,7 @@ class _ClubState extends State<Club> {
                     )),
                     if (MediaQuery.of(context).viewInsets.bottom == 0)
                       ParticipantsPanel(
+                        currentlySpeakingUsers: currentlySpeakingUsers,
                         club: widget.club,
                         size: size,
                         participantList: participantList

@@ -14,6 +14,7 @@ class ParticipantsPanel extends StatefulWidget {
   final bool hasSentJoinRequest;
   final List<AudienceData> participantList;
   final bool isOwner;
+  final Map<String,int> currentlySpeakingUsers;
   final Function(String) muteParticipant;
   final Function(String) removeParticipant;
   final Function(String) blockParticipant;
@@ -21,6 +22,7 @@ class ParticipantsPanel extends StatefulWidget {
   final Function() deleteJoinRequest;
   final BuiltClub club;
   const ParticipantsPanel({
+    @required this.currentlySpeakingUsers,
     @required this.club,
     @required this.size,
     @required this.participantList,
@@ -120,8 +122,11 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                       CachedNetworkImage(
                         imageUrl: widget.club.creator.avatar,
                         imageBuilder: (context, imageProvider) => CircleAvatar(
-                          radius: widget.size.width / 9.4,
-                          backgroundColor: Color(0xffFDCF09),
+                          radius: widget.size.width / 9,
+                          backgroundColor: widget.currentlySpeakingUsers!=null
+                              && widget.currentlySpeakingUsers[widget.club.creator.username]!=null
+                              && widget.currentlySpeakingUsers[widget.club.creator.username]>0
+                              ?Colors.redAccent:Color(0xffFDCF09),
                           child: CircleAvatar(
                             radius: widget.size.width / 10,
                             backgroundImage: imageProvider,
@@ -145,9 +150,17 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                   child: IconButton(
                     icon: Icon(
                       isOwnerMuted() == false
-                          ? Icons.mic_none_outlined
+                          ?
+                      widget.currentlySpeakingUsers!=null
+                          && widget.currentlySpeakingUsers[widget.club.creator.username]!=null
+                          && widget.currentlySpeakingUsers[widget.club.creator.username]>0
+                          ?Icons.mic_rounded
+                          : Icons.mic_none_outlined
                           : Icons.mic_off_outlined,
-                      color: Colors.redAccent,
+                      color: widget.currentlySpeakingUsers!=null
+                          && widget.currentlySpeakingUsers[widget.club.creator.username]!=null
+                          && widget.currentlySpeakingUsers[widget.club.creator.username]>0
+                          ?Colors.redAccent:Colors.black,
                     ),
                     color: Colors.black,
                   ),
@@ -209,8 +222,11 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     CircleAvatar(
-                                      radius: widget.size.width / 9.4,
-                                      backgroundColor: Color(0xffFDCF09),
+                                      radius: widget.size.width / 9,
+                                      backgroundColor: widget.currentlySpeakingUsers!=null
+                                          && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]!=null
+                                          && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]>0
+                                          ?Colors.redAccent:Color(0xffFDCF09),
                                       child: CircleAvatar(
                                         radius: widget.size.width / 10,
                                         backgroundImage: NetworkImage(widget
@@ -261,9 +277,17 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                 child: IconButton(
                                   icon: Icon(
                                     !widget.participantList[index].isMuted
-                                        ? Icons.mic_none_outlined
+                                        ?
+                                    widget.currentlySpeakingUsers!=null
+                                        && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]!=null
+                                        && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]>0
+                                        ?Icons.mic_rounded
+                                        :Icons.mic_none_outlined
                                         : Icons.mic_off_outlined,
-                                    color: Colors.redAccent,
+                                    color: widget.currentlySpeakingUsers!=null
+                                        && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]!=null
+                                        && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]>0
+                                        ?Colors.redAccent:Colors.black,
                                   ),
                                 ),
                               )

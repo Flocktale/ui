@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -35,13 +36,15 @@ class _SocialRelationPageState extends State<SocialRelationPage>
 
     relationMap[type]['data'] =
         (await Provider.of<DatabaseApiService>(context, listen: false)
-                .getRelations(
-      userId: widget.user.userId,
-      socialRelation: type,
-      lastevaluatedkey:
+            .getRelations(
+          userId: widget.user.userId,
+          socialRelation: type,
+          lastevaluatedkey:
           (relationMap[type]['data'] as BuiltSearchUsers)?.lastevaluatedkey,
-    ))
+        ))
             .body;
+
+
     relationMap[type]['isLoading'] = false;
 
     setState(() {});
