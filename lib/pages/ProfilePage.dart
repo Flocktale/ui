@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -600,10 +599,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                           minWidth: size.width / 1.5,
                                           child: RaisedButton(
                                             onPressed: () {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
                                                       builder: (_) =>
-                                                          EditProfile(user: _user,)));
+                                                          EditProfile(
+                                                            user: _user,
+                                                          )))
+                                                  .then((_) {
+                                                setState(() {});
+                                              });
                                             },
                                             color: Colors.white,
                                             child: Text('EDIT PROFILE',
@@ -771,22 +775,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         Positioned(
                           top: size.height / 14,
                           left: ((size.width / 2) - (size.width / 9)),
-                          child: CachedNetworkImage(
-                            imageUrl: _user.avatar != null
-                                ? _user.avatar
-                                : 'assets/images/Card1.jpg',
-                            imageBuilder: (context, imageProvider) =>
-                                CircleAvatar(
-                              backgroundImage: imageProvider,
-                              backgroundColor: Colors.white,
-                              radius: size.height / 18,
-                            ),
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) => CircleAvatar(
-                              //        backgroundImage: AssetImage('assets/Card1.jpg'),
-                              backgroundColor: Colors.white,
-                              radius: size.height / 18,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: size.height / 18,
+                            child: FadeInImage.assetNetwork(
+                              image: _user.avatar + '_large',
+                              placeholder: 'assets/gifs/fading_lines.gif',
+                              imageErrorBuilder: (context, _, __) =>
+                                  Image.asset('assets/images/logo.ico'),
                             ),
                           ),
                         ),

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -29,7 +28,7 @@ class _NotificationPageState extends State<NotificationPage> {
     ))
         .body;
 
-  //  var z = notificationList.notifications[0];
+    //  var z = notificationList.notifications[0];
     List<NotificationData> temp = [];
     int curTime = DateTime.now().millisecondsSinceEpoch -
         Duration.microsecondsPerMinute * 30;
@@ -170,24 +169,21 @@ class _NotificationPageState extends State<NotificationPage> {
                                               .targetResourceId),
                                         )));
                               },
-                        leading:
-                            notificationList.notifications[index].avatar != null
-                                ? CachedNetworkImage(
-                                    imageUrl: notificationList
-                                            .notifications[index].avatar +
-                                        "_thumb",
-                                    imageBuilder: (context, imageProvider) =>
-                                        CircleAvatar(
-                                      backgroundImage: imageProvider,
-                                    ),
-                                    placeholder: (context, url) =>
-                                        CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                  )
-                                : CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                  ),
+                        leading: notificationList.notifications[index].avatar !=
+                                null
+                            ? CircleAvatar(
+                                child: FadeInImage.assetNetwork(
+                                  image: notificationList
+                                          .notifications[index].avatar +
+                                      "_thumb",
+                                  placeholder: 'assets/gifs/fading_lines.gif',
+                                  imageErrorBuilder: (context, _, __) =>
+                                      Image.asset('assets/images/logo.ico'),
+                                ),
+                              )
+                            : CircleAvatar(
+                                backgroundColor: Colors.white,
+                              ),
                         title: Column(
                           children: [
                             RichText(

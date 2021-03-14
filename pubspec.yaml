@@ -57,7 +57,6 @@ dependencies:
   intl: ^0.16.1
   country_code_picker: ^1.7.0
   pin_code_text_field: ^1.7.1
-  cached_network_image: ^2.5.0
   contacts_service: ^0.4.6
   share: ^2.0.0
   # The following adds the Cupertino Icons font to your application.
@@ -90,14 +89,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/Default-female.png
-    - assets/Card1.jpg
-    - assets/Card2.jpg
-    - assets/Card3.jpg
-    - assets/Card4.jpg
-    - assets/images/facebook.png
-    - assets/LandingPage.gif
-
+    - assets/
+    - assets/gifs/
+    - assets/images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

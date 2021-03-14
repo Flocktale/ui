@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -14,7 +13,7 @@ class ParticipantsPanel extends StatefulWidget {
   final bool hasSentJoinRequest;
   final List<AudienceData> participantList;
   final bool isOwner;
-  final Map<String,int> currentlySpeakingUsers;
+  final Map<String, int> currentlySpeakingUsers;
   final Function(String) muteParticipant;
   final Function(String) removeParticipant;
   final Function(String) blockParticipant;
@@ -119,22 +118,27 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      CachedNetworkImage(
-                        imageUrl: widget.club.creator.avatar,
-                        imageBuilder: (context, imageProvider) => CircleAvatar(
-                          radius: widget.size.width / 9,
-                          backgroundColor: widget.currentlySpeakingUsers!=null
-                              && widget.currentlySpeakingUsers[widget.club.creator.username]!=null
-                              && widget.currentlySpeakingUsers[widget.club.creator.username]>0
-                              ?Colors.redAccent:Color(0xffFDCF09),
-                          child: CircleAvatar(
-                            radius: widget.size.width / 10,
-                            backgroundImage: imageProvider,
+                      CircleAvatar(
+                        radius: widget.size.width / 9,
+                        backgroundColor:
+                            widget.currentlySpeakingUsers != null &&
+                                    widget.currentlySpeakingUsers[
+                                            widget.club.creator.username] !=
+                                        null &&
+                                    widget.currentlySpeakingUsers[
+                                            widget.club.creator.username] >
+                                        0
+                                ? Colors.redAccent
+                                : Color(0xffFDCF09),
+                        child: CircleAvatar(
+                          radius: widget.size.width / 10,
+                          child: FadeInImage.assetNetwork(
+                            image: widget.club.creator.avatar,
+                            placeholder: 'assets/gifs/fading_lines.gif',
+                            imageErrorBuilder: (context, _, __) =>
+                                Image.asset('assets/images/logo.ico'),
                           ),
                         ),
-                        placeholder: (context, url) =>
-                            CircularProgressIndicator(),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                       Text(
                         widget.club.creator.username,
@@ -150,17 +154,25 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                   child: IconButton(
                     icon: Icon(
                       isOwnerMuted() == false
-                          ?
-                      widget.currentlySpeakingUsers!=null
-                          && widget.currentlySpeakingUsers[widget.club.creator.username]!=null
-                          && widget.currentlySpeakingUsers[widget.club.creator.username]>0
-                          ?Icons.mic_rounded
-                          : Icons.mic_none_outlined
+                          ? widget.currentlySpeakingUsers != null &&
+                                  widget.currentlySpeakingUsers[
+                                          widget.club.creator.username] !=
+                                      null &&
+                                  widget.currentlySpeakingUsers[
+                                          widget.club.creator.username] >
+                                      0
+                              ? Icons.mic_rounded
+                              : Icons.mic_none_outlined
                           : Icons.mic_off_outlined,
-                      color: widget.currentlySpeakingUsers!=null
-                          && widget.currentlySpeakingUsers[widget.club.creator.username]!=null
-                          && widget.currentlySpeakingUsers[widget.club.creator.username]>0
-                          ?Colors.redAccent:Colors.black,
+                      color: widget.currentlySpeakingUsers != null &&
+                              widget.currentlySpeakingUsers[
+                                      widget.club.creator.username] !=
+                                  null &&
+                              widget.currentlySpeakingUsers[
+                                      widget.club.creator.username] >
+                                  0
+                          ? Colors.redAccent
+                          : Colors.black,
                     ),
                     color: Colors.black,
                   ),
@@ -223,10 +235,25 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                   children: [
                                     CircleAvatar(
                                       radius: widget.size.width / 9,
-                                      backgroundColor: widget.currentlySpeakingUsers!=null
-                                          && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]!=null
-                                          && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]>0
-                                          ?Colors.redAccent:Color(0xffFDCF09),
+                                      backgroundColor:
+                                          widget.currentlySpeakingUsers !=
+                                                      null &&
+                                                  widget.currentlySpeakingUsers[
+                                                          widget
+                                                              .participantList[
+                                                                  index]
+                                                              .audience
+                                                              .username] !=
+                                                      null &&
+                                                  widget.currentlySpeakingUsers[
+                                                          widget
+                                                              .participantList[
+                                                                  index]
+                                                              .audience
+                                                              .username] >
+                                                      0
+                                              ? Colors.redAccent
+                                              : Color(0xffFDCF09),
                                       child: CircleAvatar(
                                         radius: widget.size.width / 10,
                                         backgroundImage: NetworkImage(widget
@@ -277,17 +304,39 @@ class _ParticipantsPanelState extends State<ParticipantsPanel> {
                                 child: IconButton(
                                   icon: Icon(
                                     !widget.participantList[index].isMuted
-                                        ?
-                                    widget.currentlySpeakingUsers!=null
-                                        && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]!=null
-                                        && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]>0
-                                        ?Icons.mic_rounded
-                                        :Icons.mic_none_outlined
+                                        ? widget.currentlySpeakingUsers !=
+                                                    null &&
+                                                widget.currentlySpeakingUsers[
+                                                        widget
+                                                            .participantList[
+                                                                index]
+                                                            .audience
+                                                            .username] !=
+                                                    null &&
+                                                widget.currentlySpeakingUsers[
+                                                        widget
+                                                            .participantList[
+                                                                index]
+                                                            .audience
+                                                            .username] >
+                                                    0
+                                            ? Icons.mic_rounded
+                                            : Icons.mic_none_outlined
                                         : Icons.mic_off_outlined,
-                                    color: widget.currentlySpeakingUsers!=null
-                                        && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]!=null
-                                        && widget.currentlySpeakingUsers[widget.participantList[index].audience.username]>0
-                                        ?Colors.redAccent:Colors.black,
+                                    color: widget.currentlySpeakingUsers !=
+                                                null &&
+                                            widget.currentlySpeakingUsers[widget
+                                                    .participantList[index]
+                                                    .audience
+                                                    .username] !=
+                                                null &&
+                                            widget.currentlySpeakingUsers[widget
+                                                    .participantList[index]
+                                                    .audience
+                                                    .username] >
+                                                0
+                                        ? Colors.redAccent
+                                        : Colors.black,
                                   ),
                                 ),
                               )

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:agora_rtc_engine/rtc_engine.dart' as RTC;
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -1178,17 +1177,12 @@ class _ClubState extends State<Club> {
                                 child: ClipRRect(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10.0)),
-                                    // child: Image.network(
-                                    //   _clubAudience.club.clubAvatar,
-                                    //   fit: BoxFit.cover,
-                                    // ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: _clubAudience.club.clubAvatar +
+                                    child: FadeInImage.assetNetwork(
+                                      image: _clubAudience.club.clubAvatar +
                                           "_large",
-                                      placeholder: (context, url) =>
-                                          CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          Icon(Icons.error),
+                                      placeholder: 'assets/gifs/pinwheel.gif',
+                                      imageErrorBuilder: (context, _, __) =>
+                                          Image.asset('assets/images/logo.ico'),
                                     )),
                               ),
                               Container(
@@ -1283,58 +1277,53 @@ class _ClubState extends State<Club> {
                                     },
                                     child: Row(children: <Widget>[
                                       _isParticipant
-                                          ? CachedNetworkImage(
-                                              imageUrl: _clubAudience
-                                                      .club.creator.avatar +
-                                                  "_thumb",
-                                              imageBuilder:
-                                                  (context, imageProvider) =>
-                                                      CircleAvatar(
-                                                radius: size.width / 18,
-                                                backgroundColor:
-                                                    currentlySpeakingUsers !=
-                                                                null &&
-                                                            currentlySpeakingUsers[
-                                                                    widget
-                                                                        .club
-                                                                        .creator
-                                                                        .username] !=
-                                                                null &&
-                                                            currentlySpeakingUsers[
-                                                                    widget
-                                                                        .club
-                                                                        .creator
-                                                                        .username] >
-                                                                0
-                                                        ? Colors.redAccent
-                                                        : Color(0xffFDCF09),
-                                                child: CircleAvatar(
-                                                  radius: size.width / 20,
-                                                  backgroundImage:
-                                                      imageProvider,
+                                          ? CircleAvatar(
+                                              radius: size.width / 18,
+                                              backgroundColor:
+                                                  currentlySpeakingUsers !=
+                                                              null &&
+                                                          currentlySpeakingUsers[
+                                                                  widget
+                                                                      .club
+                                                                      .creator
+                                                                      .username] !=
+                                                              null &&
+                                                          currentlySpeakingUsers[
+                                                                  widget
+                                                                      .club
+                                                                      .creator
+                                                                      .username] >
+                                                              0
+                                                      ? Colors.redAccent
+                                                      : Color(0xffFDCF09),
+                                              child: CircleAvatar(
+                                                radius: size.width / 20,
+                                                child: FadeInImage.assetNetwork(
+                                                  image: _clubAudience
+                                                          .club.creator.avatar +
+                                                      "_thumb",
+                                                  placeholder:
+                                                      'assets/gifs/fading_lines.gif',
+                                                  imageErrorBuilder: (context,
+                                                          _, __) =>
+                                                      Image.asset(
+                                                          'assets/images/logo.ico'),
                                                 ),
                                               ),
-                                              placeholder: (context, url) =>
-                                                  CircularProgressIndicator(),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Icon(Icons.error),
                                             )
-                                          : CachedNetworkImage(
-                                              imageUrl: _clubAudience
-                                                      .club.creator.avatar +
-                                                  "_thumb",
-                                              imageBuilder:
-                                                  (context, imageProvider) =>
-                                                      CircleAvatar(
-                                                backgroundImage: imageProvider,
-                                                radius: size.width / 20,
+                                          : CircleAvatar(
+                                              radius: size.width / 20,
+                                              child: FadeInImage.assetNetwork(
+                                                image: _clubAudience
+                                                        .club.creator.avatar +
+                                                    "_thumb",
+                                                placeholder:
+                                                    'assets/gifs/fading_lines.gif',
+                                                imageErrorBuilder: (context, _,
+                                                        __) =>
+                                                    Image.asset(
+                                                        'assets/images/logo.ico'),
                                               ),
-                                              placeholder: (context, url) =>
-                                                  CircularProgressIndicator(),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Icon(Icons.error),
                                             ),
                                       Container(
                                         margin: EdgeInsets.fromLTRB(
@@ -1513,22 +1502,20 @@ class _ClubState extends State<Club> {
                                               itemCount: comments.length,
                                               controller: _controller,
                                               itemBuilder: (context, index) {
-                                                // Timer(
-                                                // Duration(milliseconds: 300),
-                                                // () => _controller
-                                                //     .jumpTo(_controller.position.maxScrollExtent));
-
                                                 var a = ListTile(
-                                                  leading: CachedNetworkImage(
-                                                    imageUrl: comments[index]
-                                                            .user
-                                                            .avatar +
-                                                        "_thumb",
-                                                    imageBuilder: (context,
-                                                            imageProvider) =>
-                                                        CircleAvatar(
-                                                      backgroundImage:
-                                                          imageProvider,
+                                                  leading: CircleAvatar(
+                                                    child: FadeInImage
+                                                        .assetNetwork(
+                                                      image: comments[index]
+                                                              .user
+                                                              .avatar +
+                                                          "_thumb",
+                                                      placeholder:
+                                                          'assets/gifs/fading_lines.gif',
+                                                      imageErrorBuilder: (context,
+                                                              _, __) =>
+                                                          Image.asset(
+                                                              'assets/images/logo.ico'),
                                                     ),
                                                   ),
                                                   title: Row(

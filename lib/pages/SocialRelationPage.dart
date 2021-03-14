@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,14 +35,13 @@ class _SocialRelationPageState extends State<SocialRelationPage>
 
     relationMap[type]['data'] =
         (await Provider.of<DatabaseApiService>(context, listen: false)
-            .getRelations(
-          userId: widget.user.userId,
-          socialRelation: type,
-          lastevaluatedkey:
+                .getRelations(
+      userId: widget.user.userId,
+      socialRelation: type,
+      lastevaluatedkey:
           (relationMap[type]['data'] as BuiltSearchUsers)?.lastevaluatedkey,
-        ))
+    ))
             .body;
-
 
     relationMap[type]['isLoading'] = false;
 
@@ -184,17 +182,14 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          CachedNetworkImage(
-                            imageUrl: _user.avatar + "_thumb",
-                            imageBuilder: (context, imageProvider) =>
-                                CircleAvatar(
-                              backgroundImage: imageProvider,
-                              radius: 30,
+                          CircleAvatar(
+                            radius: 30,
+                            child: FadeInImage.assetNetwork(
+                              image: _user.avatar + "_thumb",
+                              placeholder: 'assets/gifs/fading_lines.gif',
+                              imageErrorBuilder: (context, _, __) =>
+                                  Image.asset('assets/images/logo.ico'),
                             ),
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
                           ),
                           Column(
                             children: <Widget>[

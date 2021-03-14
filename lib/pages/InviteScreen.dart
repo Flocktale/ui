@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -155,13 +154,13 @@ class _InviteScreenState extends State<InviteScreen> {
             key: ValueKey(_user.username),
             margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
             child: ListTile(
-              leading: CachedNetworkImage(
-                imageUrl: _user.avatar + "_thumb",
-                imageBuilder: (context, imageProvider) => CircleAvatar(
-                  backgroundImage: imageProvider,
+              leading: CircleAvatar(
+                child: FadeInImage.assetNetwork(
+                  image: _user.avatar + "_thumb",
+                  placeholder: 'assets/gifs/fading_lines.gif',
+                  imageErrorBuilder: (context, _, __) =>
+                      Image.asset('assets/images/logo.ico'),
                 ),
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
               title: InkWell(
                 onTap: () {

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flocktale/Models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -115,19 +114,12 @@ class _CarouselState extends State<Carousel> {
                     Container(
                       height: 100,
                       width: size.width,
-                      //       child: Image.network(
-                      //         widget.Clubs[index].clubAvatar,
-                      // //      height: 130,
-                      // //      width: 200,
-                      //         fit: BoxFit.fill,
-                      //       ),
-                      child: CachedNetworkImage(
-                        imageUrl: widget.Clubs[index].clubAvatar,
+                      child: FadeInImage.assetNetwork(
+                        image: widget.Clubs[index].clubAvatar,
                         fit: BoxFit.fill,
-                        placeholder: (context, url) => Container(
-                            padding: EdgeInsets.all(40),
-                            child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        placeholder: 'assets/gifs/pinwheel.gif',
+                        imageErrorBuilder: (context, _, __) =>
+                            Image.asset('assets/images/logo.ico'),
                       ),
                     ),
 
@@ -145,18 +137,15 @@ class _CarouselState extends State<Carousel> {
                       top: 120,
                       left: 5,
                       child: Row(children: [
-                        CachedNetworkImage(
-                          imageUrl:
-                              widget.Clubs[index].creator.avatar + "_thumb",
-                          imageBuilder: (context, imageProvider) =>
-                              CircleAvatar(
-                            backgroundImage: imageProvider,
-                            radius: 10,
+                        CircleAvatar(
+                          radius: 10,
+                          child: FadeInImage.assetNetwork(
+                            image:
+                                widget.Clubs[index].creator.avatar + "_thumb",
+                            placeholder: 'assets/gifs/fading_lines.gif',
+                            imageErrorBuilder: (context, _, __) =>
+                                Image.asset('assets/images/logo.ico'),
                           ),
-                          placeholder: (context, url) =>
-                              CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
                         ),
                         SizedBox(
                           width: 5,
