@@ -14,13 +14,16 @@ class AgoraController {
   bool isMicMuted;
   BuiltClub club;
 
-  AgoraController create() {
+  AgoraController create({bool isMuted = false}) {
     if (_agoraHandler != null) return this;
 
     _agoraHandler = AgoraHandler();
     _isClubMuted = false;
-    isMicMuted = true;
-    _agoraHandler.init().then((handler) => agoraEventHandler = handler);
+    isMicMuted = isMuted;
+    _agoraHandler.init().then((handler) async {
+      agoraEventHandler = handler;
+      await hardMuteAction(isMicMuted);
+    });
     return this;
   }
 
@@ -29,7 +32,7 @@ class AgoraController {
   Future<void> joinAsAudience({
     @required String clubId,
     @required String token,
-    @required int intergerUsername, 
+    @required int intergerUsername,
     @required Function audioVolumeIndication,
   }) async {
     agoraEventHandler.audioVolumeIndication = audioVolumeIndication;
@@ -38,17 +41,17 @@ class AgoraController {
     await _agoraHandler.joinClub(clubId, token,
         integerUsername: intergerUsername ?? 0);
 
-        // _agoraHandler._eventHandler.audioVolumeIndication = audioVolumeIndication;
+    // _agoraHandler._eventHandler.audioVolumeIndication = audioVolumeIndication;
   }
 
   Future<void> joinAsParticipant({
     @required String clubId,
     @required String token,
-    @required int integerUsername, 
+    @required int integerUsername,
     @required Function audioVolumeIndication,
   }) async {
     agoraEventHandler.audioVolumeIndication = audioVolumeIndication;
-    
+
     assert(clubId != null && token != null);
     await _agoraHandler.joinClub(clubId, token,
         isHost: true, integerUsername: integerUsername ?? 0);
@@ -80,4 +83,3 @@ class AgoraController {
     await _agoraHandler.muteSwitchMic(muteAction);
   }
 }
-

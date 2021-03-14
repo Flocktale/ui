@@ -37,7 +37,7 @@ class _ClubState extends State<Club> {
   bool _sentRequest = false;
 
   Map<int, String> integerUsernames = {};
-  Map<String,int> currentlySpeakingUsers;
+  Map<String, int> currentlySpeakingUsers;
   // bool _isLive = false;
   // bool _isConcluded = false;
 
@@ -78,7 +78,7 @@ class _ClubState extends State<Club> {
   }
 
   void getActiveSpeakers(List<RTC.AudioVolumeInfo> speakers, _) {
-    var speakingUsers = new Map<String,int>();
+    var speakingUsers = new Map<String, int>();
     speakers.forEach((e) {
       //speakingUsers.putIfAbsent(integerUsernames[e.uid], () => e.volume);
       speakingUsers[integerUsernames[e.uid]] = e.volume;
@@ -122,7 +122,8 @@ class _ClubState extends State<Club> {
       // convertT
       // print(convertToInt(participant.audience.username));
       integerUsernames.putIfAbsent(0, () => participant.audience.username);
-      integerUsernames.putIfAbsent(convertToInt(participant.audience.username), () => participant.audience.username);
+      integerUsernames.putIfAbsent(convertToInt(participant.audience.username),
+          () => participant.audience.username);
     });
 
     print('list of it: $participantList');
@@ -487,7 +488,7 @@ class _ClubState extends State<Club> {
         Provider.of<UserData>(context, listen: false).user.username;
     Provider.of<AgoraController>(context, listen: false).club =
         _clubAudience.club;
-    await Provider.of<AgoraController>(context,listen : false).create();
+    await Provider.of<AgoraController>(context, listen: false).create();
     await Provider.of<AgoraController>(context, listen: false)
         .joinAsParticipant(
       clubId: _clubAudience.club.clubId,
@@ -540,7 +541,8 @@ class _ClubState extends State<Club> {
     // now we can join club in websocket also.
     _joinClubInWebsocket();
 
-    Provider.of<AgoraController>(context, listen: false).create();
+    Provider.of<AgoraController>(context, listen: false)
+        .create(isMuted: this._isMuted);
 
     // if user is participant till the time of fetching this club data.
     this._isParticipant = _clubAudience.audienceData.status ==
@@ -994,7 +996,7 @@ class _ClubState extends State<Club> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final cuser = Provider.of<UserData>(context,listen:false).user;
+    final cuser = Provider.of<UserData>(context, listen: false).user;
     if (!once) {
       once = true;
       hola();
@@ -1003,7 +1005,9 @@ class _ClubState extends State<Club> {
       onWillPop: () async {
         Provider.of<MySocket>(context, listen: false)
             .leaveClub(widget.club.clubId);
-        Provider.of<AgoraController>(context,listen: false).agoraEventHandler.audioVolumeIndication = null; 
+        Provider.of<AgoraController>(context, listen: false)
+            .agoraEventHandler
+            .audioVolumeIndication = null;
         return true;
       },
       child: Scaffold(
@@ -1086,8 +1090,8 @@ class _ClubState extends State<Club> {
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 20, 0),
                                             child: RaisedButton(
-                                              onPressed: ()async {
-                                                 await _playButtonHandler();
+                                              onPressed: () async {
+                                                await _playButtonHandler();
 
                                                 respondToInvitation('cancel');
                                                 setState(() {
@@ -1110,8 +1114,8 @@ class _ClubState extends State<Club> {
                                             ),
                                           ),
                                           RaisedButton(
-                                            onPressed: ()async {
-                                             await _playButtonHandler();
+                                            onPressed: () async {
+                                              await _playButtonHandler();
                                               if (_isPlaying) {
                                                 if (participantList.length <
                                                     10) {
@@ -1278,44 +1282,60 @@ class _ClubState extends State<Club> {
                                       );
                                     },
                                     child: Row(children: <Widget>[
-                                      _isParticipant?
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                        _clubAudience.club.creator.avatar +
-                                            "_thumb",
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                            CircleAvatar(
-                                              radius: size.width / 18,
-                                              backgroundColor: currentlySpeakingUsers!=null
-                                                  && currentlySpeakingUsers[widget.club.creator.username]!=null
-                                                  && currentlySpeakingUsers[widget.club.creator.username]>0
-                                                  ?Colors.redAccent:Color(0xffFDCF09),
-                                              child: CircleAvatar(
-                                                radius: size.width / 20,
-                                                backgroundImage: imageProvider,
+                                      _isParticipant
+                                          ? CachedNetworkImage(
+                                              imageUrl: _clubAudience
+                                                      .club.creator.avatar +
+                                                  "_thumb",
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      CircleAvatar(
+                                                radius: size.width / 18,
+                                                backgroundColor:
+                                                    currentlySpeakingUsers !=
+                                                                null &&
+                                                            currentlySpeakingUsers[
+                                                                    widget
+                                                                        .club
+                                                                        .creator
+                                                                        .username] !=
+                                                                null &&
+                                                            currentlySpeakingUsers[
+                                                                    widget
+                                                                        .club
+                                                                        .creator
+                                                                        .username] >
+                                                                0
+                                                        ? Colors.redAccent
+                                                        : Color(0xffFDCF09),
+                                                child: CircleAvatar(
+                                                  radius: size.width / 20,
+                                                  backgroundImage:
+                                                      imageProvider,
+                                                ),
                                               ),
+                                              placeholder: (context, url) =>
+                                                  CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
+                                            )
+                                          : CachedNetworkImage(
+                                              imageUrl: _clubAudience
+                                                      .club.creator.avatar +
+                                                  "_thumb",
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      CircleAvatar(
+                                                backgroundImage: imageProvider,
+                                                radius: size.width / 20,
+                                              ),
+                                              placeholder: (context, url) =>
+                                                  CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
                                             ),
-                                        placeholder: (context, url) =>
-                                            CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) =>
-                                            Icon(Icons.error),
-                                      ):
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                            _clubAudience.club.creator.avatar +
-                                                "_thumb",
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                CircleAvatar(
-                                          backgroundImage: imageProvider,
-                                          radius: size.width / 20,
-                                        ),
-                                        placeholder: (context, url) =>
-                                            CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) =>
-                                            Icon(Icons.error),
-                                      ),
                                       Container(
                                         margin: EdgeInsets.fromLTRB(
                                             size.width / 30, 0, 0, 0),
@@ -1374,20 +1394,39 @@ class _ClubState extends State<Club> {
                                             margin: EdgeInsets.fromLTRB(
                                                 10, 0, 0, 0),
                                             child: FloatingActionButton(
-                                              heroTag: "mic btn",
-                                              onPressed: () =>
-                                                  _toggleMuteOfParticpant(
-                                                      Provider.of<UserData>(
-                                                              context,
-                                                              listen: false)
-                                                          .userId),
-                                              child: !_isMuted
-                                                  ? currentlySpeakingUsers!=null&&currentlySpeakingUsers[cuser.username]!=null && currentlySpeakingUsers[cuser.username]>0?
-                                              Icon(Icons.mic_rounded,color: Colors.redAccent,):
-                                                  Icon(Icons.mic_none_rounded,color: Colors.black,)
-                                                  : Icon(Icons.mic_off_rounded,color: Colors.black,),
-                                              backgroundColor: Colors.white
-                                            ),
+                                                heroTag: "mic btn",
+                                                onPressed: () =>
+                                                    _toggleMuteOfParticpant(
+                                                        Provider.of<UserData>(
+                                                                context,
+                                                                listen: false)
+                                                            .userId),
+                                                child: !_isMuted
+                                                    ? currentlySpeakingUsers !=
+                                                                null &&
+                                                            currentlySpeakingUsers[
+                                                                    cuser
+                                                                        .username] !=
+                                                                null &&
+                                                            currentlySpeakingUsers[
+                                                                    cuser
+                                                                        .username] >
+                                                                0
+                                                        ? Icon(
+                                                            Icons.mic_rounded,
+                                                            color: Colors
+                                                                .redAccent,
+                                                          )
+                                                        : Icon(
+                                                            Icons
+                                                                .mic_none_rounded,
+                                                            color: Colors.black,
+                                                          )
+                                                    : Icon(
+                                                        Icons.mic_off_rounded,
+                                                        color: Colors.black,
+                                                      ),
+                                                backgroundColor: Colors.white),
                                           ),
 
                                         // dedicated button for sending join request or stepping down to become only listener
@@ -1402,10 +1441,12 @@ class _ClubState extends State<Club> {
                                                     onPressed: () =>
                                                         _participationButtonHandler(),
                                                     child: _isParticipant
-                                                        ? Icon(Icons
-                                                            .remove_from_queue,
-                                                      color: Colors.redAccent,
-                                                    )
+                                                        ? Icon(
+                                                            Icons
+                                                                .remove_from_queue,
+                                                            color: Colors
+                                                                .redAccent,
+                                                          )
                                                         : !_sentRequest
                                                             ? Icon(Icons
                                                                 .person_add)
