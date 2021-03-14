@@ -10,6 +10,7 @@ import 'package:flocktale/services/SecureStorage.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'ClubsByUser.dart';
+import 'EditProfile.dart';
 import '../Carousel.dart';
 import 'package:built_collection/built_collection.dart';
 import 'ProfileImagePage.dart';
@@ -330,7 +331,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 children: <Widget>[
                                   SizedBox(height: size.height / 20),
                                   Text(
-                                    //  'Caroline Steele',
                                     _user.name != null
                                         ? _user.name
                                         : _user.username,
@@ -603,11 +603,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (_) =>
-                                                          ProfileImagePage(
-                                                            name: _user.name,
-                                                            userName:
-                                                                _user.username,
-                                                          )));
+                                                          EditProfile(user: _user,)));
                                             },
                                             color: Colors.white,
                                             child: Text('EDIT PROFILE',

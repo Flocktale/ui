@@ -43,10 +43,10 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
   share(BuildContext context){
-  //  final RenderBox box = context.findRenderObject();
+    //  final RenderBox box = context.findRenderObject();
     Share.share(text,
       subject: subject,
-   // sharePositionOrigin: box.localToGlobal(Offset.zero)&box.size
+      // sharePositionOrigin: box.localToGlobal(Offset.zero)&box.size
     );
   }
 
@@ -68,13 +68,13 @@ class _ContactsPageState extends State<ContactsPage> {
         title: Text(
           "Connect with your contacts",
           style: TextStyle(
-            fontFamily: "Lato",
-            fontWeight: FontWeight.bold,
-            color: Colors.black
+              fontFamily: "Lato",
+              fontWeight: FontWeight.bold,
+              color: Colors.black
           ),
         ),
         iconTheme: IconThemeData(
-          color: Colors.black
+            color: Colors.black
         ),
       ),
       body: Container(
@@ -85,71 +85,71 @@ class _ContactsPageState extends State<ContactsPage> {
               child: TextField(
                 controller: searchController,
                 decoration: InputDecoration(
-                  labelText: "Search",
-                  border: new OutlineInputBorder(
-                    borderSide: new BorderSide(
-                      color: Theme.of(context).primaryColor
+                    labelText: "Search",
+                    border: new OutlineInputBorder(
+                        borderSide: new BorderSide(
+                            color: Theme.of(context).primaryColor
+                        )
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Theme.of(context).primaryColor,
                     )
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Theme.of(context).primaryColor,
-                  )
                 ),
               ),
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: isSearching? contactsFiltered.length : contacts.length,
-                shrinkWrap: true,
-                itemBuilder: (context,index){
-                  Contact contact = isSearching? contactsFiltered[index] : contacts[index];
-                return contact.phones.length > 0?
-                ListTile(
-                  leading: (contact.avatar!=null && contact.avatar.length>0)?
-                  CircleAvatar(backgroundImage: MemoryImage(contact.avatar)):
-                  CircleAvatar(
-                    child: Text(
-                      contact.initials(),
-                      style: TextStyle(
-                        fontFamily: "Lato"
+                  itemCount: isSearching? contactsFiltered.length : contacts.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context,index){
+                    Contact contact = isSearching? contactsFiltered[index] : contacts[index];
+                    return contact.phones.length > 0?
+                    ListTile(
+                      leading: (contact.avatar!=null && contact.avatar.length>0)?
+                      CircleAvatar(backgroundImage: MemoryImage(contact.avatar)):
+                      CircleAvatar(
+                          child: Text(
+                            contact.initials(),
+                            style: TextStyle(
+                                fontFamily: "Lato"
+                            ),
+                          )
                       ),
-                    )
-                  ),
-                  title: Text(
-                    contact.displayName,
-                    style: TextStyle(
-                      fontFamily: "Lato"
-                    ),
-                  ),
-                  subtitle: Text(
-                    contact.phones.length > 0 ? contact.phones.elementAt(0).value : '',
-                    style: TextStyle(
-                      fontFamily: "Lato"
-                    ),
-                  ),
-                  trailing: ButtonTheme(
-                    child: RaisedButton(
-                      onPressed: () {
-                        share(context);
-                      },
-                      color: Colors.white,
-                      child: Text('Invite',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red[600],
-                          )),
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.circular(18.0),
-                        side: BorderSide(
-                            color: Colors.red[600]),
+                      title: Text(
+                        contact.displayName,
+                        style: TextStyle(
+                            fontFamily: "Lato"
+                        ),
                       ),
-                      elevation: 0.0,
-                    ),
-                  ),
-                ):Container();
-              }),
+                      subtitle: Text(
+                        contact.phones.length > 0 ? contact.phones.elementAt(0).value : '',
+                        style: TextStyle(
+                            fontFamily: "Lato"
+                        ),
+                      ),
+                      trailing: ButtonTheme(
+                        child: RaisedButton(
+                          onPressed: () {
+                            share(context);
+                          },
+                          color: Colors.white,
+                          child: Text('Invite',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red[600],
+                              )),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(18.0),
+                            side: BorderSide(
+                                color: Colors.red[600]),
+                          ),
+                          elevation: 0.0,
+                        ),
+                      ),
+                    ):Container();
+                  }),
             ),
           ],
         ),
