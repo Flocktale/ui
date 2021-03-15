@@ -13,7 +13,6 @@ import 'ClubsByUser.dart';
 import 'EditProfile.dart';
 import '../Carousel.dart';
 import 'package:built_collection/built_collection.dart';
-import 'ProfileImagePage.dart';
 
 import '../MinClub.dart';
 

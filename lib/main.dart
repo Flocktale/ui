@@ -82,9 +82,6 @@ class MyApp extends StatelessWidget {
               Provider.of<AgoraController>(ctx, listen: false),
               Provider.of<UserData>(ctx, listen: false)),
         ),
-        // Provider(
-        // create: (ctx)=> MySocket(Provider.of<UserData>(ctx, listen: false).user.userId),
-        // ),
       ],
       child: MaterialApp(
         onGenerateRoute: RouteGenerator.generateRoute,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flocktale/pages/HomePage.dart';
-import 'package:flocktale/pages/ImagePage.dart';
 import 'package:flocktale/pages/NotificationPage.dart';
 import 'package:flocktale/root.dart';
 
@@ -15,8 +14,6 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => HomePage());
       case '/notificationPage':
         return MaterialPageRoute(builder: (_) => NotificationPage());
-      case '/imagePage':
-        return MaterialPageRoute(builder: (_) => ImagePage());
       default:
         return _errorRoute();
     }

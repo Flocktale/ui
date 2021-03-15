@@ -15,8 +15,6 @@ import 'Club.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class NewClub extends StatefulWidget {
-  final String userId;
-  NewClub({this.userId});
   @override
   _NewClubState createState() => _NewClubState();
 }
@@ -86,12 +84,13 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     if (_newClubModel == null) return;
 
     final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final userId = Provider.of<UserData>(context, listen: false).userId;
 
     final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     final resp = await service.createNewClub(
       body: _newClubModel,
-      creatorId: widget.userId,
+      creatorId: userId,
       authorization: authToken,
     );
     if (resp.isSuccessful && image != null) {
@@ -108,16 +107,22 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
         print("!!!!!!!!!!!!!!!!!!!!!!!");
         print(response.isSuccessful);
         BuiltClub newClub = (await service.getClubByClubId(
-          userId: widget.userId,
+          userId: userId,
           clubId: resp.body['clubId'],
           authorization: authToken,
         ))
             .body
             ?.club;
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => Club(
-                  club: newClub,
-                ))).then((value) => (){_formKey.currentState.reset();image=null;setState(() {});});
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (_) => Club(
+                      club: newClub,
+                    )))
+            .then((value) => () {
+                  _formKey.currentState.reset();
+                  image = null;
+                  setState(() {});
+                });
         Fluttertoast.showToast(msg: 'club entry is created');
       }
     } else {
@@ -125,16 +130,22 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       print(resp.error);
       Fluttertoast.showToast(msg: 'club entry is created');
       BuiltClub tempClub = (await service.getClubByClubId(
-        userId: widget.userId,
+        userId: userId,
         clubId: resp.body['clubId'],
         authorization: authToken,
       ))
           .body
           ?.club;
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => Club(
-                club: tempClub,
-              ))).then((value) => (){_formKey.currentState.reset();image=null;setState(() {});});
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+              builder: (_) => Club(
+                    club: tempClub,
+                  )))
+          .then((value) => () {
+                _formKey.currentState.reset();
+                image = null;
+                setState(() {});
+              });
       _formKey.currentState.reset();
       setState(() {
         image = null;
@@ -305,12 +316,14 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   }
 
   _showMaterialDialog() {
-    BuiltClub activeClub = Provider.of<AgoraController>(context, listen: false).club;
+    BuiltClub activeClub =
+        Provider.of<AgoraController>(context, listen: false).club;
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Please end the club \"${activeClub.clubName}\" before entering another club."),
+            title: Text(
+                "Please end the club \"${activeClub.clubName}\" before entering another club."),
             actions: [
               FlatButton(
                 child: Text(
@@ -318,8 +331,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                   style: TextStyle(
                       fontFamily: "Lato",
                       color: Colors.black,
-                      fontWeight: FontWeight.bold
-                  ),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -331,11 +343,13 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                   style: TextStyle(
                       fontFamily: "Lato",
                       color: Colors.redAccent,
-                      fontWeight: FontWeight.bold
-                  ),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>Club(club: activeClub,)));
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (_) => Club(
+                            club: activeClub,
+                          )));
                 },
               ),
             ],
@@ -355,14 +369,15 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     BuiltClub club = Provider.of<AgoraController>(context, listen: false).club;
-    final cuserId = Provider.of<UserData>(context,listen:false).userId;
+    final cuserId = Provider.of<UserData>(context, listen: false).userId;
     super.build(context);
     return SafeArea(
       child: Scaffold(
           body: SingleChildScrollView(
         child: Stack(children: [
           Container(
-            margin: EdgeInsets.only(left: size.width / 50, right: size.width / 50),
+            margin:
+                EdgeInsets.only(left: size.width / 50, right: size.width / 50),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -471,10 +486,10 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                           minWidth: size.width / 3.5,
                           child: RaisedButton(
                             onPressed: () {
-                              if(club!=null && club.creator.userId==cuserId){
+                              if (club != null &&
+                                  club.creator.userId == cuserId) {
                                 _showMaterialDialog();
-                              }
-                              else{
+                              } else {
                                 if (!_formKey.currentState.validate()) {
                                   return;
                                 } else {
