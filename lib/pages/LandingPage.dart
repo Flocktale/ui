@@ -1,5 +1,7 @@
 import 'package:chopper/chopper.dart';
+import 'package:flocktale/Models/basic_enums.dart';
 import 'package:flocktale/Widgets/introWidget.dart';
+import 'package:flocktale/pages/ClubSection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Carousel.dart';
@@ -9,9 +11,6 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
-import 'ClubsByCategory.dart';
-import 'ClubsByRelation.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -24,17 +23,6 @@ class _LandingPageState extends State<LandingPage>
   BuiltSearchClubs friendsClubs;
   BuiltSearchClubs followingUsersClubs;
   BuiltSearchClubs myCurrentClubs;
-  List<String> Category = [
-    'Entrepreneurship',
-    'Education',
-    'Comedy',
-    'Travel',
-    'Society',
-    'Health',
-    'Finance',
-    'Sports',
-    'Other'
-  ];
 
   BuiltNotificationList notificationList;
   bool hasNewNotifications = false;
@@ -66,10 +54,10 @@ class _LandingPageState extends State<LandingPage>
   Widget sectionHeading({
     String title,
     bool viewAll = false,
-    Widget viewAllNavigationPage,
+    ClubSectionType type,
     BuiltList<BuiltClub> clubs,
   }) {
-    assert((viewAllNavigationPage != null) == viewAll,
+    assert(type != null,
         'viewAllNavigationPage must not be null when viewAll is true and vice versa');
 
     Size size = MediaQuery.of(context).size;
@@ -91,7 +79,8 @@ class _LandingPageState extends State<LandingPage>
             ),
             viewAll
                 ? InkWell(
-                    onTap: () => _navigateTo(viewAllNavigationPage),
+                    onTap: () =>
+                        _navigateTo(ClubSection(type, category: title)),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
@@ -204,22 +193,14 @@ class _LandingPageState extends State<LandingPage>
                       sectionHeading(
                         title: "From your Friends",
                         viewAll: true,
-                        viewAllNavigationPage: ClubsByRelation(
-                          userId: Provider.of<UserData>(context, listen: false)
-                              .userId,
-                          type: 0,
-                        ),
+                        type: ClubSectionType.Friend,
                         clubs: friendsClubs.clubs,
                       ),
                     if ((followingUsersClubs?.clubs?.isNotEmpty ?? false))
                       sectionHeading(
                         title: "From the people you follow",
                         viewAll: true,
-                        viewAllNavigationPage: ClubsByRelation(
-                          userId: Provider.of<UserData>(context, listen: false)
-                              .userId,
-                          type: 1,
-                        ),
+                        type: ClubSectionType.Following,
                         clubs: followingUsersClubs.clubs,
                       ),
                     Clubs != null
@@ -232,20 +213,20 @@ class _LandingPageState extends State<LandingPage>
                                   ? sectionHeading(
                                       title: Clubs[index].category,
                                       viewAll: true,
-                                      viewAllNavigationPage: ClubsByCategory(
-                                        category: Clubs[index].category,
-                                      ),
+                                      type: ClubSectionType.Category,
                                       clubs: Clubs[index].clubs,
                                     )
                                   : Container();
-                            })
+                            },
+                          )
                         : Container(
                             child: Center(
-                                child: Text(
-                              "Loading...",
-                              style: TextStyle(
-                                  fontFamily: "Lato", color: Colors.grey),
-                            )),
+                              child: Text(
+                                "Loading...",
+                                style: TextStyle(
+                                    fontFamily: "Lato", color: Colors.grey),
+                              ),
+                            ),
                           ),
                     SizedBox(height: size.height / 10)
                   ],

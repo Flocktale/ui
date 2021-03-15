@@ -5,7 +5,6 @@ import 'package:flocktale/pages/NewClub.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flocktale/pages/SearchPage.dart';
 import 'package:flocktale/providers/userData.dart';
-import 'package:flocktale/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,14 +29,12 @@ class _HomePageState extends State<HomePage> {
   @override
   initState() {
     super.initState();
-    MySocket a = Provider.of<MySocket>(context, listen: false);
 
     String userId = Provider.of<UserData>(context, listen: false).user.userId;
 
     // TODO: UNCOMMENT THIS
     // DBHelper.fetchList(userId, context);
     FollowingDatabase.fetchList(userId, context);
-    if (a.userId != userId) a.update(userId);
   }
 
   @override
