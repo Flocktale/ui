@@ -15,11 +15,14 @@ class AgoraController {
   BuiltClub club;
 
   AgoraController create({bool isMuted = false}) {
-    if (_agoraHandler != null) return this;
+    isMicMuted = isMuted;
 
+    if (_agoraHandler != null) {
+      hardMuteAction(isMicMuted);
+      return this;
+    }
     _agoraHandler = AgoraHandler();
     _isClubMuted = false;
-    isMicMuted = isMuted;
     _agoraHandler.init().then((handler) async {
       agoraEventHandler = handler;
       await hardMuteAction(isMicMuted);

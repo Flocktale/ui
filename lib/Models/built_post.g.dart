@@ -1040,7 +1040,7 @@ class _$AudienceDataSerializer implements StructuredSerializer<AudienceData> {
       result
         ..add('status')
         ..add(serializers.serialize(object.status,
-            specifiedType: const FullType(String)));
+            specifiedType: const FullType(AudienceStatus)));
     }
     if (object.isMuted != null) {
       result
@@ -1082,7 +1082,7 @@ class _$AudienceDataSerializer implements StructuredSerializer<AudienceData> {
       switch (key) {
         case 'status':
           result.status = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(AudienceStatus)) as AudienceStatus;
           break;
         case 'isMuted':
           result.isMuted = serializers.deserialize(value,
@@ -1143,7 +1143,7 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
       result
         ..add('status')
         ..add(serializers.serialize(object.status,
-            specifiedType: const FullType(String)));
+            specifiedType: const FullType(ClubStatus)));
     }
     if (object.timeWindow != null) {
       result
@@ -1265,7 +1265,7 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
           break;
         case 'status':
           result.status = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(ClubStatus)) as ClubStatus;
           break;
         case 'timeWindow':
           result.timeWindow = serializers.deserialize(value,
@@ -3733,7 +3733,7 @@ class BuiltClubAndAudienceBuilder
 
 class _$AudienceData extends AudienceData {
   @override
-  final String status;
+  final AudienceStatus status;
   @override
   final bool isMuted;
   @override
@@ -3809,9 +3809,9 @@ class AudienceDataBuilder
     implements Builder<AudienceData, AudienceDataBuilder> {
   _$AudienceData _$v;
 
-  String _status;
-  String get status => _$this._status;
-  set status(String status) => _$this._status = status;
+  AudienceStatus _status;
+  AudienceStatus get status => _$this._status;
+  set status(AudienceStatus status) => _$this._status = status;
 
   bool _isMuted;
   bool get isMuted => _$this._isMuted;
@@ -3899,7 +3899,7 @@ class _$BuiltClub extends BuiltClub {
   @override
   final SummaryUser creator;
   @override
-  final String status;
+  final ClubStatus status;
   @override
   final int timeWindow;
   @override
@@ -4078,9 +4078,9 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       _$this._creator ??= new SummaryUserBuilder();
   set creator(SummaryUserBuilder creator) => _$this._creator = creator;
 
-  String _status;
-  String get status => _$this._status;
-  set status(String status) => _$this._status = status;
+  ClubStatus _status;
+  ClubStatus get status => _$this._status;
+  set status(ClubStatus status) => _$this._status = status;
 
   int _timeWindow;
   int get timeWindow => _$this._timeWindow;

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:flocktale/Models/enums/audienceStatus.dart';
+import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/services/chopper/serializers.dart';
 import 'package:hive/hive.dart';
 
@@ -295,7 +297,7 @@ abstract class AudienceData
     implements Built<AudienceData, AudienceDataBuilder> {
   // fields go here
   @nullable
-  String get status;
+  AudienceStatus get status;
 
   @nullable
   bool get isMuted;
@@ -339,7 +341,7 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   SummaryUser get creator;
 
   @nullable
-  String get status;
+  ClubStatus get status;
 
   @nullable
   int get timeWindow;
@@ -412,7 +414,7 @@ abstract class SummaryUser implements Built<SummaryUser, SummaryUserBuilder> {
   @nullable
   int get online; // this field is, "0" when user is online and represent timestamp when user is offline.
 
-  @nullable 
+  @nullable
   String get phone;
 
   SummaryUser._();
@@ -622,16 +624,16 @@ abstract class BuiltInviteFormat
   static Serializer<BuiltInviteFormat> get serializer =>
       _$builtInviteFormatSerializer;
 }
-abstract class BuiltContacts implements Built<BuiltContacts, BuiltContactsBuilder> {
+
+abstract class BuiltContacts
+    implements Built<BuiltContacts, BuiltContactsBuilder> {
   // fields go here
   @nullable
   BuiltList<String> get contacts;
-  
+
   BuiltContacts._();
 
   factory BuiltContacts([updates(BuiltContactsBuilder b)]) = _$BuiltContacts;
-
- 
 
   static Serializer<BuiltContacts> get serializer => _$builtContactsSerializer;
 }

@@ -1,4 +1,4 @@
-import 'package:flocktale/Models/enums.dart';
+import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -154,7 +154,7 @@ class _CarouselState extends State<Carousel> {
                         ),
                       ]),
                     ),
-                    widget.Clubs[index].status == enumToString(ClubStatus.Live)
+                    widget.Clubs[index].status == ClubStatus.Live
                         ? Positioned(
                             // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
                             bottom: 5,
@@ -173,8 +173,7 @@ class _CarouselState extends State<Carousel> {
                       right: 5,
                       child: Row(
                         children: [
-                          widget.Clubs[index].status ==
-                                  enumToString(ClubStatus.Waiting)
+                          widget.Clubs[index].status == (ClubStatus.Waiting)
                               ? Container(
                                   padding: EdgeInsets.all(2),
                                   child: Icon(
@@ -184,20 +183,19 @@ class _CarouselState extends State<Carousel> {
                                 )
                               : Container(),
                           Container(
-                            color: widget.Clubs[index].status ==
-                                    enumToString(ClubStatus.Live)
-                                ? Colors.red
-                                : widget.Clubs[index].status ==
-                                        enumToString(ClubStatus.Concluded)
-                                    ? Colors.grey
-                                    : Colors.white,
+                            color:
+                                widget.Clubs[index].status == (ClubStatus.Live)
+                                    ? Colors.red
+                                    : widget.Clubs[index].status ==
+                                            (ClubStatus.Concluded)
+                                        ? Colors.grey
+                                        : Colors.white,
                             padding: EdgeInsets.all(2),
                             child: Text(
-                              widget.Clubs[index].status ==
-                                      enumToString(ClubStatus.Live)
+                              widget.Clubs[index].status == (ClubStatus.Live)
                                   ? "LIVE"
                                   : widget.Clubs[index].status ==
-                                          enumToString(ClubStatus.Concluded)
+                                          (ClubStatus.Concluded)
                                       ? "ENDED"
                                       : _processTimestamp(
                                           widget.Clubs[index].scheduleTime),
@@ -205,10 +203,10 @@ class _CarouselState extends State<Carousel> {
                                   fontFamily: 'Lato',
                                   fontWeight: FontWeight.bold,
                                   color: widget.Clubs[index].status ==
-                                          enumToString(ClubStatus.Live)
+                                          (ClubStatus.Live)
                                       ? Colors.white
                                       : widget.Clubs[index].status ==
-                                              enumToString(ClubStatus.Concluded)
+                                              (ClubStatus.Concluded)
                                           ? Colors.white
                                           : Colors.black,
                                   //   letterSpacing: 2.0,

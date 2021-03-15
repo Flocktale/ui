@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:agora_rtc_engine/rtc_engine.dart' as RTC;
+import 'package:flocktale/Models/enums/audienceStatus.dart';
+import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/comment.dart';
-import 'package:flocktale/Models/enums.dart';
 import 'package:flocktale/pages/AudiencePage.dart';
 import 'package:flocktale/pages/InviteScreen.dart';
 import 'package:flocktale/pages/participantsPanel.dart';
@@ -222,9 +223,11 @@ class _ClubState extends State<Club> {
     Fluttertoast.showToast(msg: "This Club is live now");
 
     setState(() {
-      _clubAudience = _clubAudience.rebuild((b) => b
-        ..club.agoraToken = event['agoraToken']
-        ..club.status = enumToString(ClubStatus.Live));
+      _clubAudience = _clubAudience.rebuild(
+        (b) => b
+          ..club.agoraToken = event['agoraToken']
+          ..club.status = ClubStatus.Live,
+      );
     });
 
     //TODO
@@ -236,7 +239,7 @@ class _ClubState extends State<Club> {
 
     _clubAudience = _clubAudience.rebuild((b) => b
       ..club.agoraToken = null
-      ..club.status = enumToString(ClubStatus.Concluded));
+      ..club.status = (ClubStatus.Concluded));
 
     await Provider.of<AgoraController>(context, listen: false).stop();
 
@@ -545,13 +548,13 @@ class _ClubState extends State<Club> {
         .create(isMuted: this._isMuted);
 
     // if user is participant till the time of fetching this club data.
-    this._isParticipant = _clubAudience.audienceData.status ==
-        enumToString(AudienceStatus.Participant);
+    this._isParticipant =
+        _clubAudience.audienceData.status == AudienceStatus.Participant;
     // later it will be decided by participant list fetched by websocket.
 
     // if user has sent a join request already till the time of fetching this club.
-    this._sentRequest = _clubAudience.audienceData.status ==
-        enumToString(AudienceStatus.ActiveJoinRequest);
+    this._sentRequest =
+        _clubAudience.audienceData.status == AudienceStatus.ActiveJoinRequest;
 
     var invitation = _clubAudience.audienceData.invitationId;
     if (invitation != null) {
@@ -572,8 +575,8 @@ class _ClubState extends State<Club> {
     if (event['clubId'] != widget.club.clubId) return;
 
     Fluttertoast.showToast(msg: 'You are now a Panelist');
-    _clubAudience = _clubAudience.rebuild((b) =>
-        b..audienceData.status = enumToString(AudienceStatus.Participant));
+    _clubAudience = _clubAudience
+        .rebuild((b) => b..audienceData.status = (AudienceStatus.Participant));
 
     _isParticipant = true;
     _sentRequest = false;
@@ -648,7 +651,7 @@ class _ClubState extends State<Club> {
     _clubAudience = _clubAudience.rebuild(
       (b) => b
         ..club.agoraToken = data.body['agoraToken']
-        ..club.status = enumToString(ClubStatus.Live),
+        ..club.status = (ClubStatus.Live),
     );
 
     setState(() {});
@@ -666,7 +669,7 @@ class _ClubState extends State<Club> {
     _clubAudience = _clubAudience.rebuild(
       (b) => b
         ..club.agoraToken = null
-        ..club.status = enumToString(ClubStatus.Concluded),
+        ..club.status = (ClubStatus.Concluded),
     );
 
     await Provider.of<AgoraController>(context, listen: false).stop();
@@ -730,8 +733,7 @@ class _ClubState extends State<Club> {
   }
 
   _playButtonHandler() async {
-    if (_clubAudience.club.status != enumToString(ClubStatus.Live) &&
-        _isOwner == false) {
+    if (_clubAudience.club.status != (ClubStatus.Live) && _isOwner == false) {
       // non-owner is trying to play the club which is not yet started by owner.
       Fluttertoast.showToast(msg: "The Club has not started yet");
       return;
@@ -751,8 +753,7 @@ class _ClubState extends State<Club> {
       }
     } else {
       //start club
-      if (_clubAudience.club.status != enumToString(ClubStatus.Live) &&
-          _isOwner == true) {
+      if (_clubAudience.club.status != (ClubStatus.Live) && _isOwner == true) {
         // club is being started by owner for first time.
         await _startClub();
       }
@@ -1211,7 +1212,7 @@ class _ClubState extends State<Club> {
                                       ),
                                     ),
                                     _clubAudience.club.status ==
-                                            enumToString(ClubStatus.Live)
+                                            (ClubStatus.Live)
                                         ? Container(
                                             margin:
                                                 EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -1232,8 +1233,7 @@ class _ClubState extends State<Club> {
                                                 0, size.height / 50, 0, 0),
                                             child: Text(
                                               _clubAudience.club.status ==
-                                                      enumToString(
-                                                          ClubStatus.Concluded)
+                                                      (ClubStatus.Concluded)
                                                   ? "Concluded"
                                                   : DateTime.now().compareTo(DateTime
                                                               .fromMillisecondsSinceEpoch(
@@ -1330,7 +1330,7 @@ class _ClubState extends State<Club> {
                                 ),
                                 // if club is concluded no need to show play, mic and participation button
                                 if (_clubAudience.club.status !=
-                                    enumToString(ClubStatus.Concluded))
+                                    (ClubStatus.Concluded))
                                   FittedBox(
                                     child: Row(
                                       children: [
@@ -1353,8 +1353,7 @@ class _ClubState extends State<Club> {
                                                 : Icon(Icons.stop),
                                             backgroundColor:
                                                 _clubAudience.club.status ==
-                                                        enumToString(
-                                                            ClubStatus.Live)
+                                                        (ClubStatus.Live)
                                                     ? !_isPlaying
                                                         ? Colors.redAccent
                                                         : Colors.redAccent
@@ -1365,7 +1364,7 @@ class _ClubState extends State<Club> {
                                         // dedicated button for mic
                                         if (_isParticipant == true &&
                                             _clubAudience.club.status ==
-                                                enumToString(ClubStatus.Live))
+                                                (ClubStatus.Live))
                                           Container(
                                             margin: EdgeInsets.fromLTRB(
                                                 10, 0, 0, 0),

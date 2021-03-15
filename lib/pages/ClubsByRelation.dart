@@ -1,4 +1,4 @@
-import 'package:flocktale/Models/enums.dart';
+import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flocktale/providers/userData.dart';
@@ -210,7 +210,7 @@ class _ClubsByRelationState extends State<ClubsByRelation> {
                           ),
                         ]),
                       ),
-                      clubList[index].status == enumToString(ClubStatus.Live)
+                      clubList[index].status == (ClubStatus.Live)
                           ? Positioned(
                               // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
                               bottom: 5,
@@ -229,8 +229,7 @@ class _ClubsByRelationState extends State<ClubsByRelation> {
                         right: 5,
                         child: Row(
                           children: [
-                            clubList[index].status ==
-                                    enumToString(ClubStatus.Waiting)
+                            clubList[index].status == (ClubStatus.Waiting)
                                 ? Container(
                                     padding: EdgeInsets.all(2),
                                     child: Icon(
@@ -240,20 +239,18 @@ class _ClubsByRelationState extends State<ClubsByRelation> {
                                   )
                                 : Container(),
                             Container(
-                              color: clubList[index].status ==
-                                      enumToString(ClubStatus.Live)
+                              color: clubList[index].status == (ClubStatus.Live)
                                   ? Colors.red
                                   : clubList[index].status ==
-                                          enumToString(ClubStatus.Concluded)
+                                          (ClubStatus.Concluded)
                                       ? Colors.grey
                                       : Colors.white,
                               padding: EdgeInsets.all(2),
                               child: Text(
-                                clubList[index].status ==
-                                        enumToString(ClubStatus.Live)
+                                clubList[index].status == (ClubStatus.Live)
                                     ? "LIVE"
                                     : clubList[index].status ==
-                                            enumToString(ClubStatus.Concluded)
+                                            (ClubStatus.Concluded)
                                         ? "ENDED"
                                         : _processTimestamp(
                                             clubList[index].scheduleTime),
@@ -261,11 +258,10 @@ class _ClubsByRelationState extends State<ClubsByRelation> {
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.bold,
                                     color: clubList[index].status ==
-                                            enumToString(ClubStatus.Live)
+                                            (ClubStatus.Live)
                                         ? Colors.white
                                         : clubList[index].status ==
-                                                enumToString(
-                                                    ClubStatus.Concluded)
+                                                (ClubStatus.Concluded)
                                             ? Colors.white
                                             : Colors.black,
                                     //   letterSpacing: 2.0,
