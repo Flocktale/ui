@@ -1,3 +1,4 @@
+import 'package:flocktale/customImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -108,11 +109,8 @@ class _AudiencePageState extends State<AudiencePage> {
                         key: ValueKey(_user.username),
                         child: ListTile(
                           leading: CircleAvatar(
-                            child: FadeInImage.assetNetwork(
+                            child: CustomImage(
                               image: _user.avatar + "_thumb",
-                              placeholder: 'assets/gifs/fading_lines.gif',
-                              imageErrorBuilder: (context, _, __) =>
-                                  Image.asset('assets/images/logo.ico'),
                             ),
                           ),
                           title: InkWell(

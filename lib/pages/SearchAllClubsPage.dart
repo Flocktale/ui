@@ -1,3 +1,4 @@
+import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:built_collection/built_collection.dart';
@@ -130,11 +131,8 @@ class _SearchAllClubsState extends State<SearchAllClubs> {
               margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: ListTile(
                 leading: CircleAvatar(
-                  child: FadeInImage.assetNetwork(
+                  child: CustomImage(
                     image: widget.clubs[index].clubAvatar + "_thumb",
-                    placeholder: 'assets/gifs/fading_lines.gif',
-                    imageErrorBuilder: (context, _, __) =>
-                        Image.asset('assets/images/logo.ico'),
                   ),
                 ),
                 title: Text(

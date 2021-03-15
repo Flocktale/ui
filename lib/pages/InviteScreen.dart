@@ -1,4 +1,5 @@
 import 'package:chopper/chopper.dart';
+import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -155,11 +156,8 @@ class _InviteScreenState extends State<InviteScreen> {
             margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
             child: ListTile(
               leading: CircleAvatar(
-                child: FadeInImage.assetNetwork(
+                child: CustomImage(
                   image: _user.avatar + "_thumb",
-                  placeholder: 'assets/gifs/fading_lines.gif',
-                  imageErrorBuilder: (context, _, __) =>
-                      Image.asset('assets/images/logo.ico'),
                 ),
               ),
               title: InkWell(

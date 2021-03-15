@@ -1,4 +1,5 @@
 import 'package:flocktale/Models/enums.dart';
+import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/Club.dart';
@@ -114,12 +115,8 @@ class _CarouselState extends State<Carousel> {
                     Container(
                       height: 100,
                       width: size.width,
-                      child: FadeInImage.assetNetwork(
+                      child: CustomImage(
                         image: widget.Clubs[index].clubAvatar,
-                        fit: BoxFit.fill,
-                        placeholder: 'assets/gifs/pinwheel.gif',
-                        imageErrorBuilder: (context, _, __) =>
-                            Image.asset('assets/images/logo.ico'),
                       ),
                     ),
 
@@ -139,12 +136,9 @@ class _CarouselState extends State<Carousel> {
                       child: Row(children: [
                         CircleAvatar(
                           radius: 10,
-                          child: FadeInImage.assetNetwork(
+                          child: CustomImage(
                             image:
                                 widget.Clubs[index].creator.avatar + "_thumb",
-                            placeholder: 'assets/gifs/fading_lines.gif',
-                            imageErrorBuilder: (context, _, __) =>
-                                Image.asset('assets/images/logo.ico'),
                           ),
                         ),
                         SizedBox(

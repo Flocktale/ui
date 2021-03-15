@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:agora_rtc_engine/rtc_engine.dart' as RTC;
+import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -1177,12 +1178,10 @@ class _ClubState extends State<Club> {
                                 child: ClipRRect(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10.0)),
-                                    child: FadeInImage.assetNetwork(
+                                    child: CustomImage(
                                       image: _clubAudience.club.clubAvatar +
                                           "_large",
-                                      placeholder: 'assets/gifs/pinwheel.gif',
-                                      imageErrorBuilder: (context, _, __) =>
-                                          Image.asset('assets/images/logo.ico'),
+                                      pinwheelPlaceholder: true,
                                     )),
                               ),
                               Container(
@@ -1298,31 +1297,19 @@ class _ClubState extends State<Club> {
                                                       : Color(0xffFDCF09),
                                               child: CircleAvatar(
                                                 radius: size.width / 20,
-                                                child: FadeInImage.assetNetwork(
+                                                child: CustomImage(
                                                   image: _clubAudience
                                                           .club.creator.avatar +
                                                       "_thumb",
-                                                  placeholder:
-                                                      'assets/gifs/fading_lines.gif',
-                                                  imageErrorBuilder: (context,
-                                                          _, __) =>
-                                                      Image.asset(
-                                                          'assets/images/logo.ico'),
                                                 ),
                                               ),
                                             )
                                           : CircleAvatar(
                                               radius: size.width / 20,
-                                              child: FadeInImage.assetNetwork(
+                                              child: CustomImage(
                                                 image: _clubAudience
                                                         .club.creator.avatar +
                                                     "_thumb",
-                                                placeholder:
-                                                    'assets/gifs/fading_lines.gif',
-                                                imageErrorBuilder: (context, _,
-                                                        __) =>
-                                                    Image.asset(
-                                                        'assets/images/logo.ico'),
                                               ),
                                             ),
                                       Container(
@@ -1504,18 +1491,11 @@ class _ClubState extends State<Club> {
                                               itemBuilder: (context, index) {
                                                 var a = ListTile(
                                                   leading: CircleAvatar(
-                                                    child: FadeInImage
-                                                        .assetNetwork(
+                                                    child: CustomImage(
                                                       image: comments[index]
                                                               .user
                                                               .avatar +
                                                           "_thumb",
-                                                      placeholder:
-                                                          'assets/gifs/fading_lines.gif',
-                                                      imageErrorBuilder: (context,
-                                                              _, __) =>
-                                                          Image.asset(
-                                                              'assets/images/logo.ico'),
                                                     ),
                                                   ),
                                                   title: Row(

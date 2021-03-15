@@ -1,3 +1,4 @@
+import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
@@ -162,11 +163,8 @@ class DataSearch extends SearchDelegate<String> {
                       itemCount: recentSearches.length,
                       itemBuilder: (builder, index) {
                         return ListTile(
-                          leading: FadeInImage.assetNetwork(
+                          leading: CustomImage(
                             image: recentSearches[index].avatar + "_thumb",
-                            placeholder: 'assets/gifs/fading_lines.gif',
-                            imageErrorBuilder: (context, _, __) =>
-                                Image.asset('assets/images/logo.ico'),
                           ),
                           title: Text(
                             recentSearches[index].name,

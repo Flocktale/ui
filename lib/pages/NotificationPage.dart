@@ -1,3 +1,4 @@
+import 'package:flocktale/customImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -169,21 +170,18 @@ class _NotificationPageState extends State<NotificationPage> {
                                               .targetResourceId),
                                         )));
                               },
-                        leading: notificationList.notifications[index].avatar !=
-                                null
-                            ? CircleAvatar(
-                                child: FadeInImage.assetNetwork(
-                                  image: notificationList
-                                          .notifications[index].avatar +
-                                      "_thumb",
-                                  placeholder: 'assets/gifs/fading_lines.gif',
-                                  imageErrorBuilder: (context, _, __) =>
-                                      Image.asset('assets/images/logo.ico'),
-                                ),
-                              )
-                            : CircleAvatar(
-                                backgroundColor: Colors.white,
-                              ),
+                        leading:
+                            notificationList.notifications[index].avatar != null
+                                ? CircleAvatar(
+                                    child: CustomImage(
+                                      image: notificationList
+                                              .notifications[index].avatar +
+                                          "_thumb",
+                                    ),
+                                  )
+                                : CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                  ),
                         title: Column(
                           children: [
                             RichText(

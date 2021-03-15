@@ -65,6 +65,9 @@ class _EditProfileState extends State<EditProfile> {
           authorization: authToken,
         );
         if (resp.isSuccessful) {
+          // clearing image cache so that 
+          PaintingBinding.instance.imageCache.clear();
+
           Fluttertoast.showToast(msg: "Profile Image Updated");
         } else {
           Fluttertoast.showToast(
@@ -73,6 +76,7 @@ class _EditProfileState extends State<EditProfile> {
         }
       }
     }
+
     Navigator.of(context).pop();
   }
 

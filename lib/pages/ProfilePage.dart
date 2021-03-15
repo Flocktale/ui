@@ -1,3 +1,4 @@
+import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -778,11 +779,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: size.height / 18,
-                            child: FadeInImage.assetNetwork(
+                            child: CustomImage(
                               image: _user.avatar + '_large',
-                              placeholder: 'assets/gifs/fading_lines.gif',
-                              imageErrorBuilder: (context, _, __) =>
-                                  Image.asset('assets/images/logo.ico'),
                             ),
                           ),
                         ),

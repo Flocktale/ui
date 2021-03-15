@@ -1,3 +1,4 @@
+import 'package:flocktale/customImage.dart';
 import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -184,11 +185,8 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                         children: <Widget>[
                           CircleAvatar(
                             radius: 30,
-                            child: FadeInImage.assetNetwork(
+                            child: CustomImage(
                               image: _user.avatar + "_thumb",
-                              placeholder: 'assets/gifs/fading_lines.gif',
-                              imageErrorBuilder: (context, _, __) =>
-                                  Image.asset('assets/images/logo.ico'),
                             ),
                           ),
                           Column(
