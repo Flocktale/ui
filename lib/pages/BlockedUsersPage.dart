@@ -5,7 +5,7 @@ import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
-
+import 'package:built_collection/built_collection.dart';
 import 'ProfilePage.dart';
 
 class BlockedUsersPage extends StatefulWidget {
@@ -16,71 +16,41 @@ class BlockedUsersPage extends StatefulWidget {
 }
 
 class _BlockedUsersPageState extends State<BlockedUsersPage> {
-  Map<String, dynamic> blockedUsersMap = {
-    'data': null,
-    'isLoading': true,
-  };
 
+  BuiltList<AudienceData> blockedUsers;
+  bool isLoading = true;
   Future<void> _fetchBlockedUsersData() async {
     final authToken = (Provider.of<UserData>(context, listen: false).authToken);
-    blockedUsersMap['data'] =
+    blockedUsers =
         (await Provider.of<DatabaseApiService>(context, listen: false)
                 .getAllBlockedUsers(
                     clubId: widget.club.clubId, authorization: authToken))
             .body;
-    blockedUsersMap['isLoading'] = false;
+    isLoading = false;
     setState(() {});
   }
 
-  void _fetchMoreBlockedUserData() async {
-    if (blockedUsersMap['isLoading'] == true) return;
-    setState(() {});
-    final lastEvaluatedKey =
-        (blockedUsersMap['data'] as BuiltActiveJoinRequests)?.lastevaluatedkey;
-
-    if (lastEvaluatedKey != null) {
-      await _fetchBlockedUsersData();
-    } else {
-      await Future.delayed(Duration(milliseconds: 200));
-      blockedUsersMap['isLoading'] = false;
-    }
-    setState(() {});
-  }
 
   Widget audienceList() {
     final size = MediaQuery.of(context).size;
-    var blockedUsersList = (blockedUsersMap['data'] as BuiltActiveJoinRequests)
-        ?.activeJoinRequestUsers;
-    final bool isLoading = blockedUsersMap['isLoading'];
-    final listLength = (blockedUsersList?.length ?? 0) + 1;
-    final _user = Provider.of<UserData>(context, listen: false).user;
-    return Container(
+    final listLength = blockedUsers.length;
+    return listLength==0?
+        Center(
+          child: Text(
+              "No blocked users",
+            style: TextStyle(
+              fontFamily: "Lato",
+              color: Colors.grey
+            ),
+          ),
+        ):
+    Container(
         margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-        child: NotificationListener<ScrollNotification>(
-          onNotification: (ScrollNotification scrollInfo) {
-            if (scrollInfo.metrics.pixels ==
-                scrollInfo.metrics.maxScrollExtent) {
-              _fetchMoreBlockedUserData();
-              blockedUsersMap['isLoading'] = true;
-            }
-            return true;
-          },
-          child: ListView.builder(
+        child: ListView.builder(
               itemCount: listLength,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                if (index == listLength - 1) {
-                  if (isLoading)
-                    return Container(
-                      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  else
-                    return Container();
-                }
-
-                final _user = blockedUsersList[index].audience;
-
+                final _user = blockedUsers[index].audience;
                 return Container(
                   key: ValueKey(_user.username),
                   child: ListTile(
@@ -136,7 +106,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                                             authorization: authToken));
                                 if (resp.isSuccessful) {
                                   Fluttertoast.showToast(msg: 'User unblocked');
-                                  blockedUsersList = blockedUsersList
+                                  blockedUsers = blockedUsers
                                       .rebuild((b) => b.removeAt(index));
                                   setState(() {});
                                 } else {
@@ -163,7 +133,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                   ),
                 );
               }),
-        ));
+    );
   }
 
   @override
@@ -186,7 +156,13 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             )),
-        body: audienceList(),
+        body: isLoading?
+              Center(
+                child: Container(
+                  child: CircularProgressIndicator()
+                ),
+              ):
+              audienceList(),
       ),
     );
   }

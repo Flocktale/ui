@@ -473,10 +473,6 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                         SizedBox(
                           height: size.height / 50,
                         ),
-                        _buildSubCategory(),
-                        SizedBox(
-                          height: size.height / 50,
-                        ),
                         _scheduleClub(),
                         scheduleClub ? dateTimePicker() : Container(),
                         SizedBox(
