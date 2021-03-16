@@ -63,6 +63,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   int _heartCount;
 
   List<Comment> comments = [];
+  final TextEditingController _newCommentController = TextEditingController();
 
   int convertToInt(String username) {
     int hash = 0;
@@ -1219,6 +1220,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                             navigateTo: _navigateTo,
                             processTimestamp: _processTimestamp,
                             addComment: addComment,
+                            newCommentController: _newCommentController,
                           ),
 
                           SizedBox(height: size.height / 30),

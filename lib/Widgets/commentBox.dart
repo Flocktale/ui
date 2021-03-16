@@ -12,6 +12,8 @@ class CommentBox extends StatelessWidget {
   final Function(int, int) processTimestamp;
   final Function(String) addComment;
 
+  final TextEditingController newCommentController;
+
   CommentBox({
     this.size,
     this.comments,
@@ -19,9 +21,8 @@ class CommentBox extends StatelessWidget {
     this.navigateTo,
     this.processTimestamp,
     this.addComment,
+    this.newCommentController,
   });
-
-  final TextEditingController newCommentController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
