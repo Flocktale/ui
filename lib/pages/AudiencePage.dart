@@ -32,6 +32,7 @@ class _AudiencePageState extends State<AudiencePage> {
                         ?.lastevaluatedkey,
                     authorization: authToken))
             .body;
+    print(audienceMap['data']);
     audienceMap['isLoading'] = false;
     setState(() {});
   }
@@ -136,7 +137,7 @@ class _AudiencePageState extends State<AudiencePage> {
                                       )));
                             },
                             child: Text(
-                              _user.tagline != null ? '@${_user.tagline}' : '',
+                              _user.tagline != null ? _user.tagline : 'Audience',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'Lato',

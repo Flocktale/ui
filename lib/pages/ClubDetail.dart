@@ -1135,7 +1135,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                     ),
                                     child: Row(children: <Widget>[
                                       CircleAvatar(
-                                        radius: size.width / 18,
+                                        radius: size.width / 17,
                                         backgroundColor:
                                             currentlySpeakingUsers != null &&
                                                     currentlySpeakingUsers[
@@ -1167,7 +1167,19 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                           style: TextStyle(
                                               fontFamily: 'Lato',
                                               fontWeight: FontWeight.bold,
-                                              fontSize: size.width / 25),
+                                              fontSize: size.width / 25,
+                                              color:  currentlySpeakingUsers != null &&
+                                                  currentlySpeakingUsers[
+                                                  widget.club.creator
+                                                      .username] !=
+                                                      null &&
+                                                  currentlySpeakingUsers[
+                                                  widget.club.creator
+                                                      .username] >
+                                                      0
+                                                  ? Colors.redAccent
+                                                  : Colors.black,
+                                          ),
                                         ),
                                       ),
                                     ]),

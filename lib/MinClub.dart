@@ -32,7 +32,7 @@ class _MinClubState extends State<MinClub> {
         ? InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ClubDetailPage(club: club)));
+                  builder: (_) => ClubDetailPage(club: club))).then((value) => setState((){}));
             },
             child: Container(
               height: size.height / 12,

@@ -123,7 +123,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _navigateTo(Widget page) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
-    setState(() {});
+    _fetchUser();
+    print(_user);
   }
 
   PopupMenuButton<String> _profileDropDownMenu() {

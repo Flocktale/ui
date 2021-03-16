@@ -62,8 +62,8 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   BuiltClub get _newClubModel {
     if (name?.isNotEmpty != true ||
         description?.isNotEmpty != true ||
-        category?.isNotEmpty != true ||
-        subCategory?.isNotEmpty != true) {
+        category?.isNotEmpty != true
+        ) {
       Fluttertoast.showToast(msg: 'Fill all fields');
       print('flll all the fields');
       return null;

@@ -2,6 +2,7 @@ import 'package:chopper/chopper.dart';
 import 'package:flocktale/Models/basic_enums.dart';
 import 'package:flocktale/Widgets/introWidget.dart';
 import 'package:flocktale/pages/ClubSection.dart';
+import 'package:flocktale/pages/NotificationPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Carousel.dart';
@@ -48,7 +49,7 @@ class _LandingPageState extends State<LandingPage>
 
   void _navigateTo(Widget page) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
-    setState(() {});
+    await _fetchAllClubs();
   }
 
   Widget sectionHeading({
@@ -164,9 +165,7 @@ class _LandingPageState extends State<LandingPage>
                   onPressed: () {
                     hasNewNotifications = false;
                     setState(() {});
-                    Navigator.of(context)
-                        .pushNamed('/notificationPage')
-                        .then((value) => setState(() {}));
+                    _navigateTo(NotificationPage());
                   },
                 ),
               ],
