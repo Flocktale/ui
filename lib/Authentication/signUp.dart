@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:agora_handler/main.dart';
+import 'package:flocktale/Authentication/logOut.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/webSocket.dart';
 import 'package:flocktale/services/SecureStorage.dart';
@@ -67,20 +68,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       });
     }
-  }
-
-  _logOutUser() async {
-    final _storage = SecureStorage();
-    await _storage.logout();
-    // print(1);
-    final _userId = Provider.of<UserData>(context, listen: false).userId;
-    await Provider.of<DatabaseApiService>(context, listen: false).deleteFCMToken(
-      userId: _userId,
-      authorization: null,
-    );
-    // await Provider.of<AgoraController>(context,listen: false).dispose();
-    await Provider.of<MySocket>(context,listen:false).closeConnection();
-    Phoenix.rebirth(context);
   }
 
   _signUpWithBackend() async {
@@ -383,7 +370,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             onTap: () async {
                               //TODO
                               //Progress Indicator here
-                              await _logOutUser();
+                              await logOutUser(context);
                             },
                             child: Container(
                                 height: size.height / 20,
