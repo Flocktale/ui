@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
-import 'package:flocktale/pages/Club.dart';
+import 'package:flocktale/pages/ClubDetail.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/webSocket.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +31,8 @@ class _MinClubState extends State<MinClub> {
     return club != null
         ? InkWell(
             onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => Club(club: club)));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => ClubDetailPage(club: club)));
             },
             child: Container(
               height: size.height / 12,

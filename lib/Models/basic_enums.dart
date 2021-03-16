@@ -1,1 +1,1 @@
-enum ClubSectionType { Friend, Following, Category }
+enum ClubSectionType { Friend, Following, Category, User }

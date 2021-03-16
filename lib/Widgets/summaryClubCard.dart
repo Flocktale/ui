@@ -1,6 +1,6 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
-import 'package:flocktale/pages/Club.dart';
+import 'package:flocktale/pages/ClubDetail.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flutter/material.dart';
@@ -45,9 +45,7 @@ class SummaryClubCard extends StatelessWidget {
                 ),
                 onPressed: () {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (_) => Club(
-                            club: activeClub,
-                          )));
+                      builder: (_) => ClubDetailPage(club: activeClub)));
                 },
               ),
             ],
@@ -91,13 +89,13 @@ class SummaryClubCard extends StatelessWidget {
               } else {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => Club(club: club),
+                    builder: (_) => ClubDetailPage(club: club),
                   ),
                 );
               }
             } else {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => Club(
+                builder: (_) => ClubDetailPage(
                   club: club,
                 ),
               ));

@@ -11,7 +11,7 @@ import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import '../MinClub.dart';
 import 'package:flocktale/providers/agoraController.dart';
-import 'Club.dart';
+import 'ClubDetail.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class NewClub extends StatefulWidget {
@@ -115,7 +115,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
             ?.club;
         Navigator.of(context)
             .push(MaterialPageRoute(
-                builder: (_) => Club(
+                builder: (_) => ClubDetailPage(
                       club: newClub,
                     )))
             .then((value) => () {
@@ -138,7 +138,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
           ?.club;
       Navigator.of(context)
           .push(MaterialPageRoute(
-              builder: (_) => Club(
+              builder: (_) => ClubDetailPage(
                     club: tempClub,
                   )))
           .then((value) => () {
@@ -347,7 +347,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                 ),
                 onPressed: () {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (_) => Club(
+                      builder: (_) => ClubDetailPage(
                             club: activeClub,
                           )));
                 },

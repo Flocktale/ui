@@ -1,7 +1,7 @@
 import 'package:flocktale/Widgets/summaryClubCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
-import 'package:flocktale/pages/Club.dart';
+import 'package:flocktale/pages/ClubDetail.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:intl/intl.dart';
 import 'package:flocktale/providers/agoraController.dart';

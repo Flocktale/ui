@@ -8,7 +8,7 @@ import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
 import '../MinClub.dart';
-import 'Club.dart';
+import 'ClubDetail.dart';
 import 'SearchAllClubsPage.dart';
 
 class SearchPage extends StatefulWidget {
@@ -309,7 +309,7 @@ class DataSearch extends SearchDelegate<String> {
                                   : Text("Club"),
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => Club(
+                                    builder: (_) => ClubDetailPage(
                                           club: allSearches.clubs[index],
                                         )));
                               },

@@ -2,7 +2,7 @@ import 'package:flocktale/customImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
-import 'package:flocktale/pages/Club.dart';
+import 'package:flocktale/pages/ClubDetail.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
@@ -164,7 +164,7 @@ class _NotificationPageState extends State<NotificationPage> {
                               }
                             : () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => Club(
+                                    builder: (_) => ClubDetailPage(
                                           club: getClub(notificationList
                                               .notifications[index]
                                               .targetResourceId),
@@ -289,10 +289,10 @@ class _NotificationPageState extends State<NotificationPage> {
                                                   minWidth: size.width / 3.5,
                                                   child: RaisedButton(
                                                     onPressed: () async {
-                                                      Navigator.of(context).push(
-                                                          MaterialPageRoute(
-                                                              builder: (_) => Club(
-                                                                  club: getClub(notificationList
+                                                      Navigator.of(context).push(MaterialPageRoute(
+                                                          builder: (_) => ClubDetailPage(
+                                                              club: getClub(
+                                                                  notificationList
                                                                       .notifications[
                                                                           index]
                                                                       .targetResourceId))));

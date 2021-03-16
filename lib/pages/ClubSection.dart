@@ -59,6 +59,14 @@ class _ClubSectionState extends State<ClubSection> {
       );
     }
 
+    if (widget.type == ClubSectionType.User) {
+      response = await Provider.of<DatabaseApiService>(context, listen: false)
+          .getMyOrganizedClubs(
+              userId: userId,
+              lastevaluatedkey: lastevaluatedkey,
+              authorization: authToken);
+    }
+
     clubMap['data'] = response.body;
 
     clubMap['isLoading'] = false;

@@ -2,7 +2,7 @@ import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:flocktale/pages/Club.dart';
+import 'package:flocktale/pages/ClubDetail.dart';
 
 class SearchAllClubs extends StatefulWidget {
   final BuiltList<BuiltClub> clubs;
@@ -123,7 +123,7 @@ class _SearchAllClubsState extends State<SearchAllClubs> {
           return InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => Club(
+                  builder: (_) => ClubDetailPage(
                         club: widget.clubs[index],
                       )));
             },

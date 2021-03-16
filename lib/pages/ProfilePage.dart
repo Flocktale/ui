@@ -1,7 +1,9 @@
 import 'package:flocktale/Authentication/logOut.dart';
+import 'package:flocktale/Models/basic_enums.dart';
 import 'package:flocktale/Widgets/ProfileTopBackground.dart';
 import 'package:flocktale/Widgets/socialRelationActions.dart';
 import 'package:flocktale/customImage.dart';
+import 'package:flocktale/pages/ClubSection.dart';
 import 'package:flocktale/services/socialInteraction.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,7 +13,6 @@ import 'package:flocktale/pages/SocialRelationPage.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
-import 'ClubsByUser.dart';
 import 'EditProfile.dart';
 import '../Carousel.dart';
 import 'package:built_collection/built_collection.dart';
@@ -185,8 +186,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               InkWell(
                 onTap: () => _navigateTo(
-                  ClubsByUser(
-                    userId: _user.userId,
+                  ClubSection(
+                    ClubSectionType.User,
+                    category: 'Clubs of ${_user.name ?? _user.username}',
                   ),
                 ),
                 child: Text(
@@ -328,14 +330,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 //crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
                                   InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (_) =>
-                                                  SocialRelationPage(
-                                                      initpos: 0,
-                                                      user: _user)));
-                                    },
+                                    onTap: () => _navigateTo(
+                                      SocialRelationPage(
+                                        initpos: 0,
+                                        user: _user,
+                                      ),
+                                    ),
                                     child: Column(
                                       children: <Widget>[
                                         Text('${_user.friendsCount ?? 0}',
