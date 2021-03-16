@@ -72,12 +72,19 @@ class AuthUser {
     }
   }
 
-  Future<bool> confirmOTP(String code) async {
+  Future<dynamic> confirmOTP(String code) async {
     try {
       cognitoSession = await _cognitoUser.sendCustomChallengeAnswer(code);
       return true;
-    } catch (e) {
+    } on CognitoUserCustomChallengeException catch (e) {
+      return "WRONG_OTP";
+    } on CognitoClientException catch (e) {
       print(e);
+
+      if (e.code == "NotAuthorizedException") {
+        return "EXPIRED";
+      }
+
       return false;
     }
   }

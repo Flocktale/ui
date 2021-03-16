@@ -65,9 +65,7 @@ class _PhoneLoginState extends State<PhoneLogin> {
                 ),
               ],
             ),
-            SizedBox(
-              height: size.height / 10,
-            ),
+            SizedBox(height: size.height / 10),
             FittedBox(
               child: Container(
                 margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -261,8 +259,20 @@ class _PhoneLoginState extends State<PhoneLogin> {
                             }
 
                             final otp = _otpController.text;
-                            await Provider.of<UserData>(context, listen: false)
+                            final resp = await Provider.of<UserData>(context,
+                                    listen: false)
                                 .submitOTP(otp);
+                            if (resp == "EXPIRED") {
+                              // reset screen
+                              setState(() {
+                                phoneNumberSubmitted = false;
+                                _otpController.text = '';
+                              });
+                            } else if (resp == "WRONG_OTP") {
+                              setState(() {
+                                _otpController.text = '';
+                              });
+                            }
                           },
                           color: Colors.red[600],
                           child: Text('Submit',

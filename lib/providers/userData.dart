@@ -106,10 +106,17 @@ class UserData with ChangeNotifier {
     }
   }
 
-  Future<void> submitOTP(String code) async {
+  Future<dynamic> submitOTP(String code) async {
     assert(code != null);
     final resp = await _authUser.confirmOTP(code);
-    if (resp == true) {
+
+    if (resp == "EXPIRED") {
+      Fluttertoast.showToast(msg: 'OTP expired, please try again');
+      return resp;
+    } else if (resp == "WRONG_OTP") {
+      Fluttertoast.showToast(msg: 'Wrong otp, please try again');
+      return resp;
+    } else if (resp == true) {
       _isAuth = true;
 
       await _storage.setIdToken(_authUser.cognitoSession.idToken.jwtToken);
@@ -129,6 +136,7 @@ class UserData with ChangeNotifier {
       await fetchUserFromBackend();
     }
     notifyListeners();
+    return true;
   }
 
   bool get loaded => _loaded;
