@@ -40,6 +40,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   BuiltClubAndAudience _clubAudience;
   bool _isOwner;
 
+// to indicate if user is on club page and club is in stopped phase
+// so that when he play the club again
+  bool _clubStoppedInside = false;
+
   ScrollController _listController = ScrollController();
   bool _isPlaying;
 
@@ -157,14 +161,13 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     setState(() {});
   }
 
-  void _youAreBlocked(event) {
+  void _youAreBlocked(event) async {
     if (event['clubId'] != widget.club.clubId) return;
 
     // block if the current Club is blocked
     if (event['clubId'] == widget.club.clubId) {
-      Provider.of<MySocket>(context, listen: false)
-          .leaveClub(widget.club.clubId);
-      Provider.of<AgoraController>(context, listen: false).stop();
+      await _stopClub();
+
       Navigator.pop(context);
       Fluttertoast.showToast(msg: "Sorry, You are blocked from this club");
     }
@@ -239,14 +242,11 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     _clubAudience = _clubAudience.rebuild((b) => b
       ..club.agoraToken = null
-      ..club.status = (ClubStatus.Concluded));
+      ..club.status = ClubStatus.Concluded);
 
-    await Provider.of<AgoraController>(context, listen: false).stop();
+    await _stopClub();
 
     Fluttertoast.showToast(msg: "This Club is concluded now");
-
-//sending websocket message to indicate about club stopped event
-    Provider.of<MySocket>(context, listen: false).stopClub(widget.club.clubId);
 
     setState(() {
       _isPlaying = false;
@@ -505,7 +505,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     }
   }
 
-  void _enterClub() async {
+  Future<void> _enterClub({bool fromPlayHandler = false}) async {
+    // setting it to false as user is entering club.
+    _clubStoppedInside = false;
+
     this._isOwner = Provider.of<UserData>(context, listen: false).userId ==
         widget.club.creator.userId;
 
@@ -545,8 +548,11 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         .create(isMuted: this._isMuted);
 
     if (this._isPlaying == false && this._isOwner == false) {
-      // if club is not playing already then play it automatically for non-owner.
-      await _playButtonHandler();
+      // if this function is called from play button handler then to prevent recursion
+      if (fromPlayHandler == false) {
+        // if club is not playing already then play it automatically for non-owner.
+        await _playButtonHandler();
+      }
     }
 
     setState(() {});
@@ -647,15 +653,12 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     _clubAudience = _clubAudience.rebuild(
       (b) => b
         ..club.agoraToken = null
-        ..club.status = (ClubStatus.Concluded),
+        ..club.status = ClubStatus.Concluded,
     );
 
-    await Provider.of<AgoraController>(context, listen: false).stop();
+    await _stopClub();
 
     Fluttertoast.showToast(msg: 'This club is concluded now.');
-
-//sending websocket message to indicate about club stopped event
-    Provider.of<MySocket>(context, listen: false).stopClub(widget.club.clubId);
 
     setState(() {
       _isPlaying = false;
@@ -711,19 +714,19 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       if (_isOwner) {
         _showMaterialDialog();
       } else {
-        //sending websocket message to indicate about club stopped event
-        Provider.of<MySocket>(context, listen: false)
-            .stopClub(widget.club.clubId);
-
-        // stop club
-        await Provider.of<AgoraController>(context, listen: false).stop();
-        _isPlaying = false;
+        await _stopClub();
       }
     } else {
       //start club
       if (_clubAudience.club.status != (ClubStatus.Live) && _isOwner == true) {
         // club is being started by owner for first time.
         await _startClub();
+      }
+
+      if (_clubStoppedInside == true) {
+        // it means club was in stopped phase, and is re-played.
+        // so telling backend by sending websocket msg and registering as audience again with getClubByClubId.
+        await _enterClub(fromPlayHandler: true);
       }
 
       if (_clubAudience.audienceData.status == AudienceStatus.Participant) {
@@ -946,8 +949,17 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                           msg: 'Panelist slots are full. Max 9 allowed.');
                     }
                   } else {
-                    Fluttertoast.showToast(
-                        msg: 'Please let the host start the club.');
+                    if (_clubAudience.club.status == ClubStatus.Waiting) {
+                      Fluttertoast.showToast(
+                          msg: 'Please let the host start the club.');
+                    } else if (_clubAudience.club.status == ClubStatus.Live) {
+                      Fluttertoast.showToast(
+                          msg: 'Please play the club first.');
+                    } else {
+                      await respondToInvitation('cancel');
+                      Fluttertoast.showToast(
+                          msg: 'Can not accept, deleting request!');
+                    }
                   }
                 },
                 color: Colors.white,
@@ -1047,6 +1059,29 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
             : Colors.grey,
       ),
     );
+  }
+
+  Future<void> _stopClub() async {
+    // stop msg to websocket
+    Provider.of<MySocket>(context, listen: false).leaveClub(widget.club.clubId);
+
+    // stopping from agora
+    await Provider.of<AgoraController>(context, listen: false).stop();
+
+    _clubStoppedInside = true;
+
+    if (_isOwner == false) {
+      //resetting user priveleges, if not owner
+      _clubAudience = _clubAudience.rebuild(
+        (b) => b
+          ..audienceData.status = null
+          ..audienceData.invitationId = null,
+      );
+    }
+
+    this._isPlaying = false;
+
+    setState(() {});
   }
 
   @override
@@ -1166,20 +1201,21 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                               _clubAudience
                                                   .club.creator.username,
                                           style: TextStyle(
-                                              fontFamily: 'Lato',
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: size.width / 25,
-                                              color:  currentlySpeakingUsers != null &&
-                                                  currentlySpeakingUsers[
-                                                  widget.club.creator
-                                                      .username] !=
-                                                      null &&
-                                                  currentlySpeakingUsers[
-                                                  widget.club.creator
-                                                      .username] >
-                                                      0
-                                                  ? Colors.redAccent
-                                                  : Colors.black,
+                                            fontFamily: 'Lato',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: size.width / 25,
+                                            color: currentlySpeakingUsers !=
+                                                        null &&
+                                                    currentlySpeakingUsers[
+                                                            widget.club.creator
+                                                                .username] !=
+                                                        null &&
+                                                    currentlySpeakingUsers[
+                                                            widget.club.creator
+                                                                .username] >
+                                                        0
+                                                ? Colors.redAccent
+                                                : Colors.black,
                                           ),
                                         ),
                                       ),
