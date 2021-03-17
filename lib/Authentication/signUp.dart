@@ -7,6 +7,7 @@ import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/webSocket.dart';
 import 'package:flocktale/services/SecureStorage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -258,7 +259,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     ? usernameAvailable
                                         ? "Username is available"
                                         : "Username is not available"
-                                    : "Minimum length of username is 4",
+                                    : "Allowed Characters: a-z 0-9 _ (Min length: 3)",
                                 helperStyle: !usernameAvailable ||
                                         _usernameController.text.length <= 3
                                     ? TextStyle(
@@ -275,7 +276,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             : BorderSide(
                                                 color: Colors.redAccent)
                                         : BorderSide(color: Colors.redAccent))),
+                            textCapitalization: TextCapitalization.none,
+                            textInputAction: TextInputAction.done,
+                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                            maxLength: 25,
                             onChanged: (val) async {
+                              if (val.isEmpty) return;
+                              val = val.toLowerCase();
+
+                              String newVal = '';
+
+                              for (int i = 0; i < val.length; i++) {
+                                if (RegExp(r'[a-zA-Z0-9_]').hasMatch(val[i]) ==
+                                    true) {
+                                  newVal += val[i];
+                                }
+                              }
+
+                              val = newVal;
+
+                              _usernameController.text = val;
+                              _usernameController.selection =
+                                  TextSelection.fromPosition(TextPosition(
+                                      offset: _usernameController.text.length));
+
+                              if (val.length < 4) {
+                                usernameAvailable = false;
+                                return;
+                              }
+
                               final service = Provider.of<DatabaseApiService>(
                                   context,
                                   listen: false);
@@ -287,7 +316,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           username: val,
                                           authorization: authToken))
                                       .body;
-                              if (resp.isAvailable &&
+                              if (resp?.isAvailable == true &&
                                   _usernameController.text.length > 3) {
                                 setState(() {
                                   usernameAvailable = true;
@@ -300,7 +329,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             },
                             validator: (val) {
                               if (val.isEmpty) return 'Please fill this field';
-                              if (val.length < 3)
+                              if (val.length <= 3)
                                 return 'Minimum length should be 3';
 
                               return null;
@@ -309,10 +338,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           SizedBox(height: size.height / 50),
                           TextFormField(
                             controller: _tagLineController,
-                            maxLines: 1,
-                            maxLength: 50,
+                            minLines: 1,
+                            maxLines: 3,
+                            maxLength: 100,
+                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
                             decoration: InputDecoration(
-                                labelText: 'TAGLINE ',
+                                labelText: 'TAGLINE',
                                 hintText: "Describe yourself in one line.",
                                 hintStyle: TextStyle(
                                     fontFamily: 'Lato',
@@ -328,6 +359,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           // SizedBox(height: size.height/100),
                           TextFormField(
                             controller: _bioController,
+                            minLines: 3,
+                            maxLines: 15,
                             decoration: InputDecoration(
                                 labelText: 'BIO',
                                 hintText: "Tell something about yourself.",
@@ -344,7 +377,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           SizedBox(height: 50),
                           InkWell(
-                            onTap: _signUpWithBackend,
+                            onTap: () => _signUpWithBackend(),
                             child: Container(
                                 height: 40.0,
                                 child: Material(
@@ -390,6 +423,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                 )),
                           ),
+                          SizedBox(height: 100),
                         ],
                       ),
                     ),
