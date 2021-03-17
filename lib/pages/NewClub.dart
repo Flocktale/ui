@@ -71,7 +71,10 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     var parsedDate =
         DateTime.parse(scheduleDate ?? DateTime.now().toIso8601String());
 
-    int scheduleDateTime = parsedDate.millisecondsSinceEpoch;
+    int scheduleDateTime;
+    if(scheduleClub){
+      scheduleDateTime= parsedDate.millisecondsSinceEpoch;
+    }
     return BuiltClub((b) => b
       ..clubName = name
       ..description = description
