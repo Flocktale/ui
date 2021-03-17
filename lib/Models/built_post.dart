@@ -578,9 +578,13 @@ abstract class BuiltUnifiedSearchResults
 
   @nullable
   BuiltList<SummaryUser> get users;
+  @nullable
+  String get userlastevaluatedkey;
 
   @nullable
   BuiltList<BuiltClub> get clubs;
+  @nullable
+  String get clublastevaluatedkey;
 
   BuiltUnifiedSearchResults._();
 

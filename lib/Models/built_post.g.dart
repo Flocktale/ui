@@ -1941,12 +1941,24 @@ class _$BuiltUnifiedSearchResultsSerializer
             specifiedType: const FullType(
                 BuiltList, const [const FullType(SummaryUser)])));
     }
+    if (object.userlastevaluatedkey != null) {
+      result
+        ..add('userlastevaluatedkey')
+        ..add(serializers.serialize(object.userlastevaluatedkey,
+            specifiedType: const FullType(String)));
+    }
     if (object.clubs != null) {
       result
         ..add('clubs')
         ..add(serializers.serialize(object.clubs,
             specifiedType:
                 const FullType(BuiltList, const [const FullType(BuiltClub)])));
+    }
+    if (object.clublastevaluatedkey != null) {
+      result
+        ..add('clublastevaluatedkey')
+        ..add(serializers.serialize(object.clublastevaluatedkey,
+            specifiedType: const FullType(String)));
     }
     return result;
   }
@@ -1969,11 +1981,19 @@ class _$BuiltUnifiedSearchResultsSerializer
                       BuiltList, const [const FullType(SummaryUser)]))
               as BuiltList<Object>);
           break;
+        case 'userlastevaluatedkey':
+          result.userlastevaluatedkey = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
         case 'clubs':
           result.clubs.replace(serializers.deserialize(value,
                   specifiedType: const FullType(
                       BuiltList, const [const FullType(BuiltClub)]))
               as BuiltList<Object>);
+          break;
+        case 'clublastevaluatedkey':
+          result.clublastevaluatedkey = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
       }
     }
@@ -5321,13 +5341,22 @@ class _$BuiltUnifiedSearchResults extends BuiltUnifiedSearchResults {
   @override
   final BuiltList<SummaryUser> users;
   @override
+  final String userlastevaluatedkey;
+  @override
   final BuiltList<BuiltClub> clubs;
+  @override
+  final String clublastevaluatedkey;
 
   factory _$BuiltUnifiedSearchResults(
           [void Function(BuiltUnifiedSearchResultsBuilder) updates]) =>
       (new BuiltUnifiedSearchResultsBuilder()..update(updates)).build();
 
-  _$BuiltUnifiedSearchResults._({this.users, this.clubs}) : super._();
+  _$BuiltUnifiedSearchResults._(
+      {this.users,
+      this.userlastevaluatedkey,
+      this.clubs,
+      this.clublastevaluatedkey})
+      : super._();
 
   @override
   BuiltUnifiedSearchResults rebuild(
@@ -5343,19 +5372,26 @@ class _$BuiltUnifiedSearchResults extends BuiltUnifiedSearchResults {
     if (identical(other, this)) return true;
     return other is BuiltUnifiedSearchResults &&
         users == other.users &&
-        clubs == other.clubs;
+        userlastevaluatedkey == other.userlastevaluatedkey &&
+        clubs == other.clubs &&
+        clublastevaluatedkey == other.clublastevaluatedkey;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, users.hashCode), clubs.hashCode));
+    return $jf($jc(
+        $jc($jc($jc(0, users.hashCode), userlastevaluatedkey.hashCode),
+            clubs.hashCode),
+        clublastevaluatedkey.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('BuiltUnifiedSearchResults')
           ..add('users', users)
-          ..add('clubs', clubs))
+          ..add('userlastevaluatedkey', userlastevaluatedkey)
+          ..add('clubs', clubs)
+          ..add('clublastevaluatedkey', clublastevaluatedkey))
         .toString();
   }
 }
@@ -5370,17 +5406,29 @@ class BuiltUnifiedSearchResultsBuilder
       _$this._users ??= new ListBuilder<SummaryUser>();
   set users(ListBuilder<SummaryUser> users) => _$this._users = users;
 
+  String _userlastevaluatedkey;
+  String get userlastevaluatedkey => _$this._userlastevaluatedkey;
+  set userlastevaluatedkey(String userlastevaluatedkey) =>
+      _$this._userlastevaluatedkey = userlastevaluatedkey;
+
   ListBuilder<BuiltClub> _clubs;
   ListBuilder<BuiltClub> get clubs =>
       _$this._clubs ??= new ListBuilder<BuiltClub>();
   set clubs(ListBuilder<BuiltClub> clubs) => _$this._clubs = clubs;
+
+  String _clublastevaluatedkey;
+  String get clublastevaluatedkey => _$this._clublastevaluatedkey;
+  set clublastevaluatedkey(String clublastevaluatedkey) =>
+      _$this._clublastevaluatedkey = clublastevaluatedkey;
 
   BuiltUnifiedSearchResultsBuilder();
 
   BuiltUnifiedSearchResultsBuilder get _$this {
     if (_$v != null) {
       _users = _$v.users?.toBuilder();
+      _userlastevaluatedkey = _$v.userlastevaluatedkey;
       _clubs = _$v.clubs?.toBuilder();
+      _clublastevaluatedkey = _$v.clublastevaluatedkey;
       _$v = null;
     }
     return this;
@@ -5405,12 +5453,16 @@ class BuiltUnifiedSearchResultsBuilder
     try {
       _$result = _$v ??
           new _$BuiltUnifiedSearchResults._(
-              users: _users?.build(), clubs: _clubs?.build());
+              users: _users?.build(),
+              userlastevaluatedkey: userlastevaluatedkey,
+              clubs: _clubs?.build(),
+              clublastevaluatedkey: clublastevaluatedkey);
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'users';
         _users?.build();
+
         _$failedField = 'clubs';
         _clubs?.build();
       } catch (e) {
