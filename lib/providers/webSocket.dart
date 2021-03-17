@@ -77,11 +77,13 @@ class MySocket with ChangeNotifier {
     final clubId = event['clubId'];
 
     if (what == 'socialCounts') {
-      userData.updateUser = userData.user.rebuild((b) => b
+      final updatedUser = userData.user.rebuild((b) => b
         ..followerCount = event['followerCount'] ?? userData.user.followerCount
         ..followingCount =
             event['followingCount'] ?? userData.user.followingCount
         ..friendsCount = event['friendsCount'] ?? userData.user.friendsCount);
+
+      userData.updateUser(updatedUser);
     } else if (funcs[what] != null) {
       funcs[what](event);
     } else if (agoraController.club?.clubId != null &&

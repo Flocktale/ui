@@ -1,14 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:agora_handler/main.dart';
 import 'package:flocktale/Authentication/logOut.dart';
-import 'package:flocktale/providers/agoraController.dart';
-import 'package:flocktale/providers/webSocket.dart';
-import 'package:flocktale/services/SecureStorage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -97,8 +92,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final phoneNumber =
         Provider.of<UserData>(context, listen: false).phoneNumber;
 
-    final _prefs = await SharedPreferences.getInstance();
-
     final newUser = BuiltUser(
       (b) => b
         ..userId = userId
@@ -139,7 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       }
 
-      Provider.of<UserData>(context, listen: false).updateUser = newUser;
+      Provider.of<UserData>(context, listen: false).updateUser(newUser);
 
       // We don't need to push from here as Consumer at root path will automatically change the screen to home screen on listening changes of auth status;
 

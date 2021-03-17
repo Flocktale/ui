@@ -66,26 +66,6 @@ class UserData with ChangeNotifier {
     notifyListeners();
   }
 
-  /// when user is logged in only then this method can be used
-  Future<void> fetchUserFromBackend() async {
-    if (userId == null || _authUser?.cognitoSession == null) return;
-
-    _isAuth = true;
-
-    final response = await _postApiService.getUserProfile(
-        userId: userId, primaryUserId: userId, authorization: authToken);
-
-    if (response != null && response.body != null) {
-      _builtUser = response.body.user;
-
-      if (_builtUser?.userId == null) {
-        _builtUser = null;
-      }
-    }
-
-    notifyListeners();
-  }
-
   Future<bool> sendOTP(String dialCode, String phoneNumber) async {
     assert(dialCode != null);
     assert(phoneNumber != null);
@@ -133,7 +113,7 @@ class UserData with ChangeNotifier {
         authorization: authToken,
       );
 
-      await fetchUserFromBackend();
+      await initiate();
     }
     notifyListeners();
     return true;
@@ -158,12 +138,12 @@ class UserData with ChangeNotifier {
     return _authUser?.cognitoSession?.idToken?.payload['phone_number'];
   }
 
-  set updateUser(BuiltUser user) {
+  void updateUser(BuiltUser user) async {
     _isAuth = true;
 
     _builtUser = user;
 
-    notifyListeners();
+    await initiate();
   }
 
   String get authToken => _authUser?.cognitoSession?.idToken?.jwtToken;
