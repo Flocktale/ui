@@ -1,8 +1,11 @@
 import 'package:flocktale/customImage.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:flocktale/pages/ClubDetail.dart';
+import 'package:provider/provider.dart';
 
 class SearchAllClubs extends StatefulWidget {
   final BuiltList<BuiltClub> clubs;
@@ -13,143 +16,120 @@ class SearchAllClubs extends StatefulWidget {
 }
 
 class _SearchAllClubsState extends State<SearchAllClubs> {
-//  Map<String, dynamic> searchClubsMap = {
-//    'data': null,
-//    'isLoading': true,
-//  };
+ Map<String, dynamic> searchClubsMap = {
+   'data': null,
+   'isLoading': true,
+ };
+  String lastEvaluatedKey;
+ getClubs() async {
+   String username = widget.query;
+   final service = Provider.of<DatabaseApiService>(context,listen: false);
+   //allSearches = (await service.getUserbyUsername(username)).body;
 
-//  getClubs() async {
-//    String username = widget.query;
-//    final service = Provider.of<DatabaseApiService>(context);
-//    //allSearches = (await service.getUserbyUsername(username)).body;
-//
-//    final authToken = Provider.of<UserData>(context, listen: false).authToken;
-//
-//    searchClubsMap['data'] = (await service.unifiedQueryRoutes(
-//      searchString: username,
-//      type: "clubs",
-//      lastevaluatedkey: (searchClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey,
-//      authorization: authToken,
-//    )).body.clubs;
-//    searchClubsMap['isLoading'] = false;
-//    setState(() {
-//    });
-//    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//    print(searchClubsMap['data']);
-//    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//  }
-//
-//  getMoreClubs()async{
-//    if (searchClubsMap['isLoading'] == true) return;
-//    setState(() {});
-//
-//    final lastevaulatedkey =
-//        (searchClubsMap['data'] as BuiltSearchUsers)?.lastevaluatedkey;
-//
-//    if (lastevaulatedkey != null) {
-//      await getClubs();
-//    } else {
-//      await Future.delayed(Duration(milliseconds: 200));
-//      searchClubsMap['isLoading'] = false;
-//    }
-//
-//    setState(() {});
-//  }
-//
-//  Widget showClubs(){
-//
-//    final relationUsers = (searchClubsMap['data'] as BuiltSearchUsers)?.users;
-//
-//    final bool isLoading = searchClubsMap['isLoading'];
-//
-//    final listLength = (relationUsers?.length ?? 0) + 1;
-//
-//    return NotificationListener<ScrollNotification>(
-//      onNotification: (ScrollNotification scrollInfo) {
-//        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-//          searchClubsMap['isLoading'] = true;
-//          getMoreClubs();
-//        }
-//        return true;
-//      },
-//      child: ListView.builder(
-//          itemBuilder: (context,index){
-//            if (index == listLength - 1) {
-//              if (isLoading)
-//                return Container(
-//                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-//                  child: Center(child: CircularProgressIndicator()),
-//                );
-//              else
-//                return Container();
-//            }
-//            final _user = relationUsers[index];
-//
-//            return Container(
-//                key: ValueKey(_user.username),
-//                margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-//                child: ListTile(
-//                  leading: CircleAvatar(
-//                    backgroundImage: NetworkImage(_user.avatar),
-//                  ),
-//                  title: InkWell(
-//                    onTap: (){
-//                      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
-//                    },
-//                    child: Text(
-//                      _user.username,
-//                      style:
-//                      TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
-//                    ),
-//                  ),
-//                )
-//            );
-//
-//          }),
-//    );
-//  }
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//    getClubs();
-//  }
+   final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
-  Widget showClubs() {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: widget.clubs.length,
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ClubDetailPage(
-                        club: widget.clubs[index],
-                      )));
-            },
-            child: Container(
-              margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: ListTile(
-                leading: CircleAvatar(
-                  child: CustomImage(
-                    image: widget.clubs[index].clubAvatar + "_thumb",
-                  ),
-                ),
-                title: Text(
-                  widget.clubs[index].clubName,
-                  style: TextStyle(fontFamily: "Lato"),
-                ),
-                subtitle: widget.clubs[index].creator != null
-                    ? Text(
-                        widget.clubs[index].creator.username,
-                        style: TextStyle(fontFamily: "Lato"),
-                      )
-                    : Container(),
-              ),
-            ),
-          );
-        });
-  }
+   searchClubsMap['data'] = (await service.unifiedQueryRoutes(
+     searchString: username,
+     type: "clubs",
+     lastevaluatedkey: lastEvaluatedKey,
+     authorization: authToken,
+   )).body;
+   searchClubsMap['isLoading'] = false;
+   lastEvaluatedKey = searchClubsMap['data'].clublastevaluatedkey;
+   setState(() {
+   });
+   print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+   print(searchClubsMap['data']);
+   print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+ }
+
+ getMoreClubs()async{
+   if (searchClubsMap['isLoading'] == true) return;
+   setState(() {});
+
+   if (lastEvaluatedKey != null) {
+     await getClubs();
+   } else {
+     await Future.delayed(Duration(milliseconds: 200));
+     searchClubsMap['isLoading'] = false;
+   }
+
+   setState(() {});
+ }
+
+ Widget showClubs(){
+
+   final searchClubs = (searchClubsMap['data'] as BuiltUnifiedSearchResults)?.clubs;
+
+   final bool isLoading = searchClubsMap['isLoading'];
+
+   final listLength = (searchClubs?.length ?? 0) + 1;
+
+   return NotificationListener<ScrollNotification>(
+     onNotification: (ScrollNotification scrollInfo) {
+       if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+         searchClubsMap['isLoading'] = true;
+         getMoreClubs();
+       }
+       return true;
+     },
+     child: ListView.builder(
+       itemCount: listLength,
+         shrinkWrap: true,
+         itemBuilder: (context,index){
+           if (index == listLength - 1) {
+             if (isLoading)
+               return Container(
+                 margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                 child: Center(child: CircularProgressIndicator()),
+               );
+             else
+               return Container();
+           }
+           final _club = searchClubs[index];
+
+           return Container(
+               key: ValueKey(_club.clubId),
+               margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+               child: ListTile(
+                 leading: CircleAvatar(
+                   backgroundImage: NetworkImage(_club.clubAvatar),
+                 ),
+                 title: InkWell(
+                   onTap: (){
+                     Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ClubDetailPage(club: _club)));
+                   },
+                   child: Text(
+                     _club.clubName,
+                     style:
+                     TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                   ),
+                 ),
+                 subtitle: InkWell(
+                   onTap: (){
+                     Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ClubDetailPage(club: _club)));
+                   },
+                   child: Text(
+                     _club.category!=null?_club.category:"Club",
+                     style:
+                     TextStyle(fontFamily: 'Lato'),
+                   ),
+                 ),
+               )
+           );
+
+         }),
+   );
+ }
+
+ @override
+ void initState() {
+   super.initState();
+   Future.delayed(Duration.zero, () {
+     getClubs();
+   });
+ }
+
 
   @override
   Widget build(BuildContext context) {

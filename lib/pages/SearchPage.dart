@@ -211,6 +211,19 @@ class DataSearch extends SearchDelegate<String> {
                           fontSize: size.width / 20),
                     ),
                     //SizedBox(height: size.height/50),
+                    allSearches.users.length==0?
+                        Container(
+                          child: Center(
+                            child:Text(
+                              "No users found",
+                              style: TextStyle(
+                                fontFamily: "Lato",
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold
+                              ),
+                            )
+                          ),
+                        ):
                     Flexible(
                       child: Container(
                         margin: EdgeInsets.fromLTRB(
@@ -256,6 +269,10 @@ class DataSearch extends SearchDelegate<String> {
                             }),
                       ),
                     ),
+                    allSearches.users.length==0?
+                    Container(
+
+                    ):
                     InkWell(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
@@ -271,7 +288,9 @@ class DataSearch extends SearchDelegate<String> {
                               style: TextStyle(
                                   fontFamily: 'Lato',
                                   fontWeight: FontWeight.w500,
-                                  fontSize: size.width / 25),
+                                  fontSize: size.width / 25,
+                                color: Colors.redAccent
+                              ),
                             ))),
                     SizedBox(
                       height: size.height / 30,
@@ -284,6 +303,19 @@ class DataSearch extends SearchDelegate<String> {
                           fontWeight: FontWeight.w500,
                           fontSize: size.width / 20),
                     ),
+                    allSearches.clubs.length==0?
+                    Container(
+                      child: Center(
+                          child:Text(
+                            "No clubs found",
+                            style: TextStyle(
+                                fontFamily: "Lato",
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold
+                            ),
+                          )
+                      ),
+                    ):
                     Flexible(
                       child: Container(
                         margin: EdgeInsets.fromLTRB(
@@ -318,6 +350,10 @@ class DataSearch extends SearchDelegate<String> {
                         ),
                       ),
                     ),
+                    allSearches.clubs.length==0?
+                    Container(
+
+                    ):
                     InkWell(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
@@ -332,7 +368,9 @@ class DataSearch extends SearchDelegate<String> {
                           style: TextStyle(
                               fontFamily: 'Lato',
                               fontWeight: FontWeight.w500,
-                              fontSize: size.width / 25),
+                              fontSize: size.width / 25,
+                            color: Colors.redAccent
+                          ),
                         ))),
                   ],
                 ),

@@ -48,8 +48,7 @@ class _LandingPageState extends State<LandingPage>
   }
 
   void _navigateTo(Widget page) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
-    await _fetchAllClubs();
+    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page)).then((value) => _fetchAllClubs());
   }
 
   Widget sectionHeading({
@@ -147,7 +146,8 @@ class _LandingPageState extends State<LandingPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 IconButton(
-                    icon: Icon(Icons.camera_alt_outlined), onPressed: null),
+                    icon: Icon(Icons.camera_alt_outlined),
+                    onPressed: null),
                 Text(
                   'Flocktale',
                   style: TextStyle(

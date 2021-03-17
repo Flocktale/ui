@@ -1,7 +1,10 @@
 import 'package:flocktale/customImage.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:provider/provider.dart';
 
 import 'ProfilePage.dart';
 
@@ -18,99 +21,111 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
     'data': null,
     'isLoading': true,
   };
+  String lastEvaluatedKey;
+  Future<void> getUsers() async {
+   String username = widget.query;
+   final service = Provider.of<DatabaseApiService>(context,listen: false);
+   final authToken = Provider.of<UserData>(context, listen: false).authToken;
+   searchUsersMap['data'] = (await service.unifiedQueryRoutes(
+     searchString: username,
+     type: "users",
+     lastevaluatedkey: lastEvaluatedKey,
+     authorization: authToken,
+   )).body;
+   lastEvaluatedKey = searchUsersMap['data'].userlastevaluatedkey;
+   searchUsersMap['isLoading'] = false;
+   print("*****************************************************************");
+   setState(() {
+   });
+   print(searchUsersMap);
+ }
+//
+  Future<void> getMoreUsers()async{
+   if (searchUsersMap['isLoading'] == true) return;
+   setState(() {});
 
-//  getUsers() async {
-//    String username = widget.query;
-//    final service = Provider.of<DatabaseApiService>(context);
-//    //allSearches = (await service.getUserbyUsername(username)).body;
-//
-//    final authToken = Provider.of<UserData>(context, listen: false).authToken;
-//
-//    searchUsersMap['data'] = (await service.unifiedQueryRoutes(
-//      searchString: username,
-//      type: "users",
-//      lastevaluatedkey: (searchUsersMap['data'] as BuiltSearchUsers)?.lastevaluatedkey,
-//      authorization: authToken,
-//    )).body;
-//    searchUsersMap['isLoading'] = false;
-//    setState(() {
-//    });
-//    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//    print(searchUsersMap['data']);
-//    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//    setState(() {
-//    });
-//  }
-//
-//  getMoreUsers()async{
-//    if (searchUsersMap['isLoading'] == true) return;
-//    setState(() {});
-//
-//    final lastevaulatedkey =
-//        (searchUsersMap['data'] as BuiltSearchUsers)?.lastevaluatedkey;
-//
-//    if (lastevaulatedkey != null) {
-//      await getUsers();
-//    } else {
-//      await Future.delayed(Duration(milliseconds: 200));
-//      searchUsersMap['isLoading'] = false;
-//    }
-//
-//    setState(() {});
-//  }
+   if (lastEvaluatedKey != null) {
+     await getUsers();
+   } else {
+     await Future.delayed(Duration(milliseconds: 200));
+     searchUsersMap['isLoading'] = false;
+   }
 
-//  Widget showUsers(){
-//
-//    final relationUsers = (searchUsersMap['data'] as BuiltSearchUsers)?.users;
-//
-//    final bool isLoading = searchUsersMap['isLoading'];
-//
-//    final listLength = (relationUsers?.length ?? 0) + 1;
-//
-//    return NotificationListener<ScrollNotification>(
-//      onNotification: (ScrollNotification scrollInfo) {
-//        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-//          searchUsersMap['isLoading'] = true;
-//          getMoreUsers();
-//        }
-//        return true;
-//      },
-//      child: ListView.builder(
-//          itemBuilder: (context,index){
-//            if (index == listLength - 1) {
-//              if (isLoading)
-//                return Container(
-//                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-//                  child: Center(child: CircularProgressIndicator()),
-//                );
-//              else
-//                return Container();
-//            }
-//            final _user = relationUsers[index];
-//
-//            return Container(
-//                key: ValueKey(_user.username),
-//                margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-//                child: ListTile(
-//                  leading: CircleAvatar(
-//                  backgroundImage: NetworkImage(_user.avatar),
-//                  ),
-//                  title: InkWell(
-//                    onTap: (){
-//                    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
-//                    },
-//                    child: Text(
-//                    _user.username,
-//                    style:
-//                    TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
-//                    ),
-//                  ),
-//                )
-//              );
-//
-//          }),
-//    );
-//  }
+   setState(() {});
+ }
+
+ Widget showUsers(){
+
+   final relationUsers = (searchUsersMap['data'] as BuiltUnifiedSearchResults)?.users;
+
+   final bool isLoading = searchUsersMap['isLoading'];
+
+   final listLength = (relationUsers?.length ?? 0) + 1;
+
+   print(listLength);
+   return Container(
+     margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+     child: NotificationListener<ScrollNotification>(
+       onNotification: (ScrollNotification scrollInfo) {
+         if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+           getMoreUsers();
+           searchUsersMap['isLoading'] = true;
+         }
+         return true;
+       },
+       child: ListView.builder(
+         itemCount: listLength,
+         shrinkWrap: true,
+           itemBuilder: (context,index){
+             if (index == listLength - 1) {
+               if (isLoading)
+                 return Container(
+                   margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                   child: Center(child: CircularProgressIndicator()),
+                 );
+               else
+                 return Container();
+             }
+             final _user =
+             relationUsers[index];
+
+             return _user!=null?
+             Container(
+                 key: ValueKey(_user.username),
+                 child: ListTile(
+                   leading: CircleAvatar(
+                   backgroundImage: NetworkImage(_user.avatar),
+                   ),
+                   title: InkWell(
+                     onTap: (){
+                     Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
+                     },
+                     child: Text(
+                     _user.username,
+                     style:
+                     TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                     ),
+                   ),
+                   subtitle: InkWell(
+                     onTap: (){
+                       Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
+                     },
+                     child: Text(
+                       _user.tagline!=null?_user.tagline:"User",
+                       style:
+                       TextStyle(fontFamily: 'Lato',),
+                     ),
+                   ),
+                 )
+               ):
+             Center(
+               child:CircularProgressIndicator()
+             );
+
+           }),
+     ),
+   );
+ }
 
 //  @override
 //  void initState() {
@@ -123,42 +138,49 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
 //    super.didChangeDependencies();
 //  }
 
-  Widget showUsers() {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: widget.users.length,
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ProfilePage(
-                        userId: widget.users[index].userId,
-                      )));
-            },
-            child: Container(
-              margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: ListTile(
-                leading: CircleAvatar(
-                  child: CustomImage(
-                    image: widget.users[index].avatar + "_thumb",
-                  ),
-                ),
-                title: Text(
-                  widget.users[index].username,
-                  style: TextStyle(fontFamily: "Lato"),
-                ),
-                subtitle: widget.users[index].name != null
-                    ? Text(
-                        widget.users[index].name,
-                        style: TextStyle(fontFamily: "Lato"),
-                      )
-                    : Container(),
-              ),
-            ),
-          );
-        });
-  }
+  // Widget showUsers() {
+  //   return ListView.builder(
+  //       shrinkWrap: true,
+  //       itemCount: widget.users.length,
+  //       itemBuilder: (context, index) {
+  //         return InkWell(
+  //           onTap: () {
+  //             Navigator.of(context).push(MaterialPageRoute(
+  //                 builder: (_) => ProfilePage(
+  //                       userId: widget.users[index].userId,
+  //                     )));
+  //           },
+  //           child: Container(
+  //             margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+  //             child: ListTile(
+  //               leading: CircleAvatar(
+  //                 child: CustomImage(
+  //                   image: widget.users[index].avatar + "_thumb",
+  //                 ),
+  //               ),
+  //               title: Text(
+  //                 widget.users[index].username,
+  //                 style: TextStyle(fontFamily: "Lato"),
+  //               ),
+  //               subtitle: widget.users[index].name != null
+  //                   ? Text(
+  //                       widget.users[index].name,
+  //                       style: TextStyle(fontFamily: "Lato"),
+  //                     )
+  //                   : Container(),
+  //             ),
+  //           ),
+  //         );
+  //       });
+  // }
 
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      getUsers();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,7 +195,11 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
               color: Colors.black),
         ),
       ),
-      body: showUsers(),
+      body: searchUsersMap['data']!=null?
+      showUsers():
+      Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

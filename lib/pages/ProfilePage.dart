@@ -122,8 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _navigateTo(Widget page) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
-    _fetchUser();
+    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page)).then((value) => _fetchUser());
     print(_user);
   }
 
