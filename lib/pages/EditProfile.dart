@@ -124,6 +124,7 @@ class _EditProfileState extends State<EditProfile> {
     return _loading
         ? Center(child: CircularProgressIndicator())
         : Scaffold(
+
             body: ListView(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

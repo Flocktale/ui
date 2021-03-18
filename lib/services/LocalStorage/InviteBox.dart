@@ -12,6 +12,7 @@ import 'package:built_collection/built_collection.dart';
 
 class InviteBox {
   static Box contactBox;
+  static List<CONTACT.Contact> _contacts;
   static Future<void> init() async {
     if (contactBox == null) contactBox = await Hive.openBox('contacts');
   }
@@ -20,7 +21,7 @@ class InviteBox {
       BuildContext context) async {
     await init();
     if (await Permission.contacts.request().isGranted) {
-      List<CONTACT.Contact> _contacts = await fetchContactsFromPhone();
+       _contacts = await fetchContactsFromPhone();
       List<String> phoneNumbers = [];
       _contacts.forEach((element) {
         element.phones.forEach((element) {
@@ -70,6 +71,10 @@ class InviteBox {
     });
     print(res);
     return res;
+  }
+
+  static List<CONTACT.Contact> getContacts(){
+    return _contacts;
   }
 
   static void addContact(String phoneNo, String userId, String userAvatar) {

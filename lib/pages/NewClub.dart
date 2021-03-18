@@ -27,6 +27,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   String subCategory;
   String scheduleDate;
   bool scheduleClub = false;
+  bool isLoading = false;
   TextEditingController _controller1;
   List<String> categoryList = [];
   File image;
@@ -85,7 +86,9 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
 
   _createClub() async {
     if (_newClubModel == null) return;
-
+    setState(() {
+      isLoading = true;
+    });
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final userId = Provider.of<UserData>(context, listen: false).userId;
 
@@ -96,6 +99,9 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       creatorId: userId,
       authorization: authToken,
     );
+    setState(() {
+      isLoading = false;
+    });
     if (resp.isSuccessful && image != null) {
       String imageInBase64;
       if (image != null) {
@@ -123,9 +129,16 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                     )))
             .then((value) => () {
                   _formKey.currentState.reset();
-                  image = null;
-                  setState(() {});
+                  setState(() {
+                    image = null;
+                    isLoading = false;
+                  });
                 });
+        setState(() {
+          _formKey.currentState.reset();
+          image = null;
+          isLoading = false;
+        });
         Fluttertoast.showToast(msg: 'club entry is created');
       }
     } else {
@@ -376,7 +389,11 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return SafeArea(
       child: Scaffold(
-          body: SingleChildScrollView(
+          body: isLoading?
+              Center(
+                child: CircularProgressIndicator(),
+              ):
+          SingleChildScrollView(
         child: Stack(children: [
           Container(
             margin:
