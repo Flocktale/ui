@@ -541,15 +541,15 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     // setting current mic status of user.
     this._isMuted = _clubAudience.audienceData.isMuted;
 
-    // now we can join club in websocket also.
-    _joinClubInWebsocket();
-
     Provider.of<AgoraController>(context, listen: false)
         .create(isMuted: this._isMuted);
 
-    if (this._isPlaying == false && this._isOwner == false) {
-      // if this function is called from play button handler then to prevent recursion
-      if (fromPlayHandler == false) {
+    if (fromPlayHandler == false) {
+      // now we can join club in websocket also.
+      _joinClubInWebsocket();
+
+      if (this._isPlaying == false && this._isOwner == false) {
+        // if this function is called from play button handler then to prevent recursion
         // if club is not playing already then play it automatically for non-owner.
         await _playButtonHandler();
       }
@@ -1063,7 +1063,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Future<void> _stopClub() async {
     // stop msg to websocket
-    Provider.of<MySocket>(context, listen: false).leaveClub(widget.club.clubId);
+    Provider.of<MySocket>(context, listen: false).stopClub(widget.club.clubId);
 
     // stopping from agora
     await Provider.of<AgoraController>(context, listen: false).stop();
