@@ -23,6 +23,8 @@ class UserData with ChangeNotifier {
 
   bool _isAuth = false;
 
+  bool _newRegistration = false;
+
   UserData(this._postApiService) {
     print('-------------------initiating------------------------------------');
     initiate();
@@ -138,7 +140,9 @@ class UserData with ChangeNotifier {
     return _authUser?.cognitoSession?.idToken?.payload['phone_number'];
   }
 
-  void updateUser(BuiltUser user) async {
+  void updateUser(BuiltUser user, {bool isNew = false}) async {
+    _newRegistration = isNew;
+
     _isAuth = true;
 
     _builtUser = user;
@@ -147,6 +151,13 @@ class UserData with ChangeNotifier {
   }
 
   String get authToken => _authUser?.cognitoSession?.idToken?.jwtToken;
+
+  bool get newRegistration => _newRegistration;
+
+  set newRegistration(bool isNew) {
+    _newRegistration = isNew;
+    notifyListeners();
+  }
 
   // set cognitoSession(CognitoUserSession session) {
   //   _currentSession = session;

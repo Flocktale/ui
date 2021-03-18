@@ -48,7 +48,9 @@ class _LandingPageState extends State<LandingPage>
   }
 
   void _navigateTo(Widget page) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page)).then((value) => _fetchAllClubs());
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => page))
+        .then((value) => _fetchAllClubs());
   }
 
   Widget sectionHeading({
@@ -68,13 +70,16 @@ class _LandingPageState extends State<LandingPage>
         SizedBox(height: size.height / 30),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontFamily: 'Lato',
-                fontWeight: FontWeight.w400,
-                fontSize: size.width / 15,
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontWeight: FontWeight.w500,
+                  fontSize: size.width / 18,
+                ),
               ),
             ),
             viewAll
@@ -84,7 +89,7 @@ class _LandingPageState extends State<LandingPage>
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
-                        'View All',
+                        'View All >',
                         style: TextStyle(
                           fontSize: size.width / 30,
                           fontWeight: FontWeight.bold,
@@ -96,7 +101,6 @@ class _LandingPageState extends State<LandingPage>
                 : Container(),
           ],
         ),
-        SizedBox(height: size.height / 50),
         Carousel(Clubs: clubs),
       ],
     );
@@ -146,8 +150,7 @@ class _LandingPageState extends State<LandingPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 IconButton(
-                    icon: Icon(Icons.camera_alt_outlined),
-                    onPressed: null),
+                    icon: Icon(Icons.camera_alt_outlined), onPressed: null),
                 Text(
                   'Flocktale',
                   style: TextStyle(

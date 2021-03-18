@@ -173,20 +173,15 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Header() String authorization,
   });
 
-
   // Contact Sync API
 
   @Get(path: '/users/contacts-sync')
-  Future<Response<SummaryUser>> syncContacts({
-    @required @Query('contacts') BuiltList<String> contacts
-  });
+  Future<Response<SummaryUser>> syncContacts(
+      {@required @Query('contacts') BuiltList<String> contacts});
 
   @Post(path: '/users/contacts-sync')
-  Future<Response<BuiltList<SummaryUser>>> syncContactsByPost({
-    @required @Body() BuiltContacts body
-  });
-
-
+  Future<Response<BuiltList<SummaryUser>>> syncContactsByPost(
+      {@required @Body() BuiltContacts body});
 
   //! ---------------------------------------------------------------------------------------
   //! ---------------------------------------------------------------------------------------
@@ -477,7 +472,7 @@ abstract class DatabaseApiService extends ChopperService {
     print("------------------initiating database----------------");
     final client = ChopperClient(
       baseUrl: 'https://18bmot2ra5.execute-api.ap-south-1.amazonaws.com/Stage',
-      // baseUrl: 'https://b0b83928c6bc.ngrok.io',
+      // baseUrl: 'https://edcebf8059db.ngrok.io',
       services: [
         _$DatabaseApiService(),
       ],

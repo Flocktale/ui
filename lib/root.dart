@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flocktale/pages/ContactsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Authentication/signUp.dart';
 import 'package:flocktale/pages/HomePage.dart';
@@ -20,11 +21,16 @@ class RootPage extends StatelessWidget {
         if (userData.loaded) {
           if (userData.isAuth == false)
             widget = PhoneLogin();
+          // isAuth is true
           else if (userData.user == null) {
-            // isAuth is true
             widget = SignUpScreen();
           } else {
-            widget = HomePage();
+            // if isAuth is true and it is a new registration.
+            if (userData.newRegistration) {
+              widget = ContactsPage(newRegistration: userData.newRegistration);
+            } else {
+              widget = HomePage();
+            }
           }
         }
 

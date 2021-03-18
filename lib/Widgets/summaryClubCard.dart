@@ -72,7 +72,7 @@ class SummaryClubCard extends StatelessWidget {
         Provider.of<AgoraController>(context, listen: false).club;
 
     return Container(
-      margin: EdgeInsets.fromLTRB(15, 15, 15, 0),
+      margin: EdgeInsets.fromLTRB(0, 15, 15, 0),
       //width: 200.0,
       width: 150,
       child: Card(
