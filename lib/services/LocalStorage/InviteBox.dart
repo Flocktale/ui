@@ -19,12 +19,17 @@ class InviteBox {
 
   static Future<List<String>> getNonSavedPhoneNumbers(
       BuildContext context) async {
+
+      
     await init();
     if (await Permission.contacts.request().isGranted) {
+      Map<String,String> phoneToName = {};
        _contacts = await fetchContactsFromPhone();
       List<String> phoneNumbers = [];
       _contacts.forEach((element) {
+        int ind = -1;
         element.phones.forEach((element) {
+          ind++;
           String phoneNo = element.value;
 
           if (phoneNo[0] != '+') return;
@@ -32,6 +37,7 @@ class InviteBox {
 
           if (contactBox.get(phoneNo) == null) {
             phoneNumbers.add(phoneNo);
+            phoneToName[phoneNo] = _contacts[ind].givenName;
           }
         });
       });
@@ -46,7 +52,7 @@ class InviteBox {
               .body;
 
       result.forEach((element) {
-        addContact(element.phone, element.userId, element.avatar);
+        addContact(element.phone, element.userId, element.avatar,phoneToName[element.phone]);
       });
     } else {
       Fluttertoast.showToast(
@@ -77,8 +83,8 @@ class InviteBox {
     return _contacts;
   }
 
-  static void addContact(String phoneNo, String userId, String userAvatar) {
-    Contact c = new Contact(userId, userAvatar, phoneNo);
+  static void addContact(String phoneNo, String userId, String userAvatar,String name) {
+    Contact c = new Contact(userId, userAvatar, phoneNo,name);
     contactBox.put(phoneNo, c.toJson());
   }
 
