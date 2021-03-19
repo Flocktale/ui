@@ -21,6 +21,9 @@ class CustomImage extends StatelessWidget {
             ? 'assets/gifs/pinwheel.gif'
             : 'assets/gifs/fading_lines.gif',
         image: image,
+        imageErrorBuilder: (ctx, _, __) {
+          return Image.asset('assets/images/logo.png');
+        },
       ),
     );
   }

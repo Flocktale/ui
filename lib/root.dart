@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 class RootPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Consumer<UserData>(
       builder: (ctx, userData, loadingWidget) {
         Provider.of<MySocket>(context, listen: false).update(userData.userId);
@@ -37,18 +36,13 @@ class RootPage extends StatelessWidget {
         return widget;
       },
       child: Scaffold(
-        body: Center(
-          child: SizedBox(
-            // width: 250.0,
-            child: TextLiquidFill(
-              text: 'FLOCKTALE',
-              waveColor: Colors.blueAccent,
-              boxBackgroundColor: Colors.redAccent,
-              textStyle: TextStyle(
-                fontSize: 40.0,
-                fontWeight: FontWeight.bold,
-              ),
-              boxHeight: size.height,
+        body: Container(
+          decoration: BoxDecoration(
+            color: Color(0xfff74040),
+            // color: Color(0xff004040),
+            image: DecorationImage(
+              image: AssetImage('assets/images/splash.png'),
+              fit: BoxFit.fitWidth,
             ),
           ),
         ),

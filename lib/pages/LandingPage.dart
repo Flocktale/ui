@@ -150,12 +150,17 @@ class _LandingPageState extends State<LandingPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 IconButton(
-                    icon: Icon(Icons.camera_alt_outlined), onPressed: null),
+                  icon: Image.asset('assets/images/inverted_logo.png'),
+                  onPressed: null,
+                ),
                 Text(
                   'Flocktale',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    color: Colors.redAccent,
+                    fontSize: 24,
                     letterSpacing: 2.0,
+                    fontFamily: 'Montserrat',
                   ),
                 ),
                 IconButton(
