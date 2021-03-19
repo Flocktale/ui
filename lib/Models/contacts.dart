@@ -17,7 +17,7 @@ class Contact {
   dynamic toJson(){
     Map<String,String> m = {};
     m['phoneNo'] = phoneNo;
-    m['userid'] = userId;
+    m['userId'] = userId;
     m['userAvatar'] = userAvatar;
     return json.encode(m);
   }
