@@ -1,17 +1,19 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:agora_rtc_engine/rtc_engine.dart' as RTC;
 import 'package:flocktale/Models/enums/audienceStatus.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
+import 'package:flocktale/Widgets/clubConcludeAlert.dart';
 import 'package:flocktale/Widgets/commentBox.dart';
 import 'package:flocktale/Widgets/detailClubCard.dart';
+import 'package:flocktale/Widgets/displayInvitationInClub.dart';
 import 'package:flocktale/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/comment.dart';
-import 'package:flocktale/pages/AudiencePage.dart';
 import 'package:flocktale/pages/InviteScreen.dart';
-import 'package:flocktale/pages/participantsPanel.dart';
+import 'package:flocktale/Widgets/HallPanelBuilder.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/providers/webSocket.dart';
@@ -20,6 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'ProfilePage.dart';
 import 'ClubJoinRequests.dart';
 import 'package:intl/intl.dart';
@@ -40,10 +43,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   BuiltClubAndAudience _clubAudience;
   bool _isOwner;
 
-// to indicate if user is on club page and club is in stopped phase
-// so that when he play the club again
-  bool _clubStoppedInside = false;
-
   ScrollController _listController = ScrollController();
   bool _isPlaying;
 
@@ -58,8 +57,13 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   BuiltList<BuiltClub> Clubs;
   List<AudienceData> participantList = [];
 
-  // List<AudienceData> audienceList = [];
-  // int likes = -1;
+  final Map<String, dynamic> _audienceMap = {
+    'list': <AudienceData>[],
+    'lastevaluatedkey': null,
+    'isLoading': false,
+  };
+
+  final PanelController _panelController = PanelController();
 
   // reaction counts
   int _dislikeCount;
@@ -439,6 +443,12 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   _sendJoinRequest() async {
+    if (participantList.length >= 10) {
+      Fluttertoast.showToast(
+          msg: 'All Panelist slots are filled. Max 9 allowed.');
+      return;
+    }
+
     final resp = await _service.sendJoinRequest(
       clubId: widget.club.clubId,
       userId: _myUserId,
@@ -505,10 +515,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     }
   }
 
-  Future<void> _enterClub({bool fromPlayHandler = false}) async {
-    // setting it to false as user is entering club.
-    _clubStoppedInside = false;
-
+  Future<void> _enterClub() async {
     this._isOwner = Provider.of<UserData>(context, listen: false).userId ==
         widget.club.creator.userId;
 
@@ -536,6 +543,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       return;
     }
 
+    // fetching audience list
+    _infiniteAudienceListRefresh(init: true);
+
     _clubAudience = resp.body;
 
     // setting current mic status of user.
@@ -544,15 +554,13 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     Provider.of<AgoraController>(context, listen: false)
         .create(isMuted: this._isMuted);
 
-    if (fromPlayHandler == false) {
-      // now we can join club in websocket also.
-      _joinClubInWebsocket();
+    // now we can join club in websocket also.
+    _joinClubInWebsocket();
 
-      if (this._isPlaying == false && this._isOwner == false) {
-        // if this function is called from play button handler then to prevent recursion
-        // if club is not playing already then play it automatically for non-owner.
-        await _playButtonHandler();
-      }
+    if (this._isPlaying == false && this._isOwner == false) {
+      // if this function is called from play button handler then to prevent recursion
+      // if club is not playing already then play it automatically for non-owner.
+      await _playButtonHandler();
     }
 
     setState(() {});
@@ -680,16 +688,13 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         _navigateTo(ClubJoinRequests(club: widget.club));
         break;
 
-      case 'Show Audience':
-        _navigateTo(AudiencePage(club: widget.club));
-        break;
-
       case 'Invite Panelist':
         _navigateTo(InviteScreen(
           club: widget.club,
           forPanelist: true,
         ));
         break;
+
       case 'Invite Audience':
         _navigateTo(InviteScreen(
           club: widget.club,
@@ -721,12 +726,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       if (_clubAudience.club.status != (ClubStatus.Live) && _isOwner == true) {
         // club is being started by owner for first time.
         await _startClub();
-      }
-
-      if (_clubStoppedInside == true) {
-        // it means club was in stopped phase, and is re-played.
-        // so telling backend by sending websocket msg and registering as audience again with getClubByClubId.
-        await _enterClub(fromPlayHandler: true);
       }
 
       if (_clubAudience.audienceData.status == AudienceStatus.Participant) {
@@ -766,11 +765,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       // user is interacting with join request button
       if (_clubAudience.audienceData.status !=
           AudienceStatus.ActiveJoinRequest) {
-        if (participantList.length < 10) {
-          await _sendJoinRequest();
-        } else
-          Fluttertoast.showToast(
-              msg: 'All Panelist slots are filled. Max 9 allowed.');
+        await _sendJoinRequest();
       } else {
         await _deleteJoinRequest();
       }
@@ -813,38 +808,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     return str;
   }
 
-  AlertDialog get _clubConcludeAlert => AlertDialog(
-        title: Text("Do you want to end the club?"),
-        actions: [
-          FlatButton(
-            child: Text(
-              "No",
-              style: TextStyle(
-                  fontFamily: "Lato",
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          FlatButton(
-            child: Text(
-              "Yes",
-              style: TextStyle(
-                  fontFamily: "Lato",
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.bold),
-            ),
-            onPressed: () async {
-              await _concludeClub();
-
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-
   void _infiniteRefresh() async {
     while (true) {
       bool terminate = false;
@@ -856,11 +819,64 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     }
   }
 
+  Future<List<AudienceData>> _fetchAudienceList(String lastevaluatedkey) async {
+    final resp = await _service.getAudienceList(
+        clubId: widget.club.clubId,
+        lastevaluatedkey: lastevaluatedkey,
+        authorization: _authToken);
+
+    _audienceMap['lastevaluatedkey'] = resp.body.lastevaluatedkey;
+
+    return resp.body.audience.asList();
+  }
+
+  void _infiniteAudienceListRefresh({bool init = false}) async {
+    if (init) {
+      final resp = await _service.getAudienceList(
+          clubId: widget.club.clubId,
+          lastevaluatedkey: null,
+          authorization: _authToken);
+
+      _audienceMap['list'] = resp.body.audience.asList();
+      setState(() {});
+    }
+
+    while (true) {
+      bool terminate = false;
+      int delay;
+      if (_audienceMap['list'].length <= 20)
+        delay = Random().nextInt(10) + 10;
+      else if (_audienceMap['list'].length <= 30)
+        delay = Random().nextInt(15) + 15;
+      else if (_audienceMap['list'].length <= 50)
+        delay = Random().nextInt(25) + 25;
+      else if (_audienceMap['list'].length <= 100)
+        delay = Random().nextInt(35) + 35;
+      else
+        delay = Random().nextInt(60) + 60;
+
+      await Future.delayed(
+        Duration(seconds: delay),
+        () async {
+          if (this.mounted == true) {
+            _audienceMap['list'] = await _fetchAudienceList(null);
+            if (this.mounted) {
+              setState(() {});
+            } else
+              terminate = true;
+          } else
+            terminate = true;
+        },
+      );
+      if (terminate) break;
+    }
+  }
+
   _showMaterialDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return _clubConcludeAlert;
+          return clubConcludeAlert(context, _concludeClub);
         });
   }
 
@@ -884,7 +900,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         return _isOwner
             ? {
                 'Show Join Requests',
-                'Show Audience',
                 'Invite Panelist',
                 'Invite Audience',
                 'Show Blocked Users'
@@ -894,7 +909,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                   child: Text(choice),
                 );
               }).toList()
-            : {'Show Audience', 'Invite Audience'}.map((String choice) {
+            : {'Invite Audience'}.map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -905,76 +920,29 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   Widget _displayInvitation() {
-    final size = MediaQuery.of(context).size;
-
-    return Container(
-      height: size.height / 10,
-      width: size.width,
-      color: Colors.redAccent,
-      child: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Text(
-              "You have been invited to be a panelist",
-              style: TextStyle(fontFamily: "Lato", color: Colors.white),
-            ),
-          ),
-          FittedBox(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                child: RaisedButton(
-                  onPressed: () => respondToInvitation('cancel'),
-                  color: Colors.redAccent,
-                  child: Text(
-                    "Reject",
-                    style: TextStyle(
-                        fontFamily: "Lato",
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ),
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  await _playButtonHandler();
-                  if (_isPlaying) {
-                    if (participantList.length < 10) {
-                      await respondToInvitation('accept');
-                    } else {
-                      Fluttertoast.showToast(
-                          msg: 'Panelist slots are full. Max 9 allowed.');
-                    }
-                  } else {
-                    if (_clubAudience.club.status == ClubStatus.Waiting) {
-                      Fluttertoast.showToast(
-                          msg: 'Please let the host start the club.');
-                    } else if (_clubAudience.club.status == ClubStatus.Live) {
-                      Fluttertoast.showToast(
-                          msg: 'Please play the club first.');
-                    } else {
-                      await respondToInvitation('cancel');
-                      Fluttertoast.showToast(
-                          msg: 'Can not accept, deleting request!');
-                    }
-                  }
-                },
-                color: Colors.white,
-                child: Text(
-                  "Accept",
-                  style: TextStyle(
-                      fontFamily: "Lato",
-                      fontWeight: FontWeight.bold,
-                      color: Colors.redAccent),
-                ),
-              ),
-            ],
-          ))
-        ],
-      ),
+    return displayInvitationInClub(
+      context,
+      onReject: () async => await respondToInvitation('cancel'),
+      onAccept: () async {
+        await _playButtonHandler();
+        if (_isPlaying) {
+          if (participantList.length < 10) {
+            await respondToInvitation('accept');
+          } else {
+            Fluttertoast.showToast(
+                msg: 'Panelist slots are full. Max 9 allowed.');
+          }
+        } else {
+          if (_clubAudience.club.status == ClubStatus.Waiting) {
+            Fluttertoast.showToast(msg: 'Please let the host start the club.');
+          } else if (_clubAudience.club.status == ClubStatus.Live) {
+            Fluttertoast.showToast(msg: 'Please play the club first.');
+          } else {
+            await respondToInvitation('cancel');
+            Fluttertoast.showToast(msg: 'Can not accept, deleting request!');
+          }
+        }
+      },
     );
   }
 
@@ -1068,8 +1036,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     // stopping from agora
     await Provider.of<AgoraController>(context, listen: false).stop();
 
-    _clubStoppedInside = true;
-
     if (_isOwner == false) {
       //resetting user priveleges, if not owner
       _clubAudience = _clubAudience.rebuild(
@@ -1152,9 +1118,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                         children: <Widget>[
                           if (_clubAudience.audienceData.invitationId != null)
                             _displayInvitation(),
-
                           _detailClubCard,
-
                           Container(
                             margin: EdgeInsets.fromLTRB(
                                 15, size.height / 50, 15, 0),
@@ -1248,7 +1212,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                             ),
                           ),
                           SizedBox(height: size.height / 50),
-
                           CommentBox(
                             size: size,
                             comments: comments,
@@ -1258,74 +1221,94 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                             addComment: addComment,
                             newCommentController: _newCommentController,
                           ),
-
                           SizedBox(height: size.height / 30),
-
-                          // Container(
-                          //   margin: EdgeInsets.only(
-                          //       left: size.width / 50, right: size.width / 50),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: <Widget>[
-                          //       Text(
-                          //         'More from @${_clubAudience.club.creator.username}',
-                          //         style: TextStyle(
-                          //             fontSize: 15.0,
-                          //             fontWeight: FontWeight.bold,
-                          //             color: Colors.black),
-                          //       ),
-                          //       Text(
-                          //         'View All',
-                          //         style: TextStyle(
-                          //           fontSize: 15.0,
-                          //           fontWeight: FontWeight.bold,
-                          //           color: Colors.grey[600],
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-
-                          // SizedBox(height: size.height / 50),
-                          // FutureBuilder(
-                          //     future: _fetchAllOwnerClubs(),
-                          //     builder: (context, snapshot) {
-                          //       if (snapshot.connectionState ==
-                          //           ConnectionState.waiting) {
-                          //         return Center(
-                          //             child: CircularProgressIndicator());
-                          //       }
-                          //       return Clubs != null
-                          //           ? Carousel(
-                          //               Clubs: Clubs.where((club) =>
-                          //                       club.clubId !=
-                          //                       _clubAudience.club.clubId)
-                          //                   .toBuiltList())
-                          //           : Container();
-                          //     }),
-                          SizedBox(height: size.height / 20)
                         ],
                       ),
                     )),
                     if (MediaQuery.of(context).viewInsets.bottom == 0)
-                      ParticipantsPanel(
-                        currentlySpeakingUsers: currentlySpeakingUsers,
-                        club: widget.club,
-                        size: size,
-                        participantList: participantList
-                            .where((element) =>
-                                element.audience.userId !=
-                                widget.club.creator.userId)
-                            .toList(),
-                        isOwner: _isOwner,
-                        hasSentJoinRequest: _clubAudience.audienceData.status ==
-                            AudienceStatus.ActiveJoinRequest,
-                        muteParticipant: _toggleMuteOfParticpant,
-                        removeParticipant: _kickParticpant,
-                        blockParticipant: _blockUser,
-                        sendJoinRequest: _sendJoinRequest,
-                        deleteJoinRequest: _deleteJoinRequest,
-                      ),
+                      SlidingUpPanel(
+                          controller: _panelController,
+                          minHeight: size.height / 16,
+                          maxHeight: size.height / 1.15,
+                          backdropEnabled: true,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(24),
+                              topRight: Radius.circular(24)),
+                          panelBuilder: (ScrollController sc) =>
+                              HallPanelBuilder(
+                                sc,
+                                currentlySpeakingUsers: currentlySpeakingUsers,
+                                club: widget.club,
+                                size: size,
+                                participantList: participantList,
+                                isOwner: _isOwner,
+                                hasSentJoinRequest:
+                                    _clubAudience.audienceData.status ==
+                                        AudienceStatus.ActiveJoinRequest,
+                                muteParticipant: _toggleMuteOfParticpant,
+                                removeParticipant: _kickParticpant,
+                                blockUser: _blockUser,
+                                sendJoinRequest: _sendJoinRequest,
+                                deleteJoinRequest: _deleteJoinRequest,
+                                audienceMap: _audienceMap,
+                                inviteAudience: (userId) async {
+                                  final response = await _service.inviteUsers(
+                                    clubId: widget.club.clubId,
+                                    sponsorId: _myUserId,
+                                    invite: BuiltInviteFormat((b) => b
+                                      ..invitee = BuiltList<String>([userId])
+                                          .toBuilder()
+                                      ..type = 'participant'),
+                                    authorization: _authToken,
+                                  );
+                                  if (response.isSuccessful) {
+                                    Fluttertoast.showToast(
+                                        msg: 'Invitation sent successfully');
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: 'Error in sending invitaion');
+                                  }
+                                },
+                                fetchMoreAudience: () async {
+                                  if (_audienceMap['isLoading'] == true) return;
+
+                                  setState(() {
+                                    _audienceMap['isLoading'] = true;
+                                  });
+
+                                  if (_audienceMap['lastlastevaluatedkey'] !=
+                                      null) {
+                                    (_audienceMap['list'] as List).addAll(
+                                        await _fetchAudienceList(
+                                            _audienceMap['lastevaluatedkey']));
+                                  } else {
+                                    await Future.delayed(
+                                        Duration(milliseconds: 200));
+                                  }
+                                  setState(() {
+                                    _audienceMap['isLoading'] = false;
+                                  });
+                                },
+                              ),
+                          collapsed: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(24),
+                                topRight: Radius.circular(24),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "HALL",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 2.0),
+                              ),
+                            ),
+                          )),
                   ],
                 )
               : Container(

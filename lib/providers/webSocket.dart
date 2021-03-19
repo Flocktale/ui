@@ -51,25 +51,33 @@ class MySocket with ChangeNotifier {
       headers: {"userid": userId},
     );
 
-    this.channel.stream.listen((event) {
-      print("Event is called");
-      print(jsonDecode(event));
-      // for (int i = 0; i < 100; i++) {
-      //   print("$event$i");
-      // }
-      event = jsonDecode(event);
-      final what = event["what"];
+    this.channel.stream.listen(
+        (event) {
+          print("Event is called");
+          print(jsonDecode(event));
+          // for (int i = 0; i < 100; i++) {
+          //   print("$event$i");
+          // }
+          event = jsonDecode(event);
+          final what = event["what"];
 
-      /// when we get list of events in a single websocket message.
-      if (what == 'ListOfWhat') {
-        final List eventList = event['list'];
-        for (var element in eventList) {
-          final elementWhat = element['what'];
-          executeWhatFunction(elementWhat, element);
-        }
-      } else
-        executeWhatFunction(what, event);
-    });
+          /// when we get list of events in a single websocket message.
+          if (what == 'ListOfWhat') {
+            final List eventList = event['list'];
+            for (var element in eventList) {
+              final elementWhat = element['what'];
+              executeWhatFunction(elementWhat, element);
+            }
+          } else
+            executeWhatFunction(what, event);
+        },
+        cancelOnError: true, // closes stream as soon as any error occurs
+        onError: (obj, stacktrace) {
+          print('error in websocket stream: $obj, stacktrace: $stacktrace');
+        },
+        onDone: () {
+          print('!!!websocket connection is closed!!!');
+        });
     print("------------initializing websockets----------");
   }
 
