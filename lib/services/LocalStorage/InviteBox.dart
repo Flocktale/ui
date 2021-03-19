@@ -82,7 +82,8 @@ class InviteBox {
     contactBox.put(phoneNo, c.toJson());
   }
 
-  static void clearContactDatabase() {
+  static void clearContactDatabase() async{
+    await init();
     contactBox.clear();
   }
 }

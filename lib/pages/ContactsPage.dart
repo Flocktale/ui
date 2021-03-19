@@ -72,6 +72,7 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
   getPermissions() async {
+   // await InviteBox.clearContactDatabase();
     await InviteBox.getNonSavedPhoneNumbers(context);
     final userId = Provider.of<UserData>(context,listen:false).userId;
     await FollowingDatabase.fetchList(userId, context);
@@ -196,7 +197,7 @@ class _ContactsPageState extends State<ContactsPage> {
                       return contact.phones.length > 0
                           ? InkWell(
                         onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: null,)));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: flockUsersContactsUserId[index],)));
                         },
                             child: ListTile(
                         leading: CircleAvatar(
