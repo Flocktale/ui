@@ -22,6 +22,9 @@ class MySocket with ChangeNotifier {
   /// current club
   String _clubId;
 
+  // previously playing club
+  String _previousClubId;
+
   bool _inTheClub = false;
   bool _isPlaying = false;
 
@@ -38,6 +41,14 @@ class MySocket with ChangeNotifier {
   }
 
   void playClub(String clubId) async {
+    if (_isPlaying == true &&
+        this._previousClubId != null &&
+        clubId != this._previousClubId) {
+      // it means, user has played another club while previous club was already in playing state
+
+      stopClub(this._previousClubId);
+    }
+
     _isPlaying = true;
 
     channel.add(jsonEncode({
@@ -48,6 +59,7 @@ class MySocket with ChangeNotifier {
   }
 
   void stopClub(String clubId) async {
+    this._previousClubId = null;
     _isPlaying = false;
 
     channel.add(jsonEncode({
@@ -209,6 +221,16 @@ class MySocket with ChangeNotifier {
     Function youAreInvited,
     bool isReconnecting = false,
   }) {
+    if (_isPlaying == true && clubId != this._clubId) {
+      // it means a different club is already playing when user entered this club.
+      _previousClubId = this._clubId;
+
+      leaveClub(_previousClubId);
+
+      /// since [this._clubId] will change now
+
+    }
+
     // we are inside the club.
     _inTheClub = true;
     _clubId = clubId;
@@ -256,6 +278,14 @@ class MySocket with ChangeNotifier {
   }
 
   void leaveClub(String clubId) {
+    if (_isPlaying == true &&
+        this._previousClubId != null &&
+        this._previousClubId != clubId) {
+      // it means user came out of different club than the one which is in playing state.
+      this._clubId = this._previousClubId;
+      // so restoring current clubId
+    }
+
     // we are outhside the club
     _inTheClub = false;
 
