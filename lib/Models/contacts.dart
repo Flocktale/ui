@@ -29,7 +29,7 @@ class Contact {
       : userId = json['userId'],
         userAvatar = json['userAvatar'],
         phoneNo = json['phoneNo'],
-        name = json[' name'];
+        name = json['name'];
 
   Contact(this.userId,this.userAvatar,this.phoneNo,this.name);
 }

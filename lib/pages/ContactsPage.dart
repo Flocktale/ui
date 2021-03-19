@@ -24,14 +24,10 @@ class _ContactsPageState extends State<ContactsPage> {
   List<Contact> contacts = [];
   List<Contact> contactsFiltered = [];
   List<CONTACT.Contact> flockContacts = [];
-  List<Contact> flockUsersContacts = [];
-  List<Contact> flockContactsFiltered = [];
-  List<String> flockUersContactsAvatar = [];
-  List<String> flockUersContactsAvatarFiltered = [];
-  List<String> flockUsersContactsUserId = [];
-  List<String> flockUsersContactsUserIdFiltered = [];
-  List<bool> flockUsersContactsFollowingButtonPressed = [];
-  List<bool> flockUsersContactsFollowingButtonPressedfiltered = [];
+  Map<String,bool> buttonPressed = new Map<String,bool>();
+  List<CONTACT.Contact> flockContactsFiltered = [];
+  // List<bool> flockUsersContactsFollowingButtonPressed = [];
+  // List<bool> flockUsersContactsFollowingButtonPressedfiltered = [];
   String text = 'Hi! Join me on FlockTale.';
   String subject = 'Link to the app:';
   TextEditingController searchController = new TextEditingController();
@@ -41,41 +37,35 @@ class _ContactsPageState extends State<ContactsPage> {
       contacts = InviteBox.getContacts();
       flockContacts = InviteBox.getData();
     });
-    _flockContactsBuilder();
-  }
-
-  _flockContactsBuilder()async{
-    print("******************************");
-    print(flockContacts);
-    print(contacts);
-    print(flockContacts.length);
-    print(contacts.length);
-
+    for(int j=0;j<flockContacts.length;j++) {
+      if(FollowingDatabase.isFollowing(flockContacts[j].userId)) {
+        buttonPressed[flockContacts[j].userId] = true;
+        //flockUsersContactsFollowingButtonPressed.add(true);
+      } else{
+        buttonPressed[flockContacts[j].userId] = false;
+       // flockUsersContactsFollowingButtonPressed.add(false);
+      }
+    }
+    List<Contact> _contacts = [];
+    _contacts.addAll(contacts);
     for(int i=0;i<contacts.length;i++){
+      if(contacts[i]==null || contacts[i].phones==null|| contacts[i].phones.length==0){
+        continue;
+      }
       for(int j=0;j<flockContacts.length;j++){
-        if(contacts[i]!=null && contacts[i].phones!=null
-            && contacts[i].phones.length!=0 && contacts[i].phones.elementAt(0).value.replaceAll(' ', '')==flockContacts[j].phoneNo){
-          flockUsersContacts.add(contacts[i]);
-          flockUersContactsAvatar.add(flockContacts[j].userAvatar);
-          flockUsersContactsUserId.add(flockContacts[j].userId);
-          if(FollowingDatabase.isFollowing(flockContacts[j].userId)) {
-            flockUsersContactsFollowingButtonPressed.add(true);
-          } else{
-            flockUsersContactsFollowingButtonPressed.add(false);
-          }
+        if(contacts[i]!=null && contacts[i].phones!=null&& contacts[i].phones.length!=0 && flockContacts[j].phoneNo==contacts[i].phones.elementAt(0).value.replaceAll(' ', '')){
+          _contacts.remove(contacts[i]);
         }
       }
     }
-    contacts.removeWhere((element) => flockUsersContacts.contains(element));
-    setState(() {
+    setState((){
+      contacts = _contacts;
     });
-    print("******************************");
-    print(flockUsersContacts);
-//    print(contacts);
   }
 
+
   Future<void> getPermissions() async {
-   // await InviteBox.clearContactDatabase();
+//    await InviteBox.clearContactDatabase();
     await InviteBox.getNonSavedPhoneNumbers(context);
     final userId = Provider.of<UserData>(context,listen:false).userId;
     await FollowingDatabase.fetchList(userId, context);
@@ -85,8 +75,8 @@ class _ContactsPageState extends State<ContactsPage> {
   filterContacts() {
     List<Contact> _contacts = [];
     _contacts.addAll(contacts);
-    List<Contact> _flockUsersContacts = [];
-    _flockUsersContacts.addAll(flockUsersContacts);
+    List<CONTACT.Contact> _flockUsersContacts = [];
+    _flockUsersContacts.addAll(flockContacts);
     if (searchController.text.isNotEmpty) {
       _contacts.retainWhere((contact) {
         String searchTerm = searchController.text.toLowerCase();
@@ -95,27 +85,13 @@ class _ContactsPageState extends State<ContactsPage> {
       });
       _flockUsersContacts.retainWhere((contact) {
         String searchTerm = searchController.text.toLowerCase();
-        String contactName = contact.displayName.toLowerCase();
+        String contactName = contact.name.toLowerCase();
         return contactName.contains(searchTerm);
       });
       setState(() {
         contactsFiltered = _contacts;
         flockContactsFiltered = _flockUsersContacts;
       });
-      // for(int i=0;i<_flockUsersContacts.length;i++){
-      //   String searchTerm = searchController.text.toLowerCase();
-      //   String contact = _flockUsersContacts[i].displayName;
-      //   String contactName = contact.toLowerCase();
-      //   if(contactName.contains(searchTerm)){
-      //     flockContactsFiltered.add(_flockUsersContacts[i]);
-      //     flockUersContactsAvatarFiltered.add(flockUersContactsAvatar[i]);
-      //     flockUsersContactsUserIdFiltered.add(flockUsersContactsUserId[i]);
-      //   }
-      // }
-      // setState(() {
-      //   contactsFiltered = _contacts;
-      //   flockContactsFiltered = _flockUsersContacts;
-      // });
     }
   }
 
@@ -200,7 +176,10 @@ class _ContactsPageState extends State<ContactsPage> {
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                       child: Text(
-                        "Connect now",
+                        isSearching?
+                            flockContactsFiltered.length==0?
+                                '':
+                        "Connect now":"Connect now",
                         style: TextStyle(
                             fontFamily: "Lato",
                             fontWeight: FontWeight.bold,
@@ -210,49 +189,49 @@ class _ContactsPageState extends State<ContactsPage> {
                     ),
                     Container(
                       child: ListView.builder(
-                          itemCount: isSearching ? flockContactsFiltered.length : flockUsersContacts.length,
+                          itemCount: isSearching ? flockContactsFiltered.length : flockContacts.length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            Contact contact =
-                            isSearching ? flockContactsFiltered[index] : flockUsersContacts[index];
-                            return contact.phones.length > 0
+                            CONTACT.Contact contact =
+                            isSearching ? flockContactsFiltered[index] : flockContacts[index];
+                            return contact.phoneNo.length > 0
                                 ? InkWell(
-                              onTap: (){
-                                Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: flockUsersContactsUserId[index],)));
+                              onTap: ()async{
+                                await Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: contact.userId,))).then((value) => _fetchContacts());
                               },
                               child: ListTile(
                                 leading: CircleAvatar(
                                     backgroundImage:
-                                    NetworkImage(flockUersContactsAvatar[index])),
+                                    NetworkImage(contact.userAvatar)),
                                 title: Text(
-                                  contact.displayName,
+                                  contact.name,
                                   style: TextStyle(fontFamily: "Lato"),
                                 ),
                                 subtitle: Text(
-                                  contact.phones.length > 0
-                                      ? contact.phones.elementAt(0).value.replaceAll(' ', '')
+                                  contact.phoneNo.length > 0
+                                      ? contact.phoneNo
                                       : '',
                                   style: TextStyle(fontFamily: "Lato"),
                                 ),
-                                trailing: flockUsersContactsFollowingButtonPressed[index]?
+                                trailing: buttonPressed[contact.userId]?
                                 ButtonTheme(
                                   child: RaisedButton(
                                     onPressed: () async{
                                       setState(() {
-                                        flockUsersContactsFollowingButtonPressed[index] = false;
+                                        buttonPressed[contact.userId] = false;
                                       });
 
                                       final userId = Provider.of<UserData>(context,listen:false).userId;
                                       final authToken = Provider.of<UserData>(context,listen:false).authToken;
                                       final resp = (await Provider.of<DatabaseApiService>(context,listen: false).unfollow(userId: userId,
-                                          foreignUserId: flockUsersContactsUserId[index], authorization: authToken));
+                                          foreignUserId: contact.userId, authorization: authToken));
                                       if(resp.isSuccessful){
-                                        FollowingDatabase.deleteFollowing(flockUsersContactsUserId[index]);
+                                        FollowingDatabase.deleteFollowing(contact.userId);
                                       }
                                       else{
                                         setState(() {
-                                          flockUsersContactsFollowingButtonPressed[index] = true;
+                                          buttonPressed[contact.userId] = true;
                                         });
                                         Fluttertoast.showToast(msg: 'Something went wrong. Please try again');
                                       }
@@ -275,18 +254,18 @@ class _ContactsPageState extends State<ContactsPage> {
                                   child: RaisedButton(
                                     onPressed: () async{
                                       setState(() {
-                                        flockUsersContactsFollowingButtonPressed[index] = true;
+                                        buttonPressed[contact.userId] = true;
                                       });
                                       final userId = Provider.of<UserData>(context,listen:false).userId;
                                       final authToken = Provider.of<UserData>(context,listen:false).authToken;
                                       final resp = (await Provider.of<DatabaseApiService>(context,listen: false).follow(userId: userId,
-                                          foreignUserId: flockUsersContactsUserId[index], authorization: authToken));
+                                          foreignUserId: contact.userId, authorization: authToken));
                                       if(resp.isSuccessful){
-                                        FollowingDatabase.addFollowing(flockUsersContactsUserId[index]);
+                                        FollowingDatabase.addFollowing(contact.userId);
                                       }
                                       else{
                                         setState(() {
-                                          flockUsersContactsFollowingButtonPressed[index] = false;
+                                          buttonPressed[contact.userId] = false;
                                         });
                                         Fluttertoast.showToast(msg: 'Something went wrong. Please try again');
                                       }
@@ -312,7 +291,10 @@ class _ContactsPageState extends State<ContactsPage> {
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                       child: Text(
-                        "Invite your contacts",
+                        isSearching?
+                            contacts.length==0?
+                                "":
+                        "Invite your contacts":"Invite your contacts",
                         style: TextStyle(
                             fontFamily: "Lato",
                             fontWeight: FontWeight.bold,

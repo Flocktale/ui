@@ -26,10 +26,10 @@ class InviteBox {
       Map<String,String> phoneToName = {};
        _contacts = await fetchContactsFromPhone();
       List<String> phoneNumbers = [];
+      int ind = -1;
       _contacts.forEach((element) {
-        int ind = -1;
+        ind++;
         element.phones.forEach((element) {
-          ind++;
           String phoneNo = element.value;
 
           if (phoneNo[0] != '+') return;
