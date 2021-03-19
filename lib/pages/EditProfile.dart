@@ -126,29 +126,42 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: Text(
+            'Edit Profile',
+            style: TextStyle(color: Colors.black),
+          ),
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+        ),
         body: ListView(
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                    size.width / 20, size.height / 20, 0, 0),
-                child: RichText(
-                  text: TextSpan(
-                    text: "Edit",
-                    style: TextStyle(
-                        fontSize: size.width / 5,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                    children: [
-                      TextSpan(
-                        text: '.',
-                        style: TextStyle(color: Colors.red),
-                      )
-                    ],
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding: EdgeInsets.fromLTRB(
+              //       size.width / 20, size.height / 20, 0, 0),
+              //   child: RichText(
+              //     text: TextSpan(
+              //       text: "Edit",
+              //       style: TextStyle(
+              //           fontSize: size.width / 5,
+              //           fontWeight: FontWeight.bold,
+              //           color: Colors.black),
+              //       children: [
+              //         TextSpan(
+              //           text: '.',
+              //           style: TextStyle(color: Colors.red),
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              // ),
               Center(
                 child: Container(
                   margin: EdgeInsets.fromLTRB(0, size.height / 50, 0, 0),

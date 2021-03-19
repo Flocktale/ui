@@ -127,6 +127,15 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
             ..avatar = e['audience']['avatar']).toBuilder(),
       );
       participantList.add(participant);
+
+// removing audience if he has become participant (since audience list is fetched by long polling for now)
+      final audienceList = (_audienceMap['list'] as List<AudienceData>)
+          .where((element) =>
+              element.audience.userId != participant.audience.userId)
+          .toList();
+
+      _audienceMap['list'] = audienceList;
+
       // convertT
       // print(convertToInt(participant.audience.username));
       integerUsernames.putIfAbsent(0, () => participant.audience.username);
