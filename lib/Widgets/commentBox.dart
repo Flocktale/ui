@@ -27,17 +27,18 @@ class CommentBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: size.height / 2 + size.height / 30,
+      height: size.height / 2,
       width: size.width,
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(0),
       ),
-      child: Stack(
+      child: ListView(
+        shrinkWrap: true,
+        physics: ScrollPhysics(),
         children: <Widget>[
-          Positioned(
-            top: 15,
-            left: 10,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             child: Text(
               'COMMENTS',
               style: TextStyle(
@@ -48,89 +49,81 @@ class CommentBox extends StatelessWidget {
                   letterSpacing: 2.0),
             ),
           ),
-          Positioned(
-            top: 45,
-            left: 10,
-            child: Column(
-              children: [
-                Container(
-                  height: size.height / 2.5,
-                  width: size.width - 20,
-                  color: Colors.white,
-                  child: ListView.builder(
-                      itemCount: comments.length,
-                      controller: listController,
-                      itemBuilder: (context, index) {
-                        var a = ListTile(
-                          leading: CircleAvatar(
-                            child: CustomImage(
-                              image: comments[index].user.avatar + "_thumb",
+          Container(
+            height: size.height / 2.8,
+            width: size.width - 20,
+            color: Colors.white,
+            child: ListView.builder(
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemCount: comments.length,
+                controller: listController,
+                itemBuilder: (context, index) {
+                  var a = ListTile(
+                    leading: CircleAvatar(
+                      child: CustomImage(
+                        image: comments[index].user.avatar + "_thumb",
+                      ),
+                    ),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          onTap: () => navigateTo(
+                            ProfilePage(
+                              userId: comments[index].user.userId,
                             ),
                           ),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              InkWell(
-                                onTap: () => navigateTo(
-                                  ProfilePage(
-                                    userId: comments[index].user.userId,
-                                  ),
-                                ),
-                                child: Text(
-                                  comments[index].user.username,
-                                  style: TextStyle(
-                                      fontFamily: "Lato",
-                                      color: Colors.redAccent),
-                                ),
-                              ),
-                              Text(
-                                processTimestamp(comments[index].timestamp, 1),
-                                style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: size.width / 30),
-                              )
-                            ],
+                          child: Text(
+                            comments[index].user.username,
+                            style: TextStyle(
+                                fontFamily: "Lato", color: Colors.redAccent),
                           ),
-                          subtitle: Text(
-                            comments[index].body,
-                            style: TextStyle(fontFamily: "Lato"),
-                          ),
-                        );
-                        return a;
-                      }),
-                ),
-                Container(
-                  height: 40,
-                  margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  width: size.width - 20,
-                  child: TextField(
-                    controller: newCommentController,
-                    decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            Icons.send,
-                            color: Colors.redAccent,
-                          ),
-                          onPressed: () {
-                            addComment(newCommentController.text);
-
-                            newCommentController.text = '';
-                          },
                         ),
-                        fillColor: Colors.white,
-                        hintText: 'Comment',
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                            borderSide:
-                                BorderSide(color: Colors.black12, width: 1.0)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 2.0))),
+                        Text(
+                          processTimestamp(comments[index].timestamp, 1),
+                          style: TextStyle(
+                              fontFamily: 'Lato', fontSize: size.width / 30),
+                        )
+                      ],
+                    ),
+                    subtitle: Text(
+                      comments[index].body,
+                      style: TextStyle(fontFamily: "Lato"),
+                    ),
+                  );
+                  return a;
+                }),
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            width: size.width - 20,
+            child: TextField(
+              controller: newCommentController,
+              minLines: 1,
+              maxLines: 3,
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    Icons.send,
+                    color: Colors.redAccent,
                   ),
-                )
-              ],
+                  onPressed: () {
+                    addComment(newCommentController.text);
+
+                    newCommentController.text = '';
+                  },
+                ),
+                fillColor: Colors.white,
+                hintText: 'Comment',
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderSide: BorderSide(color: Colors.black12, width: 2.0)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 2.0)),
+              ),
             ),
           ),
         ],

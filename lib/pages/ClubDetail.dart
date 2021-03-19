@@ -1113,117 +1113,117 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                   children: [
                     Container(
                         //  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          if (_clubAudience.audienceData.invitationId != null)
-                            _displayInvitation(),
-                          _detailClubCard,
-                          Container(
-                            margin: EdgeInsets.fromLTRB(
-                                15, size.height / 50, 15, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                FittedBox(
-                                  child: InkWell(
-                                    onTap: () => _navigateTo(
-                                      ProfilePage(
-                                        userId:
-                                            _clubAudience.club.creator.userId,
+                        child: ListView(
+                      physics: ScrollPhysics(),
+                      children: <Widget>[
+                        if (_clubAudience.audienceData.invitationId != null)
+                          _displayInvitation(),
+                        _detailClubCard,
+                        Container(
+                          margin:
+                              EdgeInsets.fromLTRB(15, size.height / 50, 15, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              FittedBox(
+                                child: InkWell(
+                                  onTap: () => _navigateTo(
+                                    ProfilePage(
+                                      userId: _clubAudience.club.creator.userId,
+                                    ),
+                                  ),
+                                  child: Row(children: <Widget>[
+                                    CircleAvatar(
+                                      radius: size.width / 17,
+                                      backgroundColor:
+                                          currentlySpeakingUsers != null &&
+                                                  currentlySpeakingUsers[widget
+                                                          .club
+                                                          .creator
+                                                          .username] !=
+                                                      null &&
+                                                  currentlySpeakingUsers[widget
+                                                          .club
+                                                          .creator
+                                                          .username] >
+                                                      0
+                                              ? Colors.redAccent
+                                              : Color(0xffFDCF09),
+                                      child: CircleAvatar(
+                                        radius: size.width / 20,
+                                        child: CustomImage(
+                                          image: _clubAudience
+                                                  .club.creator.avatar +
+                                              "_thumb",
+                                        ),
                                       ),
                                     ),
-                                    child: Row(children: <Widget>[
-                                      CircleAvatar(
-                                        radius: size.width / 17,
-                                        backgroundColor:
-                                            currentlySpeakingUsers != null &&
-                                                    currentlySpeakingUsers[
-                                                            widget.club.creator
-                                                                .username] !=
-                                                        null &&
-                                                    currentlySpeakingUsers[
-                                                            widget.club.creator
-                                                                .username] >
-                                                        0
-                                                ? Colors.redAccent
-                                                : Color(0xffFDCF09),
-                                        child: CircleAvatar(
-                                          radius: size.width / 20,
-                                          child: CustomImage(
-                                            image: _clubAudience
-                                                    .club.creator.avatar +
-                                                "_thumb",
-                                          ),
+                                    Container(
+                                      margin: EdgeInsets.fromLTRB(
+                                          size.width / 30, 0, 0, 0),
+                                      child: Text(
+                                        '@' +
+                                            _clubAudience.club.creator.username,
+                                        style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: size.width / 25,
+                                          color: currentlySpeakingUsers !=
+                                                      null &&
+                                                  currentlySpeakingUsers[widget
+                                                          .club
+                                                          .creator
+                                                          .username] !=
+                                                      null &&
+                                                  currentlySpeakingUsers[widget
+                                                          .club
+                                                          .creator
+                                                          .username] >
+                                                      0
+                                              ? Colors.redAccent
+                                              : Colors.black,
                                         ),
                                       ),
-                                      Container(
-                                        margin: EdgeInsets.fromLTRB(
-                                            size.width / 30, 0, 0, 0),
-                                        child: Text(
-                                          '@' +
-                                              _clubAudience
-                                                  .club.creator.username,
-                                          style: TextStyle(
-                                            fontFamily: 'Lato',
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width / 25,
-                                            color: currentlySpeakingUsers !=
-                                                        null &&
-                                                    currentlySpeakingUsers[
-                                                            widget.club.creator
-                                                                .username] !=
-                                                        null &&
-                                                    currentlySpeakingUsers[
-                                                            widget.club.creator
-                                                                .username] >
-                                                        0
-                                                ? Colors.redAccent
-                                                : Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ]),
+                                    ),
+                                  ]),
+                                ),
+                              ),
+                              // if club is concluded no need to show play, mic and participation button
+                              if (_clubAudience.club.status !=
+                                  ClubStatus.Concluded)
+                                FittedBox(
+                                  child: Row(
+                                    children: [
+                                      _displayPlayButton,
+
+                                      // dedicated button for mic
+                                      if (_clubAudience.audienceData.status ==
+                                              AudienceStatus.Participant &&
+                                          _clubAudience.club.status ==
+                                              ClubStatus.Live)
+                                        _displayMicButton,
+
+                                      // dedicated button for sending join request or stepping down to become only listener
+                                      if (_isOwner == false &&
+                                          _isPlaying == true)
+                                        _displayParticipationButton,
+                                    ],
                                   ),
                                 ),
-                                // if club is concluded no need to show play, mic and participation button
-                                if (_clubAudience.club.status !=
-                                    ClubStatus.Concluded)
-                                  FittedBox(
-                                    child: Row(
-                                      children: [
-                                        _displayPlayButton,
-
-                                        // dedicated button for mic
-                                        if (_clubAudience.audienceData.status ==
-                                                AudienceStatus.Participant &&
-                                            _clubAudience.club.status ==
-                                                ClubStatus.Live)
-                                          _displayMicButton,
-
-                                        // dedicated button for sending join request or stepping down to become only listener
-                                        if (_isOwner == false &&
-                                            _isPlaying == true)
-                                          _displayParticipationButton,
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
+                            ],
                           ),
-                          SizedBox(height: size.height / 50),
-                          CommentBox(
-                            size: size,
-                            comments: comments,
-                            listController: _listController,
-                            navigateTo: _navigateTo,
-                            processTimestamp: _processTimestamp,
-                            addComment: addComment,
-                            newCommentController: _newCommentController,
-                          ),
-                          SizedBox(height: size.height / 30),
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: size.height / 50),
+                        CommentBox(
+                          size: size,
+                          comments: comments,
+                          listController: _listController,
+                          navigateTo: _navigateTo,
+                          processTimestamp: _processTimestamp,
+                          addComment: addComment,
+                          newCommentController: _newCommentController,
+                        ),
+                      ],
                     )),
                     if (MediaQuery.of(context).viewInsets.bottom == 0)
                       SlidingUpPanel(
