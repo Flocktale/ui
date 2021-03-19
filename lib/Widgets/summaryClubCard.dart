@@ -10,13 +10,14 @@ import 'package:provider/provider.dart';
 class SummaryClubCard extends StatelessWidget {
   final Color shadow = Color(0xFF191818);
   final BuiltClub club;
+  final Function(Widget) navigateTo;
 
-  SummaryClubCard(this.club);
+  SummaryClubCard(this.club, this.navigateTo);
 
-  _showMaterialDialog(BuildContext context) {
+  _showMaterialDialog(BuildContext context) async {
     BuiltClub activeClub =
         Provider.of<AgoraController>(context, listen: false).club;
-    showDialog(
+    final res = await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -32,7 +33,7 @@ class SummaryClubCard extends StatelessWidget {
                       fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(false);
                 },
               ),
               FlatButton(
@@ -44,13 +45,16 @@ class SummaryClubCard extends StatelessWidget {
                       fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (_) => ClubDetailPage(club: activeClub)));
+                  Navigator.of(context).pop(true);
                 },
               ),
             ],
           );
         });
+
+    if (res == true) {
+      navigateTo(ClubDetailPage(club: activeClub));
+    }
   }
 
   String _processTimestamp(int timestamp) {
@@ -87,18 +91,10 @@ class SummaryClubCard extends StatelessWidget {
                   cuurentClub.clubId != club.clubId) {
                 _showMaterialDialog(context);
               } else {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ClubDetailPage(club: club),
-                  ),
-                );
+                navigateTo(ClubDetailPage(club: club));
               }
             } else {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => ClubDetailPage(
-                  club: club,
-                ),
-              ));
+              navigateTo(ClubDetailPage(club: club));
             }
           },
           child: Stack(

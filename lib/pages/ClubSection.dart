@@ -117,10 +117,19 @@ class _ClubSectionState extends State<ClubSection> {
             else
               return Container();
           }
-          return SummaryClubCard(clubList[index]);
+          return SummaryClubCard(clubList[index], _navigateTo);
         },
       ),
     );
+  }
+
+  void _navigateTo(Widget page) async {
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => page))
+        .then((value) {
+      setState(() {});
+      _fetchClubs();
+    });
   }
 
   @override

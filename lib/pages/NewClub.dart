@@ -63,8 +63,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   BuiltClub get _newClubModel {
     if (name?.isNotEmpty != true ||
         description?.isNotEmpty != true ||
-        category?.isNotEmpty != true
-        ) {
+        category?.isNotEmpty != true) {
       Fluttertoast.showToast(msg: 'Fill all fields');
       print('flll all the fields');
       return null;
@@ -73,8 +72,8 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
         DateTime.parse(scheduleDate ?? DateTime.now().toIso8601String());
 
     int scheduleDateTime;
-    if(scheduleClub){
-      scheduleDateTime= parsedDate.millisecondsSinceEpoch;
+    if (scheduleClub) {
+      scheduleDateTime = parsedDate.millisecondsSinceEpoch;
     }
     return BuiltClub((b) => b
       ..clubName = name
@@ -331,10 +330,10 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     setState(() {});
   }
 
-  _showMaterialDialog() {
+  _showMaterialDialog() async {
     BuiltClub activeClub =
         Provider.of<AgoraController>(context, listen: false).club;
-    showDialog(
+    final res = await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -350,7 +349,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                       fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(false);
                 },
               ),
               FlatButton(
@@ -362,15 +361,16 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
                       fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (_) => ClubDetailPage(
-                            club: activeClub,
-                          )));
+                  Navigator.of(context).pop(true);
                 },
               ),
             ],
           );
         });
+    if (res == true) {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => ClubDetailPage(club: activeClub)));
+    }
   }
 
   @override
@@ -389,155 +389,157 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return SafeArea(
       child: Scaffold(
-          body: isLoading?
-              Center(
-                child: CircularProgressIndicator(),
-              ):
-          SingleChildScrollView(
-        child: Stack(children: [
-          Container(
-            margin:
-                EdgeInsets.only(left: size.width / 50, right: size.width / 50),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: size.height / 50),
-                Text(
-                  'Create a new club',
-                  style: TextStyle(
-                    fontFamily: 'Lato',
-                    fontWeight: FontWeight.bold,
-                    fontSize: size.height / 25,
-                  ),
-                ),
-                SizedBox(
-                  height: size.height / 50,
-                ),
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, size.height / 500, 0, 0),
-                    child: GestureDetector(
-                      onTap: getImage,
-                      behavior: HitTestBehavior.deferToChild,
-                      child: Container(
-                        height: size.height / 6,
-                        width: size.width / 3,
-                        color: Colors.red,
-                        child: Container(
-                          height: size.height / 6,
-                          width: size.width / 3,
-                          child: image == null
-                              ? Column(
-                                  children: [
-                                    SizedBox(
-                                      height: size.height / 20,
-                                    ),
-                                    Icon(
-                                      Icons.add_a_photo,
-                                      size: size.width / 15,
-                                      color: Colors.black,
-                                      semanticLabel: "Add a photo",
-                                    ),
-                                    Text(
-                                      "Add a club avatar",
-                                      style: TextStyle(
-                                          fontFamily: "Lato",
-                                          fontWeight: FontWeight.w400),
-                                    )
-                                  ],
-                                )
-                              : Stack(
-                                  children: [
-                                    Image.file(image),
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          image = null;
-                                          setState(() {});
-                                        },
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.transparent,
-                                          child: Icon(
-                                            Icons.cancel,
-                                            color: Colors.black,
-                                            size: size.width / 15,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: size.height / 50,
-                ),
-                Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        _buildName(),
-                        SizedBox(
-                          height: size.height / 50,
-                        ),
-                        _buildDescription(),
-                        SizedBox(
-                          height: size.height / 50,
-                        ),
-                        _buildCategory(),
-                        SizedBox(
-                          height: size.height / 50,
-                        ),
-                        _scheduleClub(),
-                        scheduleClub ? dateTimePicker() : Container(),
-                        SizedBox(
-                          height: size.height / 30,
-                        ),
-                        ButtonTheme(
-                          minWidth: size.width / 3.5,
-                          child: RaisedButton(
-                            onPressed: () {
-                              if (club != null &&
-                                  club.creator.userId == cuserId) {
-                                _showMaterialDialog();
-                              } else {
-                                if (!_formKey.currentState.validate()) {
-                                  return;
-                                } else {
-                                  _formKey.currentState.save();
-                                  print(name);
-                                  print(description);
-                                  print(category);
-                                  _createClub();
-                                }
-                              }
-                            },
-                            color: Colors.red[600],
-                            child: Text('Submit',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Lato',
-                                )),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                              //side: BorderSide(color: Colors.red[600]),
+          body: isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SingleChildScrollView(
+                  child: Stack(children: [
+                    Container(
+                      margin: EdgeInsets.only(
+                          left: size.width / 50, right: size.width / 50),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(height: size.height / 50),
+                          Text(
+                            'Create a new club',
+                            style: TextStyle(
+                              fontFamily: 'Lato',
+                              fontWeight: FontWeight.bold,
+                              fontSize: size.height / 25,
                             ),
                           ),
-                        )
-                      ],
-                    ))
-              ],
-            ),
-          ),
-          Positioned(bottom: 0, child: MinClub())
-        ]),
-      )),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          Center(
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(
+                                  0, size.height / 500, 0, 0),
+                              child: GestureDetector(
+                                onTap: getImage,
+                                behavior: HitTestBehavior.deferToChild,
+                                child: Container(
+                                  height: size.height / 6,
+                                  width: size.width / 3,
+                                  color: Colors.red,
+                                  child: Container(
+                                    height: size.height / 6,
+                                    width: size.width / 3,
+                                    child: image == null
+                                        ? Column(
+                                            children: [
+                                              SizedBox(
+                                                height: size.height / 20,
+                                              ),
+                                              Icon(
+                                                Icons.add_a_photo,
+                                                size: size.width / 15,
+                                                color: Colors.black,
+                                                semanticLabel: "Add a photo",
+                                              ),
+                                              Text(
+                                                "Add a club avatar",
+                                                style: TextStyle(
+                                                    fontFamily: "Lato",
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              )
+                                            ],
+                                          )
+                                        : Stack(
+                                            children: [
+                                              Image.file(image),
+                                              Align(
+                                                alignment: Alignment.topRight,
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    image = null;
+                                                    setState(() {});
+                                                  },
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    child: Icon(
+                                                      Icons.cancel,
+                                                      color: Colors.black,
+                                                      size: size.width / 15,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          Form(
+                            key: _formKey,
+                            child: Column(
+                              children: <Widget>[
+                                _buildName(),
+                                SizedBox(
+                                  height: size.height / 50,
+                                ),
+                                _buildDescription(),
+                                SizedBox(
+                                  height: size.height / 50,
+                                ),
+                                _buildCategory(),
+                                SizedBox(
+                                  height: size.height / 50,
+                                ),
+                                _scheduleClub(),
+                                scheduleClub ? dateTimePicker() : Container(),
+                                SizedBox(
+                                  height: size.height / 30,
+                                ),
+                                ButtonTheme(
+                                  minWidth: size.width / 3.5,
+                                  child: RaisedButton(
+                                    onPressed: () {
+                                      if (club != null &&
+                                          club.creator.userId == cuserId) {
+                                        _showMaterialDialog();
+                                      } else {
+                                        if (!_formKey.currentState.validate()) {
+                                          return;
+                                        } else {
+                                          _formKey.currentState.save();
+
+                                          _createClub();
+                                        }
+                                      }
+                                    },
+                                    color: Colors.red[600],
+                                    child: Text('Submit',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Lato',
+                                        )),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                      //side: BorderSide(color: Colors.red[600]),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    // Positioned(bottom: 0, child: MinClub(null))
+                  ]),
+                )),
     );
   }
 

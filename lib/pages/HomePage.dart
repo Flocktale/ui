@@ -43,9 +43,7 @@ class _HomePageState extends State<HomePage> {
     List<Widget> _screens = [
       LandingPage(),
       NewClub(),
-      SearchPage(
-        user: cuser,
-      ),
+      SearchPage(user: cuser),
       ProfilePage(userId: cuser.userId)
     ];
 

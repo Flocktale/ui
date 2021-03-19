@@ -6,6 +6,10 @@ import 'package:flocktale/providers/webSocket.dart';
 import 'package:provider/provider.dart';
 
 class MinClub extends StatefulWidget {
+  final Future Function(Widget) navigateTo;
+
+  MinClub(this.navigateTo);
+
   @override
   _MinClubState createState() => _MinClubState();
 }
@@ -24,15 +28,21 @@ class _MinClubState extends State<MinClub> {
   @override
   Widget build(BuildContext context) {
     BuiltClub club = Provider.of<AgoraController>(context, listen: false).club;
-    print("=================CLUB==================================");
-    print(club);
-    print("===================================================");
+
     final size = MediaQuery.of(context).size;
+
     return club != null
         ? InkWell(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ClubDetailPage(club: club))).then((value) => setState((){}));
+            onTap: () async {
+              if (widget.navigateTo != null) {
+                await widget.navigateTo(ClubDetailPage(club: club));
+              } else {
+                await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => ClubDetailPage(club: club)));
+              }
+              if (this.mounted) {
+                setState(() {});
+              }
             },
             child: Container(
               height: size.height / 12,

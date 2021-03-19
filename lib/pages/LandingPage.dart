@@ -47,10 +47,13 @@ class _LandingPageState extends State<LandingPage>
     if (this.mounted) setState(() {});
   }
 
-  void _navigateTo(Widget page) async {
+  Future<void> _navigateTo(Widget page) async {
     await Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => page))
-        .then((value) => _fetchAllClubs());
+        .then((value) {
+      setState(() {});
+      _fetchAllClubs();
+    });
   }
 
   Widget sectionHeading({
@@ -101,7 +104,10 @@ class _LandingPageState extends State<LandingPage>
                 : Container(),
           ],
         ),
-        Carousel(Clubs: clubs),
+        Carousel(
+          Clubs: clubs,
+          navigateTo: _navigateTo,
+        ),
       ],
     );
   }
@@ -240,7 +246,7 @@ class _LandingPageState extends State<LandingPage>
                 ),
               ),
             ),
-            Positioned(bottom: 0, child: MinClub()),
+            Positioned(bottom: 0, child: MinClub(_navigateTo)),
           ],
         ),
       ),

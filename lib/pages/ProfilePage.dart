@@ -63,15 +63,16 @@ class _ProfilePageState extends State<ProfilePage> {
       _user = cuser;
     } else {
       _isMe = false;
-      final fetchedUserData = (await service.getUserProfile(
-        primaryUserId: cuser.userId,
-        userId: widget.userId,
-        authorization: authToken,
-      ))
-          .body;
-      _user = fetchedUserData?.user;
-      _userRelations = fetchedUserData?.relationIndexObj;
     }
+
+    final fetchedUserData = (await service.getUserProfile(
+      primaryUserId: cuser.userId,
+      userId: widget.userId,
+      authorization: authToken,
+    ))
+        .body;
+    _user = fetchedUserData?.user;
+    _userRelations = fetchedUserData?.relationIndexObj;
 
     if (_user.userId == null) {
       _user = null;
@@ -122,8 +123,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _navigateTo(Widget page) async {
-    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page)).then((value) => _fetchUser());
-    print(_user);
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => page))
+        .then((value) {
+      _fetchUser();
+    });
   }
 
   PopupMenuButton<String> _profileDropDownMenu() {
@@ -427,7 +431,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
-                      Positioned(bottom: 0, child: MinClub())
+                      Positioned(
+                        bottom: 0,
+                        child: MinClub((Widget page) async {
+                          await Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (_) => page));
+                          _fetchAllClubs();
+                        }),
+                      )
                     ]),
                   ),
                 ],

@@ -76,7 +76,7 @@ class _SearchPageState extends State<SearchPage> {
             )
           ],
         ),
-        Positioned(bottom: 0, child: MinClub())
+        Positioned(bottom: 0, child: MinClub(null)),
       ]),
     );
   }
@@ -211,38 +211,38 @@ class DataSearch extends SearchDelegate<String> {
                           fontSize: size.width / 20),
                     ),
                     //SizedBox(height: size.height/50),
-                    allSearches.users.length==0?
-                        Container(
-                          child: Center(
-                            child:Text(
+                    allSearches.users.length == 0
+                        ? Container(
+                            child: Center(
+                                child: Text(
                               "No users found",
                               style: TextStyle(
-                                fontFamily: "Lato",
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold
-                              ),
-                            )
-                          ),
-                        ):
-                    Flexible(
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(
-                            0, size.height / 50, 0, size.height / 50),
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: allSearches.users != null
-                                ? allSearches.users.length < 3
-                                    ? allSearches.users.length
-                                    : 3
-                                : 0,
-                            itemBuilder: (builder, index) {
-                              return ListTile(
-                                leading: allSearches.users[index].avatar != null
-                                    ? Image.network(
-                                        allSearches.users[index].avatar)
-                                    : null,
-                                title:
-                                    /* RichText(text: TextSpan(
+                                  fontFamily: "Lato",
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                          )
+                        : Flexible(
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(
+                                  0, size.height / 50, 0, size.height / 50),
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: allSearches.users != null
+                                      ? allSearches.users.length < 3
+                                          ? allSearches.users.length
+                                          : 3
+                                      : 0,
+                                  itemBuilder: (builder, index) {
+                                    return ListTile(
+                                      leading: allSearches
+                                                  .users[index].avatar !=
+                                              null
+                                          ? Image.network(
+                                              allSearches.users[index].avatar)
+                                          : null,
+                                      title:
+                                          /* RichText(text: TextSpan(
                                 text: allSearches.users[index].name.substring(0,query.length),
                                 style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
                                 children: [TextSpan(
@@ -250,48 +250,49 @@ class DataSearch extends SearchDelegate<String> {
                                   style: TextStyle(color: Colors.grey)
                                 )]
                               ),),*/
-                                    allSearches.users[index].username != null
-                                        ? Text(
-                                            allSearches.users[index].username)
-                                        : null,
-                                subtitle:
-                                    allSearches.users[index].tagline != null
-                                        ? Text(allSearches.users[index].tagline)
-                                        : null,
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (_) => ProfilePage(
-                                            userId:
-                                                allSearches.users[index].userId,
-                                          )));
-                                },
-                              );
-                            }),
-                      ),
-                    ),
-                    allSearches.users.length==0?
-                    Container(
-
-                    ):
-                    InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => SearchAllUsers(
-                                    users: allSearches.users,
-                                    query: query,
-                                  )));
-                        },
-                        child: Container(
-                            width: size.width,
-                            child: Text(
-                              "See all users",
-                              style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: size.width / 25,
-                                color: Colors.redAccent
-                              ),
-                            ))),
+                                          allSearches.users[index].username !=
+                                                  null
+                                              ? Text(allSearches
+                                                  .users[index].username)
+                                              : null,
+                                      subtitle: allSearches
+                                                  .users[index].tagline !=
+                                              null
+                                          ? Text(
+                                              allSearches.users[index].tagline)
+                                          : null,
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder: (_) => ProfilePage(
+                                                      userId: allSearches
+                                                          .users[index].userId,
+                                                    )));
+                                      },
+                                    );
+                                  }),
+                            ),
+                          ),
+                    allSearches.users.length == 0
+                        ? Container()
+                        : InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => SearchAllUsers(
+                                        users: allSearches.users,
+                                        query: query,
+                                      )));
+                            },
+                            child: Container(
+                                width: size.width,
+                                child: Text(
+                                  "See all users",
+                                  style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: size.width / 25,
+                                      color: Colors.redAccent),
+                                ))),
                     SizedBox(
                       height: size.height / 30,
                     ),
@@ -303,75 +304,77 @@ class DataSearch extends SearchDelegate<String> {
                           fontWeight: FontWeight.w500,
                           fontSize: size.width / 20),
                     ),
-                    allSearches.clubs.length==0?
-                    Container(
-                      child: Center(
-                          child:Text(
-                            "No clubs found",
-                            style: TextStyle(
-                                fontFamily: "Lato",
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold
-                            ),
+                    allSearches.clubs.length == 0
+                        ? Container(
+                            child: Center(
+                                child: Text(
+                              "No clubs found",
+                              style: TextStyle(
+                                  fontFamily: "Lato",
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold),
+                            )),
                           )
-                      ),
-                    ):
-                    Flexible(
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(
-                            0, size.height / 50, 0, size.height / 50),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: allSearches.clubs.length < 3
-                              ? allSearches.clubs.length
-                              : 3,
-                          itemBuilder: (builder, index) {
-                            return ListTile(
-                              leading:
-                                  allSearches.clubs[index].clubAvatar != null
-                                      ? Image.network(
-                                          allSearches.clubs[index].clubAvatar)
-                                      : null,
-                              title: allSearches.clubs[index].clubAvatar != null
-                                  ? Text(allSearches.clubs[index].clubName)
-                                  : null,
-                              subtitle: allSearches.clubs[index].creator != null
-                                  ? Text(
-                                      allSearches.clubs[index].creator.username)
-                                  : Text("Club"),
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => ClubDetailPage(
-                                          club: allSearches.clubs[index],
-                                        )));
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    allSearches.clubs.length==0?
-                    Container(
-
-                    ):
-                    InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => SearchAllClubs(
-                                    clubs: allSearches.clubs,
-                                    query: query,
-                                  )));
-                        },
-                        child: Container(
-                            child: Text(
-                          "See all clubs",
-                          style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontWeight: FontWeight.w500,
-                              fontSize: size.width / 25,
-                            color: Colors.redAccent
+                        : Flexible(
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(
+                                  0, size.height / 50, 0, size.height / 50),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: allSearches.clubs.length < 3
+                                    ? allSearches.clubs.length
+                                    : 3,
+                                itemBuilder: (builder, index) {
+                                  return ListTile(
+                                    leading: allSearches
+                                                .clubs[index].clubAvatar !=
+                                            null
+                                        ? Image.network(
+                                            allSearches.clubs[index].clubAvatar)
+                                        : null,
+                                    title: allSearches
+                                                .clubs[index].clubAvatar !=
+                                            null
+                                        ? Text(
+                                            allSearches.clubs[index].clubName)
+                                        : null,
+                                    subtitle:
+                                        allSearches.clubs[index].creator != null
+                                            ? Text(allSearches
+                                                .clubs[index].creator.username)
+                                            : Text("Club"),
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (_) => ClubDetailPage(
+                                                    club: allSearches
+                                                        .clubs[index],
+                                                  )));
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
                           ),
-                        ))),
+                    allSearches.clubs.length == 0
+                        ? Container()
+                        : InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => SearchAllClubs(
+                                        clubs: allSearches.clubs,
+                                        query: query,
+                                      )));
+                            },
+                            child: Container(
+                                child: Text(
+                              "See all clubs",
+                              style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: size.width / 25,
+                                  color: Colors.redAccent),
+                            ))),
                   ],
                 ),
               );
