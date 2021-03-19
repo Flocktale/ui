@@ -20,7 +20,7 @@ class SocialRelationActions extends StatelessWidget {
     return ButtonTheme(
       minWidth: size.width / 3.5,
       child: RaisedButton(
-        onPressed: () => onPressed,
+        onPressed: () => onPressed(),
         color: buttonColor,
         child: Text(text,
             style: TextStyle(
