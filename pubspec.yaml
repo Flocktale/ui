@@ -90,7 +90,7 @@ dependency_overrides:
 flutter_native_splash:
   color: "#f74040"
   image: "assets/images/splash.png"
-  android_gravity: center
+  # android_gravity: center
   fullscreen: true
 
 # The following section is specific to Flutter.
