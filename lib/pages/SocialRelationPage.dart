@@ -35,6 +35,13 @@ class _SocialRelationPageState extends State<SocialRelationPage>
 
   TabController _tabController;
 
+  List<SummaryUser> friends = [];
+  List<SummaryUser> friendsFiltered = [];
+  List<SummaryUser> followers = [];
+  List<SummaryUser> followersFiltered = [];
+  List<SummaryUser> following = [];
+  List<SummaryUser> followingFiltered = [];
+
   void _initRelationData(String type) async {
     //             ["followings","followers", "requests_sent", "requests_received","friends"]
 
@@ -82,6 +89,68 @@ class _SocialRelationPageState extends State<SocialRelationPage>
     setState(() {});
   }
 
+  _filterFriends(){
+    List<SummaryUser> _friends = [];
+    _friends.addAll((relationMap[relations[0]]['data']as BuiltSearchUsers)?.users?.toList());
+    friends = _friends;
+    if(friendSearchController.text.isNotEmpty){
+      _friends.retainWhere((contact) {
+        String searchTerm = friendSearchController.text.toLowerCase();
+        String contactName = contact?.username?.toLowerCase();
+        return contactName?.contains(searchTerm);
+      });
+      setState(() {
+        friendsFiltered = _friends;
+      });
+    }
+    else{
+      setState(() {
+        friends = friendsFiltered;
+      });
+    }
+  }
+
+  _filterFollowers(){
+    List<SummaryUser> _followers = [];
+    _followers.addAll((relationMap[relations[1]]['data']as BuiltSearchUsers)?.users?.toList());
+    followers = _followers;
+    if(followerSearchController.text.isNotEmpty){
+      _followers.retainWhere((contact) {
+        String searchTerm = followerSearchController.text.toLowerCase();
+        String contactName = contact?.username?.toLowerCase();
+        return contactName?.contains(searchTerm);
+      });
+      setState(() {
+        followersFiltered = _followers;
+      });
+    }
+    else{
+      setState(() {
+        followersFiltered = followers;
+      });
+    }
+  }
+
+  _filterFollowing(){
+    List<SummaryUser> _following = [];
+    _following.addAll((relationMap[relations[2]]['data']as BuiltSearchUsers)?.users?.toList());
+    following = _following;
+    if(followingSearchController.text.isNotEmpty){
+      _following.retainWhere((contact) {
+        String searchTerm = followingSearchController.text.toLowerCase();
+        String contactName = contact?.username?.toLowerCase();
+        return contactName?.contains(searchTerm);
+      });
+      setState(() {
+        followingFiltered = _following;
+      });
+    }
+    else{
+      setState(() {
+        followingFiltered = following;
+      });
+    }
+  }
 
   Widget friendSearchBar() {
     final size = MediaQuery.of(context).size;
@@ -113,7 +182,7 @@ class _SocialRelationPageState extends State<SocialRelationPage>
       height: size.height/20,
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextField(
-        controller: friendSearchController,
+        controller: followerSearchController,
         decoration: InputDecoration(
             prefixIcon: Icon(
               Icons.search,
@@ -137,7 +206,7 @@ class _SocialRelationPageState extends State<SocialRelationPage>
       height: size.height/20,
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextField(
-        controller: friendSearchController,
+        controller: followingSearchController,
         decoration: InputDecoration(
             prefixIcon: Icon(
               Icons.search,
@@ -156,8 +225,32 @@ class _SocialRelationPageState extends State<SocialRelationPage>
   }
 
   Widget tabPage(int index) {
-    var relationUsers =
-        (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
+    //var friends = (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
+    var relationUsers;
+    if(index==0){
+      if(friendSearchController.text.length>0){
+        relationUsers = friendsFiltered;
+      }
+      else{
+        relationUsers = (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
+      }
+    }
+    else if(index==1){
+      if(followerSearchController.text.length>0){
+        relationUsers = followersFiltered;
+      }
+      else{
+        relationUsers = (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
+      }
+    }
+    else{
+      if(followingSearchController.text.length>0){
+        relationUsers = followingFiltered;
+      }
+      else{
+        relationUsers = (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
+      }
+    }
     final bool isLoading = relationMap[relations[index]]['isLoading'];
     final cuser = Provider.of<UserData>(context,listen:false).user;
     final isMe = cuser.userId==widget.user.userId;
@@ -400,6 +493,18 @@ class _SocialRelationPageState extends State<SocialRelationPage>
 
     _tabController.addListener(() {
       _initRelationData(relations[_tabController.index]);
+    });
+
+    friendSearchController.addListener(() {
+      _filterFriends();
+    });
+
+    followerSearchController.addListener(() {
+      _filterFollowers();
+    });
+
+    followingSearchController.addListener(() {
+      _filterFollowing();
     });
 
     super.initState();
