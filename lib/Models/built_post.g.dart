@@ -6,6 +6,7 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<AppConfigs> _$appConfigsSerializer = new _$AppConfigsSerializer();
 Serializer<UsernameAvailability> _$usernameAvailabilitySerializer =
     new _$UsernameAvailabilitySerializer();
 Serializer<BuiltAudienceList> _$builtAudienceListSerializer =
@@ -56,6 +57,47 @@ Serializer<BuiltInviteFormat> _$builtInviteFormatSerializer =
     new _$BuiltInviteFormatSerializer();
 Serializer<BuiltContacts> _$builtContactsSerializer =
     new _$BuiltContactsSerializer();
+
+class _$AppConfigsSerializer implements StructuredSerializer<AppConfigs> {
+  @override
+  final Iterable<Type> types = const [AppConfigs, _$AppConfigs];
+  @override
+  final String wireName = 'AppConfigs';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, AppConfigs object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.minAppVersion != null) {
+      result
+        ..add('minAppVersion')
+        ..add(serializers.serialize(object.minAppVersion,
+            specifiedType: const FullType(String)));
+    }
+    return result;
+  }
+
+  @override
+  AppConfigs deserialize(Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new AppConfigsBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'minAppVersion':
+          result.minAppVersion = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$UsernameAvailabilitySerializer
     implements StructuredSerializer<UsernameAvailability> {
@@ -2100,6 +2142,80 @@ class _$BuiltContactsSerializer implements StructuredSerializer<BuiltContacts> {
     }
 
     return result.build();
+  }
+}
+
+class _$AppConfigs extends AppConfigs {
+  @override
+  final String minAppVersion;
+
+  factory _$AppConfigs([void Function(AppConfigsBuilder) updates]) =>
+      (new AppConfigsBuilder()..update(updates)).build();
+
+  _$AppConfigs._({this.minAppVersion}) : super._();
+
+  @override
+  AppConfigs rebuild(void Function(AppConfigsBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  AppConfigsBuilder toBuilder() => new AppConfigsBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is AppConfigs && minAppVersion == other.minAppVersion;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(0, minAppVersion.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('AppConfigs')
+          ..add('minAppVersion', minAppVersion))
+        .toString();
+  }
+}
+
+class AppConfigsBuilder implements Builder<AppConfigs, AppConfigsBuilder> {
+  _$AppConfigs _$v;
+
+  String _minAppVersion;
+  String get minAppVersion => _$this._minAppVersion;
+  set minAppVersion(String minAppVersion) =>
+      _$this._minAppVersion = minAppVersion;
+
+  AppConfigsBuilder();
+
+  AppConfigsBuilder get _$this {
+    if (_$v != null) {
+      _minAppVersion = _$v.minAppVersion;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(AppConfigs other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$AppConfigs;
+  }
+
+  @override
+  void update(void Function(AppConfigsBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$AppConfigs build() {
+    final _$result = _$v ?? new _$AppConfigs._(minAppVersion: minAppVersion);
+    replace(_$result);
+    return _$result;
   }
 }
 

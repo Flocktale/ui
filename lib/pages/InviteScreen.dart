@@ -1,5 +1,5 @@
 import 'package:chopper/chopper.dart';
-import 'package:flocktale/customImage.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flocktale/Models/built_post.dart';

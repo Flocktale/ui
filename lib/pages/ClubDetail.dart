@@ -8,7 +8,7 @@ import 'package:flocktale/Widgets/clubConcludeAlert.dart';
 import 'package:flocktale/Widgets/commentBox.dart';
 import 'package:flocktale/Widgets/detailClubCard.dart';
 import 'package:flocktale/Widgets/displayInvitationInClub.dart';
-import 'package:flocktale/customImage.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/comment.dart';

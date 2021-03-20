@@ -9,7 +9,7 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:date_time_picker/date_time_picker.dart';
-import '../MinClub.dart';
+import '../Widgets/MinClub.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'ClubDetail.dart';
 import 'package:image_cropper/image_cropper.dart';

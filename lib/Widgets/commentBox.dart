@@ -1,5 +1,5 @@
 import 'package:flocktale/Models/comment.dart';
-import 'package:flocktale/customImage.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flutter/material.dart';
 

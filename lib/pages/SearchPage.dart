@@ -1,4 +1,4 @@
-import 'package:flocktale/customImage.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
@@ -7,7 +7,7 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
-import '../MinClub.dart';
+import '../Widgets/MinClub.dart';
 import 'ClubDetail.dart';
 import 'SearchAllClubsPage.dart';
 

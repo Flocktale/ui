@@ -2,7 +2,7 @@ import 'package:flocktale/Authentication/logOut.dart';
 import 'package:flocktale/Models/basic_enums.dart';
 import 'package:flocktale/Widgets/ProfileTopBackground.dart';
 import 'package:flocktale/Widgets/socialRelationActions.dart';
-import 'package:flocktale/customImage.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/pages/ClubSection.dart';
 import 'package:flocktale/services/socialInteraction.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +14,10 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 import 'EditProfile.dart';
-import '../Carousel.dart';
+import '../Widgets/Carousel.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../MinClub.dart';
+import '../Widgets/MinClub.dart';
 
 class ProfilePage extends StatefulWidget {
   final String userId;

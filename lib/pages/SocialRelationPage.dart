@@ -1,4 +1,4 @@
-import 'package:flocktale/customImage.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flutter/cupertino.dart';
@@ -89,11 +89,13 @@ class _SocialRelationPageState extends State<SocialRelationPage>
     setState(() {});
   }
 
-  _filterFriends(){
+  _filterFriends() {
     List<SummaryUser> _friends = [];
-    _friends.addAll((relationMap[relations[0]]['data']as BuiltSearchUsers)?.users?.toList());
+    _friends.addAll((relationMap[relations[0]]['data'] as BuiltSearchUsers)
+        ?.users
+        ?.toList());
     friends = _friends;
-    if(friendSearchController.text.isNotEmpty){
+    if (friendSearchController.text.isNotEmpty) {
       _friends.retainWhere((contact) {
         String searchTerm = friendSearchController.text.toLowerCase();
         String contactName = contact?.username?.toLowerCase();
@@ -102,19 +104,20 @@ class _SocialRelationPageState extends State<SocialRelationPage>
       setState(() {
         friendsFiltered = _friends;
       });
-    }
-    else{
+    } else {
       setState(() {
         friends = friendsFiltered;
       });
     }
   }
 
-  _filterFollowers(){
+  _filterFollowers() {
     List<SummaryUser> _followers = [];
-    _followers.addAll((relationMap[relations[1]]['data']as BuiltSearchUsers)?.users?.toList());
+    _followers.addAll((relationMap[relations[1]]['data'] as BuiltSearchUsers)
+        ?.users
+        ?.toList());
     followers = _followers;
-    if(followerSearchController.text.isNotEmpty){
+    if (followerSearchController.text.isNotEmpty) {
       _followers.retainWhere((contact) {
         String searchTerm = followerSearchController.text.toLowerCase();
         String contactName = contact?.username?.toLowerCase();
@@ -123,19 +126,20 @@ class _SocialRelationPageState extends State<SocialRelationPage>
       setState(() {
         followersFiltered = _followers;
       });
-    }
-    else{
+    } else {
       setState(() {
         followersFiltered = followers;
       });
     }
   }
 
-  _filterFollowing(){
+  _filterFollowing() {
     List<SummaryUser> _following = [];
-    _following.addAll((relationMap[relations[2]]['data']as BuiltSearchUsers)?.users?.toList());
+    _following.addAll((relationMap[relations[2]]['data'] as BuiltSearchUsers)
+        ?.users
+        ?.toList());
     following = _following;
-    if(followingSearchController.text.isNotEmpty){
+    if (followingSearchController.text.isNotEmpty) {
       _following.retainWhere((contact) {
         String searchTerm = followingSearchController.text.toLowerCase();
         String contactName = contact?.username?.toLowerCase();
@@ -144,8 +148,7 @@ class _SocialRelationPageState extends State<SocialRelationPage>
       setState(() {
         followingFiltered = _following;
       });
-    }
-    else{
+    } else {
       setState(() {
         followingFiltered = following;
       });
@@ -155,7 +158,7 @@ class _SocialRelationPageState extends State<SocialRelationPage>
   Widget friendSearchBar() {
     final size = MediaQuery.of(context).size;
     return Container(
-      height: size.height/20,
+      height: size.height / 20,
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextField(
         controller: friendSearchController,
@@ -179,7 +182,7 @@ class _SocialRelationPageState extends State<SocialRelationPage>
   Widget followerSearchBar() {
     final size = MediaQuery.of(context).size;
     return Container(
-      height: size.height/20,
+      height: size.height / 20,
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextField(
         controller: followerSearchController,
@@ -203,7 +206,7 @@ class _SocialRelationPageState extends State<SocialRelationPage>
   Widget followingSearchBar() {
     final size = MediaQuery.of(context).size;
     return Container(
-      height: size.height/20,
+      height: size.height / 20,
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextField(
         controller: followingSearchController,
@@ -227,33 +230,37 @@ class _SocialRelationPageState extends State<SocialRelationPage>
   Widget tabPage(int index) {
     //var friends = (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
     var relationUsers;
-    if(index==0){
-      if(friendSearchController.text.length>0){
+    if (index == 0) {
+      if (friendSearchController.text.length > 0) {
         relationUsers = friendsFiltered;
+      } else {
+        relationUsers =
+            (relationMap[relations[index]]['data'] as BuiltSearchUsers)
+                ?.users
+                ?.toList();
       }
-      else{
-        relationUsers = (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
-      }
-    }
-    else if(index==1){
-      if(followerSearchController.text.length>0){
+    } else if (index == 1) {
+      if (followerSearchController.text.length > 0) {
         relationUsers = followersFiltered;
+      } else {
+        relationUsers =
+            (relationMap[relations[index]]['data'] as BuiltSearchUsers)
+                ?.users
+                ?.toList();
       }
-      else{
-        relationUsers = (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
-      }
-    }
-    else{
-      if(followingSearchController.text.length>0){
+    } else {
+      if (followingSearchController.text.length > 0) {
         relationUsers = followingFiltered;
-      }
-      else{
-        relationUsers = (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
+      } else {
+        relationUsers =
+            (relationMap[relations[index]]['data'] as BuiltSearchUsers)
+                ?.users
+                ?.toList();
       }
     }
     final bool isLoading = relationMap[relations[index]]['isLoading'];
-    final cuser = Provider.of<UserData>(context,listen:false).user;
-    final isMe = cuser.userId==widget.user.userId;
+    final cuser = Provider.of<UserData>(context, listen: false).user;
+    final isMe = cuser.userId == widget.user.userId;
     final listLength = (relationUsers?.length ?? 0) + 1;
 
     return Column(
@@ -261,11 +268,11 @@ class _SocialRelationPageState extends State<SocialRelationPage>
         SizedBox(
           height: 30,
         ),
-        index==0?
-            friendSearchBar():
-            index==1?
-                followerSearchBar():
-                followingSearchBar(),
+        index == 0
+            ? friendSearchBar()
+            : index == 1
+                ? followerSearchBar()
+                : followingSearchBar(),
         SizedBox(
           height: 40,
         ),
@@ -345,133 +352,160 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                               )
                             ],
                           ),
-                          !isMe?
-                              _user.userId==cuser.userId?
-                                  Container():
-                          InkWell(
-                            onTap: () async{
-                              // TODO: complete this functionality
-                              final service = Provider.of<DatabaseApiService>(context,listen:false);
-                              final authToken = Provider.of<UserData>(context,listen:false).authToken;
-                              if(FollowingDatabase.isFollowing(_user.userId)){
-                                final resp = (await service.unfollow(userId: cuser.userId, foreignUserId: _user.userId, authorization: authToken));
-                                if(resp.isSuccessful){
-                                  FollowingDatabase.deleteFollowing(_user.userId);
-                                  setState(() {
-                                  });
-                                }
-                                else{
-
-                                  Fluttertoast.showToast(msg: 'Some error occurred. Please try again.');
-                                }
-                                }
-                                else{
-                                  final resp = (await service.follow(userId: cuser.userId, foreignUserId: _user.userId, authorization: authToken));
-                                  if(resp.isSuccessful){
-                                    FollowingDatabase.addFollowing(_user.userId);
-                                    setState(() {
-                                    });
-                                  }
-                                  else{
-                                    Fluttertoast.showToast(msg: 'Some error occurred. Please try again.');
-                                  }
-                                }
-                              },
-                            child:
-                            FollowingDatabase.isFollowing(_user.userId)?
-                            Container(
-                              width: 100,
-                              height: 35,
-                              child: Center(
-                                child:
-                                Text(
-                                     'Following',
-                                  style: TextStyle(
-                                    fontFamily: "Lato",
-                                    color: Colors.redAccent
-                                  ),
-                                )
-                              ),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.red[700]),
-                                  borderRadius: BorderRadius.circular(12)),
-                            ):
-                          Container(
-                            width: 100,
-                            height: 35,
-                            child: Center(
-                              child:
-                             Text(
-                              "Follow",
-                              style: TextStyle(
-                                  fontFamily: "Lato",
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold
-                              ),
-                            ),
-                          ),
-                      decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                          ):
-                              index==1?
-                                  Container():
-                          InkWell(
-                            onTap: () async{
-                              // TODO: complete this functionality
-                              final service = Provider.of<DatabaseApiService>(context,listen:false);
-                              final authToken = Provider.of<UserData>(context,listen:false).authToken;
-                              if(index==0){
-                                final resp = (await service.unfriend(userId: widget.user.userId, foreignUserId: _user.userId, authorization: authToken));
-                                if(resp.isSuccessful){
-                                  FollowingDatabase.deleteFollowing(_user.userId);
-                                  relationUsers.removeAt(ind);
-                                  _initRelationData(relations[index]);
-                                  setState(() {
-                                  });
-                                }
-                                else{
-                                  Fluttertoast.showToast(msg: 'Some error occurred. Please try again.');
-                                }
-                              }
-                              else if(index==1){
-
-                              }
-                              else{
-                                final resp = (await service.unfollow(userId: widget.user.userId, foreignUserId: _user.userId, authorization: authToken));
-                                if(resp.isSuccessful){
-                                  FollowingDatabase.deleteFollowing(_user.userId);
-                                  relationUsers.removeAt(ind);
-                                  _initRelationData(relations[index]);
-                                  setState(() {
-                                  });
-                                }
-                                else{
-                                  Fluttertoast.showToast(msg: 'Some error occurred. Please try again.');
-                                }
-                              }
-                            },
-                            child: Container(
-                              width: 100,
-                              height: 35,
-                              child: Center(
-                                child: Text(index == 0
-                                    ? 'Remove Friend'
-                                    : index == 2
-                                        ? 'Unfollow'
-                                        : '',
-                                  style: TextStyle(
-                                    fontFamily: "Lato",
-                                    color: Colors.redAccent
-                                  ),
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.red),
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                          )
+                          !isMe
+                              ? _user.userId == cuser.userId
+                                  ? Container()
+                                  : InkWell(
+                                      onTap: () async {
+                                        // TODO: complete this functionality
+                                        final service =
+                                            Provider.of<DatabaseApiService>(
+                                                context,
+                                                listen: false);
+                                        final authToken = Provider.of<UserData>(
+                                                context,
+                                                listen: false)
+                                            .authToken;
+                                        if (FollowingDatabase.isFollowing(
+                                            _user.userId)) {
+                                          final resp = (await service.unfollow(
+                                              userId: cuser.userId,
+                                              foreignUserId: _user.userId,
+                                              authorization: authToken));
+                                          if (resp.isSuccessful) {
+                                            FollowingDatabase.deleteFollowing(
+                                                _user.userId);
+                                            setState(() {});
+                                          } else {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    'Some error occurred. Please try again.');
+                                          }
+                                        } else {
+                                          final resp = (await service.follow(
+                                              userId: cuser.userId,
+                                              foreignUserId: _user.userId,
+                                              authorization: authToken));
+                                          if (resp.isSuccessful) {
+                                            FollowingDatabase.addFollowing(
+                                                _user.userId);
+                                            setState(() {});
+                                          } else {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    'Some error occurred. Please try again.');
+                                          }
+                                        }
+                                      },
+                                      child: FollowingDatabase.isFollowing(
+                                              _user.userId)
+                                          ? Container(
+                                              width: 100,
+                                              height: 35,
+                                              child: Center(
+                                                  child: Text(
+                                                'Following',
+                                                style: TextStyle(
+                                                    fontFamily: "Lato",
+                                                    color: Colors.redAccent),
+                                              )),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.red[700]),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12)),
+                                            )
+                                          : Container(
+                                              width: 100,
+                                              height: 35,
+                                              child: Center(
+                                                child: Text(
+                                                  "Follow",
+                                                  style: TextStyle(
+                                                      fontFamily: "Lato",
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.red,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12)),
+                                            ),
+                                    )
+                              : index == 1
+                                  ? Container()
+                                  : InkWell(
+                                      onTap: () async {
+                                        // TODO: complete this functionality
+                                        final service =
+                                            Provider.of<DatabaseApiService>(
+                                                context,
+                                                listen: false);
+                                        final authToken = Provider.of<UserData>(
+                                                context,
+                                                listen: false)
+                                            .authToken;
+                                        if (index == 0) {
+                                          final resp = (await service.unfriend(
+                                              userId: widget.user.userId,
+                                              foreignUserId: _user.userId,
+                                              authorization: authToken));
+                                          if (resp.isSuccessful) {
+                                            FollowingDatabase.deleteFollowing(
+                                                _user.userId);
+                                            relationUsers.removeAt(ind);
+                                            _initRelationData(relations[index]);
+                                            setState(() {});
+                                          } else {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    'Some error occurred. Please try again.');
+                                          }
+                                        } else if (index == 1) {
+                                        } else {
+                                          final resp = (await service.unfollow(
+                                              userId: widget.user.userId,
+                                              foreignUserId: _user.userId,
+                                              authorization: authToken));
+                                          if (resp.isSuccessful) {
+                                            FollowingDatabase.deleteFollowing(
+                                                _user.userId);
+                                            relationUsers.removeAt(ind);
+                                            _initRelationData(relations[index]);
+                                            setState(() {});
+                                          } else {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    'Some error occurred. Please try again.');
+                                          }
+                                        }
+                                      },
+                                      child: Container(
+                                        width: 100,
+                                        height: 35,
+                                        child: Center(
+                                          child: Text(
+                                            index == 0
+                                                ? 'Remove Friend'
+                                                : index == 2
+                                                    ? 'Unfollow'
+                                                    : '',
+                                            style: TextStyle(
+                                                fontFamily: "Lato",
+                                                color: Colors.redAccent),
+                                          ),
+                                        ),
+                                        decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.red),
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                      ),
+                                    )
                         ],
                       ),
                     ),

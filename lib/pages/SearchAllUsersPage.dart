@@ -1,4 +1,4 @@
-import 'package:flocktale/customImage.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
@@ -23,109 +23,113 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
   };
   String lastEvaluatedKey;
   Future<void> getUsers() async {
-   String username = widget.query;
-   final service = Provider.of<DatabaseApiService>(context,listen: false);
-   final authToken = Provider.of<UserData>(context, listen: false).authToken;
-   searchUsersMap['data'] = (await service.unifiedQueryRoutes(
-     searchString: username,
-     type: "users",
-     lastevaluatedkey: lastEvaluatedKey,
-     authorization: authToken,
-   )).body;
-   lastEvaluatedKey = searchUsersMap['data'].userlastevaluatedkey;
-   searchUsersMap['isLoading'] = false;
-   print("*****************************************************************");
-   setState(() {
-   });
-   print(searchUsersMap);
- }
+    String username = widget.query;
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final authToken = Provider.of<UserData>(context, listen: false).authToken;
+    searchUsersMap['data'] = (await service.unifiedQueryRoutes(
+      searchString: username,
+      type: "users",
+      lastevaluatedkey: lastEvaluatedKey,
+      authorization: authToken,
+    ))
+        .body;
+    lastEvaluatedKey = searchUsersMap['data'].userlastevaluatedkey;
+    searchUsersMap['isLoading'] = false;
+    print("*****************************************************************");
+    setState(() {});
+    print(searchUsersMap);
+  }
+
 //
-  Future<void> getMoreUsers()async{
-   if (searchUsersMap['isLoading'] == true) return;
-   setState(() {});
+  Future<void> getMoreUsers() async {
+    if (searchUsersMap['isLoading'] == true) return;
+    setState(() {});
 
-   if (lastEvaluatedKey != null) {
-     await getUsers();
-   } else {
-     await Future.delayed(Duration(milliseconds: 200));
-     searchUsersMap['isLoading'] = false;
-   }
+    if (lastEvaluatedKey != null) {
+      await getUsers();
+    } else {
+      await Future.delayed(Duration(milliseconds: 200));
+      searchUsersMap['isLoading'] = false;
+    }
 
-   setState(() {});
- }
+    setState(() {});
+  }
 
- Widget showUsers(){
+  Widget showUsers() {
+    final relationUsers =
+        (searchUsersMap['data'] as BuiltUnifiedSearchResults)?.users;
 
-   final relationUsers = (searchUsersMap['data'] as BuiltUnifiedSearchResults)?.users;
+    final bool isLoading = searchUsersMap['isLoading'];
 
-   final bool isLoading = searchUsersMap['isLoading'];
+    final listLength = (relationUsers?.length ?? 0) + 1;
 
-   final listLength = (relationUsers?.length ?? 0) + 1;
+    print(listLength);
+    return Container(
+      margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+            getMoreUsers();
+            searchUsersMap['isLoading'] = true;
+          }
+          return true;
+        },
+        child: ListView.builder(
+            itemCount: listLength,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              if (index == listLength - 1) {
+                if (isLoading)
+                  return Container(
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                else
+                  return Container();
+              }
+              final _user = relationUsers[index];
 
-   print(listLength);
-   return Container(
-     margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-     child: NotificationListener<ScrollNotification>(
-       onNotification: (ScrollNotification scrollInfo) {
-         if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-           getMoreUsers();
-           searchUsersMap['isLoading'] = true;
-         }
-         return true;
-       },
-       child: ListView.builder(
-         itemCount: listLength,
-         shrinkWrap: true,
-           itemBuilder: (context,index){
-             if (index == listLength - 1) {
-               if (isLoading)
-                 return Container(
-                   margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                   child: Center(child: CircularProgressIndicator()),
-                 );
-               else
-                 return Container();
-             }
-             final _user =
-             relationUsers[index];
-
-             return _user!=null?
-             Container(
-                 key: ValueKey(_user.username),
-                 child: ListTile(
-                   leading: CircleAvatar(
-                   backgroundImage: NetworkImage(_user.avatar),
-                   ),
-                   title: InkWell(
-                     onTap: (){
-                     Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
-                     },
-                     child: Text(
-                     _user.username,
-                     style:
-                     TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
-                     ),
-                   ),
-                   subtitle: InkWell(
-                     onTap: (){
-                       Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ProfilePage(userId: _user.userId,)));
-                     },
-                     child: Text(
-                       _user.tagline!=null?_user.tagline:"User",
-                       style:
-                       TextStyle(fontFamily: 'Lato',),
-                     ),
-                   ),
-                 )
-               ):
-             Center(
-               child:CircularProgressIndicator()
-             );
-
-           }),
-     ),
-   );
- }
+              return _user != null
+                  ? Container(
+                      key: ValueKey(_user.username),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(_user.avatar),
+                        ),
+                        title: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => ProfilePage(
+                                      userId: _user.userId,
+                                    )));
+                          },
+                          child: Text(
+                            _user.username,
+                            style: TextStyle(
+                                fontFamily: 'Lato',
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        subtitle: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => ProfilePage(
+                                      userId: _user.userId,
+                                    )));
+                          },
+                          child: Text(
+                            _user.tagline != null ? _user.tagline : "User",
+                            style: TextStyle(
+                              fontFamily: 'Lato',
+                            ),
+                          ),
+                        ),
+                      ))
+                  : Center(child: CircularProgressIndicator());
+            }),
+      ),
+    );
+  }
 
 //  @override
 //  void initState() {
@@ -181,6 +185,7 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
       getUsers();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,11 +200,11 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
               color: Colors.black),
         ),
       ),
-      body: searchUsersMap['data']!=null?
-      showUsers():
-      Center(
-        child: CircularProgressIndicator(),
-      ),
+      body: searchUsersMap['data'] != null
+          ? showUsers()
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }

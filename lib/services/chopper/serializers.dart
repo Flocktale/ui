@@ -9,6 +9,7 @@ import '../../Models/built_post.dart';
 part 'serializers.g.dart';
 
 @SerializersFor(const [
+  AppConfigs,
   BuiltContacts,
   UsernameAvailability,
   BuiltAudienceList,

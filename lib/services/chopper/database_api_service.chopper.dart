@@ -37,9 +37,16 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<AppConfigs>> getAppConfigs() {
+    final $url = '/users/global/app-configs';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<AppConfigs, AppConfigs>($request);
+  }
+
+  @override
   Future<Response<UsernameAvailability>> isThisUsernameAvailable(
       {String username, String authorization}) {
-    final $url = '/users/username-availability';
+    final $url = '/users/global/username-availability';
     final $params = <String, dynamic>{'username': username};
     final $headers = {'authorization': authorization};
     final $request = Request('GET', $url, client.baseUrl,
@@ -50,7 +57,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   @override
   Future<Response<dynamic>> createNewUser(
       {BuiltUser body, String authorization}) {
-    final $url = '/users/create';
+    final $url = '/users/global/create';
     final $headers = {'authorization': authorization};
     final $body = body;
     final $request =
@@ -240,17 +247,9 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<SummaryUser>> syncContacts({BuiltList<String> contacts}) {
-    final $url = '/users/contacts-sync';
-    final $params = <String, dynamic>{'contacts': contacts};
-    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
-    return client.send<SummaryUser, SummaryUser>($request);
-  }
-
-  @override
   Future<Response<BuiltList<SummaryUser>>> syncContactsByPost(
       {BuiltContacts body}) {
-    final $url = '/users/contacts-sync';
+    final $url = '/users/global/contacts-sync';
     final $body = body;
     final $request = Request('POST', $url, client.baseUrl, body: $body);
     return client.send<BuiltList<SummaryUser>, SummaryUser>($request);

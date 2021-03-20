@@ -7,6 +7,7 @@ part of 'serializers.dart';
 // **************************************************************************
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(AppConfigs.serializer)
       ..add(AudienceData.serializer)
       ..add(AudienceStatus.serializer)
       ..add(BuiltActiveJoinRequests.serializer)

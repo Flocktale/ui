@@ -1,6 +1,6 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
-import 'package:flocktale/customImage.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 

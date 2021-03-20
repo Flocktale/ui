@@ -11,6 +11,10 @@ part 'database_api_service.chopper.dart';
 
 @ChopperApi(baseUrl: '')
 abstract class DatabaseApiService extends ChopperService {
+  // ---------------------------------------------------------------------------------------------------------------------
+  //                                      Get App Configs
+  // ---------------------------------------------------------------------------------------------------------------------
+
   //! ---------------------------------------------------------------------------------------
   //! ---------------------------------------------------------------------------------------
   //!                                       User APIs
@@ -37,16 +41,20 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   // --------------------------------------------------------------------------------------------------------------------------
-  //        Check Username, Create User, Upload Avatar , Update User
+  //              Get AppConfigs, Check Username, Create User, Upload Avatar , Update User
   // ---------------------------------------------------------------------------------------------------------
 
-  @Get(path: '/users/username-availability')
+  /// there will be no authorization for this api
+  @Get(path: '/users/global/app-configs')
+  Future<Response<AppConfigs>> getAppConfigs();
+
+  @Get(path: '/users/global/username-availability')
   Future<Response<UsernameAvailability>> isThisUsernameAvailable({
     @required @Query() String username,
     @required @Header() String authorization,
   });
 
-  @Post(path: '/users/create')
+  @Post(path: '/users/global/create')
   Future<Response> createNewUser({
     @required @Body() BuiltUser body,
     @required @Header() String authorization,
@@ -175,11 +183,7 @@ abstract class DatabaseApiService extends ChopperService {
 
   // Contact Sync API
 
-  @Get(path: '/users/contacts-sync')
-  Future<Response<SummaryUser>> syncContacts(
-      {@required @Query('contacts') BuiltList<String> contacts});
-
-  @Post(path: '/users/contacts-sync')
+  @Post(path: '/users/global/contacts-sync')
   Future<Response<BuiltList<SummaryUser>>> syncContactsByPost(
       {@required @Body() BuiltContacts body});
 

@@ -12,7 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
-import '../customImage.dart';
+import '../Widgets/customImage.dart';
 
 class ContactsPage extends StatefulWidget {
   final bool newRegistration;

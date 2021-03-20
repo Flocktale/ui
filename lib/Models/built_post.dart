@@ -6,9 +6,21 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flocktale/Models/enums/audienceStatus.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/services/chopper/serializers.dart';
-import 'package:hive/hive.dart';
 
 part 'built_post.g.dart';
+
+abstract class AppConfigs implements Built<AppConfigs, AppConfigsBuilder> {
+  // fields go here
+
+  @nullable
+  String get minAppVersion;
+
+  AppConfigs._();
+
+  factory AppConfigs([updates(AppConfigsBuilder b)]) = _$AppConfigs;
+
+  static Serializer<AppConfigs> get serializer => _$appConfigsSerializer;
+}
 
 abstract class UsernameAvailability
     implements Built<UsernameAvailability, UsernameAvailabilityBuilder> {
