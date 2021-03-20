@@ -1,4 +1,6 @@
 import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
+import 'package:flocktale/services/LocalStorage/InviteBox.dart';
 import 'package:flocktale/services/socialInteraction.dart';
 import 'package:flutter/material.dart';
 
@@ -79,8 +81,10 @@ class SocialRelationActions extends StatelessWidget {
           text: _userRelations.B5 == false ? 'Follow' : 'Following',
           onPressed: () async {
             if (_userRelations.B5 == false) {
+              FollowingDatabase.addFollowing(_socialInteraction.userId);
               await _socialInteraction.sendFollow();
             } else {
+              FollowingDatabase.deleteFollowing(_socialInteraction.userId);
               await _socialInteraction.sendUnFollow();
             }
           },
