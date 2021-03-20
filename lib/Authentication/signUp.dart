@@ -133,7 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
 
       Provider.of<UserData>(context, listen: false)
-          .updateUser(newUser, isNew: true);
+          .initiate(isNew: true);
 
       // We don't need to push from here as Consumer at root path will automatically change the screen to home screen on listening changes of auth status;
 

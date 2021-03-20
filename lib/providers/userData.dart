@@ -25,14 +25,17 @@ class UserData with ChangeNotifier {
 
   bool _newRegistration = false;
 
+  bool _isOnlineisOnlineSomewhereElse = false;
+
   UserData(this._postApiService) {
     print('-------------------initiating------------------------------------');
     initiate();
   }
 
   /// set newRegistration to true when new user has registered
-  /// (in above case, user has login credentials, email and password, but no entry in database)
-  initiate() async {
+  initiate({bool isNew = false}) async {
+    _newRegistration = isNew;
+
     final idToken = await _storage.getIdToken();
     final accessToken = await _storage.getAccessToken();
     final refreshToken = await _storage.getRefreshToken();
@@ -51,6 +54,11 @@ class UserData with ChangeNotifier {
 
       if (response != null && response.body != null) {
         _builtUser = response.body.user;
+
+        // this function only runs during app initiation/login/signup,
+        // so the user fetched here is prior to connecting websocket,
+        // therefore if user is still online then he is using this app with same account concurrently on aonther device too.
+        _isOnlineisOnlineSomewhereElse = _builtUser.online == 0;
       } else {
         // this case can arrive if user don't have internt connection.
         // then we can load some trivial info like name,username etc from sharedPreferences
@@ -140,14 +148,10 @@ class UserData with ChangeNotifier {
     return _authUser?.cognitoSession?.idToken?.payload['phone_number'];
   }
 
-  void updateUser(BuiltUser user, {bool isNew = false}) async {
-    _newRegistration = isNew;
-
-    _isAuth = true;
-
+  void updateUser(BuiltUser user) async {
     _builtUser = user;
 
-    await initiate();
+    notifyListeners();
   }
 
   String get authToken => _authUser?.cognitoSession?.idToken?.jwtToken;
@@ -158,6 +162,8 @@ class UserData with ChangeNotifier {
     _newRegistration = isNew;
     notifyListeners();
   }
+
+  bool get isOnlineSomewhereElse => _isOnlineisOnlineSomewhereElse;
 
   // set cognitoSession(CognitoUserSession session) {
   //   _currentSession = session;
