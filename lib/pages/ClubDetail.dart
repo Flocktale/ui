@@ -53,7 +53,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   bool _isMuted;
 
-  bool once = false;
+  bool _hasActiveJRs = false;
+
   BuiltList<BuiltClub> Clubs;
   List<AudienceData> participantList = [];
 
@@ -581,6 +582,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     final username = event['username'];
     if (username != null)
       Fluttertoast.showToast(msg: '$username wish to become Panelist');
+
+    setState(() {
+      _hasActiveJRs = true;
+    });
   }
 
   void _yourJRAccepted(event) {
@@ -691,28 +696,28 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     setState(() {});
   }
 
-  void _handleMenuButtons(String value) {
+  Future<void> _handleMenuButtons(String value) async {
     switch (value) {
-      case 'Show Join Requests':
-        _navigateTo(ClubJoinRequests(club: widget.club));
+      case 'Join Requests':
+        await _navigateTo(ClubJoinRequests(club: widget.club));
         break;
 
       case 'Invite Panelist':
-        _navigateTo(InviteScreen(
+        await _navigateTo(InviteScreen(
           club: widget.club,
           forPanelist: true,
         ));
         break;
 
       case 'Invite Audience':
-        _navigateTo(InviteScreen(
+        await _navigateTo(InviteScreen(
           club: widget.club,
           forPanelist: false,
         ));
         break;
 
       case 'Show Blocked Users':
-        _navigateTo(BlockedUsersPage(club: widget.club));
+        await _navigateTo(BlockedUsersPage(club: widget.club));
         break;
     }
   }
@@ -896,6 +901,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       authorization: _authToken,
       action: response,
     );
+
     setState(() {
       _clubAudience =
           _clubAudience.rebuild((b) => b..audienceData.invitationId = null);
@@ -907,12 +913,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       onSelected: _handleMenuButtons,
       itemBuilder: (BuildContext context) {
         return _isOwner
-            ? {
-                'Show Join Requests',
-                'Invite Panelist',
-                'Invite Audience',
-                'Show Blocked Users'
-              }.map((String choice) {
+            ? {'Invite Panelist', 'Invite Audience', 'Show Blocked Users'}
+                .map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -933,10 +935,14 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       context,
       onReject: () async => await respondToInvitation('cancel'),
       onAccept: () async {
-        await _playButtonHandler();
         if (_isPlaying) {
           if (participantList.length < 10) {
             await respondToInvitation('accept');
+            setState(() {
+              _clubAudience = _clubAudience.rebuild(
+                  (b) => b..audienceData.status = AudienceStatus.Participant);
+              _joinClubAsPanelist();
+            });
           } else {
             Fluttertoast.showToast(
                 msg: 'Panelist slots are full. Max 9 allowed.');
@@ -1066,17 +1072,13 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     this._authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     _enterClub();
-
+    _infiniteRefresh();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    if (!once) {
-      once = true;
-      _infiniteRefresh();
-    }
 
     final _detailClubCard = DetailClubCard(
       clubAudience: _clubAudience,
@@ -1103,14 +1105,41 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
           iconTheme: IconThemeData(
             color: Colors.black,
           ),
-//          title: Text(
-//            "Now Playing",
-//            style: TextStyle(
-//                fontFamily: 'Lato',
-//                fontWeight: FontWeight.bold,
-//                color: Colors.black),
-//          ),
           actions: <Widget>[
+            if (_isOwner == true)
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.white,
+                  side: BorderSide(
+                      color: Colors.redAccent, width: _hasActiveJRs ? 1 : 0.5),
+                  elevation: _hasActiveJRs ? 4 : 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () async {
+                  await _handleMenuButtons('Join Requests');
+                  setState(() {
+                    _hasActiveJRs = false;
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      'Join Requests',
+                      style: TextStyle(
+                        color: _hasActiveJRs ? Colors.redAccent : Colors.grey,
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    if (_hasActiveJRs)
+                      Icon(
+                        Icons.circle,
+                        color: Colors.redAccent,
+                        size: 10,
+                      )
+                  ],
+                ),
+              ),
             _showMenuButtons(),
           ],
           backgroundColor: Colors.white,
@@ -1264,10 +1293,12 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                   final response = await _service.inviteUsers(
                                     clubId: widget.club.clubId,
                                     sponsorId: _myUserId,
-                                    invite: BuiltInviteFormat((b) => b
-                                      ..invitee = BuiltList<String>([userId])
-                                          .toBuilder()
-                                      ..type = 'participant'),
+                                    invite: BuiltInviteFormat(
+                                      (b) => b
+                                        ..invitee = BuiltList<String>([userId])
+                                            .toBuilder()
+                                        ..type = 'participant',
+                                    ),
                                     authorization: _authToken,
                                   );
                                   if (response.isSuccessful) {

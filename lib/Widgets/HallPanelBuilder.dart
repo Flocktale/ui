@@ -100,7 +100,8 @@ class HallPanelBuilder extends StatelessWidget {
             isOwner
                 ? Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => InviteScreen(club: club),
+                      builder: (_) =>
+                          InviteScreen(club: club, forPanelist: true),
                     ),
                   )
                 : !hasSentJoinRequest
