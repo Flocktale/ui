@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flocktale/pages/ContactsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Authentication/signUp.dart';
@@ -6,6 +5,7 @@ import 'package:flocktale/pages/HomePage.dart';
 import 'package:flocktale/pages/PhoneLogIn.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/providers/webSocket.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 class RootPage extends StatelessWidget {
@@ -37,14 +37,12 @@ class RootPage extends StatelessWidget {
       },
       child: Scaffold(
         body: Container(
-          decoration: BoxDecoration(
-            color: Color(0xfff74040),
-            // color: Color(0xff004040),
-            image: DecorationImage(
-              image: AssetImage('assets/images/splash.png'),
-              fit: BoxFit.fitWidth,
-            ),
-          ),
+          color: Color(0xfff74040),
+          child: Center(
+              child: SpinKitThreeBounce(
+            color: Colors.white,
+            size: 50,
+          )),
         ),
       ),
     );
