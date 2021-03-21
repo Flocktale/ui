@@ -25,12 +25,10 @@ class _SearchAllUsersState extends State<SearchAllUsers> {
   Future<void> getUsers() async {
     String username = widget.query;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     searchUsersMap['data'] = (await service.unifiedQueryRoutes(
       searchString: username,
       type: "users",
       lastevaluatedkey: lastEvaluatedKey,
-      authorization: authToken,
     ))
         .body;
     lastEvaluatedKey = searchUsersMap['data'].userlastevaluatedkey;

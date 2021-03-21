@@ -126,13 +126,10 @@ class DataSearch extends SearchDelegate<String> {
     final service = Provider.of<DatabaseApiService>(context);
     //allSearches = (await service.getUserbyUsername(username)).body;
 
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
-
     allSearches = (await service.unifiedQueryRoutes(
       searchString: username,
       type: "unified",
       lastevaluatedkey: null,
-      authorization: authToken,
     ))
         .body;
     print("===================");

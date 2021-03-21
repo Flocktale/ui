@@ -18,14 +18,12 @@ class SocialInteraction {
       {@required this.updateProfileFromResponse}) {
     userId = Provider.of<UserData>(context, listen: false).userId;
     service = Provider.of<DatabaseApiService>(context, listen: false);
-    authToken = Provider.of<UserData>(context, listen: false).authToken;
   }
 
   Future<void> sendFollow() async {
     final resp = await service.follow(
       userId: userId,
       foreignUserId: foreignUserId,
-      authorization: authToken,
     );
 
     updateProfileFromResponse(resp.body);
@@ -37,7 +35,6 @@ class SocialInteraction {
     final resp = await service.unfollow(
       userId: userId,
       foreignUserId: foreignUserId,
-      authorization: authToken,
     );
 
     updateProfileFromResponse(resp.body);
@@ -49,7 +46,6 @@ class SocialInteraction {
     final resp = await service.sendFriendRequest(
       userId: userId,
       foreignUserId: foreignUserId,
-      authorization: authToken,
     );
     updateProfileFromResponse(resp.body);
 
@@ -58,9 +54,9 @@ class SocialInteraction {
 
   Future<void> acceptFriendRequest() async {
     final resp = (await service.acceptFriendRequest(
-        userId: userId,
-        foreignUserId: foreignUserId,
-        authorization: authToken));
+      userId: userId,
+      foreignUserId: foreignUserId,
+    ));
 
     if (resp.isSuccessful) {
       updateProfileFromResponse(resp.body);
@@ -73,7 +69,6 @@ class SocialInteraction {
     final resp = await service.deleteFriendRequest(
       userId: userId,
       foreignUserId: foreignUserId,
-      authorization: authToken,
     );
     updateProfileFromResponse(resp.body);
 
@@ -84,7 +79,6 @@ class SocialInteraction {
     final resp = await service.unfriend(
       userId: userId,
       foreignUserId: foreignUserId,
-      authorization: authToken,
     );
     updateProfileFromResponse(resp.body);
 

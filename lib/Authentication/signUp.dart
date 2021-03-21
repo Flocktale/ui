@@ -11,7 +11,6 @@ import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
   SignUpScreen();
@@ -102,10 +101,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ..bio = _bioController?.text?.trim(),
     );
 
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final response = await service.createNewUser(
       body: newUser,
-      authorization: authToken,
     );
 
     if (response.isSuccessful) {
@@ -121,7 +118,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         final resp = await service.uploadAvatar(
           userId: userId,
           image: newImage,
-          authorization: authToken,
         );
         if (resp.isSuccessful) {
           Fluttertoast.showToast(msg: "Profile Image Uploaded");
@@ -132,8 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       }
 
-      Provider.of<UserData>(context, listen: false)
-          .initiate(isNew: true);
+      Provider.of<UserData>(context, listen: false).initiate(isNew: true);
 
       // We don't need to push from here as Consumer at root path will automatically change the screen to home screen on listening changes of auth status;
 
@@ -302,13 +297,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               final service = Provider.of<DatabaseApiService>(
                                   context,
                                   listen: false);
-                              final authToken =
-                                  Provider.of<UserData>(context, listen: false)
-                                      .authToken;
+
                               UsernameAvailability resp =
                                   (await service.isThisUsernameAvailable(
-                                          username: val,
-                                          authorization: authToken))
+                                username: val,
+                              ))
                                       .body;
                               if (resp?.isAvailable == true &&
                                   _usernameController.text.length > 3) {

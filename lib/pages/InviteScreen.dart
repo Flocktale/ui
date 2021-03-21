@@ -23,7 +23,8 @@ class InviteScreen extends StatefulWidget {
   _InviteScreenState createState() => _InviteScreenState();
 }
 
-class _InviteScreenState extends State<InviteScreen> with TickerProviderStateMixin{
+class _InviteScreenState extends State<InviteScreen>
+    with TickerProviderStateMixin {
   List<Contact> contacts = [];
   String type;
   String _sponsorId;
@@ -50,7 +51,9 @@ class _InviteScreenState extends State<InviteScreen> with TickerProviderStateMix
 
   share(BuildContext context) {
     //  final RenderBox box = context.findRenderObject();
-    String text = type=="followers"?'Hi! Be a panelist for my club ${widget.club.clubName} on FlockTale.':"Hi! Join my club on FlockTale.";
+    String text = type == "followers"
+        ? 'Hi! Be a panelist for my club ${widget.club.clubName} on FlockTale.'
+        : "Hi! Join my club on FlockTale.";
     String subject = 'Link to the app:';
     Share.share(
       text,
@@ -59,12 +62,11 @@ class _InviteScreenState extends State<InviteScreen> with TickerProviderStateMix
     );
   }
 
-  _fetchContacts()async{
+  _fetchContacts() async {
     contacts = (await InviteBox.fetchContactsFromPhone());
     print("1212121212121212121212121212");
     print(contacts);
-    setState(() {
-    });
+    setState(() {});
   }
 
   Future<void> _fetchRelationData() async {
@@ -108,13 +110,11 @@ class _InviteScreenState extends State<InviteScreen> with TickerProviderStateMix
     });
 
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     Response response;
     if (all) {
       response = await service.inviteAllFollowers(
         clubId: widget.club.clubId,
         sponsorId: _sponsorId,
-        authorization: authToken,
       );
     } else {
       BuiltList<String> list = BuiltList<String>([]);
@@ -126,7 +126,6 @@ class _InviteScreenState extends State<InviteScreen> with TickerProviderStateMix
         invite: BuiltInviteFormat((b) => b
           ..invitee = builder
           ..type = widget.forPanelist ? 'participant' : 'audience'),
-        authorization: authToken,
       );
     }
     if (response.isSuccessful) {
@@ -291,97 +290,86 @@ class _InviteScreenState extends State<InviteScreen> with TickerProviderStateMix
     );
   }
 
-  Widget tabPage(int index){
-    if(index==0){
+  Widget tabPage(int index) {
+    if (index == 0) {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 20),
         child: _isInviting
             ? Center(
-          child: CircularProgressIndicator(),
-        )
+                child: CircularProgressIndicator(),
+              )
             : Column(
-          children: [
-            _isSearching
-                ? Container()
-                : Expanded(child: _relationListWidget()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                /// Invite all is only for audience type of invitation
-                if (widget.forPanelist == false)
-                  _inviteButton(
-                      'Invite All', () => _inviteUsers(all: true)),
+                children: [
+                  _isSearching
+                      ? Container()
+                      : Expanded(child: _relationListWidget()),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      /// Invite all is only for audience type of invitation
+                      if (widget.forPanelist == false)
+                        _inviteButton(
+                            'Invite All', () => _inviteUsers(all: true)),
 
-                _inviteButton('Invite (${_selectedUserIds.length})',
-                        () => _inviteUsers(all: false)),
-              ],
-            )
-          ],
-        ),
+                      _inviteButton('Invite (${_selectedUserIds.length})',
+                          () => _inviteUsers(all: false)),
+                    ],
+                  )
+                ],
+              ),
       );
-    }
-    else{
+    } else {
       return Container(
         child: ListView.builder(
-          itemCount: contacts?.length,
-          itemBuilder: (context,index){
-            Contact contact = contacts[index];
-            return ListTile(
-              leading: (contact.avatar != null &&
-                  contact.avatar.length > 0)
-                  ? CircleAvatar(
-                  backgroundImage:
-                  MemoryImage(contact.avatar))
-                  : CircleAvatar(
-                backgroundColor: Colors.redAccent,
-                  child: Text(
-                    contact.initials(),
-                    style:
-                    TextStyle(fontFamily: "Lato",color: Colors.white),
-                  )),
-              title: Text(
-                contact.displayName,
-                style: TextStyle(
-                  fontFamily: "Lato",
-                  fontWeight: FontWeight.bold
+            itemCount: contacts?.length,
+            itemBuilder: (context, index) {
+              Contact contact = contacts[index];
+              return ListTile(
+                leading: (contact.avatar != null && contact.avatar.length > 0)
+                    ? CircleAvatar(backgroundImage: MemoryImage(contact.avatar))
+                    : CircleAvatar(
+                        backgroundColor: Colors.redAccent,
+                        child: Text(
+                          contact.initials(),
+                          style: TextStyle(
+                              fontFamily: "Lato", color: Colors.white),
+                        )),
+                title: Text(
+                  contact.displayName,
+                  style: TextStyle(
+                      fontFamily: "Lato", fontWeight: FontWeight.bold),
                 ),
-              ),
-              subtitle: contact!=null && contact.phones!=null && contact.phones.length!=0?
-              Text(
-                contact.phones.elementAt(0).value.replaceAll(' ', ''),
-                style: TextStyle(
-                  fontFamily: "Lato"
-                ),
-              ):
-              Text(
-                "Contact",
-                style: TextStyle(
-                    fontFamily: "Lato"
-                ),
-              ),
-              trailing: ButtonTheme(
-                child: RaisedButton(
-                  onPressed: () {
-                    share(context);
-                  },
-                  color: Colors.white,
-                  child: Text('Invite',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red[600],
-                      )),
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(18.0),
-                    side: BorderSide(
-                        color: Colors.red[600]),
+                subtitle: contact != null &&
+                        contact.phones != null &&
+                        contact.phones.length != 0
+                    ? Text(
+                        contact.phones.elementAt(0).value.replaceAll(' ', ''),
+                        style: TextStyle(fontFamily: "Lato"),
+                      )
+                    : Text(
+                        "Contact",
+                        style: TextStyle(fontFamily: "Lato"),
+                      ),
+                trailing: ButtonTheme(
+                  child: RaisedButton(
+                    onPressed: () {
+                      share(context);
+                    },
+                    color: Colors.white,
+                    child: Text('Invite',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red[600],
+                        )),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: BorderSide(color: Colors.red[600]),
+                    ),
+                    elevation: 0.0,
                   ),
-                  elevation: 0.0,
                 ),
-              ),
-            );
-
-        }),
+              );
+            }),
       );
     }
   }
@@ -390,8 +378,7 @@ class _InviteScreenState extends State<InviteScreen> with TickerProviderStateMix
   void initState() {
     this.type = widget.forPanelist ? 'friends' : 'followers';
     this._sponsorId = Provider.of<UserData>(context, listen: false).userId;
-    _tabController =
-        TabController(length: 2, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     super.initState();
     _fetchContacts();
     _fetchRelationData();
@@ -402,10 +389,10 @@ class _InviteScreenState extends State<InviteScreen> with TickerProviderStateMix
     final size = MediaQuery.of(context).size;
     return SafeArea(
         child: DefaultTabController(
-          initialIndex: 0,
-          length: 2,
-          child: Scaffold(
-      appBar: AppBar(
+      initialIndex: 0,
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
           title: Text(
             'Invite ' + (widget.forPanelist ? 'Panelist' : 'Audience'),
             style: TextStyle(
@@ -415,37 +402,34 @@ class _InviteScreenState extends State<InviteScreen> with TickerProviderStateMix
           ),
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          unselectedLabelColor: Colors.grey[700],
-          labelColor: Colors.black,
-          labelStyle:
-          TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
-          indicator: UnderlineTabIndicator(
-            borderSide: BorderSide(color: Colors.black),
-          ),
-          indicatorSize: TabBarIndicatorSize.tab,
-          tabs: [
-            Text(
-              type.toUpperCase(),
-              style: TextStyle(
-                fontFamily: "Lato",
-              ),
+          bottom: TabBar(
+            controller: _tabController,
+            isScrollable: true,
+            unselectedLabelColor: Colors.grey[700],
+            labelColor: Colors.black,
+            labelStyle:
+                TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+            indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(color: Colors.black),
             ),
-            Text(
-              "CONTACTS",
-              style: TextStyle(
-                fontFamily: "Lato"
+            indicatorSize: TabBarIndicatorSize.tab,
+            tabs: [
+              Text(
+                type.toUpperCase(),
+                style: TextStyle(
+                  fontFamily: "Lato",
+                ),
               ),
-            )
-          ],
+              Text(
+                "CONTACTS",
+                style: TextStyle(fontFamily: "Lato"),
+              )
+            ],
+          ),
         ),
+        body: TabBarView(
+            controller: _tabController, children: [tabPage(0), tabPage(1)]),
       ),
-      body: TabBarView(
-          controller: _tabController,
-          children: [tabPage(0), tabPage(1)]),
-    ),
-        ));
+    ));
   }
 }

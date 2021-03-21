@@ -31,12 +31,10 @@ class _LandingPageState extends State<LandingPage>
   Future getNotifications() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final cuser = Provider.of<UserData>(context, listen: false).user;
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     BuiltNotificationList tempNotificationList =
         (await service.getNotifications(
       userId: cuser.userId,
       lastevaluatedkey: null,
-      authorization: authToken,
     ))
             .body;
     if (notificationList != null &&
@@ -114,16 +112,14 @@ class _LandingPageState extends State<LandingPage>
 
   Future _fetchAllClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final cuser = Provider.of<UserData>(context, listen: false).user;
 
     getNotifications();
 
     await Future.wait([
-      service.getClubsOfFriends(userId: cuser.userId, authorization: authToken),
-      service.getClubsOfFollowings(
-          userId: cuser.userId, authorization: authToken),
-      service.getAllClubs(authorization: authToken),
+      service.getClubsOfFriends(userId: cuser.userId),
+      service.getClubsOfFollowings(userId: cuser.userId),
+      service.getAllClubs(),
     ]).then((values) {
       friendsClubs = values[0].body;
       followingUsersClubs = values[1].body;

@@ -53,7 +53,6 @@ class UserData with ChangeNotifier {
       final response = await _postApiService.getUserProfile(
         userId: userId,
         primaryUserId: userId,
-        authorization: authToken,
       );
 
       if (response != null && response.body != null) {
@@ -124,7 +123,6 @@ class UserData with ChangeNotifier {
       await _postApiService.registerFCMToken(
         userId: userId,
         body: BuiltFCMToken((b) => b..deviceToken = fcmToken),
-        authorization: authToken,
       );
 
       await initiate();

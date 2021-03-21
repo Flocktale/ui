@@ -33,14 +33,15 @@ class _EditProfileState extends State<EditProfile> {
         ..tagline = _tagLineController?.text?.trim()
         ..bio = _bioController?.text?.trim(),
     );
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     final oldUserData = Provider.of<UserData>(context, listen: false).user;
 
     if (oldUserData.tagline != newUser.tagline ||
         oldUserData.bio != newUser.bio) {
       final resp = (await service.updateUser(
-          userId: widget.user.userId, body: newUser, authorization: authToken));
+        userId: widget.user.userId,
+        body: newUser,
+      ));
       if (resp.isSuccessful) {
         Fluttertoast.showToast(msg: 'Your profile is updated!');
 
@@ -59,7 +60,6 @@ class _EditProfileState extends State<EditProfile> {
 
   _uploadImage() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     var pickedImage = await image.readAsBytes();
 
@@ -70,7 +70,6 @@ class _EditProfileState extends State<EditProfile> {
     final resp = await service.uploadAvatar(
       userId: widget.user.userId,
       image: newImage,
-      authorization: authToken,
     );
     if (resp.isSuccessful) {
       // clearing image cache so that

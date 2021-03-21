@@ -8,7 +8,6 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Models/contacts.dart' as CONTACT;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
@@ -251,21 +250,16 @@ class _ContactsPageState extends State<ContactsPage> {
                                                               context,
                                                               listen: false)
                                                           .userId;
-                                                  final authToken =
-                                                      Provider.of<UserData>(
-                                                              context,
-                                                              listen: false)
-                                                          .authToken;
+
                                                   final resp = (await Provider
                                                           .of<DatabaseApiService>(
                                                               context,
                                                               listen: false)
                                                       .unfollow(
-                                                          userId: userId,
-                                                          foreignUserId:
-                                                              contact.userId,
-                                                          authorization:
-                                                              authToken));
+                                                    userId: userId,
+                                                    foreignUserId:
+                                                        contact.userId,
+                                                  ));
                                                   if (resp.isSuccessful) {
                                                     FollowingDatabase
                                                         .deleteFollowing(
@@ -309,21 +303,16 @@ class _ContactsPageState extends State<ContactsPage> {
                                                               context,
                                                               listen: false)
                                                           .userId;
-                                                  final authToken =
-                                                      Provider.of<UserData>(
-                                                              context,
-                                                              listen: false)
-                                                          .authToken;
+
                                                   final resp = (await Provider
                                                           .of<DatabaseApiService>(
                                                               context,
                                                               listen: false)
                                                       .follow(
-                                                          userId: userId,
-                                                          foreignUserId:
-                                                              contact.userId,
-                                                          authorization:
-                                                              authToken));
+                                                    userId: userId,
+                                                    foreignUserId:
+                                                        contact.userId,
+                                                  ));
                                                   if (resp.isSuccessful) {
                                                     FollowingDatabase
                                                         .addFollowing(
@@ -393,15 +382,13 @@ class _ContactsPageState extends State<ContactsPage> {
                                             backgroundImage:
                                                 MemoryImage(contact.avatar))
                                         : CircleAvatar(
-                                      backgroundColor: Colors.redAccent,
+                                            backgroundColor: Colors.redAccent,
                                             child: Text(
-                                            contact.initials(),
-                                            style:
-                                                TextStyle(
-                                                    fontFamily: "Lato",
-                                                  color: Colors.white
-                                                ),
-                                          )),
+                                              contact.initials(),
+                                              style: TextStyle(
+                                                  fontFamily: "Lato",
+                                                  color: Colors.white),
+                                            )),
                                     title: Text(
                                       contact.displayName,
                                       style: TextStyle(fontFamily: "Lato"),

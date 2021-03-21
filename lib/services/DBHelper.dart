@@ -36,10 +36,10 @@ class DBHelper {
         BuiltSearchUsers u =
             (await Provider.of<DatabaseApiService>(context, listen: false)
                     .getRelations(
-                        userId: userId,
-                        socialRelation: 'followings',
-                        lastevaluatedkey: lastevaluatedkey,
-                        authorization: null))
+          userId: userId,
+          socialRelation: 'followings',
+          lastevaluatedkey: lastevaluatedkey,
+        ))
                 .body;
         u.users.forEach((e) {
           _followings.add(e.userId);

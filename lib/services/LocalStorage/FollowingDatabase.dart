@@ -10,19 +10,19 @@ class FollowingDatabase {
     if (followingBox == null) followingBox = await Hive.openBox('following');
   }
 
-	static Future<void> fetchList(String userId, BuildContext context) async {
-		await init();
+  static Future<void> fetchList(String userId, BuildContext context) async {
+    await init();
     if (followingBox.isEmpty) {
       String lastevaluatedkey;
-			
+
       do {
         BuiltSearchUsers u =
             (await Provider.of<DatabaseApiService>(context, listen: false)
                     .getRelations(
-                        userId: userId,
-                        socialRelation: 'followings',
-                        lastevaluatedkey: lastevaluatedkey,
-                        authorization: null))
+          userId: userId,
+          socialRelation: 'followings',
+          lastevaluatedkey: lastevaluatedkey,
+        ))
                 .body;
         u.users.forEach((e) {
           addFollowing(e.userId);
@@ -31,34 +31,33 @@ class FollowingDatabase {
       } while (lastevaluatedkey != null);
     }
   }
-	
 
-  static List allFollowings()  {
-		List res = [];
-		followingBox.values.forEach((element) { 
-				res.add(element);
-		});
+  static List allFollowings() {
+    List res = [];
+    followingBox.values.forEach((element) {
+      res.add(element);
+    });
     print(res);
-		return res;
+    return res;
   }
 
-	static bool isFollowing(String userId)  {
-		// init();
-		return (followingBox.get(userId)!=null);		
-	}
+  static bool isFollowing(String userId) {
+    // init();
+    return (followingBox.get(userId) != null);
+  }
 
-	static void addFollowing(String userId)  {
-		// init();
-		followingBox.put(userId, userId);
-	}
+  static void addFollowing(String userId) {
+    // init();
+    followingBox.put(userId, userId);
+  }
 
-  static void deleteFollowing(String userId)  {
-		// init();
+  static void deleteFollowing(String userId) {
+    // init();
     followingBox.delete(userId);
-	}
+  }
 
-	static void deleteAllData()  {
-		// init();  
-		followingBox.clear();
-	}
+  static void deleteAllData() {
+    // init();
+    followingBox.clear();
+  }
 }

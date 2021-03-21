@@ -1,4 +1,3 @@
-import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
@@ -26,13 +25,10 @@ class _SearchAllClubsState extends State<SearchAllClubs> {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     //allSearches = (await service.getUserbyUsername(username)).body;
 
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
-
     searchClubsMap['data'] = (await service.unifiedQueryRoutes(
       searchString: username,
       type: "clubs",
       lastevaluatedkey: lastEvaluatedKey,
-      authorization: authToken,
     ))
         .body;
     searchClubsMap['isLoading'] = false;

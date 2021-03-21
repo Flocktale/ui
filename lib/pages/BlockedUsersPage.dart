@@ -19,11 +19,11 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
   BuiltList<AudienceData> blockedUsers;
   bool isLoading = true;
   Future<void> _fetchBlockedUsersData() async {
-    final authToken = (Provider.of<UserData>(context, listen: false).authToken);
     blockedUsers =
         (await Provider.of<DatabaseApiService>(context, listen: false)
                 .getAllBlockedUsers(
-                    clubId: widget.club.clubId, authorization: authToken))
+      clubId: widget.club.clubId,
+    ))
             .body;
     isLoading = false;
     setState(() {});
@@ -88,18 +88,14 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                               minWidth: size.width / 3.5,
                               child: RaisedButton(
                                 onPressed: () async {
-                                  final authToken = Provider.of<UserData>(
-                                          context,
-                                          listen: false)
-                                      .authToken;
                                   final resp =
                                       (await Provider.of<DatabaseApiService>(
                                               context,
                                               listen: false)
                                           .unblockUser(
-                                              clubId: widget.club.clubId,
-                                              audienceId: _user.userId,
-                                              authorization: authToken));
+                                    clubId: widget.club.clubId,
+                                    audienceId: _user.userId,
+                                  ));
                                   if (resp.isSuccessful) {
                                     Fluttertoast.showToast(
                                         msg: 'User unblocked');

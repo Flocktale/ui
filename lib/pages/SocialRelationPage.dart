@@ -362,23 +362,20 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                                             Provider.of<DatabaseApiService>(
                                                 context,
                                                 listen: false);
-                                        final authToken = Provider.of<UserData>(
-                                                context,
-                                                listen: false)
-                                            .authToken;
+
                                         if (FollowingDatabase.isFollowing(
                                             _user.userId)) {
                                           final resp = (await service.unfollow(
-                                              userId: cuser.userId,
-                                              foreignUserId: _user.userId,
-                                              authorization: authToken));
+                                            userId: cuser.userId,
+                                            foreignUserId: _user.userId,
+                                          ));
                                           if (resp.isSuccessful) {
                                             FollowingDatabase.deleteFollowing(
                                                 _user.userId);
-                                //            _initRelationData(relations[index]);
-                                //             relationUsers.remove(_user);
-                                //             print("090909090909090909090909090909090909090999999999999999999999999999999999999999999999999999999");
-                                //             print(relationUsers);
+                                            //            _initRelationData(relations[index]);
+                                            //             relationUsers.remove(_user);
+                                            //             print("090909090909090909090909090909090909090999999999999999999999999999999999999999999999999999999");
+                                            //             print(relationUsers);
                                             setState(() {});
                                           } else {
                                             Fluttertoast.showToast(
@@ -387,9 +384,9 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                                           }
                                         } else {
                                           final resp = (await service.follow(
-                                              userId: cuser.userId,
-                                              foreignUserId: _user.userId,
-                                              authorization: authToken));
+                                            userId: cuser.userId,
+                                            foreignUserId: _user.userId,
+                                          ));
                                           if (resp.isSuccessful) {
                                             FollowingDatabase.addFollowing(
                                                 _user.userId);
@@ -449,15 +446,12 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                                             Provider.of<DatabaseApiService>(
                                                 context,
                                                 listen: false);
-                                        final authToken = Provider.of<UserData>(
-                                                context,
-                                                listen: false)
-                                            .authToken;
+
                                         if (index == 0) {
                                           final resp = (await service.unfriend(
-                                              userId: widget.user.userId,
-                                              foreignUserId: _user.userId,
-                                              authorization: authToken));
+                                            userId: widget.user.userId,
+                                            foreignUserId: _user.userId,
+                                          ));
                                           if (resp.isSuccessful) {
                                             FollowingDatabase.deleteFollowing(
                                                 _user.userId);
@@ -472,9 +466,9 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                                         } else if (index == 1) {
                                         } else {
                                           final resp = (await service.unfollow(
-                                              userId: widget.user.userId,
-                                              foreignUserId: _user.userId,
-                                              authorization: authToken));
+                                            userId: widget.user.userId,
+                                            foreignUserId: _user.userId,
+                                          ));
                                           if (resp.isSuccessful) {
                                             FollowingDatabase.deleteFollowing(
                                                 _user.userId);

@@ -54,7 +54,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void _fetchUser() async {
     BuiltUser cuser = Provider.of<UserData>(context, listen: false).user;
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     print('${cuser.userId}==${widget.userId}');
 
@@ -68,7 +67,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final fetchedUserData = (await service.getUserProfile(
       primaryUserId: cuser.userId,
       userId: widget.userId,
-      authorization: authToken,
     ))
         .body;
     _user = fetchedUserData?.user;
@@ -92,12 +90,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _fetchAllClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     _Clubs = (await service.getMyOrganizedClubs(
       userId: widget.userId,
       lastevaluatedkey: null,
-      authorization: authToken,
     ))
         ?.body
         ?.clubs;

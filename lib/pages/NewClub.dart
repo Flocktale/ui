@@ -9,7 +9,6 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:date_time_picker/date_time_picker.dart';
-import '../Widgets/MinClub.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'ClubDetail.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -91,12 +90,9 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final userId = Provider.of<UserData>(context, listen: false).userId;
 
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
-
     final resp = await service.createNewClub(
       body: _newClubModel,
       creatorId: userId,
-      authorization: authToken,
     );
     setState(() {
       isLoading = false;
@@ -110,14 +106,12 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
         final response = await service.updateClubAvatar(
           clubId: resp.body['clubId'],
           image: newImage,
-          authorization: authToken,
         );
         print("!!!!!!!!!!!!!!!!!!!!!!!");
         print(response.isSuccessful);
         BuiltClub newClub = (await service.getClubByClubId(
           userId: userId,
           clubId: resp.body['clubId'],
-          authorization: authToken,
         ))
             .body
             ?.club;
@@ -147,7 +141,6 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       BuiltClub tempClub = (await service.getClubByClubId(
         userId: userId,
         clubId: resp.body['clubId'],
-        authorization: authToken,
       ))
           .body
           ?.club;
@@ -316,8 +309,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
 
     if (userData.categoryData == null) {
       final service = Provider.of<DatabaseApiService>(context, listen: false);
-      final authToken = userData.authToken;
-      final resp = await service.getCategoryData(authorization: authToken);
+      final resp = await service.getCategoryData();
 
       if (resp.isSuccessful) {
         userData.categoryData = (resp.body as Map).map((k, v) => MapEntry(

@@ -49,7 +49,6 @@ class _ProfileImagePageState extends State<ProfileImagePage> {
 
   uploadImage() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final userId = Provider.of<UserData>(context, listen: false).userId;
 
     String imageInBase64;
@@ -60,7 +59,6 @@ class _ProfileImagePageState extends State<ProfileImagePage> {
     final resp = await service.uploadAvatar(
       userId: userId,
       image: newImage,
-      authorization: authToken,
     );
     if (resp.isSuccessful) {
       Fluttertoast.showToast(msg: "Profile Image Uploaded");

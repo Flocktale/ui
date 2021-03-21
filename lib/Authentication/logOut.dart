@@ -8,14 +8,15 @@ import 'package:provider/provider.dart';
 
 logOutUser(context) async {
   final _storage = SecureStorage();
-  await _storage.logout();
-  // print(1);
   final _userId = Provider.of<UserData>(context, listen: false).userId;
-  await Provider.of<DatabaseApiService>(context, listen: false).deleteFCMToken(
-    userId: _userId,
-    authorization: null,
-  );
-  await Provider.of<AgoraController>(context, listen: false).dispose();
-  await Provider.of<MySocket>(context, listen: false).closeConnection();
+
+  await Future.wait([
+    _storage.logout(),
+    Provider.of<AgoraController>(context, listen: false).dispose(),
+    Provider.of<DatabaseApiService>(context, listen: false)
+        .deleteFCMToken(userId: _userId),
+    Provider.of<MySocket>(context, listen: false).closeConnection(),
+  ]);
+
   Phoenix.rebirth(context);
 }

@@ -20,12 +20,10 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
   final searchInput = new TextEditingController();
   getJoinRequests() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     String lastevaluatedkey;
     joinRequests = (await service.getActiveJoinRequests(
       clubId: widget.club.clubId,
       lastevaluatedkey: lastevaluatedkey,
-      authorization: authToken,
     ))
         .body;
     setState(() {});
@@ -33,12 +31,10 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
 
   acceptJoinRequest(String audienceId) async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     await service.respondToJoinRequest(
       clubId: widget.club.clubId,
       action: "accept",
       audienceId: audienceId,
-      authorization: authToken,
     );
     Fluttertoast.showToast(msg: "Join Request Accepted");
     setState(() {});
@@ -59,11 +55,10 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
 
   searchJoinRequests(String searchString) async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     joinRequestsFiltered = (await service.searchInActiveJoinRequests(
-            clubId: widget.club.clubId,
-            searchString: joinRequestsFiltered?.lastevaluatedkey,
-            authorization: authToken))
+      clubId: widget.club.clubId,
+      searchString: joinRequestsFiltered?.lastevaluatedkey,
+    ))
         .body;
     setState(() {});
   }

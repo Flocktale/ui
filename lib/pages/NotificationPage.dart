@@ -20,12 +20,10 @@ class _NotificationPageState extends State<NotificationPage> {
   Future getNotifications() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final cuser = Provider.of<UserData>(context, listen: false).user;
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     String lastEvalustedKey;
     notificationList = (await service.getNotifications(
       userId: cuser.userId,
       lastevaluatedkey: lastEvalustedKey,
-      authorization: authToken,
     ))
         .body;
 
@@ -66,12 +64,8 @@ class _NotificationPageState extends State<NotificationPage> {
   respondNotifications(String notifId) async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final cuser = Provider.of<UserData>(context, listen: false).user;
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     notificationList = (await service.responseToNotification(
-            userId: cuser.userId,
-            notificationId: notifId,
-            authorization: authToken,
-            action: 'accept'))
+            userId: cuser.userId, notificationId: notifId, action: 'accept'))
         .body;
     setState(() {});
   }
@@ -105,10 +99,11 @@ class _NotificationPageState extends State<NotificationPage> {
 
   getClub(String clubId) async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
     final cuserId = Provider.of<UserData>(context, listen: false).userId;
     club = (await service.getClubByClubId(
-            clubId: clubId, userId: cuserId, authorization: authToken))
+      clubId: clubId,
+      userId: cuserId,
+    ))
         .body
         .club;
     setState(() {});
@@ -223,11 +218,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                                               context,
                                                               listen: false)
                                                           .user;
-                                                  final authToken =
-                                                      Provider.of<UserData>(
-                                                              context,
-                                                              listen: false)
-                                                          .authToken;
+
                                                   final resp = (await service
                                                       .responseToNotification(
                                                           userId: cuser.userId,
@@ -236,8 +227,6 @@ class _NotificationPageState extends State<NotificationPage> {
                                                                   .notifications[
                                                                       index]
                                                                   .notificationId,
-                                                          authorization:
-                                                              authToken,
                                                           action: "accept"));
                                                   if (resp.isSuccessful) {
                                                     hasAccepted = !hasAccepted;
@@ -336,11 +325,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                                               context,
                                                               listen: false)
                                                           .user;
-                                                  final authToken =
-                                                      Provider.of<UserData>(
-                                                              context,
-                                                              listen: false)
-                                                          .authToken;
+
                                                   final resp = (await service
                                                       .responseToNotification(
                                                           userId: cuser.userId,
@@ -349,8 +334,6 @@ class _NotificationPageState extends State<NotificationPage> {
                                                                   .notifications[
                                                                       index]
                                                                   .notificationId,
-                                                          authorization:
-                                                              authToken,
                                                           action: "cancel"));
                                                   if (resp.isSuccessful) {
                                                     final allNotification =

@@ -337,7 +337,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       clubId: widget.club.clubId,
       audienceId: _myUserId,
       indexValue: 2,
-      authorization: null,
     );
     _resetReactionValueInClubAudience(2);
   }
@@ -356,7 +355,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       clubId: widget.club.clubId,
       audienceId: _myUserId,
       indexValue: 1,
-      authorization: null,
     );
     _resetReactionValueInClubAudience(1);
   }
@@ -375,7 +373,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       clubId: widget.club.clubId,
       audienceId: _myUserId,
       indexValue: 0,
-      authorization: null,
     );
     _resetReactionValueInClubAudience(0);
   }
@@ -384,7 +381,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     Clubs = (await _service.getMyOrganizedClubs(
       userId: widget.club.creator.userId,
       lastevaluatedkey: null,
-      authorization: _authToken,
     ))
         .body
         .clubs;
@@ -419,7 +415,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       who: 'participant',
       participantId: userId,
       muteAction: toMute ? 'mute' : 'unmute',
-      authorization: _authToken,
     );
 
     if (userId == _myUserId) {
@@ -438,7 +433,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         .kickOutParticipant(
       clubId: widget.club.clubId,
       audienceId: userId,
-      authorization: _authToken,
     );
     Fluttertoast.showToast(msg: 'Removed panelist');
   }
@@ -447,7 +441,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     await _service.blockAudience(
       clubId: widget.club.clubId,
       audienceId: userId,
-      authorization: _authToken,
     );
     Fluttertoast.showToast(msg: 'Blocked user');
   }
@@ -462,7 +455,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     final resp = await _service.sendJoinRequest(
       clubId: widget.club.clubId,
       userId: _myUserId,
-      authorization: _authToken,
     );
     if (resp.isSuccessful) {
       _clubAudience = _clubAudience.rebuild(
@@ -479,7 +471,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     final resp = await _service.deleteJoinRequet(
       clubId: widget.club.clubId,
       userId: _myUserId,
-      authorization: _authToken,
     );
     if (resp.isSuccessful) {
       _clubAudience =
@@ -541,7 +532,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     final resp = await _service.getClubByClubId(
       clubId: widget.club.clubId,
       userId: _myUserId,
-      authorization: _authToken,
     );
 
     if (resp.isSuccessful == false) {
@@ -654,7 +644,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     final data = await _service.startClub(
       clubId: widget.club.clubId,
       userId: _myUserId,
-      authorization: _authToken,
     );
     print(data.body['agoraToken']);
     _clubAudience = _clubAudience.rebuild(
@@ -670,7 +659,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     await _service.concludeClub(
       clubId: widget.club.clubId,
       creatorId: _myUserId,
-      authorization: _authToken,
     );
     _clubAudience = _clubAudience.rebuild(
       (b) => b
@@ -762,7 +750,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       clubId: widget.club.clubId,
       audienceId: _myUserId,
       isSelf: 'true',
-      authorization: _authToken,
     ));
     if (resp.isSuccessful)
       Fluttertoast.showToast(msg: 'You are now an audience');
@@ -835,9 +822,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Future<List<AudienceData>> _fetchAudienceList(String lastevaluatedkey) async {
     final resp = await _service.getAudienceList(
-        clubId: widget.club.clubId,
-        lastevaluatedkey: lastevaluatedkey,
-        authorization: _authToken);
+      clubId: widget.club.clubId,
+      lastevaluatedkey: lastevaluatedkey,
+    );
 
     _audienceMap['lastevaluatedkey'] = resp.body.lastevaluatedkey;
 
@@ -847,9 +834,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   void _infiniteAudienceListRefresh({bool init = false}) async {
     if (init) {
       final resp = await _service.getAudienceList(
-          clubId: widget.club.clubId,
-          lastevaluatedkey: null,
-          authorization: _authToken);
+        clubId: widget.club.clubId,
+        lastevaluatedkey: null,
+      );
 
       _audienceMap['list'] = resp.body.audience.asList();
       setState(() {});
@@ -898,7 +885,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     await _service.responseToNotification(
       userId: _myUserId,
       notificationId: _clubAudience.audienceData.invitationId,
-      authorization: _authToken,
       action: response,
     );
 
@@ -1069,7 +1055,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   void initState() {
     this._myUserId = Provider.of<UserData>(context, listen: false).userId;
     this._service = Provider.of<DatabaseApiService>(context, listen: false);
-    this._authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     _enterClub();
     _infiniteRefresh();
@@ -1299,7 +1284,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                             .toBuilder()
                                         ..type = 'participant',
                                     ),
-                                    authorization: _authToken,
                                   );
                                   if (response.isSuccessful) {
                                     Fluttertoast.showToast(

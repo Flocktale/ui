@@ -24,7 +24,6 @@ class _ClubSectionState extends State<ClubSection> {
 
   Future<void> _fetchClubs() async {
     final userId = Provider.of<UserData>(context, listen: false).userId;
-    final authToken = Provider.of<UserData>(context, listen: false).authToken;
 
     final lastevaluatedkey =
         (clubMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
@@ -37,7 +36,6 @@ class _ClubSectionState extends State<ClubSection> {
     if (widget.type == ClubSectionType.Friend) {
       response = await databaseService.getClubsOfFriends(
         userId: userId,
-        authorization: authToken,
         lastevaluatedkey: lastevaluatedkey,
       );
     }
@@ -45,7 +43,6 @@ class _ClubSectionState extends State<ClubSection> {
     if (widget.type == ClubSectionType.Following) {
       response = await databaseService.getClubsOfFollowings(
         userId: userId,
-        authorization: authToken,
         lastevaluatedkey: lastevaluatedkey,
       );
     }
@@ -55,16 +52,15 @@ class _ClubSectionState extends State<ClubSection> {
           .getClubsOfCategory(
         category: widget.category,
         lastevaluatedkey: lastevaluatedkey,
-        authorization: authToken,
       );
     }
 
     if (widget.type == ClubSectionType.User) {
       response = await Provider.of<DatabaseApiService>(context, listen: false)
           .getMyOrganizedClubs(
-              userId: userId,
-              lastevaluatedkey: lastevaluatedkey,
-              authorization: authToken);
+        userId: userId,
+        lastevaluatedkey: lastevaluatedkey,
+      );
     }
 
     clubMap['data'] = response.body;
