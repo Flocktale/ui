@@ -1,4 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flocktale/providers/agoraController.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/providers/webSocket.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -53,10 +56,33 @@ _configureFCM() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (_) => DatabaseApiService.create(),
-      dispose: (context, DatabaseApiService service) =>
-          service.client.dispose(),
+    return MultiProvider(
+      providers: [
+        Provider(
+          create: (_) => DatabaseApiService.create(),
+          dispose: (context, DatabaseApiService service) =>
+              service.client.dispose(),
+        ),
+
+        Provider<AgoraController>(
+          create: (_) => AgoraController().create(),
+          dispose: (context, AgoraController agoraController) =>
+              agoraController.dispose(),
+        ),
+
+//since we are using DatabaseApiService in another provider, it should be defined after that.
+
+        ChangeNotifierProvider<UserData>(
+          create: (ctx) =>
+              UserData(Provider.of<DatabaseApiService>(ctx, listen: false)),
+        ),
+
+        ChangeNotifierProvider<MySocket>(
+          create: (ctx) => MySocket(
+              Provider.of<AgoraController>(ctx, listen: false),
+              Provider.of<UserData>(ctx, listen: false)),
+        ),
+      ],
       child: MaterialApp(
         title: 'Flocktale',
         onGenerateRoute: RouteGenerator.generateRoute,
