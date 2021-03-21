@@ -229,7 +229,7 @@ class _SocialRelationPageState extends State<SocialRelationPage>
 
   Widget tabPage(int index) {
     //var friends = (relationMap[relations[index]]['data'] as BuiltSearchUsers)?.users?.toList();
-    var relationUsers;
+    List<SummaryUser> relationUsers;
     if (index == 0) {
       if (friendSearchController.text.length > 0) {
         relationUsers = friendsFiltered;
@@ -375,6 +375,10 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                                           if (resp.isSuccessful) {
                                             FollowingDatabase.deleteFollowing(
                                                 _user.userId);
+                                //            _initRelationData(relations[index]);
+                                //             relationUsers.remove(_user);
+                                //             print("090909090909090909090909090909090909090999999999999999999999999999999999999999999999999999999");
+                                //             print(relationUsers);
                                             setState(() {});
                                           } else {
                                             Fluttertoast.showToast(

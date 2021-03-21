@@ -393,10 +393,14 @@ class _ContactsPageState extends State<ContactsPage> {
                                             backgroundImage:
                                                 MemoryImage(contact.avatar))
                                         : CircleAvatar(
+                                      backgroundColor: Colors.redAccent,
                                             child: Text(
                                             contact.initials(),
                                             style:
-                                                TextStyle(fontFamily: "Lato"),
+                                                TextStyle(
+                                                    fontFamily: "Lato",
+                                                  color: Colors.white
+                                                ),
                                           )),
                                     title: Text(
                                       contact.displayName,
