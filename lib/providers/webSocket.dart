@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -100,7 +101,9 @@ class MySocket with ChangeNotifier {
 
       Fluttertoast.showToast(msg: 'Please check your internet connection');
 
-      await Future.delayed(Duration(seconds: 3 * retries));
+      await Future.delayed(Duration(
+        seconds: min(2 * retries, 15),
+      ));
       return await connectWs(retries: retries + 1);
     }
   }

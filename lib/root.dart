@@ -1,7 +1,6 @@
+import 'package:flocktale/Models/appConstants.dart';
 import 'package:flocktale/Widgets/denyConcurrentUse.dart';
 import 'package:flocktale/pages/ContactsPage.dart';
-import 'package:flocktale/providers/agoraController.dart';
-import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Authentication/signUp.dart';
 import 'package:flocktale/pages/HomePage.dart';
@@ -14,6 +13,9 @@ import 'package:provider/provider.dart';
 class RootPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // using this context as rootContext
+    AppConstants.rootContext = context;
+
     return Consumer<UserData>(
       builder: (context, userData, loadingWidget) {
         Widget widget = loadingWidget;

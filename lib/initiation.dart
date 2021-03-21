@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flocktale/Models/appConstants.dart';
+import 'package:flocktale/root.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flocktale/services/connectivityCheck.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,8 @@ class _InitiationState extends State<Initiation> {
         await _showUpdateDialog();
       }
 
-      Navigator.of(context).pushReplacementNamed('/root');
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (_) => RootPage()));
     } else {
       this._tappable = true;
       setState(() {});

@@ -5,6 +5,8 @@ import '../../Models/built_post.dart';
 import 'built_value_converter.dart';
 import 'package:built_collection/built_collection.dart';
 
+import 'customInterceptor.dart';
+
 part 'database_api_service.chopper.dart';
 
 // command for build runner - flutter packages pub run build_runner watch --delete-conflicting-outputs --use-polling-watcher
@@ -483,6 +485,7 @@ abstract class DatabaseApiService extends ChopperService {
       converter: BuiltValueConverter(),
       interceptors: [
         HttpLoggingInterceptor(),
+        CustomInterceptor(),
       ],
     );
 

@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flocktale/initiation.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/providers/webSocket.dart';
@@ -85,13 +86,12 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flocktale',
-        onGenerateRoute: RouteGenerator.generateRoute,
-        initialRoute: '/init',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: Colors.red,
           accentColor: Colors.redAccent,
         ),
+        home: Initiation(),
       ),
     );
   }

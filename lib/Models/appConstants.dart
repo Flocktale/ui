@@ -1,6 +1,7 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Widgets/internet_error_flushbar.dart';
 import 'package:flocktale/services/connectivityCheck.dart';
+import 'package:flutter/material.dart';
 
 class AppConstants {
   static AppConfigs appConfigs;
@@ -10,4 +11,6 @@ class AppConstants {
   static final internetErrorFlushBar = InternetErrorFlushbar();
 
   static ConnectionStatusSingleton connectionStatus;
+
+  static BuildContext rootContext;
 }

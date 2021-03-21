@@ -24,7 +24,7 @@ class InternetErrorFlushbar {
 
   showFlushbar(BuildContext context) async {
     if (_onScreen) return;
-    await Future.delayed(Duration(milliseconds: 250));
+    await Future.delayed(Duration(milliseconds: 1000));
     _flushbar..show(context);
   }
 
