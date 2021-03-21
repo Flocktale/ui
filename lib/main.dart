@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:flocktale/providers/agoraController.dart';
-import 'package:flocktale/providers/webSocket.dart';
 import 'package:provider/provider.dart';
-import 'providers/userData.dart';
 import 'package:logging/logging.dart';
 import 'route_generator.dart';
 import 'services/chopper/database_api_service.dart';
@@ -56,37 +53,14 @@ _configureFCM() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider(
-          create: (_) => DatabaseApiService.create(),
-          dispose: (context, DatabaseApiService service) =>
-              service.client.dispose(),
-        ),
-
-        Provider<AgoraController>(
-          create: (_) => AgoraController().create(),
-          dispose: (context, AgoraController agoraController) =>
-              agoraController.dispose(),
-        ),
-
-//since we are using DatabaseApiService in another provider, it should be defined after that.
-
-        ChangeNotifierProvider<UserData>(
-          create: (ctx) =>
-              UserData(Provider.of<DatabaseApiService>(ctx, listen: false)),
-        ),
-
-        ChangeNotifierProvider<MySocket>(
-          create: (ctx) => MySocket(
-              Provider.of<AgoraController>(ctx, listen: false),
-              Provider.of<UserData>(ctx, listen: false)),
-        ),
-      ],
+    return Provider(
+      create: (_) => DatabaseApiService.create(),
+      dispose: (context, DatabaseApiService service) =>
+          service.client.dispose(),
       child: MaterialApp(
-        onGenerateRoute: RouteGenerator.generateRoute,
         title: 'Flocktale',
-        initialRoute: '/',
+        onGenerateRoute: RouteGenerator.generateRoute,
+        initialRoute: '/init',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: Colors.red,
