@@ -98,23 +98,23 @@ class _ClubSectionState extends State<ClubSection> {
         }
         return true;
       },
-      child: GridView.builder(
-        shrinkWrap: true,
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemCount: listClubs,
-        itemBuilder: (context, index) {
-          if (index == listClubs - 1) {
-            if (isLoading)
-              return Container(
-                margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            else
-              return Container();
-          }
-          return SummaryClubCard(clubList[index], _navigateTo);
-        },
+      child: Container(
+        margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+        child: GridView.builder(
+          shrinkWrap: true,
+          gridDelegate:
+              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          itemCount: listClubs,
+          itemBuilder: (context, index) {
+            if (index == listClubs - 1) {
+              if (isLoading)
+                return Center(child: CircularProgressIndicator());
+              else
+                return Container();
+            }
+            return SummaryClubCard(clubList[index], _navigateTo);
+          },
+        ),
       ),
     );
   }

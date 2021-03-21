@@ -1092,16 +1092,16 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
           ),
           actions: <Widget>[
             if (_isOwner == true)
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white,
-                  side: BorderSide(
-                      color: Colors.redAccent, width: _hasActiveJRs ? 1 : 0.5),
-                  elevation: _hasActiveJRs ? 4 : 0,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                ),
-                onPressed: () async {
+              InkWell(
+                // style: ElevatedButton.styleFrom(
+                //   primary: Colors.white,
+                //   side: BorderSide(
+                //       color: Colors.redAccent, width: _hasActiveJRs ? 1 : 0.5),
+                //   elevation: _hasActiveJRs ? 4 : 0,
+                //   shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(8)),
+                // ),
+                onTap: () async {
                   await _handleMenuButtons('Join Requests');
                   setState(() {
                     _hasActiveJRs = false;

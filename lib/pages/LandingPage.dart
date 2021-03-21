@@ -160,8 +160,8 @@ class _LandingPageState extends State<LandingPage>
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.redAccent,
-                    fontSize: 24,
-                    letterSpacing: 2.0,
+                    fontSize: size.width/20,
+                    letterSpacing: 0.0,
                     fontFamily: 'Montserrat',
                   ),
                 ),
