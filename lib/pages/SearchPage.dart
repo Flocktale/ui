@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flocktale/pages/SearchAllUsersPage.dart';
-import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
@@ -31,9 +30,7 @@ class _SearchPageState extends State<SearchPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(
-              height: size.height / 50,
-            ),
+            SizedBox(height: size.height / 50),
             Text(
               'Search',
               style: TextStyle(
@@ -41,9 +38,7 @@ class _SearchPageState extends State<SearchPage> {
                   fontWeight: FontWeight.bold,
                   fontSize: size.width / 10),
             ),
-            SizedBox(
-              height: size.height / 50,
-            ),
+            SizedBox(height: size.height / 50),
             Container(
               height: 50,
               margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
@@ -71,9 +66,7 @@ class _SearchPageState extends State<SearchPage> {
                 },
               ),
             ),
-            SizedBox(
-              height: size.height / 50,
-            )
+            SizedBox(height: size.height / 50)
           ],
         ),
         Positioned(bottom: 0, child: MinClub(null)),
@@ -118,7 +111,7 @@ class DataSearch extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     // Show some result based on the selection
-    throw UnimplementedError();
+    return searchResultFutureBuilder();
   }
 
   getAllUsers() async {
@@ -138,6 +131,10 @@ class DataSearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    return searchResultFutureBuilder();
+  }
+
+  Widget searchResultFutureBuilder() {
     final size = MediaQuery.of(context).size;
     // Show when someone searches for something
     return query.isEmpty
