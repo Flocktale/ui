@@ -48,7 +48,8 @@ abstract class DatabaseApiService extends ChopperService {
 
   /// there will be no authorization for this api
   @Get(path: '/users/global/app-configs')
-  Future<Response<AppConfigs>> getAppConfigs();
+  Future<Response<AppConfigs>> getAppConfigs(
+      [@Header() String noAuthRequired = 'true']);
 
   @Get(path: '/users/global/username-availability')
   Future<Response<UsernameAvailability>> isThisUsernameAvailable({

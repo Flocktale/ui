@@ -25,23 +25,27 @@ class UserData with ChangeNotifier {
 
   bool _newRegistration = false;
 
-  bool _isOnlineisOnlineSomewhereElse = false;
+  bool _isOnlineSomewhereElse = false;
 
   UserData(this._postApiService) {
     print('-------------------initiating------------------------------------');
     initiate();
   }
 
-  /// set newRegistration to true when new user has registered
-  initiate({bool isNew = false}) async {
-    _newRegistration = isNew;
-
+  initCognitoSession() async {
     final idToken = await _storage.getIdToken();
     final accessToken = await _storage.getAccessToken();
     final refreshToken = await _storage.getRefreshToken();
 
     await _authUser.initCachedSession(
         idToken: idToken, accessToken: accessToken, refreshToken: refreshToken);
+  }
+
+  /// set newRegistration to true when new user has registered
+  initiate({bool isNew = false}) async {
+    _newRegistration = isNew;
+
+    await initCognitoSession();
 
     if (userId != null) {
       _isAuth = true;
@@ -58,7 +62,7 @@ class UserData with ChangeNotifier {
         // this function only runs during app initiation/login/signup,
         // so the user fetched here is prior to connecting websocket,
         // therefore if user is still online then he is using this app with same account concurrently on aonther device too.
-        _isOnlineisOnlineSomewhereElse = _builtUser.online == 0;
+        _isOnlineSomewhereElse = _builtUser.online == 0;
       } else {
         // this case can arrive if user don't have internt connection.
         // then we can load some trivial info like name,username etc from sharedPreferences
@@ -163,7 +167,9 @@ class UserData with ChangeNotifier {
     notifyListeners();
   }
 
-  bool get isOnlineSomewhereElse => _isOnlineisOnlineSomewhereElse;
+  bool get isOnlineSomewhereElse => _isOnlineSomewhereElse;
+
+  bool get isAuthTokenValid => _authUser?.cognitoSession?.isValid();
 
   // set cognitoSession(CognitoUserSession session) {
   //   _currentSession = session;

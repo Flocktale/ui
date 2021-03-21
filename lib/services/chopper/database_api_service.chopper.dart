@@ -37,9 +37,10 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<AppConfigs>> getAppConfigs() {
+  Future<Response<AppConfigs>> getAppConfigs([String noAuthRequired = 'true']) {
     final $url = '/users/global/app-configs';
-    final $request = Request('GET', $url, client.baseUrl);
+    final $headers = {'noAuthRequired': noAuthRequired};
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<AppConfigs, AppConfigs>($request);
   }
 
