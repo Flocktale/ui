@@ -33,6 +33,9 @@
 			Flutter's first frame.
 			-->
 			<meta-data android:name="io.flutter.embedding.android.SplashScreenDrawable" android:resource="@drawable/launch_background" />
+			<!-- notification icon for fcm -->
+			<meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/launcher_icon" />
+			<!--  -->
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />

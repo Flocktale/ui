@@ -261,32 +261,27 @@ class _SocialRelationPageState extends State<SocialRelationPage>
     final bool isLoading = relationMap[relations[index]]['isLoading'];
     final cuser = Provider.of<UserData>(context, listen: false).user;
     final isMe = cuser.userId == widget.user.userId;
+
     final listLength = (relationUsers?.length ?? 0) + 1;
 
     return Column(
       children: <Widget>[
-        SizedBox(
-          height: 30,
-        ),
-        index == 0
-            ? friendSearchBar()
-            : index == 1
-                ? followerSearchBar()
-                : followingSearchBar(),
-        SizedBox(
-          height: 40,
-        ),
-        Text(
-          'All ${tabs[index]}',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-          textAlign: TextAlign.left,
-        ),
-        SizedBox(
-          height: 30,
-        ),
+        SizedBox(height: 30),
+        // index == 0
+        //     ? friendSearchBar()
+        //     : index == 1
+        //         ? followerSearchBar()
+        //         : followingSearchBar(),
+        // SizedBox(height: 40),
+        // Text(
+        //   'All ${tabs[index]}',
+        //   style: TextStyle(
+        //     fontWeight: FontWeight.bold,
+        //     fontSize: 20,
+        //   ),
+        //   textAlign: TextAlign.left,
+        // ),
+        // SizedBox(height: 30),
         Expanded(
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification scrollInfo) {
@@ -318,6 +313,7 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                   final _user = relationUsers[ind];
 
                   return InkWell(
+                    key: UniqueKey(),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => ProfilePage(
@@ -325,7 +321,6 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                               )));
                     },
                     child: Container(
-                      key: ValueKey(_user.username),
                       margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -455,8 +450,22 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                                           if (resp.isSuccessful) {
                                             FollowingDatabase.deleteFollowing(
                                                 _user.userId);
+
                                             relationUsers.removeAt(ind);
+
+                                            relationMap[relations[index]]
+                                                ['data'] = (relationMap[
+                                                            relations[index]]
+                                                        ['data']
+                                                    as BuiltSearchUsers)
+                                                .rebuild((b) => b
+                                                  ..users =
+                                                      BuiltList<SummaryUser>(
+                                                              relationUsers)
+                                                          .toBuilder());
+
                                             _initRelationData(relations[index]);
+
                                             setState(() {});
                                           } else {
                                             Fluttertoast.showToast(
@@ -472,8 +481,21 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                                           if (resp.isSuccessful) {
                                             FollowingDatabase.deleteFollowing(
                                                 _user.userId);
+
                                             relationUsers.removeAt(ind);
+
+                                            relationMap[relations[index]]
+                                                ['data'] = (relationMap[
+                                                            relations[index]]
+                                                        ['data']
+                                                    as BuiltSearchUsers)
+                                                .rebuild((b) => b
+                                                  ..users =
+                                                      BuiltList<SummaryUser>(
+                                                              relationUsers)
+                                                          .toBuilder());
                                             _initRelationData(relations[index]);
+
                                             setState(() {});
                                           } else {
                                             Fluttertoast.showToast(
