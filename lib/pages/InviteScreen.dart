@@ -51,9 +51,22 @@ class _InviteScreenState extends State<InviteScreen>
 
   share(BuildContext context) {
     //  final RenderBox box = context.findRenderObject();
-    String text = type == "followers"
-        ? 'Hi! Be a panelist for my club ${widget.club.clubName} on FlockTale.'
-        : "Hi! Join my club on FlockTale.";
+    String text;
+
+    if (widget.forPanelist) {
+//owner is sending participation ivnitation
+      text =
+          'Hi! Be a panelist for my club "${widget.club.clubName}" on FlockTale.';
+    } else {
+      if (widget.club.creator.userId ==
+          Provider.of<UserData>(context, listen: false).userId) {
+        text =
+            'Hey, come and join us in Hall of "${widget.club.clubName}" on Flocktale.';
+      } else {
+        text =
+            'Hi, let\'s listen to "${widget.club.clubName}" together on Flocktale. The panelists are really interesting.';
+      }
+    }
     String subject = 'Link to the app:';
     Share.share(
       text,
@@ -335,7 +348,7 @@ class _InviteScreenState extends State<InviteScreen>
                               fontFamily: "Lato", color: Colors.white),
                         )),
                 title: Text(
-                  contact.displayName,
+                  contact.displayName ?? '',
                   style: TextStyle(
                       fontFamily: "Lato", fontWeight: FontWeight.bold),
                 ),

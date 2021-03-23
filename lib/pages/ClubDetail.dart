@@ -558,7 +558,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     _joinClubInWebsocket();
 
     if (this._isPlaying == false && this._isOwner == false) {
-      // if this function is called from play button handler then to prevent recursion
       // if club is not playing already then play it automatically for non-owner.
       await _playButtonHandler();
     }
@@ -713,7 +712,11 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   _playButtonHandler() async {
     if (_clubAudience.club.status != (ClubStatus.Live) && _isOwner == false) {
       // non-owner is trying to play the club which is not yet started by owner.
-      Fluttertoast.showToast(msg: "The Club has not started yet");
+      if (_clubAudience.club.status == ClubStatus.Concluded) {
+        Fluttertoast.showToast(msg: "The Club is concluded");
+      } else if (_clubAudience.club.status == ClubStatus.Waiting) {
+        Fluttertoast.showToast(msg: "The Club has not started yet");
+      }
       return;
     }
 
@@ -859,11 +862,14 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       await Future.delayed(
         Duration(seconds: delay),
         () async {
-          if (this.mounted == true) {
-            _audienceMap['list'] = await _fetchAudienceList(null);
-            if (this.mounted) {
+          if (this.mounted == true &&
+              _clubAudience?.club?.status == ClubStatus.Live) {
+            if (this.mounted)
+              _audienceMap['list'] = await _fetchAudienceList(null);
+
+            if (this.mounted)
               setState(() {});
-            } else
+            else
               terminate = true;
           } else
             terminate = true;
@@ -871,6 +877,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       );
       if (terminate) break;
     }
+
+    _audienceMap['list'] = <AudienceData>[];
+    _audienceMap['lastevaluatedkey'] = null;
+    if (this.mounted) setState(() {});
   }
 
   _showMaterialDialog() {

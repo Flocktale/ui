@@ -123,18 +123,18 @@ class MySocket with ChangeNotifier {
 
     if (_inTheClub) {
       joinClub(_clubId);
-      await Future.delayed(Duration(milliseconds: 250));
+      await Future.delayed(Duration(milliseconds: 700));
       if (_isPlaying) {
         playClub(_clubId);
-        await Future.delayed(Duration(milliseconds: 250));
+        await Future.delayed(Duration(milliseconds: 700));
       }
     } else {
       if (_isPlaying && _clubId != null) {
         leaveClub(_clubId);
-        await Future.delayed(Duration(milliseconds: 250));
+        await Future.delayed(Duration(milliseconds: 700));
 
         playClub(_clubId);
-        await Future.delayed(Duration(milliseconds: 250));
+        await Future.delayed(Duration(milliseconds: 700));
       }
     }
   }
