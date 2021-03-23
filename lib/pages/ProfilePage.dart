@@ -205,7 +205,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         SizedBox(height: size.height / 50),
         _Clubs != null
-            ? Carousel(Clubs: _Clubs)
+            ? Carousel(Clubs: _Clubs, navigateTo: _navigateTo)
             : Container(
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                 child: Center(
