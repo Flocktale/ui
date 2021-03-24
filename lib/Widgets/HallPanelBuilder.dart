@@ -17,7 +17,7 @@ class HallPanelBuilder extends StatelessWidget {
   final bool isOwner;
   final Map<String, int> currentlySpeakingUsers;
 
-  final Function(String) muteParticipant;
+  final Function(String, bool) muteParticipant;
   final Function(String) removeParticipant;
 
   final Function(String) inviteAudience;
@@ -62,7 +62,7 @@ class HallPanelBuilder extends StatelessWidget {
   void _handleMenuButtons(String value, String userId) {
     switch (value) {
       case 'Mute':
-        muteParticipant(userId);
+        muteParticipant(userId, true);
         break;
       case 'Remove':
         removeParticipant(userId);

@@ -139,10 +139,12 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
       // convertT
       // print(convertToInt(participant.audience.username));
-      integerUsernames.putIfAbsent(0, () => participant.audience.username);
       integerUsernames.putIfAbsent(convertToInt(participant.audience.username),
           () => participant.audience.username);
     });
+
+    integerUsernames.putIfAbsent(
+        0, () => Provider.of<UserData>(context, listen: false).user.username);
 
     print('list of it: $participantList');
 
@@ -386,7 +388,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         .clubs;
   }
 
-  void _toggleMuteOfParticpant(String userId) async {
+  /// set [overridenMute] to true if host is muting panelist
+  void _toggleMuteOfParticpant(String userId,
+      [bool overridenMute = false]) async {
     // if user is unmuting himself. (_isMuted is true then till now)
     if (_isMuted && userId == _myUserId) {
       var status = await Permission.microphone.status;
@@ -410,11 +414,18 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       }
     }
 
+    String muteAction;
+    if (overridenMute) {
+      muteAction = 'mute';
+    } else {
+      muteAction = toMute ? 'mute' : 'unmute';
+    }
+
     await _service.muteActionOnParticipant(
       clubId: widget.club.clubId,
       who: 'participant',
       participantId: userId,
-      muteAction: toMute ? 'mute' : 'unmute',
+      muteAction: muteAction,
     );
 
     if (userId == _myUserId) {
@@ -423,7 +434,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       _isMuted = toMute;
     }
 
-    Fluttertoast.showToast(msg: toMute ? 'muted' : 'unmuted');
+    Fluttertoast.showToast(msg: muteAction == 'mute' ? 'muted' : 'unmuted');
 
     setState(() {});
   }
