@@ -96,7 +96,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       print(speakingUsers[integerUsernames[e.uid]]);
     });
 
-    setState(() {
+    _justRefresh(() {
       currentlySpeakingUsers = speakingUsers;
     });
     // print('All Speaking users with their volume  $speakingUsers');
@@ -108,6 +108,30 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     // String username = integerUsernames[uid];
 
     // print('$username is the dominating speaker');
+  }
+
+  void _onRemoteAudioStateChanged(
+      int uid, _, RTC.AudioRemoteStateReason reason, __) {
+    if (integerUsernames[uid] != null) {
+      // for remote user: 5 when muted and 6 when unmuted
+      if (reason.index == 5 || reason.index == 6) {
+        bool isMuted;
+        if (reason.index == 5)
+          isMuted = true;
+        else if (reason.index == 6) isMuted = false;
+
+        for (int i = 0; i < participantList.length; i++) {
+          var participant = participantList[i];
+          if (participant.audience.username == integerUsernames[uid]) {
+            participantList[i] = participantList[i]
+                .rebuild((b) => b..isMuted = isMuted ?? false);
+
+            _justRefresh();
+            break;
+          }
+        }
+      }
+    }
   }
 
   void scrollToBottom() {
@@ -148,7 +172,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     print('list of it: $participantList');
 
-    setState(() {});
+    _justRefresh();
   }
 
   void _setAudienceCount(event) {
@@ -158,7 +182,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       _clubAudience = _clubAudience
           .rebuild((b) => b..club.estimatedAudience = event['count']);
 
-    setState(() {});
+    _justRefresh();
   }
 
   void _setReactionCounters(event) {
@@ -174,7 +198,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       _heartCount = count;
     }
 
-    setState(() {});
+    _justRefresh();
   }
 
   void _youAreBlocked(event) async {
@@ -189,6 +213,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     }
   }
 
+// used when host mutes me
   void _youAreMuted(event) {
     if (event['clubId'] != _clubAudience.club.clubId) return;
     final bool isMuted = event['isMuted'];
@@ -198,50 +223,24 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     this._isMuted = isMuted;
 
-    Fluttertoast.showToast(msg: " You are ${isMuted ? 'mute' : 'unmute'}d");
-    setState(() {});
-  }
-
-  void _muteActionResponse(event) {
-    if (event['clubId'] != _clubAudience.club.clubId) return;
-
-    final participantIdList = ((event['participantIdList'] ?? []) as List)
-        .map((e) => e as String)
-        .toList();
-
-    final myUserId = Provider.of<UserData>(context, listen: false).userId;
-
-    final bool isMuted = event['isMuted'];
-
-    for (var id in participantIdList) {
-      // if i am affected user
-      if (id == myUserId) {
-        _isMuted = isMuted;
-
-        Provider.of<AgoraController>(context, listen: false)
-            .hardMuteAction(isMuted);
-
-        Fluttertoast.showToast(msg: " You are ${isMuted ? 'mute' : 'unmute'}d");
-      }
-
-      // changing mute status of this participant inside participantList.
-      for (int i = 0; i < participantList.length; i++) {
-        if (participantList[i].audience.userId == id) {
-          participantList[i] =
-              participantList[i].rebuild((b) => b..isMuted = isMuted);
-          break;
-        }
+    for (int i = 0; i < participantList.length; i++) {
+      var participant = participantList[i];
+      if (participant.audience.userId == _myUserId) {
+        participantList[i] =
+            participantList[i].rebuild((b) => b..isMuted = isMuted);
+        break;
       }
     }
 
-    setState(() {});
+    Fluttertoast.showToast(msg: " You are ${isMuted ? 'mute' : 'unmute'}d");
+    _justRefresh();
   }
 
   void _clubStartedByOwner(event) {
     if (event['clubId'] != _clubAudience.club.clubId) return;
     Fluttertoast.showToast(msg: "This Club is live now");
 
-    setState(() {
+    _justRefresh(() {
       _clubAudience = _clubAudience.rebuild(
         (b) => b
           ..club.agoraToken = event['agoraToken']
@@ -249,8 +248,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       );
     });
 
-    //TODO
-    // enable play button
+    if (_isOwner == false) {
+      _playButtonHandler();
+    }
   }
 
   void _clubConcludedByOwner(event) async {
@@ -264,7 +264,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     Fluttertoast.showToast(msg: "This Club is concluded now");
 
-    setState(() {
+    _justRefresh(() {
       _isPlaying = false;
     });
   }
@@ -296,7 +296,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     } else {
       newMessage = true;
     }
-    setState(() {});
+    _justRefresh();
   }
 
   void _addOldComments(event) {
@@ -305,7 +305,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     for (int i = length - 1; i >= 0; i--) {
       _putNewComment(event['oldComments'][i]);
     }
-    setState(() {});
+    _justRefresh();
 
     Future.delayed(const Duration(seconds: 1),
         () => _listController.jumpTo(_listController.position.maxScrollExtent));
@@ -322,7 +322,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     _clubAudience = _clubAudience.rebuild((b) => b
       ..reactionIndexValue =
           _clubAudience.reactionIndexValue == value ? null : value);
-    setState(() {});
+    _justRefresh();
   }
 
   void _toggleClubHeart() async {
@@ -436,7 +436,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     Fluttertoast.showToast(msg: muteAction == 'mute' ? 'muted' : 'unmuted');
 
-    setState(() {});
+    _justRefresh();
   }
 
   void _kickParticpant(String userId) async {
@@ -472,7 +472,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
           (b) => b..audienceData.status = AudienceStatus.ActiveJoinRequest);
 
       Fluttertoast.showToast(msg: "Join Request Sent");
-      setState(() {});
+      _justRefresh();
     } else {
       Fluttertoast.showToast(msg: 'Some error occurred');
     }
@@ -487,7 +487,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       _clubAudience =
           _clubAudience.rebuild((b) => b..audienceData.status = null);
       Fluttertoast.showToast(msg: "Join Request Cancelled");
-      setState(() {});
+      _justRefresh();
     } else {
       Fluttertoast.showToast(msg: 'Some Error occurred');
     }
@@ -508,7 +508,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       clubId: _clubAudience.club.clubId,
       token: _clubAudience.club.agoraToken,
       integerUsername: convertToInt(username),
-      audioVolumeIndication: getActiveSpeakers,
     );
   }
 
@@ -516,18 +515,39 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     if (_clubAudience != null) {
       Provider.of<AgoraController>(context, listen: false).club =
           _clubAudience.club;
+      String username =
+          Provider.of<UserData>(context, listen: false).user.username;
 
       await Provider.of<AgoraController>(context, listen: false).joinAsAudience(
         clubId: _clubAudience.club.clubId,
         token: _clubAudience.club.agoraToken,
-        audioVolumeIndication: getActiveSpeakers,
+        integerUsername: convertToInt(username),
       );
     } else {
       Fluttertoast.showToast(msg: "Club is null error");
     }
   }
 
+  void _initAgoraCallbacks() {
+    final _agoraEventHandler =
+        Provider.of<AgoraController>(context, listen: false).agoraEventHandler;
+
+    _agoraEventHandler.audioVolumeIndication = getActiveSpeakers;
+
+    _agoraEventHandler.remoteAudioStateChanged = _onRemoteAudioStateChanged;
+  }
+
+  void _disposeAgoraCallbacks() {
+    final _agoraEventHandler =
+        Provider.of<AgoraController>(context, listen: false).agoraEventHandler;
+
+    _agoraEventHandler.audioVolumeIndication = null;
+    _agoraEventHandler.remoteAudioStateChanged = null;
+  }
+
   Future<void> _enterClub() async {
+    _initAgoraCallbacks();
+
     this._isOwner = Provider.of<UserData>(context, listen: false).userId ==
         widget.club.creator.userId;
 
@@ -535,10 +555,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     this._isPlaying =
         Provider.of<AgoraController>(context, listen: false).club?.clubId ==
             widget.club.clubId;
-
-    Provider.of<AgoraController>(context, listen: false)
-        .agoraEventHandler
-        .audioVolumeIndication = getActiveSpeakers;
 
     final resp = await _service.getClubByClubId(
       clubId: widget.club.clubId,
@@ -568,12 +584,14 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     // now we can join club in websocket also.
     _joinClubInWebsocket();
 
-    if (this._isPlaying == false && this._isOwner == false) {
+    if (this._isPlaying == false &&
+        (this._isOwner == false ||
+            _clubAudience.club.status == ClubStatus.Live)) {
       // if club is not playing already then play it automatically for non-owner.
       await _playButtonHandler();
     }
 
-    setState(() {});
+    _justRefresh();
   }
 
   void _newJRArrived(event) {
@@ -583,7 +601,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     if (username != null)
       Fluttertoast.showToast(msg: '$username wish to become Panelist');
 
-    setState(() {
+    _justRefresh(() {
       _hasActiveJRs = true;
     });
   }
@@ -597,7 +615,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     _joinClubAsPanelist();
 
-    setState(() {});
+    _justRefresh();
   }
 
   void _yourJRcancelledByOwner(event) {
@@ -606,7 +624,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     Fluttertoast.showToast(msg: 'You request to speak has been cancelled.');
     _clubAudience = _clubAudience.rebuild((b) => b..audienceData.status = null);
 
-    setState(() {});
+    _justRefresh();
   }
 
   void _youAreKickedOut(event) {
@@ -615,7 +633,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     _clubAudience = _clubAudience.rebuild((b) => b..audienceData.status = null);
 
     _joinClubAsAudience();
-    setState(() {});
+    _justRefresh();
   }
 
   void _youAreInvited(event) {
@@ -626,7 +644,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     Fluttertoast.showToast(msg: event['message'] ?? '');
 
-    setState(() {});
+    _justRefresh();
   }
 
   void _joinClubInWebsocket() {
@@ -639,7 +657,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       setAudienceCount: _setAudienceCount,
       clubStarted: _clubStartedByOwner,
       youAreMuted: _youAreMuted,
-      muteActionResponse: _muteActionResponse,
       youAreBlocked: _youAreBlocked,
       newJRArrived: _newJRArrived,
       yourJRAccepted: _yourJRAccepted,
@@ -662,7 +679,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         ..club.status = (ClubStatus.Live),
     );
 
-    setState(() {});
+    _justRefresh();
   }
 
   Future<void> _concludeClub() async {
@@ -680,7 +697,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     Fluttertoast.showToast(msg: 'This club is concluded now.');
 
-    setState(() {
+    _justRefresh(() {
       _isPlaying = false;
     });
   }
@@ -691,7 +708,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         builder: (_) => page,
       ),
     );
-    setState(() {});
+    _justRefresh();
   }
 
   Future<void> _handleMenuButtons(String value) async {
@@ -756,7 +773,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       _isPlaying = true;
     }
 
-    setState(() {});
+    _justRefresh();
   }
 
   Future<void> _leavePanel() async {
@@ -769,7 +786,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       Fluttertoast.showToast(msg: 'You are now an audience');
     else
       Fluttertoast.showToast(msg: 'Some Error occurred');
-    setState(() {});
+    _justRefresh();
   }
 
   void _participationButtonHandler() async {
@@ -786,7 +803,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       }
     }
 
-    setState(() {});
+    _justRefresh();
   }
 
   String _processScheduledTimestamp(int timestamp) {
@@ -828,7 +845,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       bool terminate = false;
       await Future.delayed(
         const Duration(seconds: 30),
-        () => {if (this.mounted == true) setState(() {}) else terminate = true},
+        () => {if (this.mounted == true) _justRefresh() else terminate = true},
       );
       if (terminate) break;
     }
@@ -853,7 +870,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       );
 
       _audienceMap['list'] = resp.body.audience.asList();
-      setState(() {});
+      _justRefresh();
     }
 
     while (true) {
@@ -879,7 +896,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
               _audienceMap['list'] = await _fetchAudienceList(null);
 
             if (this.mounted)
-              setState(() {});
+              _justRefresh();
             else
               terminate = true;
           } else
@@ -891,7 +908,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     _audienceMap['list'] = <AudienceData>[];
     _audienceMap['lastevaluatedkey'] = null;
-    if (this.mounted) setState(() {});
+    if (this.mounted) _justRefresh();
   }
 
   _showMaterialDialog() {
@@ -909,7 +926,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       action: response,
     );
 
-    setState(() {
+    _justRefresh(() {
       _clubAudience =
           _clubAudience.rebuild((b) => b..audienceData.invitationId = null);
     });
@@ -945,7 +962,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         if (_isPlaying) {
           if (participantList.length < 10) {
             await respondToInvitation('accept');
-            setState(() {
+            _justRefresh(() {
               _clubAudience = _clubAudience.rebuild(
                   (b) => b..audienceData.status = AudienceStatus.Participant);
               _joinClubAsPanelist();
@@ -1069,7 +1086,16 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     this._isPlaying = false;
 
-    setState(() {});
+    _justRefresh();
+  }
+
+  void _justRefresh([Function refresh]) {
+    if (this.mounted) {
+      if (refresh != null) {
+        refresh();
+      }
+      setState(() {});
+    }
   }
 
   @override
@@ -1103,6 +1129,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         Provider.of<AgoraController>(context, listen: false)
             .agoraEventHandler
             .audioVolumeIndication = null;
+
+        _disposeAgoraCallbacks();
         return true;
       },
       child: Scaffold(
@@ -1124,7 +1152,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                 // ),
                 onTap: () async {
                   await _handleMenuButtons('Join Requests');
-                  setState(() {
+                  _justRefresh(() {
                     _hasActiveJRs = false;
                   });
                 },
@@ -1282,7 +1310,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                               HallPanelBuilder(
                                 sc,
                                 currentlySpeakingUsers: currentlySpeakingUsers,
-                                club: widget.club,
+                                club: _clubAudience?.club ?? widget.club,
                                 size: size,
                                 participantList: participantList,
                                 isOwner: _isOwner,
@@ -1317,7 +1345,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                 fetchMoreAudience: () async {
                                   if (_audienceMap['isLoading'] == true) return;
 
-                                  setState(() {
+                                  _justRefresh(() {
                                     _audienceMap['isLoading'] = true;
                                   });
 
@@ -1330,7 +1358,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                     await Future.delayed(
                                         Duration(milliseconds: 200));
                                   }
-                                  setState(() {
+                                  _justRefresh(() {
                                     _audienceMap['isLoading'] = false;
                                   });
                                 },

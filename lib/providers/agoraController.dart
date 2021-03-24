@@ -35,14 +35,11 @@ class AgoraController {
   Future<void> joinAsAudience({
     @required String clubId,
     @required String token,
-    @required int intergerUsername,
-    @required Function audioVolumeIndication,
+    @required int integerUsername,
   }) async {
-    agoraEventHandler.audioVolumeIndication = audioVolumeIndication;
-
     assert(clubId != null && token != null);
     await _agoraHandler.joinClub(clubId, token,
-        integerUsername: intergerUsername ?? 0);
+        integerUsername: integerUsername ?? 0);
 
     // _agoraHandler._eventHandler.audioVolumeIndication = audioVolumeIndication;
   }
@@ -51,10 +48,7 @@ class AgoraController {
     @required String clubId,
     @required String token,
     @required int integerUsername,
-    @required Function audioVolumeIndication,
   }) async {
-    agoraEventHandler.audioVolumeIndication = audioVolumeIndication;
-
     assert(clubId != null && token != null);
     await _agoraHandler.joinClub(clubId, token,
         isHost: true, integerUsername: integerUsername ?? 0);

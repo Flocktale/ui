@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chopper/chopper.dart';
 import 'package:flocktale/Models/basic_enums.dart';
 import 'package:flocktale/Widgets/introWidget.dart';
@@ -28,6 +30,8 @@ class _LandingPageState extends State<LandingPage>
   BuiltNotificationList notificationList;
   bool hasNewNotifications = false;
 
+  DateTime _clubFetchedTime = DateTime.now();
+
   Future getNotifications() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final cuser = Provider.of<UserData>(context, listen: false).user;
@@ -46,6 +50,9 @@ class _LandingPageState extends State<LandingPage>
   }
 
   Future<void> _navigateTo(Widget page) async {
+    // when user is on another page, then no need to keep fetching clubs
+    _clubFetchedTime = null;
+
     await Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => page))
         .then((value) {
@@ -110,11 +117,14 @@ class _LandingPageState extends State<LandingPage>
     );
   }
 
-  Future _fetchAllClubs() async {
+  Future _fetchAllClubs([bool initiating = false]) async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final cuser = Provider.of<UserData>(context, listen: false).user;
 
-    getNotifications();
+    if (initiating) {
+      getNotifications();
+    }
+    _clubFetchedTime = DateTime.now();
 
     await Future.wait([
       service.getClubsOfFriends(userId: cuser.userId),
@@ -132,9 +142,24 @@ class _LandingPageState extends State<LandingPage>
     });
   }
 
+  _infinteClubFetching() async {
+    await _fetchAllClubs(true);
+
+    while (true) {
+      final diff = DateTime.now()
+          .difference(_clubFetchedTime ?? DateTime.now())
+          .inSeconds;
+      if (diff < 30) {
+        await Future.delayed(Duration(seconds: max(30 - diff, 10)));
+      } else {
+        await _fetchAllClubs();
+      }
+    }
+  }
+
   @override
   void initState() {
-    _fetchAllClubs();
+    _infinteClubFetching();
     super.initState();
   }
 
@@ -160,7 +185,7 @@ class _LandingPageState extends State<LandingPage>
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.redAccent,
-                    fontSize: size.width/20,
+                    fontSize: size.width / 20,
                     letterSpacing: 0.0,
                     fontFamily: 'Montserrat',
                   ),

@@ -1,3 +1,4 @@
+import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -127,14 +128,20 @@ class HallPanelBuilder extends StatelessWidget {
                 border: Border.all(color: Colors.redAccent, width: 2)),
           ),
         ),
-        Text(
-          isOwner
-              ? "Invite Panelists"
-              : !hasSentJoinRequest
-                  ? "Ask to join"
-                  : "Cancel join request",
-          style: TextStyle(fontFamily: "Lato", fontWeight: FontWeight.bold),
-        )
+        if (isOwner)
+          Text(
+            isOwner
+                ? "Invite Panelists"
+                : !hasSentJoinRequest
+                    ? "Ask to join"
+                    : "Cancel join request",
+            style: TextStyle(fontFamily: "Lato", fontWeight: FontWeight.bold),
+          )
+        else if (club?.status == ClubStatus.Live && participantList.length < 9)
+          Text(
+            !hasSentJoinRequest ? "Ask to join" : "Cancel join request",
+            style: TextStyle(fontFamily: "Lato", fontWeight: FontWeight.bold),
+          )
       ],
     );
   }

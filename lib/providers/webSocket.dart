@@ -177,13 +177,12 @@ class MySocket with ChangeNotifier {
         clubId == agoraController.club.clubId) {
       final agoraToken = agoraController.club.agoraToken;
 
-      if (what == "muteAction#") {
+      if (what == "muteParticipant") {
         final bool isMuted = event['isMuted'];
         agoraController.hardMuteAction(isMuted);
         Fluttertoast.showToast(msg: " You are ${isMuted ? 'mute' : 'unmute'}d");
       } else if (what == "JR#Resp#accept") {
         agoraController.joinAsParticipant(clubId: clubId, token: agoraToken);
-
         Fluttertoast.showToast(msg: 'You are now a Panelist');
       } else if (what == "kickedOut") {
         agoraController.joinAsAudience(clubId: clubId, token: agoraToken);
@@ -214,7 +213,6 @@ class MySocket with ChangeNotifier {
     Function setAudienceCount,
     Function clubStarted,
     Function youAreMuted,
-    Function muteActionResponse,
     Function youAreBlocked,
     Function newJRArrived,
     Function yourJRAccepted,
@@ -255,8 +253,6 @@ class MySocket with ChangeNotifier {
     funcs["clubStarted"] = clubStarted;
 
     funcs["muteParticipant"] = youAreMuted;
-
-    funcs["muteAction#"] = muteActionResponse;
 
     funcs["blocked"] = youAreBlocked;
 
@@ -307,8 +303,6 @@ class MySocket with ChangeNotifier {
     funcs["clubStarted"] = null;
 
     funcs["muteParticipant"] = null;
-
-    funcs["muteAction#"] = null;
 
     funcs["blocked"] = null;
 
