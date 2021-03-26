@@ -31,9 +31,9 @@ class CustomInterceptor implements RequestInterceptor {
         // TODO: if auth token is still not valid then ask user to login again
         // may be Phoenix.rebirth after all logout operations
       }
-
+      return request.copyWith(
+          headers: {...request.headers, 'authorization': user.authToken});
       // adding authorization token here
-      request.headers['authorization'] = user.authToken;
     }
 
     return request;

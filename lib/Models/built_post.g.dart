@@ -2315,6 +2315,19 @@ class _$BuiltUnifiedSearchResultsSerializer
         ..add(serializers.serialize(object.clublastevaluatedkey,
             specifiedType: const FullType(String)));
     }
+    if (object.communities != null) {
+      result
+        ..add('communities')
+        ..add(serializers.serialize(object.communities,
+            specifiedType: const FullType(
+                BuiltList, const [const FullType(BuiltCommunityUser)])));
+    }
+    if (object.communitylastevaluatedkey != null) {
+      result
+        ..add('communitylastevaluatedkey')
+        ..add(serializers.serialize(object.communitylastevaluatedkey,
+            specifiedType: const FullType(String)));
+    }
     return result;
   }
 
@@ -2348,6 +2361,16 @@ class _$BuiltUnifiedSearchResultsSerializer
           break;
         case 'clublastevaluatedkey':
           result.clublastevaluatedkey = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'communities':
+          result.communities.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(BuiltCommunityUser)]))
+              as BuiltList<Object>);
+          break;
+        case 'communitylastevaluatedkey':
+          result.communitylastevaluatedkey = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
       }
@@ -6294,6 +6317,10 @@ class _$BuiltUnifiedSearchResults extends BuiltUnifiedSearchResults {
   final BuiltList<BuiltClub> clubs;
   @override
   final String clublastevaluatedkey;
+  @override
+  final BuiltList<BuiltCommunityUser> communities;
+  @override
+  final String communitylastevaluatedkey;
 
   factory _$BuiltUnifiedSearchResults(
           [void Function(BuiltUnifiedSearchResultsBuilder) updates]) =>
@@ -6303,7 +6330,9 @@ class _$BuiltUnifiedSearchResults extends BuiltUnifiedSearchResults {
       {this.users,
       this.userlastevaluatedkey,
       this.clubs,
-      this.clublastevaluatedkey})
+      this.clublastevaluatedkey,
+      this.communities,
+      this.communitylastevaluatedkey})
       : super._();
 
   @override
@@ -6322,15 +6351,21 @@ class _$BuiltUnifiedSearchResults extends BuiltUnifiedSearchResults {
         users == other.users &&
         userlastevaluatedkey == other.userlastevaluatedkey &&
         clubs == other.clubs &&
-        clublastevaluatedkey == other.clublastevaluatedkey;
+        clublastevaluatedkey == other.clublastevaluatedkey &&
+        communities == other.communities &&
+        communitylastevaluatedkey == other.communitylastevaluatedkey;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, users.hashCode), userlastevaluatedkey.hashCode),
-            clubs.hashCode),
-        clublastevaluatedkey.hashCode));
+        $jc(
+            $jc(
+                $jc($jc($jc(0, users.hashCode), userlastevaluatedkey.hashCode),
+                    clubs.hashCode),
+                clublastevaluatedkey.hashCode),
+            communities.hashCode),
+        communitylastevaluatedkey.hashCode));
   }
 
   @override
@@ -6339,7 +6374,9 @@ class _$BuiltUnifiedSearchResults extends BuiltUnifiedSearchResults {
           ..add('users', users)
           ..add('userlastevaluatedkey', userlastevaluatedkey)
           ..add('clubs', clubs)
-          ..add('clublastevaluatedkey', clublastevaluatedkey))
+          ..add('clublastevaluatedkey', clublastevaluatedkey)
+          ..add('communities', communities)
+          ..add('communitylastevaluatedkey', communitylastevaluatedkey))
         .toString();
   }
 }
@@ -6369,6 +6406,17 @@ class BuiltUnifiedSearchResultsBuilder
   set clublastevaluatedkey(String clublastevaluatedkey) =>
       _$this._clublastevaluatedkey = clublastevaluatedkey;
 
+  ListBuilder<BuiltCommunityUser> _communities;
+  ListBuilder<BuiltCommunityUser> get communities =>
+      _$this._communities ??= new ListBuilder<BuiltCommunityUser>();
+  set communities(ListBuilder<BuiltCommunityUser> communities) =>
+      _$this._communities = communities;
+
+  String _communitylastevaluatedkey;
+  String get communitylastevaluatedkey => _$this._communitylastevaluatedkey;
+  set communitylastevaluatedkey(String communitylastevaluatedkey) =>
+      _$this._communitylastevaluatedkey = communitylastevaluatedkey;
+
   BuiltUnifiedSearchResultsBuilder();
 
   BuiltUnifiedSearchResultsBuilder get _$this {
@@ -6377,6 +6425,8 @@ class BuiltUnifiedSearchResultsBuilder
       _userlastevaluatedkey = _$v.userlastevaluatedkey;
       _clubs = _$v.clubs?.toBuilder();
       _clublastevaluatedkey = _$v.clublastevaluatedkey;
+      _communities = _$v.communities?.toBuilder();
+      _communitylastevaluatedkey = _$v.communitylastevaluatedkey;
       _$v = null;
     }
     return this;
@@ -6404,7 +6454,9 @@ class BuiltUnifiedSearchResultsBuilder
               users: _users?.build(),
               userlastevaluatedkey: userlastevaluatedkey,
               clubs: _clubs?.build(),
-              clublastevaluatedkey: clublastevaluatedkey);
+              clublastevaluatedkey: clublastevaluatedkey,
+              communities: _communities?.build(),
+              communitylastevaluatedkey: communitylastevaluatedkey);
     } catch (_) {
       String _$failedField;
       try {
@@ -6413,6 +6465,9 @@ class BuiltUnifiedSearchResultsBuilder
 
         _$failedField = 'clubs';
         _clubs?.build();
+
+        _$failedField = 'communities';
+        _communities?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuiltUnifiedSearchResults', _$failedField, e.toString());

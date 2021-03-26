@@ -87,6 +87,9 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(BuiltList, const [const FullType(BuiltClub)]),
           () => new ListBuilder<BuiltClub>())
       ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(BuiltCommunityUser)]),
+          () => new ListBuilder<BuiltCommunityUser>())
+      ..addBuilderFactory(
           const FullType(BuiltSet, const [const FullType(String)]),
           () => new SetBuilder<String>())
       ..addBuilderFactory(

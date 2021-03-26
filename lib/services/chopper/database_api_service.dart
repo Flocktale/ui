@@ -498,8 +498,8 @@ abstract class DatabaseApiService extends ChopperService {
       ],
       converter: BuiltValueConverter(),
       interceptors: [
-        HttpLoggingInterceptor(),
         CustomInterceptor(),
+        HttpLoggingInterceptor(),
       ],
     );
 

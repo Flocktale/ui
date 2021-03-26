@@ -699,6 +699,11 @@ abstract class BuiltUnifiedSearchResults
   @nullable
   String get clublastevaluatedkey;
 
+  @nullable
+  BuiltList<BuiltCommunityUser> get communities;
+  @nullable
+  String get communitylastevaluatedkey;
+
   BuiltUnifiedSearchResults._();
 
   factory BuiltUnifiedSearchResults(
