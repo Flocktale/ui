@@ -9,6 +9,107 @@ import 'package:flocktale/services/chopper/serializers.dart';
 
 part 'built_post.g.dart';
 
+abstract class CommunityImageUploadBody
+    implements
+        Built<CommunityImageUploadBody, CommunityImageUploadBodyBuilder> {
+  // fields go here
+
+  @nullable
+  String get avatar;
+
+  @nullable
+  String get coverImage;
+
+  CommunityImageUploadBody._();
+
+  factory CommunityImageUploadBody(
+          [updates(CommunityImageUploadBodyBuilder b)]) =
+      _$CommunityImageUploadBody;
+
+  static Serializer<CommunityImageUploadBody> get serializer =>
+      _$communityImageUploadBodySerializer;
+}
+
+abstract class BuiltCommunityList
+    implements Built<BuiltCommunityList, BuiltCommunityListBuilder> {
+  // fields go here
+
+  @nullable
+  BuiltList<BuiltCommunity> get communities;
+
+  @nullable
+  String get lastevaluatedkey;
+
+  BuiltCommunityList._();
+
+  factory BuiltCommunityList([updates(BuiltCommunityListBuilder b)]) =
+      _$BuiltCommunityList;
+
+  static Serializer<BuiltCommunityList> get serializer =>
+      _$builtCommunityListSerializer;
+}
+
+abstract class BuiltCommunityUser
+    implements Built<BuiltCommunityUser, BuiltCommunityUserBuilder> {
+  // fields go here
+
+  @nullable
+  BuiltCommunity get community;
+
+  @nullable
+  SummaryUser get user;
+
+  BuiltCommunityUser._();
+
+  factory BuiltCommunityUser([updates(BuiltCommunityUserBuilder b)]) =
+      _$BuiltCommunityUser;
+
+  static Serializer<BuiltCommunityUser> get serializer =>
+      _$builtCommunityUserSerializer;
+}
+
+abstract class BuiltCommunity
+    implements Built<BuiltCommunity, BuiltCommunityBuilder> {
+  // fields go here
+
+  @nullable
+  String get communityId;
+
+  @nullable
+  String get name;
+
+  @nullable
+  String get description;
+
+  @nullable
+  String get avatar;
+
+  @nullable
+  String get coverImage;
+
+  @nullable
+  SummaryUser get creator;
+
+  @nullable
+  BuiltSet<String> get hosts;
+
+  @nullable
+  BuiltSet<String> get liveClubHosts;
+
+  @nullable
+  int get scheduledClubCount;
+
+  @nullable
+  int get memberCount;
+
+  BuiltCommunity._();
+
+  factory BuiltCommunity([updates(BuiltCommunityBuilder b)]) = _$BuiltCommunity;
+
+  static Serializer<BuiltCommunity> get serializer =>
+      _$builtCommunitySerializer;
+}
+
 abstract class AppConfigs implements Built<AppConfigs, AppConfigsBuilder> {
   // fields go here
 
@@ -653,20 +754,3 @@ abstract class BuiltContacts
 
   static Serializer<BuiltContacts> get serializer => _$builtContactsSerializer;
 }
-
-
-// @HiveType()
-// class Contact {
-//   @HiveField(0)
-//   final String userId;
-
-//   @HiveField(1)
-//   final String userAvatar;
-
-//   @HiveField(2)
-//   final String phoneNumber;
-
-  
-
-//   Contact(this.userId,this.userAvatar,this.phoneNumber);
-// }

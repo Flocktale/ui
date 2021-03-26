@@ -513,15 +513,17 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> getAllCommunities({String lastevaluatedkey}) {
+  Future<Response<BuiltCommunityList>> getAllCommunities(
+      {String lastevaluatedkey}) {
     final $url = '/communities/global/';
     final $headers = {'lastevaluatedkey': lastevaluatedkey};
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client.send<BuiltCommunityList, BuiltCommunityList>($request);
   }
 
   @override
-  Future<Response<dynamic>> createCommunity({dynamic body, dynamic creatorId}) {
+  Future<Response<dynamic>> createCommunity(
+      {BuiltCommunity body, dynamic creatorId}) {
     final $url = '/communities/global/create/';
     final $params = <String, dynamic>{'creatorId': creatorId};
     final $body = body;
@@ -531,31 +533,31 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> getMyHostedCommunities({String userId}) {
+  Future<Response<BuiltCommunityList>> getMyHostedCommunities({String userId}) {
     final $url = '/mycommunities/$userId?type=HOST';
     final $request = Request('GET', $url, client.baseUrl);
-    return client.send<dynamic, dynamic>($request);
+    return client.send<BuiltCommunityList, BuiltCommunityList>($request);
   }
 
   @override
-  Future<Response<dynamic>> getMyMemberCommunities(
+  Future<Response<BuiltCommunityList>> getMyMemberCommunities(
       {String userId, String lastevaluatedkey}) {
     final $url = '/mycommunities/$userId?type=MEMBER';
     final $headers = {'lastevaluatedkey': lastevaluatedkey};
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client.send<BuiltCommunityList, BuiltCommunityList>($request);
   }
 
   @override
-  Future<Response<dynamic>> getCommunityData(String communityId) {
+  Future<Response<BuiltCommunity>> getCommunityData(String communityId) {
     final $url = '/communities/$communityId/';
     final $request = Request('GET', $url, client.baseUrl);
-    return client.send<dynamic, dynamic>($request);
+    return client.send<BuiltCommunity, BuiltCommunity>($request);
   }
 
   @override
   Future<Response<dynamic>> updateCommunityData(
-      String communityId, dynamic body) {
+      String communityId, BuiltCommunity body) {
     final $url = '/communities/$communityId/';
     final $body = body;
     final $request = Request('PATCH', $url, client.baseUrl, body: $body);
@@ -563,14 +565,14 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> getCommunityUsers(String communityId,
+  Future<Response<BuiltSearchUsers>> getCommunityUsers(String communityId,
       {dynamic type, String lastevaluatedkey}) {
     final $url = '/communities/$communityId/users';
     final $params = <String, dynamic>{'type': type};
     final $headers = {'lastevaluatedkey': lastevaluatedkey};
     final $request = Request('GET', $url, client.baseUrl,
         parameters: $params, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client.send<BuiltSearchUsers, BuiltSearchUsers>($request);
   }
 
   @override
@@ -594,7 +596,7 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<dynamic>> uploadCommunityImages(String communityId,
-      {dynamic body}) {
+      {CommunityImageUploadBody body}) {
     final $url = '/communities/$communityId/image/';
     final $body = body;
     final $request = Request('POST', $url, client.baseUrl, body: $body);
@@ -602,11 +604,11 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> getCommunityActiveClubs(String communityId,
+  Future<Response<BuiltSearchClubs>> getCommunityActiveClubs(String communityId,
       {String lastevaluatedkey}) {
     final $url = '/communities/$communityId/clubs/';
     final $headers = {'lastevaluatedkey': lastevaluatedkey};
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
-    return client.send<dynamic, dynamic>($request);
+    return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
   }
 }

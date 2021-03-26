@@ -421,32 +421,34 @@ abstract class DatabaseApiService extends ChopperService {
   //! ---------------------------------------------------------------------------------------
 
   @Get(path: '/communities/global/')
-  Future<Response> getAllCommunities({@Header() String lastevaluatedkey});
+  Future<Response<BuiltCommunityList>> getAllCommunities(
+      {@Header() String lastevaluatedkey});
 
   @Post(path: '/communities/global/create/')
   Future<Response> createCommunity({
-    @required @Body() body,
+    @required @Body() BuiltCommunity body,
     @required @Query() creatorId,
   });
 
   @Get(path: '/mycommunities/{userId}?type=HOST')
-  Future<Response> getMyHostedCommunities({@required @Path() String userId});
+  Future<Response<BuiltCommunityList>> getMyHostedCommunities(
+      {@required @Path() String userId});
 
   @Get(path: '/mycommunities/{userId}?type=MEMBER')
-  Future<Response> getMyMemberCommunities({
+  Future<Response<BuiltCommunityList>> getMyMemberCommunities({
     @required @Path() String userId,
     @Header() String lastevaluatedkey,
   });
 
   @Get(path: '/communities/{communityId}/')
-  Future<Response> getCommunityData(@Path() String communityId);
+  Future<Response<BuiltCommunity>> getCommunityData(@Path() String communityId);
 
   @Patch(path: '/communities/{communityId}/')
-  Future<Response> updateCommunityData(
-      @Path() String communityId, @Body() body); // to update description only.
+  Future<Response> updateCommunityData(@Path() String communityId,
+      @Body() BuiltCommunity body); // to update description only.
 
   @Get(path: '/communities/{communityId}/users')
-  Future<Response> getCommunityUsers(
+  Future<Response<BuiltSearchUsers>> getCommunityUsers(
     @Path() String communityId, {
     @required @Query() type, //["HOST","MEMBER"]
     @Header() String lastevaluatedkey,
@@ -469,12 +471,12 @@ abstract class DatabaseApiService extends ChopperService {
   @Post(path: '/communities/{communityId}/image/')
   Future<Response> uploadCommunityImages(
     @Path() String communityId, {
-    @Body() body,
+    @Body() CommunityImageUploadBody body,
   });
 
   /// to get live/scheduled clubs
   @Get(path: '/communities/{communityId}/clubs/')
-  Future<Response> getCommunityActiveClubs(
+  Future<Response<BuiltSearchClubs>> getCommunityActiveClubs(
     @Path() String communityId, {
     @Header() String lastevaluatedkey,
   });
