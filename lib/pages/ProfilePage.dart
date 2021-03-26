@@ -1,5 +1,6 @@
 import 'package:flocktale/Authentication/logOut.dart';
 import 'package:flocktale/Models/basic_enums.dart';
+import 'package:flocktale/Widgets/CommunityCard.dart';
 import 'package:flocktale/Widgets/ProfileTopBackground.dart';
 import 'package:flocktale/Widgets/socialRelationActions.dart';
 import 'package:flocktale/Widgets/customImage.dart';
@@ -206,6 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
         SizedBox(height: size.height / 50),
         _Clubs != null
             ? Carousel(Clubs: _Clubs, navigateTo: _navigateTo)
+   //         ?CommunityCard()
             : Container(
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                 child: Center(
