@@ -16,6 +16,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(BuiltClub.serializer)
       ..add(BuiltClubAndAudience.serializer)
       ..add(BuiltCommunity.serializer)
+      ..add(BuiltCommunityAndUser.serializer)
       ..add(BuiltCommunityList.serializer)
       ..add(BuiltCommunityUser.serializer)
       ..add(BuiltContacts.serializer)
@@ -33,6 +34,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(CategoryClubsList.serializer)
       ..add(ClubStatus.serializer)
       ..add(CommunityImageUploadBody.serializer)
+      ..add(CommunityUserType.serializer)
       ..add(JoinRequests.serializer)
       ..add(NotificationData.serializer)
       ..add(ReactionUser.serializer)
@@ -89,9 +91,6 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(BuiltCommunityUser)]),
           () => new ListBuilder<BuiltCommunityUser>())
-      ..addBuilderFactory(
-          const FullType(BuiltSet, const [const FullType(String)]),
-          () => new SetBuilder<String>())
       ..addBuilderFactory(
           const FullType(BuiltSet, const [const FullType(String)]),
           () => new SetBuilder<String>()))

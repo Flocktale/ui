@@ -549,10 +549,13 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<BuiltCommunity>> getCommunityData(String communityId) {
+  Future<Response<BuiltCommunityAndUser>> getCommunityByCommunityId(
+      String communityId,
+      {String userId}) {
     final $url = '/communities/$communityId/';
-    final $request = Request('GET', $url, client.baseUrl);
-    return client.send<BuiltCommunity, BuiltCommunity>($request);
+    final $params = <String, dynamic>{'userId': userId};
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client.send<BuiltCommunityAndUser, BuiltCommunityAndUser>($request);
   }
 
   @override
@@ -576,10 +579,52 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> addCommunityUser(String communityId,
-      {dynamic type, dynamic userId}) {
+  Future<Response<BuiltSearchUsers>> seachCommunityMember(String communityId,
+      {String searchString, String lastevaluatedkey}) {
+    final $url = '/communities/$communityId/users?type=MEMBER';
+    final $params = <String, dynamic>{'searchString': searchString};
+    final $headers = {'lastevaluatedkey': lastevaluatedkey};
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<BuiltSearchUsers, BuiltSearchUsers>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> joinCommunityAsMember(String communityId,
+      {dynamic userId}) {
     final $url = '/communities/$communityId/users';
-    final $params = <String, dynamic>{'type': type, 'userId': userId};
+    final $params = <String, dynamic>{'userId': userId};
+    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> inviteCommunityMemberToBecomeHost(
+      String communityId,
+      {dynamic memberId}) {
+    final $url = '/communities/$communityId/users/invite';
+    final $params = <String, dynamic>{'memberId': memberId};
+    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<BuiltCommunityUser>> acceptHostCommunityInvitation(
+      String communityId,
+      {dynamic memberId}) {
+    final $url =
+        '/communities/$communityId/users/invite/response?response=accept';
+    final $params = <String, dynamic>{'memberId': memberId};
+    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
+    return client.send<BuiltCommunityUser, BuiltCommunityUser>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> cancelHostCommunityInvitation(String communityId,
+      {dynamic memberId}) {
+    final $url =
+        '/communities/$communityId/users/invite/response?response=cancel';
+    final $params = <String, dynamic>{'memberId': memberId};
     final $request = Request('POST', $url, client.baseUrl, parameters: $params);
     return client.send<dynamic, dynamic>($request);
   }

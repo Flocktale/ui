@@ -441,7 +441,10 @@ abstract class DatabaseApiService extends ChopperService {
   });
 
   @Get(path: '/communities/{communityId}/')
-  Future<Response<BuiltCommunity>> getCommunityData(@Path() String communityId);
+  Future<Response<BuiltCommunityAndUser>> getCommunityByCommunityId(
+    @Path() String communityId, {
+    @required @Query() String userId,
+  });
 
   @Patch(path: '/communities/{communityId}/')
   Future<Response> updateCommunityData(@Path() String communityId,
@@ -454,11 +457,37 @@ abstract class DatabaseApiService extends ChopperService {
     @Header() String lastevaluatedkey,
   });
 
-  @Post(path: '/communities/{communityId}/users')
-  Future<Response> addCommunityUser(
+  @Get(path: '/communities/{communityId}/users?type=MEMBER')
+  Future<Response<BuiltSearchUsers>> seachCommunityMember(
     @Path() String communityId, {
-    @required @Query() type, //["HOST","MEMBER"]
+    @required @Query() String searchString,
+    @Header() String lastevaluatedkey,
+  });
+
+  @Post(path: '/communities/{communityId}/users')
+  Future<Response> joinCommunityAsMember(
+    @Path() String communityId, {
     @required @Query() userId,
+  });
+
+  @Post(path: '/communities/{communityId}/users/invite')
+  Future<Response> inviteCommunityMemberToBecomeHost(
+    @Path() String communityId, {
+    @required @Query() memberId,
+  });
+
+  @Post(
+      path: '/communities/{communityId}/users/invite/response?response=accept')
+  Future<Response<BuiltCommunityUser>> acceptHostCommunityInvitation(
+    @Path() String communityId, {
+    @required @Query() memberId,
+  });
+
+  @Post(
+      path: '/communities/{communityId}/users/invite/response?response=cancel')
+  Future<Response> cancelHostCommunityInvitation(
+    @Path() String communityId, {
+    @required @Query() memberId,
   });
 
   @Delete(path: '/communities/{communityId}/users')

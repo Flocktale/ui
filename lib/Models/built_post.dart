@@ -7,7 +7,27 @@ import 'package:flocktale/Models/enums/audienceStatus.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/services/chopper/serializers.dart';
 
+import 'enums/communityUserType.dart';
+
 part 'built_post.g.dart';
+
+abstract class BuiltCommunityAndUser
+    implements Built<BuiltCommunityAndUser, BuiltCommunityAndUserBuilder> {
+  // fields go here
+  @nullable
+  BuiltCommunity get community;
+
+  @nullable
+  BuiltCommunityUser get communityUser;
+
+  BuiltCommunityAndUser._();
+
+  factory BuiltCommunityAndUser([updates(BuiltCommunityAndUserBuilder b)]) =
+      _$BuiltCommunityAndUser;
+
+  static Serializer<BuiltCommunityAndUser> get serializer =>
+      _$builtCommunityAndUserSerializer;
+}
 
 abstract class CommunityImageUploadBody
     implements
@@ -59,6 +79,15 @@ abstract class BuiltCommunityUser
   @nullable
   SummaryUser get user;
 
+  @nullable
+  CommunityUserType get type;
+
+  @nullable
+  int get timestamp;
+
+  @nullable
+  bool get invited;
+
   BuiltCommunityUser._();
 
   factory BuiltCommunityUser([updates(BuiltCommunityUserBuilder b)]) =
@@ -94,7 +123,7 @@ abstract class BuiltCommunity
   BuiltSet<String> get hosts;
 
   @nullable
-  BuiltSet<String> get liveClubHosts;
+  int get liveClubCount;
 
   @nullable
   int get scheduledClubCount;

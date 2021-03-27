@@ -6,6 +6,8 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<BuiltCommunityAndUser> _$builtCommunityAndUserSerializer =
+    new _$BuiltCommunityAndUserSerializer();
 Serializer<CommunityImageUploadBody> _$communityImageUploadBodySerializer =
     new _$CommunityImageUploadBodySerializer();
 Serializer<BuiltCommunityList> _$builtCommunityListSerializer =
@@ -65,6 +67,64 @@ Serializer<BuiltInviteFormat> _$builtInviteFormatSerializer =
     new _$BuiltInviteFormatSerializer();
 Serializer<BuiltContacts> _$builtContactsSerializer =
     new _$BuiltContactsSerializer();
+
+class _$BuiltCommunityAndUserSerializer
+    implements StructuredSerializer<BuiltCommunityAndUser> {
+  @override
+  final Iterable<Type> types = const [
+    BuiltCommunityAndUser,
+    _$BuiltCommunityAndUser
+  ];
+  @override
+  final String wireName = 'BuiltCommunityAndUser';
+
+  @override
+  Iterable<Object> serialize(
+      Serializers serializers, BuiltCommunityAndUser object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.community != null) {
+      result
+        ..add('community')
+        ..add(serializers.serialize(object.community,
+            specifiedType: const FullType(BuiltCommunity)));
+    }
+    if (object.communityUser != null) {
+      result
+        ..add('communityUser')
+        ..add(serializers.serialize(object.communityUser,
+            specifiedType: const FullType(BuiltCommunityUser)));
+    }
+    return result;
+  }
+
+  @override
+  BuiltCommunityAndUser deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new BuiltCommunityAndUserBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'community':
+          result.community.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltCommunity)) as BuiltCommunity);
+          break;
+        case 'communityUser':
+          result.communityUser.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(BuiltCommunityUser))
+              as BuiltCommunityUser);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$CommunityImageUploadBodySerializer
     implements StructuredSerializer<CommunityImageUploadBody> {
@@ -202,6 +262,24 @@ class _$BuiltCommunityUserSerializer
         ..add(serializers.serialize(object.user,
             specifiedType: const FullType(SummaryUser)));
     }
+    if (object.type != null) {
+      result
+        ..add('type')
+        ..add(serializers.serialize(object.type,
+            specifiedType: const FullType(CommunityUserType)));
+    }
+    if (object.timestamp != null) {
+      result
+        ..add('timestamp')
+        ..add(serializers.serialize(object.timestamp,
+            specifiedType: const FullType(int)));
+    }
+    if (object.invited != null) {
+      result
+        ..add('invited')
+        ..add(serializers.serialize(object.invited,
+            specifiedType: const FullType(bool)));
+    }
     return result;
   }
 
@@ -224,6 +302,19 @@ class _$BuiltCommunityUserSerializer
         case 'user':
           result.user.replace(serializers.deserialize(value,
               specifiedType: const FullType(SummaryUser)) as SummaryUser);
+          break;
+        case 'type':
+          result.type = serializers.deserialize(value,
+                  specifiedType: const FullType(CommunityUserType))
+              as CommunityUserType;
+          break;
+        case 'timestamp':
+          result.timestamp = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'invited':
+          result.invited = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
           break;
       }
     }
@@ -286,12 +377,11 @@ class _$BuiltCommunitySerializer
             specifiedType:
                 const FullType(BuiltSet, const [const FullType(String)])));
     }
-    if (object.liveClubHosts != null) {
+    if (object.liveClubCount != null) {
       result
-        ..add('liveClubHosts')
-        ..add(serializers.serialize(object.liveClubHosts,
-            specifiedType:
-                const FullType(BuiltSet, const [const FullType(String)])));
+        ..add('liveClubCount')
+        ..add(serializers.serialize(object.liveClubCount,
+            specifiedType: const FullType(int)));
     }
     if (object.scheduledClubCount != null) {
       result
@@ -350,11 +440,9 @@ class _$BuiltCommunitySerializer
                       const FullType(BuiltSet, const [const FullType(String)]))
               as BuiltSet<Object>);
           break;
-        case 'liveClubHosts':
-          result.liveClubHosts.replace(serializers.deserialize(value,
-                  specifiedType:
-                      const FullType(BuiltSet, const [const FullType(String)]))
-              as BuiltSet<Object>);
+        case 'liveClubCount':
+          result.liveClubCount = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
         case 'scheduledClubCount':
           result.scheduledClubCount = serializers.deserialize(value,
@@ -2481,6 +2569,115 @@ class _$BuiltContactsSerializer implements StructuredSerializer<BuiltContacts> {
   }
 }
 
+class _$BuiltCommunityAndUser extends BuiltCommunityAndUser {
+  @override
+  final BuiltCommunity community;
+  @override
+  final BuiltCommunityUser communityUser;
+
+  factory _$BuiltCommunityAndUser(
+          [void Function(BuiltCommunityAndUserBuilder) updates]) =>
+      (new BuiltCommunityAndUserBuilder()..update(updates)).build();
+
+  _$BuiltCommunityAndUser._({this.community, this.communityUser}) : super._();
+
+  @override
+  BuiltCommunityAndUser rebuild(
+          void Function(BuiltCommunityAndUserBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  BuiltCommunityAndUserBuilder toBuilder() =>
+      new BuiltCommunityAndUserBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is BuiltCommunityAndUser &&
+        community == other.community &&
+        communityUser == other.communityUser;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, community.hashCode), communityUser.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('BuiltCommunityAndUser')
+          ..add('community', community)
+          ..add('communityUser', communityUser))
+        .toString();
+  }
+}
+
+class BuiltCommunityAndUserBuilder
+    implements Builder<BuiltCommunityAndUser, BuiltCommunityAndUserBuilder> {
+  _$BuiltCommunityAndUser _$v;
+
+  BuiltCommunityBuilder _community;
+  BuiltCommunityBuilder get community =>
+      _$this._community ??= new BuiltCommunityBuilder();
+  set community(BuiltCommunityBuilder community) =>
+      _$this._community = community;
+
+  BuiltCommunityUserBuilder _communityUser;
+  BuiltCommunityUserBuilder get communityUser =>
+      _$this._communityUser ??= new BuiltCommunityUserBuilder();
+  set communityUser(BuiltCommunityUserBuilder communityUser) =>
+      _$this._communityUser = communityUser;
+
+  BuiltCommunityAndUserBuilder();
+
+  BuiltCommunityAndUserBuilder get _$this {
+    if (_$v != null) {
+      _community = _$v.community?.toBuilder();
+      _communityUser = _$v.communityUser?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(BuiltCommunityAndUser other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$BuiltCommunityAndUser;
+  }
+
+  @override
+  void update(void Function(BuiltCommunityAndUserBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$BuiltCommunityAndUser build() {
+    _$BuiltCommunityAndUser _$result;
+    try {
+      _$result = _$v ??
+          new _$BuiltCommunityAndUser._(
+              community: _community?.build(),
+              communityUser: _communityUser?.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'community';
+        _community?.build();
+        _$failedField = 'communityUser';
+        _communityUser?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'BuiltCommunityAndUser', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
 class _$CommunityImageUploadBody extends CommunityImageUploadBody {
   @override
   final String avatar;
@@ -2682,12 +2879,20 @@ class _$BuiltCommunityUser extends BuiltCommunityUser {
   final BuiltCommunity community;
   @override
   final SummaryUser user;
+  @override
+  final CommunityUserType type;
+  @override
+  final int timestamp;
+  @override
+  final bool invited;
 
   factory _$BuiltCommunityUser(
           [void Function(BuiltCommunityUserBuilder) updates]) =>
       (new BuiltCommunityUserBuilder()..update(updates)).build();
 
-  _$BuiltCommunityUser._({this.community, this.user}) : super._();
+  _$BuiltCommunityUser._(
+      {this.community, this.user, this.type, this.timestamp, this.invited})
+      : super._();
 
   @override
   BuiltCommunityUser rebuild(
@@ -2703,19 +2908,28 @@ class _$BuiltCommunityUser extends BuiltCommunityUser {
     if (identical(other, this)) return true;
     return other is BuiltCommunityUser &&
         community == other.community &&
-        user == other.user;
+        user == other.user &&
+        type == other.type &&
+        timestamp == other.timestamp &&
+        invited == other.invited;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, community.hashCode), user.hashCode));
+    return $jf($jc(
+        $jc($jc($jc($jc(0, community.hashCode), user.hashCode), type.hashCode),
+            timestamp.hashCode),
+        invited.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('BuiltCommunityUser')
           ..add('community', community)
-          ..add('user', user))
+          ..add('user', user)
+          ..add('type', type)
+          ..add('timestamp', timestamp)
+          ..add('invited', invited))
         .toString();
   }
 }
@@ -2734,12 +2948,27 @@ class BuiltCommunityUserBuilder
   SummaryUserBuilder get user => _$this._user ??= new SummaryUserBuilder();
   set user(SummaryUserBuilder user) => _$this._user = user;
 
+  CommunityUserType _type;
+  CommunityUserType get type => _$this._type;
+  set type(CommunityUserType type) => _$this._type = type;
+
+  int _timestamp;
+  int get timestamp => _$this._timestamp;
+  set timestamp(int timestamp) => _$this._timestamp = timestamp;
+
+  bool _invited;
+  bool get invited => _$this._invited;
+  set invited(bool invited) => _$this._invited = invited;
+
   BuiltCommunityUserBuilder();
 
   BuiltCommunityUserBuilder get _$this {
     if (_$v != null) {
       _community = _$v.community?.toBuilder();
       _user = _$v.user?.toBuilder();
+      _type = _$v.type;
+      _timestamp = _$v.timestamp;
+      _invited = _$v.invited;
       _$v = null;
     }
     return this;
@@ -2764,7 +2993,11 @@ class BuiltCommunityUserBuilder
     try {
       _$result = _$v ??
           new _$BuiltCommunityUser._(
-              community: _community?.build(), user: _user?.build());
+              community: _community?.build(),
+              user: _user?.build(),
+              type: type,
+              timestamp: timestamp,
+              invited: invited);
     } catch (_) {
       String _$failedField;
       try {
@@ -2799,7 +3032,7 @@ class _$BuiltCommunity extends BuiltCommunity {
   @override
   final BuiltSet<String> hosts;
   @override
-  final BuiltSet<String> liveClubHosts;
+  final int liveClubCount;
   @override
   final int scheduledClubCount;
   @override
@@ -2816,7 +3049,7 @@ class _$BuiltCommunity extends BuiltCommunity {
       this.coverImage,
       this.creator,
       this.hosts,
-      this.liveClubHosts,
+      this.liveClubCount,
       this.scheduledClubCount,
       this.memberCount})
       : super._();
@@ -2840,7 +3073,7 @@ class _$BuiltCommunity extends BuiltCommunity {
         coverImage == other.coverImage &&
         creator == other.creator &&
         hosts == other.hosts &&
-        liveClubHosts == other.liveClubHosts &&
+        liveClubCount == other.liveClubCount &&
         scheduledClubCount == other.scheduledClubCount &&
         memberCount == other.memberCount;
   }
@@ -2862,7 +3095,7 @@ class _$BuiltCommunity extends BuiltCommunity {
                             coverImage.hashCode),
                         creator.hashCode),
                     hosts.hashCode),
-                liveClubHosts.hashCode),
+                liveClubCount.hashCode),
             scheduledClubCount.hashCode),
         memberCount.hashCode));
   }
@@ -2877,7 +3110,7 @@ class _$BuiltCommunity extends BuiltCommunity {
           ..add('coverImage', coverImage)
           ..add('creator', creator)
           ..add('hosts', hosts)
-          ..add('liveClubHosts', liveClubHosts)
+          ..add('liveClubCount', liveClubCount)
           ..add('scheduledClubCount', scheduledClubCount)
           ..add('memberCount', memberCount))
         .toString();
@@ -2917,11 +3150,9 @@ class BuiltCommunityBuilder
   SetBuilder<String> get hosts => _$this._hosts ??= new SetBuilder<String>();
   set hosts(SetBuilder<String> hosts) => _$this._hosts = hosts;
 
-  SetBuilder<String> _liveClubHosts;
-  SetBuilder<String> get liveClubHosts =>
-      _$this._liveClubHosts ??= new SetBuilder<String>();
-  set liveClubHosts(SetBuilder<String> liveClubHosts) =>
-      _$this._liveClubHosts = liveClubHosts;
+  int _liveClubCount;
+  int get liveClubCount => _$this._liveClubCount;
+  set liveClubCount(int liveClubCount) => _$this._liveClubCount = liveClubCount;
 
   int _scheduledClubCount;
   int get scheduledClubCount => _$this._scheduledClubCount;
@@ -2943,7 +3174,7 @@ class BuiltCommunityBuilder
       _coverImage = _$v.coverImage;
       _creator = _$v.creator?.toBuilder();
       _hosts = _$v.hosts?.toBuilder();
-      _liveClubHosts = _$v.liveClubHosts?.toBuilder();
+      _liveClubCount = _$v.liveClubCount;
       _scheduledClubCount = _$v.scheduledClubCount;
       _memberCount = _$v.memberCount;
       _$v = null;
@@ -2977,7 +3208,7 @@ class BuiltCommunityBuilder
               coverImage: coverImage,
               creator: _creator?.build(),
               hosts: _hosts?.build(),
-              liveClubHosts: _liveClubHosts?.build(),
+              liveClubCount: liveClubCount,
               scheduledClubCount: scheduledClubCount,
               memberCount: memberCount);
     } catch (_) {
@@ -2987,8 +3218,6 @@ class BuiltCommunityBuilder
         _creator?.build();
         _$failedField = 'hosts';
         _hosts?.build();
-        _$failedField = 'liveClubHosts';
-        _liveClubHosts?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'BuiltCommunity', _$failedField, e.toString());
