@@ -18,10 +18,13 @@ class NewClub extends StatefulWidget {
   _NewClubState createState() => _NewClubState();
 }
 
-class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
+class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _communityFormKey = GlobalKey<FormState>();
   String name;
+  String communityName;
   String description;
+  String communityDescription;
   String category;
   String subCategory;
   String scheduleDate;
@@ -31,6 +34,7 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
   List<String> categoryList = [];
   File image;
   List<String> subCategoryList = [];
+  TabController _tabController;
   final picker = ImagePicker();
 
   getImage() async {
@@ -38,6 +42,32 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     if (selectedImage != null) {
       final croppedImage = await ImageCropper.cropImage(
           cropStyle: CropStyle.rectangle,
+          sourcePath: selectedImage.path,
+          aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+          compressQuality: 50,
+          maxHeight: 400,
+          maxWidth: 400,
+          compressFormat: ImageCompressFormat.jpg,
+          androidUiSettings: AndroidUiSettings(
+              statusBarColor: Colors.redAccent,
+              cropFrameColor: Colors.grey[600],
+              backgroundColor: Colors.white,
+              toolbarColor: Colors.white));
+      setState(() {
+        if (croppedImage != null) {
+          image = File(croppedImage.path);
+        } else {
+          print("Picture not selected.");
+        }
+      });
+    }
+  }
+
+  getCommunitiesProfileImage() async {
+    final selectedImage = await picker.getImage(source: ImageSource.gallery);
+    if (selectedImage != null) {
+      final croppedImage = await ImageCropper.cropImage(
+          cropStyle: CropStyle.circle,
           sourcePath: selectedImage.path,
           aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
           compressQuality: 50,
@@ -80,6 +110,19 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       ..category = category
       ..subCategory = subCategory
       ..scheduleTime = scheduleDateTime);
+  }
+
+  BuiltCommunity get _newCommunityModel {
+    if (communityName?.isNotEmpty != true ||
+        communityDescription?.isNotEmpty != true ) {
+      Fluttertoast.showToast(msg: 'Fill all fields');
+      print('flll all the fields');
+      return null;
+    }
+    return BuiltCommunity((b) => b
+        ..name = communityName
+        ..description = communityDescription
+      );
   }
 
   _createClub() async {
@@ -161,6 +204,89 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     }
   }
 
+  _createCommunity() async {
+    if (_newCommunityModel == null) return;
+    setState(() {
+      isLoading = true;
+    });
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final userId = Provider.of<UserData>(context, listen: false).userId;
+
+    final resp = await service.createCommunity(
+      body: _newCommunityModel,
+      creatorId: userId,
+    );
+    setState(() {
+      isLoading = false;
+    });
+    // if (resp.isSuccessful && image != null) {
+    //   String imageInBase64;
+    //   if (image != null) {
+    //     var pickedImage = await image.readAsBytes();
+    //     imageInBase64 = base64Encode(pickedImage);
+    //     final newImage = BuiltProfileImage((b) => b..image = imageInBase64);
+    //     final response = await service.updateClubAvatar(
+    //       clubId: resp.body['clubId'],
+    //       image: newImage,
+    //     );
+    //     print("!!!!!!!!!!!!!!!!!!!!!!!");
+    //     print(response.isSuccessful);
+    //     BuiltClub newClub = (await service.getClubByClubId(
+    //       userId: userId,
+    //       clubId: resp.body['clubId'],
+    //     ))
+    //         .body
+    //         ?.club;
+    //     Navigator.of(context)
+    //         .push(MaterialPageRoute(
+    //         builder: (_) => ClubDetailPage(
+    //           club: newClub,
+    //         )))
+    //         .then((value) => () {
+    //       _formKey.currentState.reset();
+    //       setState(() {
+    //         image = null;
+    //         isLoading = false;
+    //       });
+    //     });
+    //     setState(() {
+    //       _formKey.currentState.reset();
+    //       image = null;
+    //       isLoading = false;
+    //     });
+    //     Fluttertoast.showToast(msg: 'club entry is created');
+    //   }
+    // }
+    // else {
+    //   print('=========${resp.body}');
+    //   print(resp.error);
+    //   Fluttertoast.showToast(msg: 'club entry is created');
+    //   BuiltClub tempClub = (await service.getClubByClubId(
+    //     userId: userId,
+    //     clubId: resp.body['clubId'],
+    //   ))
+    //       .body
+    //       ?.club;
+    //   Navigator.of(context)
+    //       .push(MaterialPageRoute(
+    //       builder: (_) => ClubDetailPage(
+    //         club: tempClub,
+    //       )))
+    //       .then((value) => () {
+    //     _formKey.currentState.reset();
+    //     image = null;
+    //     setState(() {});
+    //   });
+    //   _formKey.currentState.reset();
+    //   setState(() {
+    //     image = null;
+    //   });
+    // }
+    if(resp.isSuccessful){
+      Fluttertoast.showToast(msg: 'Community created');
+    }
+  }
+
   Widget _buildName() {
     return TextFormField(
       onTap: () {},
@@ -182,6 +308,27 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     );
   }
 
+  Widget _buildCommunityName() {
+    return TextFormField(
+      onTap: () {},
+      decoration: InputDecoration(
+        labelText: 'Name',
+        border: OutlineInputBorder(),
+        focusColor: Colors.red,
+      ),
+      validator: (value) {
+        if (value.isEmpty) return 'Required';
+        if (value.length < 3) return 'Minimum Length should be 3';
+        if (value.length > 25) return 'Maximum Length should be 25';
+
+        return null;
+      },
+      onSaved: (String value) {
+        communityName = value;
+      },
+    );
+  }
+
   Widget _buildDescription() {
     return TextField(
       decoration: InputDecoration(
@@ -194,6 +341,22 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
       maxLines: 2,
       onChanged: (String value) {
         description = value;
+      },
+    );
+  }
+
+  Widget _buildCommunityDescription() {
+    return TextField(
+      decoration: InputDecoration(
+        labelText: 'Description',
+        labelStyle: TextStyle(
+          fontFamily: 'Lato',
+        ),
+        border: OutlineInputBorder(),
+      ),
+      maxLines: 2,
+      onChanged: (String value) {
+        communityDescription = value;
       },
     );
   }
@@ -365,9 +528,261 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     }
   }
 
+  Widget tabPage(int index){
+    Size size = MediaQuery.of(context).size;
+    BuiltClub club = Provider.of<AgoraController>(context, listen: false).club;
+    final cuserId = Provider.of<UserData>(context, listen: false).userId;
+    if(index==0){
+      return isLoading
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : SingleChildScrollView(
+            child: Stack(children: [
+              Container(
+                margin: EdgeInsets.only(
+                    left: size.width / 50, right: size.width / 50),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: size.height / 50),
+                    // Text(
+                    //   'Create a new club',
+                    //   style: TextStyle(
+                    //     fontFamily: 'Lato',
+                    //     fontWeight: FontWeight.bold,
+                    //     fontSize: size.height / 25,
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: size.height / 50,
+                    // ),
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(
+                            0, size.height / 500, 0, 0),
+                        child: GestureDetector(
+                          onTap: getImage,
+                          behavior: HitTestBehavior.deferToChild,
+                          child: Container(
+                            height: size.height / 6,
+                            width: size.width / 3,
+                            color: Colors.red,
+                            child: Container(
+                              height: size.height / 6,
+                              width: size.width / 3,
+                              child: image == null
+                                  ? Column(
+                                children: [
+                                  SizedBox(
+                                    height: size.height / 20,
+                                  ),
+                                  Icon(
+                                    Icons.add_a_photo,
+                                    size: size.width / 15,
+                                    color: Colors.black,
+                                    semanticLabel: "Add a photo",
+                                  ),
+                                  Text(
+                                    "Add a club avatar",
+                                    style: TextStyle(
+                                        fontFamily: "Lato",
+                                        fontWeight:
+                                        FontWeight.w400),
+                                  )
+                                ],
+                              )
+                                  : Stack(
+                                children: [
+                                  Image.file(image),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        image = null;
+                                        setState(() {});
+                                      },
+                                      child: CircleAvatar(
+                                        backgroundColor:
+                                        Colors.transparent,
+                                        child: Icon(
+                                          Icons.cancel,
+                                          color: Colors.black,
+                                          size: size.width / 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height / 50,
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+                          _buildName(),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          _buildDescription(),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          _buildCategory(),
+                          SizedBox(
+                            height: size.height / 50,
+                          ),
+                          _scheduleClub(),
+                          scheduleClub ? dateTimePicker() : Container(),
+                          SizedBox(
+                            height: size.height / 30,
+                          ),
+                          ButtonTheme(
+                            minWidth: size.width / 3.5,
+                            child: RaisedButton(
+                              onPressed: () {
+                                if (club != null &&
+                                    club.creator.userId == cuserId) {
+                                  _showMaterialDialog();
+                                } else {
+                                  if (!_formKey.currentState.validate()) {
+                                    return;
+                                  } else {
+                                    _formKey.currentState.save();
+
+                                    _createClub();
+                                  }
+                                }
+                              },
+                              color: Colors.red[600],
+                              child: Text('Submit',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Lato',
+                                  )),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                //side: BorderSide(color: Colors.red[600]),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+          // Positioned(bottom: 0, child: MinClub(null))
+        ]),
+      );
+    }
+    return SingleChildScrollView(
+      child: Form(
+        key: _communityFormKey,
+        child: Column(
+          children: [
+            SizedBox(
+              height: size.height/30,
+            ),
+            Center(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(0, size.height / 50, 0, 0),
+                child: GestureDetector(
+                  onTap: getCommunitiesProfileImage,
+                  behavior: HitTestBehavior.deferToChild,
+                  child: CircleAvatar(
+                    radius: size.height / 14.7,
+                    backgroundColor: Colors.red,
+                    child: CircleAvatar(
+                      radius: size.height / 15,
+                      backgroundImage:
+                      image == null ? null : FileImage(image),
+                      backgroundColor: Colors.white,
+                      child: image == null
+                          ? Icon(
+                        Icons.add_a_photo,
+                        size: size.width / 15,
+                        color: Colors.black,
+                      )
+                          : Align(
+                        alignment: Alignment.topRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            image = null;
+                            setState(() {});
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            child: Icon(
+                              Icons.cancel,
+                              color: Colors.black,
+                              size: size.width / 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: size.height/30 + size.height/50,
+            ),
+            _buildCommunityName(),
+            SizedBox(
+              height: size.height/50,
+            ),
+            _buildCommunityDescription(),
+            SizedBox(
+              height: size.height/50,
+            ),
+            ButtonTheme(
+              minWidth: size.width / 3.5,
+              child: RaisedButton(
+                onPressed: () {
+
+                    if (!_communityFormKey.currentState.validate()) {
+                      return;
+                    } else {
+                      _communityFormKey.currentState.save();
+
+                      _createCommunity();
+                    }
+
+                },
+                color: Colors.red[600],
+                child: Text('Submit',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Lato',
+                    )),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                  //side: BorderSide(color: Colors.red[600]),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     _controller1 = TextEditingController(text: DateTime.now().toString());
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     _initCategoryData();
 
     super.initState();
@@ -378,160 +793,54 @@ class _NewClubState extends State<NewClub> with AutomaticKeepAliveClientMixin {
     Size size = MediaQuery.of(context).size;
     BuiltClub club = Provider.of<AgoraController>(context, listen: false).club;
     final cuserId = Provider.of<UserData>(context, listen: false).userId;
-    super.build(context);
     return SafeArea(
-      child: Scaffold(
-          body: isLoading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : SingleChildScrollView(
-                  child: Stack(children: [
-                    Container(
-                      margin: EdgeInsets.only(
-                          left: size.width / 50, right: size.width / 50),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(height: size.height / 50),
-                          Text(
-                            'Create a new club',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontWeight: FontWeight.bold,
-                              fontSize: size.height / 25,
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height / 50,
-                          ),
-                          Center(
-                            child: Container(
-                              margin: EdgeInsets.fromLTRB(
-                                  0, size.height / 500, 0, 0),
-                              child: GestureDetector(
-                                onTap: getImage,
-                                behavior: HitTestBehavior.deferToChild,
-                                child: Container(
-                                  height: size.height / 6,
-                                  width: size.width / 3,
-                                  color: Colors.red,
-                                  child: Container(
-                                    height: size.height / 6,
-                                    width: size.width / 3,
-                                    child: image == null
-                                        ? Column(
-                                            children: [
-                                              SizedBox(
-                                                height: size.height / 20,
-                                              ),
-                                              Icon(
-                                                Icons.add_a_photo,
-                                                size: size.width / 15,
-                                                color: Colors.black,
-                                                semanticLabel: "Add a photo",
-                                              ),
-                                              Text(
-                                                "Add a club avatar",
-                                                style: TextStyle(
-                                                    fontFamily: "Lato",
-                                                    fontWeight:
-                                                        FontWeight.w400),
-                                              )
-                                            ],
-                                          )
-                                        : Stack(
-                                            children: [
-                                              Image.file(image),
-                                              Align(
-                                                alignment: Alignment.topRight,
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    image = null;
-                                                    setState(() {});
-                                                  },
-                                                  child: CircleAvatar(
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    child: Icon(
-                                                      Icons.cancel,
-                                                      color: Colors.black,
-                                                      size: size.width / 15,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height / 50,
-                          ),
-                          Form(
-                            key: _formKey,
-                            child: Column(
-                              children: <Widget>[
-                                _buildName(),
-                                SizedBox(
-                                  height: size.height / 50,
-                                ),
-                                _buildDescription(),
-                                SizedBox(
-                                  height: size.height / 50,
-                                ),
-                                _buildCategory(),
-                                SizedBox(
-                                  height: size.height / 50,
-                                ),
-                                _scheduleClub(),
-                                scheduleClub ? dateTimePicker() : Container(),
-                                SizedBox(
-                                  height: size.height / 30,
-                                ),
-                                ButtonTheme(
-                                  minWidth: size.width / 3.5,
-                                  child: RaisedButton(
-                                    onPressed: () {
-                                      if (club != null &&
-                                          club.creator.userId == cuserId) {
-                                        _showMaterialDialog();
-                                      } else {
-                                        if (!_formKey.currentState.validate()) {
-                                          return;
-                                        } else {
-                                          _formKey.currentState.save();
-
-                                          _createClub();
-                                        }
-                                      }
-                                    },
-                                    color: Colors.red[600],
-                                    child: Text('Submit',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Lato',
-                                        )),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18.0),
-                                      //side: BorderSide(color: Colors.red[600]),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+      child: DefaultTabController(
+        initialIndex: 0,
+        length: 2,
+        child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                "Create",
+                style: TextStyle(
+                  fontFamily: "Lato",
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+              bottom: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                unselectedLabelColor: Colors.grey[700],
+                labelColor: Colors.black,
+                labelStyle:
+                TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                indicator: UnderlineTabIndicator(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                tabs: [
+                  Text(
+                    "CLUB",
+                    style: TextStyle(
+                      fontFamily: "Lato",
+                      letterSpacing: 2.0
                     ),
-                    // Positioned(bottom: 0, child: MinClub(null))
-                  ]),
-                )),
+                  ),
+                  Text(
+                    "COMMUNITY",
+                    style: TextStyle(
+                        fontFamily: "Lato",
+                      letterSpacing: 2.0
+                    ),
+                  )
+                ],
+              ),
+            ),
+          body: TabBarView(
+              controller: _tabController, children: [tabPage(0), tabPage(1)]),
+        ),
+      )
     );
   }
 
