@@ -20,7 +20,7 @@ class _CommunityCardState extends State<CommunityCard> {
     final size = MediaQuery.of(context).size;
     return ClipRRect(
       child: Container(
-        margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+        margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10))
         ),
