@@ -28,6 +28,10 @@ class _LandingPageState extends State<LandingPage>
   BuiltSearchClubs followingUsersClubs;
   BuiltSearchClubs myCurrentClubs;
 
+  Map<String,dynamic> communityMap = {
+    'data': null,
+    'isLoading': true,
+  };
   BuiltNotificationList notificationList;
   bool hasNewNotifications = false;
 
@@ -117,6 +121,29 @@ class _LandingPageState extends State<LandingPage>
         ),
       ],
     );
+  }
+
+  Future<void> _fetchCommunities()async{
+    final service = Provider.of<DatabaseApiService>(context,listen:false);
+    communityMap['data'] = (await service.getAllCommunities(
+      lastevaluatedkey: (communityMap['data'] as BuiltCommunityList)?.lastevaluatedkey
+    )).body;
+    communityMap['isLoading'] = false;
+    setState(() {
+    });
+  }
+
+  void _fetchMoreCommunities()async{
+    final service = Provider.of<DatabaseApiService>(context,listen:false);
+    final lastEvaluatedKey = (communityMap['data'] as BuiltCommunityList)?.lastevaluatedkey;
+    if(lastEvaluatedKey!=null){
+      await _fetchCommunities();
+    }else{
+      await Future.delayed(Duration(milliseconds: 200));
+      communityMap['isLoading'] = false;
+    }
+    setState(() {
+    });
   }
 
   Future _fetchAllClubs([bool initiating = false]) async {
@@ -225,25 +252,50 @@ class _LandingPageState extends State<LandingPage>
           Positioned(bottom: 0, child: MinClub(_navigateTo)),
         ],
       );
-    }
-    return Stack(
-      children: [
-        Container(
-          // margin: EdgeInsets.all(10),
-          child: RefreshIndicator(
-            onRefresh: (){
-              return;
-            },
-            child: ListView.builder(
-              itemCount: 20,
-                itemBuilder: (context,index){
-                  return CommunityCard();
-            }),
+    }else{
+      final communities = (communityMap['data'] as BuiltCommunityList)?.communities;
+      final bool isLoading = communityMap['isLoading'];
+
+      final listLength = (communities?.length ?? 0) + 1;
+      return Stack(
+        children: [
+          Container(
+            // margin: EdgeInsets.all(10),
+            child: RefreshIndicator(
+              onRefresh: (){
+                return;
+              },
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                    _fetchMoreCommunities();
+                    communityMap['isLoading'] = true;
+                  }
+                  return true;
+                },
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: listLength,
+                    itemBuilder: (context,index){
+                      if (index == listLength - 1) {
+                        if (isLoading)
+                          return Container(
+                            margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        else
+                          return Container();
+                      }
+                      final _community = communities[index];
+                      return CommunityCard(community: _community,);
+                    }),
+              ),
+            ),
           ),
-        ),
-        Positioned(bottom: 0, child: MinClub(_navigateTo)),
-      ],
-    );
+          Positioned(bottom: 0, child: MinClub(_navigateTo)),
+        ],
+      );
+    }
   }
 
   @override
@@ -251,6 +303,7 @@ class _LandingPageState extends State<LandingPage>
     _infinteClubFetching();
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     super.initState();
+    _fetchCommunities();
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/pages/CommunityPage.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:flocktale/providers/userData.dart';
 
 class CommunityCard extends StatefulWidget {
+  BuiltCommunity community;
+  CommunityCard({this.community});
   @override
   _CommunityCardState createState() => _CommunityCardState();
 }
@@ -17,6 +20,8 @@ class _CommunityCardState extends State<CommunityCard> {
   bool isMember = false;
   @override
   Widget build(BuildContext context) {
+    final _communityCoverImage = widget.community.coverImage;
+    final _communityAvatar = widget.community.avatar;
     final _userAvatar = Provider.of<UserData>(context,listen:false).user.avatar;
     final size = MediaQuery.of(context).size;
     return InkWell(
@@ -36,9 +41,9 @@ class _CommunityCardState extends State<CommunityCard> {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 image: DecorationImage(
                   fit: BoxFit.fill,
-                  image: AssetImage(
-                    'assets/images/logo.png',
-                  ),
+                  image: NetworkImage(
+                    _communityCoverImage
+                  )
                 ),
               ),
               height: size.height/4,
@@ -70,7 +75,7 @@ class _CommunityCardState extends State<CommunityCard> {
                     backgroundColor: Colors.white,
                     radius: size.width/20,
                     child: CircleAvatar(
-                  backgroundImage: NetworkImage(_userAvatar),
+                  backgroundImage: NetworkImage(_communityAvatar),
                       radius: size.width/23,
               ),
                   ),
@@ -81,7 +86,7 @@ class _CommunityCardState extends State<CommunityCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "COMMUNITY NAME",
+                        widget.community.name,
                         style: TextStyle(
                             fontFamily: "Lato",
                             color: Colors.white,
@@ -89,7 +94,7 @@ class _CommunityCardState extends State<CommunityCard> {
                         ),
                       ),
                       Text(
-                        "Creator name",
+                        widget.community.creator.name,
                         style: TextStyle(
                           fontFamily: "Lato",
                           color: Colors.grey[400],

@@ -8,6 +8,7 @@ class CommunityPage extends StatefulWidget {
 class _CommunityPageState extends State<CommunityPage> with TickerProviderStateMixin{
   TabController _tabController;
   bool _isOwner = true;
+
   Widget tabPage(int index){
     final size = MediaQuery.of(context).size;
     if(index==0){
