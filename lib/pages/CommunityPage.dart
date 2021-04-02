@@ -1,6 +1,13 @@
+import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Widgets/customImage.dart';
+import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 class CommunityPage extends StatefulWidget {
+  BuiltCommunity community;
+  CommunityPage({this.community});
   @override
   _CommunityPageState createState() => _CommunityPageState();
 }
@@ -8,8 +15,11 @@ class CommunityPage extends StatefulWidget {
 class _CommunityPageState extends State<CommunityPage> with TickerProviderStateMixin{
   TabController _tabController;
   bool _isOwner = true;
-
+  bool isMember = false;
+  
   Widget tabPage(int index){
+    final service = Provider.of<DatabaseApiService>(context,listen:false);
+    final userId = Provider.of<UserData>(context,listen:false).userId;
     final size = MediaQuery.of(context).size;
     if(index==0){
       return Column(
@@ -19,7 +29,7 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
             width: size.width,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage("assets/images/logo.png"),
+                    image: NetworkImage(widget.community.coverImage),
                     fit: BoxFit.cover
                 )
             ),
@@ -28,33 +38,62 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
             padding: EdgeInsets.fromLTRB(size.width/20, size.width/20, size.width/20, size.width/20),
             color: Colors.grey[200],
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage(
-                    "assets/images/logo.png",
-                  ),
-                  radius: size.width/15,
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(widget.community.avatar),
+                      radius: size.width/15,
+                    ),
+                    SizedBox(
+                      width: size.width/20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.community.name,
+                          style: TextStyle(
+                              fontFamily: "Lato",
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        Text(
+                          widget.community.creator.name,
+                          style: TextStyle(
+                              fontFamily: "Lato",
+                              color: Colors.grey
+                          ),
+                        )
+                      ],
+                    )
+                  ],
                 ),
-                SizedBox(
-                  width: size.width/20,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
                     Text(
-                      "COMMUNITY NAME",
+                      isMember?
+                        "JOIN":"Member",
                       style: TextStyle(
-                          fontFamily: "Lato",
-                          fontWeight: FontWeight.bold
+                        fontFamily: "Lato"
                       ),
                     ),
-                    Text(
-                      "Creator name",
-                      style: TextStyle(
-                          fontFamily: "Lato",
-                          color: Colors.grey
-                      ),
-                    )
+                    IconButton(
+                        icon: isMember?
+                        Icon(Icons.add):Icon(Icons.check,color: Colors.green,), 
+                        onPressed: ()async{
+                          isMember = !isMember;
+                          setState(() {
+                          });
+                          final resp = (await service.joinCommunityAsMember(widget.community.communityId, userId: userId));
+                          if(!resp.isSuccessful){
+                            Fluttertoast.showToast(msg: 'Sorry something went wrong.');
+                            setState(() {
+                              isMember = !isMember;
+                            });
+                          }
+                    })
                   ],
                 )
               ],

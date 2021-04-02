@@ -26,7 +26,7 @@ class _CommunityCardState extends State<CommunityCard> {
     final size = MediaQuery.of(context).size;
     return InkWell(
       onTap: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>CommunityPage()));
+        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>CommunityPage(community: widget.community,)));
       },
       child: ClipRRect(
         child: Container(
