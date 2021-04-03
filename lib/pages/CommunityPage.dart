@@ -1,5 +1,7 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Widgets/customImage.dart';
+import 'package:flocktale/Widgets/summaryClubCard.dart';
+import 'package:flocktale/pages/NewClub.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,46 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
   TabController _tabController;
   bool _isOwner = true;
   bool isMember = false;
-  
+  bool isHost = true;
+  Map<String,dynamic> communityClubsMap = {
+    'data': null,
+    'isLoading': true,
+  };
+  Widget clubGrid(){
+    final clubList = (communityClubsMap['data'] as BuiltSearchClubs)?.clubs;
+    final bool isLoading = communityClubsMap['isLoading'];
+    final listClubs = (clubList?.length ?? 0) + 1;
+    return RefreshIndicator(
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+              _fetchMoreCommunityClubs();
+              communityClubsMap['isLoading'] = true;
+            }
+            return true;
+          },
+          child: Container(
+            margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+            child: GridView.builder(
+              shrinkWrap: true,
+              gridDelegate:
+              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              itemCount: listClubs,
+              itemBuilder: (context, index) {
+                if (index == listClubs - 1) {
+                  if (isLoading)
+                    return Center(child: CircularProgressIndicator());
+                  else
+                    return Container();
+                }
+                return SummaryClubCard(clubList[index], _navigateTo);
+              },
+            ),
+          ),
+        ),
+        onRefresh: (){}
+        );
+  }
   Widget tabPage(int index){
     final service = Provider.of<DatabaseApiService>(context,listen:false);
     final userId = Provider.of<UserData>(context,listen:false).userId;
@@ -131,13 +172,53 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
                       ),
                     );
                   })
-          )
+          ),
         ],
       );
     }
-    else{
-      return Container();
+    else if(index==1){
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            isHost?
+                InkWell(
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>NewClub())).then((value) => _fetchCommunityClubs());
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                          "Create CLub",
+                          style: TextStyle(
+                              fontFamily: "Lato"
+                          )
+                      ),
+                      IconButton(
+                        onPressed: (){},
+                        icon: Icon(Icons.add),
+                      )
+                    ],
+                  ),
+                ):
+                Container(),
+            clubGrid()
+          ]
+        ),
+      );
     }
+    else{
+      return Center(
+        child: Text(
+          "Coming soon...",
+          style: TextStyle(
+            fontFamily: "Lato",
+            color: Colors.redAccent
+          ),
+        )
+      );
+    }
+
   }
 
   void _justRefresh([Function refresh]) {
@@ -206,9 +287,32 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
     );
   }
 
+  _fetchCommunityClubs()async{
+    final service = Provider.of<DatabaseApiService>(context,listen:false);
+    communityClubsMap['data'] = (await service.getCommunityActiveClubs(
+        widget.community.communityId,
+      lastevaluatedkey: (communityClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey
+    )).body;
+    communityClubsMap['isLoading'] = false;
+    setState(() {
+    });
+  }
+
+  _fetchMoreCommunityClubs()async{
+    final service = Provider.of<DatabaseApiService>(context,listen:false);
+    final lastevaluatedkey = (communityClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
+    if(lastevaluatedkey!=null){
+      await _fetchCommunityClubs();
+    }else{
+      await Future.delayed(Duration(milliseconds: 200));
+      communityClubsMap['isLoading'] = false;
+    }
+  }
+
   @override
   void initState() {
     _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+    _fetchCommunityClubs();
     super.initState();
   }
   @override

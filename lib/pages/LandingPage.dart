@@ -128,6 +128,7 @@ class _LandingPageState extends State<LandingPage>
     communityMap['data'] = (await service.getAllCommunities(
       lastevaluatedkey: (communityMap['data'] as BuiltCommunityList)?.lastevaluatedkey
     )).body;
+    print(communityMap['data']);
     communityMap['isLoading'] = false;
     setState(() {
     });
@@ -255,7 +256,7 @@ class _LandingPageState extends State<LandingPage>
     }else{
       final communities = (communityMap['data'] as BuiltCommunityList)?.communities;
       final bool isLoading = communityMap['isLoading'];
-
+      print(communities);
       final listLength = (communities?.length ?? 0) + 1;
       return Stack(
         children: [
