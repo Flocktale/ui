@@ -90,7 +90,7 @@ class _NotificationPageState extends State<NotificationPage> {
     } else if (daysDiff < 7) {
       str = '$daysDiff ' + (daysDiff == 1 ? 'd' : 'd');
     } else {
-      final weekDiff = daysDiff / 7;
+      final weekDiff = (daysDiff / 7).floor();
       str = '$weekDiff ' + (weekDiff == 1 ? 'w' : 'w');
     }
 

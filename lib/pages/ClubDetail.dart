@@ -833,7 +833,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     } else if (daysDiff < 7) {
       str = '$daysDiff ' + (daysDiff == 1 ? 'day' : 'days') + suff;
     } else {
-      final weekDiff = daysDiff / 7;
+      final weekDiff = (daysDiff / 7).floor();
       str = '$weekDiff ' + (weekDiff == 1 ? 'week' : 'weeks') + suff;
     }
 
