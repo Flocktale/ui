@@ -7,6 +7,7 @@ import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+
 class CommunityPage extends StatefulWidget {
   BuiltCommunity community;
   CommunityPage({this.community});
@@ -14,23 +15,25 @@ class CommunityPage extends StatefulWidget {
   _CommunityPageState createState() => _CommunityPageState();
 }
 
-class _CommunityPageState extends State<CommunityPage> with TickerProviderStateMixin{
+class _CommunityPageState extends State<CommunityPage>
+    with TickerProviderStateMixin {
   TabController _tabController;
   bool _isOwner = true;
   bool isMember = false;
   bool isHost = true;
-  Map<String,dynamic> communityClubsMap = {
+  Map<String, dynamic> communityClubsMap = {
     'data': null,
     'isLoading': true,
   };
-  Widget clubGrid(){
+  Widget clubGrid() {
     final clubList = (communityClubsMap['data'] as BuiltSearchClubs)?.clubs;
     final bool isLoading = communityClubsMap['isLoading'];
     final listClubs = (clubList?.length ?? 0) + 1;
     return RefreshIndicator(
         child: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
-            if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+            if (scrollInfo.metrics.pixels ==
+                scrollInfo.metrics.maxScrollExtent) {
               _fetchMoreCommunityClubs();
               communityClubsMap['isLoading'] = true;
             }
@@ -41,7 +44,7 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
             child: GridView.builder(
               shrinkWrap: true,
               gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               itemCount: listClubs,
               itemBuilder: (context, index) {
                 if (index == listClubs - 1) {
@@ -55,28 +58,27 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
             ),
           ),
         ),
-        onRefresh: (){}
-        );
+        onRefresh: () {});
   }
-  Widget tabPage(int index){
-    final service = Provider.of<DatabaseApiService>(context,listen:false);
-    final userId = Provider.of<UserData>(context,listen:false).userId;
+
+  Widget tabPage(int index) {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final userId = Provider.of<UserData>(context, listen: false).userId;
     final size = MediaQuery.of(context).size;
-    if(index==0){
+    if (index == 0) {
       return Column(
         children: [
           Container(
-            height: size.height/6,
+            height: size.height / 6,
             width: size.width,
             decoration: BoxDecoration(
                 image: DecorationImage(
                     image: NetworkImage(widget.community.coverImage),
-                    fit: BoxFit.cover
-                )
-            ),
+                    fit: BoxFit.cover)),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(size.width/20, size.width/20, size.width/20, size.width/20),
+            padding: EdgeInsets.fromLTRB(size.width / 20, size.width / 20,
+                size.width / 20, size.width / 20),
             color: Colors.grey[200],
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -85,10 +87,10 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
                   children: [
                     CircleAvatar(
                       backgroundImage: NetworkImage(widget.community.avatar),
-                      radius: size.width/15,
+                      radius: size.width / 15,
                     ),
                     SizedBox(
-                      width: size.width/20,
+                      width: size.width / 20,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,16 +98,12 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
                         Text(
                           widget.community.name,
                           style: TextStyle(
-                              fontFamily: "Lato",
-                              fontWeight: FontWeight.bold
-                          ),
+                              fontFamily: "Lato", fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          widget.community.creator.name,
-                          style: TextStyle(
-                              fontFamily: "Lato",
-                              color: Colors.grey
-                          ),
+                          widget.community.creator.username,
+                          style:
+                              TextStyle(fontFamily: "Lato", color: Colors.grey),
                         )
                       ],
                     )
@@ -114,111 +112,101 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
                 Row(
                   children: [
                     Text(
-                      isMember?
-                        "JOIN":"Member",
-                      style: TextStyle(
-                        fontFamily: "Lato"
-                      ),
+                      isMember ? "JOIN" : "Member",
+                      style: TextStyle(fontFamily: "Lato"),
                     ),
                     IconButton(
-                        icon: isMember?
-                        Icon(Icons.add):Icon(Icons.check,color: Colors.green,), 
-                        onPressed: ()async{
+                        icon: isMember
+                            ? Icon(Icons.add)
+                            : Icon(
+                                Icons.check,
+                                color: Colors.green,
+                              ),
+                        onPressed: () async {
                           isMember = !isMember;
-                          setState(() {
-                          });
-                          final resp = (await service.joinCommunityAsMember(widget.community.communityId, userId: userId));
-                          if(!resp.isSuccessful){
-                            Fluttertoast.showToast(msg: 'Sorry something went wrong.');
+                          setState(() {});
+                          final resp = (await service.joinCommunityAsMember(
+                              widget.community.communityId,
+                              userId: userId));
+                          if (!resp.isSuccessful) {
+                            Fluttertoast.showToast(
+                                msg: 'Sorry something went wrong.');
                             setState(() {
                               isMember = !isMember;
                             });
                           }
-                    })
+                        })
                   ],
                 )
               ],
             ),
           ),
           Container(
-              height: size.height/8,
+              height: size.height / 8,
               color: Colors.grey[200],
-              padding: EdgeInsets.fromLTRB(0, 0, 0, size.width/20),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, size.width / 20),
               child: ListView.builder(
                   itemCount: 10,
                   scrollDirection: Axis.horizontal,
-                  itemBuilder: (context,index){
+                  itemBuilder: (context, index) {
                     return Container(
-                      margin:EdgeInsets.fromLTRB(size.width/20,0,0,0),
+                      margin: EdgeInsets.fromLTRB(size.width / 20, 0, 0, 0),
                       child: Column(
                         children: [
                           CircleAvatar(
-                            backgroundImage: AssetImage("assets/images/logo.png"),
-                            radius: size.width/15,
+                            backgroundImage:
+                                AssetImage("assets/images/logo.png"),
+                            radius: size.width / 15,
                           ),
                           Container(
-                            width: size.width/10,
+                            width: size.width / 10,
                             child: FittedBox(
                               child: Text(
-                                "Name ${index+1}",
+                                "Name ${index + 1}",
                                 style: TextStyle(
                                     fontFamily: "Lato",
-                                    fontWeight: FontWeight.bold
-                                ),
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           )
                         ],
                       ),
                     );
-                  })
-          ),
+                  })),
         ],
       );
-    }
-    else if(index==1){
+    } else if (index == 1) {
       return SingleChildScrollView(
-        child: Column(
-          children: [
-            isHost?
-                InkWell(
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>NewClub())).then((value) => _fetchCommunityClubs());
+        child: Column(children: [
+          isHost
+              ? InkWell(
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => NewClub()))
+                        .then((value) => _fetchCommunityClubs());
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                          "Create CLub",
-                          style: TextStyle(
-                              fontFamily: "Lato"
-                          )
-                      ),
+                      Text("Create CLub", style: TextStyle(fontFamily: "Lato")),
                       IconButton(
-                        onPressed: (){},
+                        onPressed: () {},
                         icon: Icon(Icons.add),
                       )
                     ],
                   ),
-                ):
-                Container(),
-            clubGrid()
-          ]
-        ),
+                )
+              : Container(),
+          clubGrid()
+        ]),
       );
-    }
-    else{
+    } else {
       return Center(
-        child: Text(
-          "Coming soon...",
-          style: TextStyle(
-            fontFamily: "Lato",
-            color: Colors.redAccent
-          ),
-        )
-      );
+          child: Text(
+        "Coming soon...",
+        style: TextStyle(fontFamily: "Lato", color: Colors.redAccent),
+      ));
     }
-
   }
 
   void _justRefresh([Function refresh]) {
@@ -270,40 +258,40 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
       onSelected: _handleMenuButtons,
       itemBuilder: (BuildContext context) {
         return _isOwner
-            ? {'Option 1', 'Option 2', 'Option 3'}
-            .map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
-          );
-        }).toList()
+            ? {'Option 1', 'Option 2', 'Option 3'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList()
             : {'Option 1'}.map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
-          );
-        }).toList();
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
       },
     );
   }
 
-  _fetchCommunityClubs()async{
-    final service = Provider.of<DatabaseApiService>(context,listen:false);
+  _fetchCommunityClubs() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
     communityClubsMap['data'] = (await service.getCommunityActiveClubs(
-        widget.community.communityId,
-      lastevaluatedkey: (communityClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey
-    )).body;
+            widget.community.communityId,
+            lastevaluatedkey: (communityClubsMap['data'] as BuiltSearchClubs)
+                ?.lastevaluatedkey))
+        .body;
     communityClubsMap['isLoading'] = false;
-    setState(() {
-    });
+    setState(() {});
   }
 
-  _fetchMoreCommunityClubs()async{
-    final service = Provider.of<DatabaseApiService>(context,listen:false);
-    final lastevaluatedkey = (communityClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
-    if(lastevaluatedkey!=null){
+  _fetchMoreCommunityClubs() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final lastevaluatedkey =
+        (communityClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
+    if (lastevaluatedkey != null) {
       await _fetchCommunityClubs();
-    }else{
+    } else {
       await Future.delayed(Duration(milliseconds: 200));
       communityClubsMap['isLoading'] = false;
     }
@@ -315,6 +303,7 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
     _fetchCommunityClubs();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -324,21 +313,16 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
         appBar: AppBar(
           title: Text(
             "Community Name",
-            style: TextStyle(
-              fontFamily: "Lato",
-              fontWeight: FontWeight.bold
-            ),
+            style: TextStyle(fontFamily: "Lato", fontWeight: FontWeight.bold),
           ),
-          actions: [
-            _showMenuButtons()
-          ],
+          actions: [_showMenuButtons()],
           bottom: TabBar(
             controller: _tabController,
             isScrollable: true,
             unselectedLabelColor: Colors.grey[700],
             labelColor: Colors.white,
             labelStyle:
-            TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
             indicator: UnderlineTabIndicator(
               borderSide: BorderSide(color: Colors.white),
             ),
@@ -346,37 +330,26 @@ class _CommunityPageState extends State<CommunityPage> with TickerProviderStateM
             tabs: [
               Text(
                 "HOME",
-                style: TextStyle(
-                    fontFamily: "Lato",
-                    letterSpacing: 2.0
-                ),
+                style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
               ),
               Text(
                 "CLUBS",
-                style: TextStyle(
-                    fontFamily: "Lato",
-                    letterSpacing: 2.0
-                ),
+                style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
               ),
               Text(
                 "MARKET",
-                style: TextStyle(
-                    fontFamily: "Lato",
-                    letterSpacing: 2.0
-                ),
+                style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
               ),
               Text(
                 "DONATE",
-                style: TextStyle(
-                    fontFamily: "Lato",
-                    letterSpacing: 2.0
-                ),
+                style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
               )
             ],
           ),
         ),
         body: TabBarView(
-            controller: _tabController, children: [tabPage(0), tabPage(1), tabPage(2), tabPage(3)]),
+            controller: _tabController,
+            children: [tabPage(0), tabPage(1), tabPage(2), tabPage(3)]),
       ),
     );
   }

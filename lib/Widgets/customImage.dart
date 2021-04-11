@@ -17,12 +17,16 @@ class CustomImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
       child: FadeInImage.assetNetwork(
+        fit: BoxFit.fill,
         placeholder: pinwheelPlaceholder
             ? 'assets/gifs/pinwheel.gif'
             : 'assets/gifs/fading_lines.gif',
         image: image,
         imageErrorBuilder: (ctx, _, __) {
-          return Image.asset('assets/images/logo.png');
+          return Image.asset(
+            'assets/images/logo.png',
+            fit: BoxFit.fill,
+          );
         },
       ),
     );

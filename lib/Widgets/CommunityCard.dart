@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:flocktale/providers/userData.dart';
 
 class CommunityCard extends StatefulWidget {
-  BuiltCommunity community;
+  final BuiltCommunity community;
   CommunityCard({this.community});
   @override
   _CommunityCardState createState() => _CommunityCardState();
@@ -22,38 +22,41 @@ class _CommunityCardState extends State<CommunityCard> {
   Widget build(BuildContext context) {
     final _communityCoverImage = widget.community.coverImage;
     final _communityAvatar = widget.community.avatar;
-    final _userAvatar = Provider.of<UserData>(context,listen:false).user.avatar;
+    final _userAvatar =
+        Provider.of<UserData>(context, listen: false).user.avatar;
     final size = MediaQuery.of(context).size;
     return InkWell(
-      onTap: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>CommunityPage(community: widget.community,)));
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => CommunityPage(
+                  community: widget.community,
+                )));
       },
       child: ClipRRect(
         child: Container(
           margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10))
-          ),
+              borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Stack(children: <Widget>[
             Container(
               decoration: BoxDecoration(
                 color: Colors.transparent,
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(
-                    _communityCoverImage
-                  )
-                ),
               ),
-              height: size.height/4,
+              height: size.height / 4,
+              width: double.infinity,
+              child: CustomImage(
+                radius: 10,
+                image: _communityCoverImage,
+              ),
             ),
             Container(
-              height: size.height/4,
+              height: size.height / 4,
               width: size.width,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),bottomRight: Radius.circular(10)),
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10)),
                   gradient: LinearGradient(
                       begin: FractionalOffset.topCenter,
                       end: FractionalOffset.bottomCenter,
@@ -67,20 +70,19 @@ class _CommunityCardState extends State<CommunityCard> {
                       ])),
             ),
             Positioned(
-              bottom: size.height/15,
+              bottom: size.height / 15,
               left: 10,
               child: Row(
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.white,
-                    radius: size.width/20,
+                    radius: size.width / 20,
                     child: CircleAvatar(
-                  backgroundImage: NetworkImage(_communityAvatar),
-                      radius: size.width/23,
-              ),
+                      child: CustomImage(image: _communityAvatar),
+                    ),
                   ),
                   SizedBox(
-                    width: size.width/30,
+                    width: size.width / 30,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,16 +92,14 @@ class _CommunityCardState extends State<CommunityCard> {
                         style: TextStyle(
                             fontFamily: "Lato",
                             color: Colors.white,
-                            letterSpacing: 2.0
-                        ),
+                            letterSpacing: 2.0),
                       ),
                       Text(
-                        widget.community.creator.name,
+                        widget.community.creator.username,
                         style: TextStyle(
-                          fontFamily: "Lato",
-                          color: Colors.grey[400],
-                          fontSize: size.width/30
-                        ),
+                            fontFamily: "Lato",
+                            color: Colors.grey[400],
+                            fontSize: size.width / 30),
                       ),
                     ],
                   ),
@@ -110,44 +110,37 @@ class _CommunityCardState extends State<CommunityCard> {
               bottom: 10,
               left: 10,
               child: Container(
-                height: size.height/22.5,
+                height: size.height / 22.5,
                 width: size.width,
                 child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 5,
-                    itemBuilder: (context,index){
-                      return index==4?
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                            height: size.height/22.5,
-                            width: size.height/22.5,
-                            decoration: BoxDecoration(
-                              //color: Color(0xfff74040)
-                              color: Colors.black45
-                            ),
-                            child: Center(
-                              child: Text(
-                                "+6",
-                                style: TextStyle(
-                                  fontFamily: "Lato",
-                                  color: Colors.white
+                    itemBuilder: (context, index) {
+                      return index == 4
+                          ? Container(
+                              margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                              height: size.height / 22.5,
+                              width: size.height / 22.5,
+                              decoration: BoxDecoration(
+                                  //color: Color(0xfff74040)
+                                  color: Colors.black45),
+                              child: Center(
+                                child: Text(
+                                  "+6",
+                                  style: TextStyle(
+                                      fontFamily: "Lato", color: Colors.white),
                                 ),
                               ),
-                            ),
-                          ):
-                      Container(
-                        margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                        height: size.height/22.5,
-                        width: size.height/22.5,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(2)),
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    _userAvatar
-                                )
                             )
-                        ),
-                      );
+                          : Container(
+                              margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                              height: size.height / 22.5,
+                              width: size.height / 22.5,
+                              child: CustomImage(
+                                image: _userAvatar,
+                                radius: 2,
+                              ),
+                            );
                     }),
               ),
             ),
@@ -162,19 +155,15 @@ class _CommunityCardState extends State<CommunityCard> {
                         Text(
                           "15",
                           style: TextStyle(
-                              fontFamily: "Lato",
-                              color: Colors.white
-                          ),
+                              fontFamily: "Lato", color: Colors.white),
                         ),
                         SizedBox(
                           width: 2,
                         ),
                         Container(
-                          height: size.height/50,
-                          width: size.width/15,
-                          decoration: BoxDecoration(
-                              color: Color(0xfff74040)
-                          ),
+                          height: size.height / 50,
+                          width: size.width / 15,
+                          decoration: BoxDecoration(color: Color(0xfff74040)),
                           child: Center(
                             child: Text(
                               "LIVE",
@@ -183,8 +172,7 @@ class _CommunityCardState extends State<CommunityCard> {
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 2.0,
                                   color: Colors.white,
-                                  fontSize: size.width/50
-                              ),
+                                  fontSize: size.width / 50),
                             ),
                           ),
                         )
@@ -195,17 +183,15 @@ class _CommunityCardState extends State<CommunityCard> {
                     child: Row(
                       children: [
                         Text(
-                            "35",
+                          "35",
                           style: TextStyle(
-                            fontFamily: "Lato",
-                            color: Colors.white
-                          ),
+                              fontFamily: "Lato", color: Colors.white),
                         ),
                         SizedBox(
                           width: 2,
                         ),
                         Icon(
-                            Icons.schedule,
+                          Icons.schedule,
                           color: Colors.white,
                         )
                       ],
@@ -215,37 +201,46 @@ class _CommunityCardState extends State<CommunityCard> {
               ),
             ),
             Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.4),
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomLeft: Radius.circular(10))
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                    "15K",
-                      style: TextStyle(
-                        fontFamily: "Lato",
-                        color: Colors.white,
-                        fontSize: size.width/30
+                top: 0,
+                right: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(10))),
+                  child: Row(
+                    children: [
+                      Text(
+                        "15K",
+                        style: TextStyle(
+                            fontFamily: "Lato",
+                            color: Colors.white,
+                            fontSize: size.width / 30),
                       ),
-                    ),
-                    Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: size.width/25,
-                    ),
-                    IconButton(icon: isMember?Icon(Icons.check,color: Colors.green,):Icon(Icons.add,color: Colors.white,), onPressed: (){
-                      setState(() {
-                        isMember = !isMember;
-                      });
-                    })
-                  ],
-                ),
-              )
-            )
+                      Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: size.width / 25,
+                      ),
+                      IconButton(
+                          icon: isMember
+                              ? Icon(
+                                  Icons.check,
+                                  color: Colors.green,
+                                )
+                              : Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                          onPressed: () {
+                            setState(() {
+                              isMember = !isMember;
+                            });
+                          })
+                    ],
+                  ),
+                ))
           ]),
         ),
       ),

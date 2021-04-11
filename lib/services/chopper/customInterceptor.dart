@@ -6,6 +6,16 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
 
 class CustomInterceptor implements RequestInterceptor {
+  Request removeNull(Request request) {
+    final headers = {...request.headers};
+    headers?.removeWhere((key, value) => value == null);
+
+    final queryParams = {...request.parameters};
+    queryParams?.removeWhere((key, value) => value == null);
+
+    return request.copyWith(headers: headers, parameters: queryParams);
+  }
+
   @override
   FutureOr<Request> onRequest(Request request) async {
     final connectivityResult =
@@ -15,6 +25,8 @@ class CustomInterceptor implements RequestInterceptor {
       AppConstants.internetErrorFlushBar.showFlushbar(AppConstants.rootContext);
       // throw InternetConnectionException();
     }
+
+    request = removeNull(request);
 
     if (request.headers['noAuthRequired'] == 'true') {
       return request;

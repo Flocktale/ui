@@ -28,7 +28,7 @@ class _LandingPageState extends State<LandingPage>
   BuiltSearchClubs followingUsersClubs;
   BuiltSearchClubs myCurrentClubs;
 
-  Map<String,dynamic> communityMap = {
+  Map<String, dynamic> communityMap = {
     'data': null,
     'isLoading': true,
   };
@@ -123,28 +123,28 @@ class _LandingPageState extends State<LandingPage>
     );
   }
 
-  Future<void> _fetchCommunities()async{
-    final service = Provider.of<DatabaseApiService>(context,listen:false);
+  Future<void> _fetchCommunities() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
     communityMap['data'] = (await service.getAllCommunities(
-      lastevaluatedkey: (communityMap['data'] as BuiltCommunityList)?.lastevaluatedkey
-    )).body;
+            lastevaluatedkey:
+                (communityMap['data'] as BuiltCommunityList)?.lastevaluatedkey))
+        .body;
     print(communityMap['data']);
     communityMap['isLoading'] = false;
-    setState(() {
-    });
+    setState(() {});
   }
 
-  void _fetchMoreCommunities()async{
-    final service = Provider.of<DatabaseApiService>(context,listen:false);
-    final lastEvaluatedKey = (communityMap['data'] as BuiltCommunityList)?.lastevaluatedkey;
-    if(lastEvaluatedKey!=null){
+  void _fetchMoreCommunities() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final lastEvaluatedKey =
+        (communityMap['data'] as BuiltCommunityList)?.lastevaluatedkey;
+    if (lastEvaluatedKey != null) {
       await _fetchCommunities();
-    }else{
+    } else {
       await Future.delayed(Duration(milliseconds: 200));
       communityMap['isLoading'] = false;
     }
-    setState(() {
-    });
+    setState(() {});
   }
 
   Future _fetchAllClubs([bool initiating = false]) async {
@@ -187,9 +187,9 @@ class _LandingPageState extends State<LandingPage>
     }
   }
 
-  Widget tabPage(int index){
+  Widget tabPage(int index) {
     Size size = MediaQuery.of(context).size;
-    if(index==0){
+    if (index == 0) {
       return Stack(
         children: [
           Container(
@@ -222,29 +222,29 @@ class _LandingPageState extends State<LandingPage>
                     ),
                   Clubs != null
                       ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                    itemCount: Clubs?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      return Clubs[index].clubs.isNotEmpty
-                          ? sectionHeading(
-                        title: Clubs[index].category,
-                        viewAll: true,
-                        type: ClubSectionType.Category,
-                        clubs: Clubs[index].clubs,
-                      )
-                          : Container();
-                    },
-                  )
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: Clubs?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            return Clubs[index].clubs.isNotEmpty
+                                ? sectionHeading(
+                                    title: Clubs[index].category,
+                                    viewAll: true,
+                                    type: ClubSectionType.Category,
+                                    clubs: Clubs[index].clubs,
+                                  )
+                                : Container();
+                          },
+                        )
                       : Container(
-                    child: Center(
-                      child: Text(
-                        "Loading...",
-                        style: TextStyle(
-                            fontFamily: "Lato", color: Colors.grey),
-                      ),
-                    ),
-                  ),
+                          child: Center(
+                            child: Text(
+                              "Loading...",
+                              style: TextStyle(
+                                  fontFamily: "Lato", color: Colors.grey),
+                            ),
+                          ),
+                        ),
                   SizedBox(height: size.height / 10)
                 ],
               ),
@@ -253,8 +253,9 @@ class _LandingPageState extends State<LandingPage>
           Positioned(bottom: 0, child: MinClub(_navigateTo)),
         ],
       );
-    }else{
-      final communities = (communityMap['data'] as BuiltCommunityList)?.communities;
+    } else {
+      final communities =
+          (communityMap['data'] as BuiltCommunityList)?.communities;
       final bool isLoading = communityMap['isLoading'];
       print(communities);
       final listLength = (communities?.length ?? 0) + 1;
@@ -263,12 +264,13 @@ class _LandingPageState extends State<LandingPage>
           Container(
             // margin: EdgeInsets.all(10),
             child: RefreshIndicator(
-              onRefresh: (){
+              onRefresh: () {
                 return;
               },
               child: NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification scrollInfo) {
-                  if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                  if (scrollInfo.metrics.pixels ==
+                      scrollInfo.metrics.maxScrollExtent) {
                     _fetchMoreCommunities();
                     communityMap['isLoading'] = true;
                   }
@@ -277,7 +279,7 @@ class _LandingPageState extends State<LandingPage>
                 child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: listLength,
-                    itemBuilder: (context,index){
+                    itemBuilder: (context, index) {
                       if (index == listLength - 1) {
                         if (isLoading)
                           return Container(
@@ -288,7 +290,9 @@ class _LandingPageState extends State<LandingPage>
                           return Container();
                       }
                       final _community = communities[index];
-                      return CommunityCard(community: _community,);
+                      return CommunityCard(
+                        community: _community,
+                      );
                     }),
               ),
             ),
@@ -355,34 +359,37 @@ class _LandingPageState extends State<LandingPage>
           // ),
           appBar: AppBar(
             leading: IconButton(
-                    icon: Image.asset('assets/images/inverted_logo.png'),
-                    onPressed: null,
-                  ),
+              icon: Image.asset('assets/images/inverted_logo.png'),
+              onPressed: null,
+            ),
             title: Text(
-                              'Flocktale',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.redAccent,
-                                fontSize: size.width / 20,
-                                letterSpacing: 0.0,
-                                fontFamily: 'Montserrat',
-                              ),
-                            ),
+              'Flocktale',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.redAccent,
+                fontSize: size.width / 20,
+                letterSpacing: 0.0,
+                fontFamily: 'Montserrat',
+              ),
+            ),
             centerTitle: true,
             actions: [
-            IconButton(
-                      icon: hasNewNotifications == false
-                          ? Icon(Icons.notifications_none_outlined,color: Colors.black,)
-                          : Icon(
-                              Icons.notifications_active,
-                              color: Colors.redAccent,
-                            ),
-                      onPressed: () {
-                        hasNewNotifications = false;
-                        setState(() {});
-                        _navigateTo(NotificationPage());
-                      },
-                    ),
+              IconButton(
+                icon: hasNewNotifications == false
+                    ? Icon(
+                        Icons.notifications_none_outlined,
+                        color: Colors.black,
+                      )
+                    : Icon(
+                        Icons.notifications_active,
+                        color: Colors.redAccent,
+                      ),
+                onPressed: () {
+                  hasNewNotifications = false;
+                  setState(() {});
+                  _navigateTo(NotificationPage());
+                },
+              ),
             ],
             bottom: TabBar(
               controller: _tabController,
@@ -390,7 +397,7 @@ class _LandingPageState extends State<LandingPage>
               unselectedLabelColor: Colors.grey[700],
               labelColor: Colors.black,
               labelStyle:
-              TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                  TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
               indicator: UnderlineTabIndicator(
                 borderSide: BorderSide(color: Colors.black),
               ),
@@ -398,17 +405,11 @@ class _LandingPageState extends State<LandingPage>
               tabs: [
                 Text(
                   "CLUBS",
-                  style: TextStyle(
-                      fontFamily: "Lato",
-                      letterSpacing: 2.0
-                  ),
+                  style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
                 ),
                 Text(
                   "COMMUNITIES",
-                  style: TextStyle(
-                      fontFamily: "Lato",
-                      letterSpacing: 2.0
-                  ),
+                  style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
                 )
               ],
             ),
