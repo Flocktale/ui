@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +13,8 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'ClubDetail.dart';
 import 'package:image_cropper/image_cropper.dart';
+
+import 'CommunityPage.dart';
 
 class NewClub extends StatefulWidget {
   @override
@@ -33,6 +36,8 @@ class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
   TextEditingController _controller1;
   List<String> categoryList = [];
   File image;
+  File communityCoverImage;
+  File communityAvatar;
   List<String> subCategoryList = [];
   TabController _tabController;
   final picker = ImagePicker();
@@ -63,6 +68,33 @@ class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
     }
   }
 
+  getCommunityCoverImage() async {
+    Size size = MediaQuery.of(context).size;
+    final selectedImage = await picker.getImage(source: ImageSource.gallery);
+    if (selectedImage != null) {
+      final croppedImage = await ImageCropper.cropImage(
+          cropStyle: CropStyle.rectangle,
+          sourcePath: selectedImage.path,
+          aspectRatio: CropAspectRatio(ratioX: 3, ratioY: 2),
+          compressQuality: 50,
+          maxHeight: (2*size.width~/3),
+          maxWidth: size.width~/1,
+          compressFormat: ImageCompressFormat.jpg,
+          androidUiSettings: AndroidUiSettings(
+              statusBarColor: Colors.redAccent,
+              cropFrameColor: Colors.grey[600],
+              backgroundColor: Colors.white,
+              toolbarColor: Colors.white));
+      setState(() {
+        if (croppedImage != null) {
+          communityCoverImage = File(croppedImage.path);
+        } else {
+          print("Picture not selected.");
+        }
+      });
+    }
+  }
+
   getCommunitiesProfileImage() async {
     final selectedImage = await picker.getImage(source: ImageSource.gallery);
     if (selectedImage != null) {
@@ -81,7 +113,7 @@ class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
               toolbarColor: Colors.white));
       setState(() {
         if (croppedImage != null) {
-          image = File(croppedImage.path);
+          communityAvatar = File(croppedImage.path);
         } else {
           print("Picture not selected.");
         }
@@ -210,7 +242,9 @@ class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
       isLoading = true;
     });
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final userId = Provider.of<UserData>(context, listen: false).userId;
+    final userId = Provider
+        .of<UserData>(context, listen: false)
+        .userId;
 
     final resp = await service.createCommunity(
       body: _newCommunityModel,
@@ -219,71 +253,91 @@ class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
     setState(() {
       isLoading = false;
     });
-    // if (resp.isSuccessful && image != null) {
-    //   String imageInBase64;
-    //   if (image != null) {
-    //     var pickedImage = await image.readAsBytes();
-    //     imageInBase64 = base64Encode(pickedImage);
-    //     final newImage = BuiltProfileImage((b) => b..image = imageInBase64);
-    //     final response = await service.updateClubAvatar(
-    //       clubId: resp.body['clubId'],
-    //       image: newImage,
-    //     );
-    //     print("!!!!!!!!!!!!!!!!!!!!!!!");
-    //     print(response.isSuccessful);
-    //     BuiltClub newClub = (await service.getClubByClubId(
-    //       userId: userId,
-    //       clubId: resp.body['clubId'],
-    //     ))
-    //         .body
-    //         ?.club;
-    //     Navigator.of(context)
-    //         .push(MaterialPageRoute(
-    //         builder: (_) => ClubDetailPage(
-    //           club: newClub,
-    //         )))
-    //         .then((value) => () {
-    //       _formKey.currentState.reset();
-    //       setState(() {
-    //         image = null;
-    //         isLoading = false;
-    //       });
-    //     });
-    //     setState(() {
-    //       _formKey.currentState.reset();
-    //       image = null;
-    //       isLoading = false;
-    //     });
-    //     Fluttertoast.showToast(msg: 'club entry is created');
-    //   }
-    // }
-    // else {
-    //   print('=========${resp.body}');
-    //   print(resp.error);
-    //   Fluttertoast.showToast(msg: 'club entry is created');
-    //   BuiltClub tempClub = (await service.getClubByClubId(
-    //     userId: userId,
-    //     clubId: resp.body['clubId'],
-    //   ))
-    //       .body
-    //       ?.club;
-    //   Navigator.of(context)
-    //       .push(MaterialPageRoute(
-    //       builder: (_) => ClubDetailPage(
-    //         club: tempClub,
-    //       )))
-    //       .then((value) => () {
-    //     _formKey.currentState.reset();
-    //     image = null;
-    //     setState(() {});
-    //   });
-    //   _formKey.currentState.reset();
-    //   setState(() {
-    //     image = null;
-    //   });
-    // }
-    if(resp.isSuccessful){
-      Fluttertoast.showToast(msg: 'Community created');
+    if (resp.isSuccessful && communityAvatar != null) {
+      String imageInBase64;
+      String communityImage64;
+      if (communityCoverImage != null) {
+        var pickedAvatar = await communityAvatar.readAsBytes();
+        var pickedImage = await communityCoverImage.readAsBytes();
+        imageInBase64 = base64Encode(pickedImage);
+        communityImage64 = base64Encode(pickedAvatar);
+        CommunityImageUploadBody communityImages = CommunityImageUploadBody((
+            b) =>
+        b
+          ..coverImage = imageInBase64
+          ..avatar = communityImage64
+        );
+
+        final response = await service.uploadCommunityImages(
+            resp.body['communityId'],
+            body: communityImages
+        );
+        print("!!!!!!!!!!!!!!!!!!!!!!!");
+        print(response.isSuccessful);
+        BuiltCommunity newCommunity = (await service.getCommunityByCommunityId(
+            resp.body['communityId'],
+            userId: userId
+        ))
+            .body
+            ?.community;
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+            builder: (_) =>
+                CommunityPage(
+                  community: newCommunity,
+                )))
+            .then((value) =>
+            () {
+          _formKey.currentState.reset();
+          setState(() {
+            communityAvatar = null;
+            communityCoverImage = null;
+            isLoading = false;
+          });
+        });
+        setState(() {
+          _formKey.currentState.reset();
+          communityAvatar = null;
+          communityCoverImage = null;
+          isLoading = false;
+        });
+        Fluttertoast.showToast(msg: 'community entry is created');
+      }
+    }
+    else {
+      print('=========${resp.body}');
+      print(resp.error);
+      Fluttertoast.showToast(msg: 'club entry is created');
+      BuiltCommunity newCommunity = (await service.getCommunityByCommunityId(
+          resp.body['communityId'],
+          userId: userId
+      ))
+          .body
+          ?.community;
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+          builder: (_) =>
+              CommunityPage(
+                community: newCommunity,
+              )))
+          .then((value) =>
+          () {
+        _formKey.currentState.reset();
+        setState(() {
+          communityAvatar = null;
+          communityCoverImage = null;
+          isLoading = false;
+        });
+      });
+      setState(() {
+        _formKey.currentState.reset();
+        communityAvatar = null;
+        communityCoverImage = null;
+        isLoading = false;
+      });
+      if (resp.isSuccessful) {
+        Fluttertoast.showToast(msg: 'Community created');
+      }
     }
   }
 
@@ -705,9 +759,9 @@ class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
                     child: CircleAvatar(
                       radius: size.height / 15,
                       backgroundImage:
-                      image == null ? null : FileImage(image),
+                      communityAvatar == null ? null : FileImage(communityAvatar),
                       backgroundColor: Colors.white,
-                      child: image == null
+                      child: communityAvatar == null
                           ? Icon(
                         Icons.add_a_photo,
                         size: size.width / 15,
@@ -717,7 +771,7 @@ class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
                         alignment: Alignment.topRight,
                         child: GestureDetector(
                           onTap: () {
-                            image = null;
+                            communityAvatar = null;
                             setState(() {});
                           },
                           child: CircleAvatar(
@@ -730,6 +784,73 @@ class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
                           ),
                         ),
                       ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: size.height/30,
+            ),
+            Center(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(
+                    0, size.height / 500, 0, 0),
+                child: GestureDetector(
+                  onTap: getCommunityCoverImage,
+                  behavior: HitTestBehavior.deferToChild,
+                  child: Container(
+                    height: size.height/6,
+                    width: size.width ,
+                    color: Colors.red,
+                    child: Container(
+                      height: size.height/6,
+                      width: size.width,
+                      child: communityCoverImage == null
+                          ? Column(
+                        children: [
+                          SizedBox(
+                            height: size.height / 20,
+                          ),
+                          Icon(
+                            Icons.add_a_photo,
+                            size: size.width / 15,
+                            color: Colors.black,
+                            semanticLabel: "Add a photo",
+                          ),
+                          Text(
+                            "Add a cover image",
+                            style: TextStyle(
+                                fontFamily: "Lato",
+                                fontWeight:
+                                FontWeight.w400),
+                          )
+                        ],
+                      )
+                          : Stack(
+                        children: [
+                          Image.file(communityCoverImage,fit: BoxFit.fill,),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: GestureDetector(
+                              onTap: () {
+                                communityCoverImage = null;
+                                setState(() {});
+                              },
+                              child: CircleAvatar(
+                                backgroundColor:
+                                Colors.transparent,
+                                child: Icon(
+                                  Icons.cancel,
+                                  color: Colors.black,
+                                  size: size.width / 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      color: Colors.white,
                     ),
                   ),
                 ),
