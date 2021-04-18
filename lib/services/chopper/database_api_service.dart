@@ -181,9 +181,26 @@ abstract class DatabaseApiService extends ChopperService {
   //---------------------------------------------------------------------------------------------
 
   @Post(path: '/clubs/global/create/')
-  Future<Response> createNewClub({
-    @required @Body() BuiltClub body,
+  Future<Response> createNewGeneralClub({
     @required @Query() String creatorId,
+    @Query() String type = "general",
+    @required @Body() BuiltClub body,
+  });
+
+  @Post(path: '/clubs/global/create/')
+  Future<Response> createNewCommunityClub({
+    @required @Query() String creatorId,
+    @Query() String type = "community",
+    @required @Query() String communityId,
+    @required @Body() BuiltClub body,
+  });
+
+  @Post(path: '/clubs/global/create/')
+  Future<Response> createNewContentClub({
+    @required @Query() String creatorId,
+    @Query() String type = "content",
+    @Query() String contentUrl,
+    @Query() String contentType = "news", // "news" or "commerce"
   });
 
   @Post(path: 'clubs/{clubId}/avatar/')
@@ -234,8 +251,19 @@ abstract class DatabaseApiService extends ChopperService {
     @Header() String lastevaluatedkey,
   });
 
+  @Get(path: '/clubs/global')
+  Future<Response<BuiltSearchClubs>> getClubsOfContent({
+    @required @Query() String contentUrl,
+    @Header() String lastevaluatedkey,
+  });
+
   @Get(path: '/clubs/global/category-data')
   Future<Response> getCategoryData();
+
+  @Get(path: '/clubs/global/content-data')
+  Future<Response<BuiltList<ClubContentModel>>> getContentData(
+      {@Query() String type = "news" // "news" or "commerce"
+      });
 
   @Get(path: '/clubs/{clubId}')
   Future<Response<BuiltClubAndAudience>> getClubByClubId({

@@ -6,6 +6,8 @@ part of 'built_post.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
+Serializer<ClubContentModel> _$clubContentModelSerializer =
+    new _$ClubContentModelSerializer();
 Serializer<BuiltCommunityAndUser> _$builtCommunityAndUserSerializer =
     new _$BuiltCommunityAndUserSerializer();
 Serializer<CommunityImageUploadBody> _$communityImageUploadBodySerializer =
@@ -67,6 +69,89 @@ Serializer<BuiltInviteFormat> _$builtInviteFormatSerializer =
     new _$BuiltInviteFormatSerializer();
 Serializer<BuiltContacts> _$builtContactsSerializer =
     new _$BuiltContactsSerializer();
+
+class _$ClubContentModelSerializer
+    implements StructuredSerializer<ClubContentModel> {
+  @override
+  final Iterable<Type> types = const [ClubContentModel, _$ClubContentModel];
+  @override
+  final String wireName = 'ClubContentModel';
+
+  @override
+  Iterable<Object> serialize(Serializers serializers, ClubContentModel object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[];
+    if (object.source != null) {
+      result
+        ..add('source')
+        ..add(serializers.serialize(object.source,
+            specifiedType: const FullType(String)));
+    }
+    if (object.title != null) {
+      result
+        ..add('title')
+        ..add(serializers.serialize(object.title,
+            specifiedType: const FullType(String)));
+    }
+    if (object.url != null) {
+      result
+        ..add('url')
+        ..add(serializers.serialize(object.url,
+            specifiedType: const FullType(String)));
+    }
+    if (object.decription != null) {
+      result
+        ..add('decription')
+        ..add(serializers.serialize(object.decription,
+            specifiedType: const FullType(String)));
+    }
+    if (object.avatar != null) {
+      result
+        ..add('avatar')
+        ..add(serializers.serialize(object.avatar,
+            specifiedType: const FullType(String)));
+    }
+    return result;
+  }
+
+  @override
+  ClubContentModel deserialize(
+      Serializers serializers, Iterable<Object> serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new ClubContentModelBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'source':
+          result.source = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'title':
+          result.title = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'url':
+          result.url = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'decription':
+          result.decription = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'avatar':
+          result.avatar = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$BuiltCommunityAndUserSerializer
     implements StructuredSerializer<BuiltCommunityAndUser> {
@@ -2566,6 +2651,130 @@ class _$BuiltContactsSerializer implements StructuredSerializer<BuiltContacts> {
     }
 
     return result.build();
+  }
+}
+
+class _$ClubContentModel extends ClubContentModel {
+  @override
+  final String source;
+  @override
+  final String title;
+  @override
+  final String url;
+  @override
+  final String decription;
+  @override
+  final String avatar;
+
+  factory _$ClubContentModel(
+          [void Function(ClubContentModelBuilder) updates]) =>
+      (new ClubContentModelBuilder()..update(updates)).build();
+
+  _$ClubContentModel._(
+      {this.source, this.title, this.url, this.decription, this.avatar})
+      : super._();
+
+  @override
+  ClubContentModel rebuild(void Function(ClubContentModelBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ClubContentModelBuilder toBuilder() =>
+      new ClubContentModelBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is ClubContentModel &&
+        source == other.source &&
+        title == other.title &&
+        url == other.url &&
+        decription == other.decription &&
+        avatar == other.avatar;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc($jc($jc($jc(0, source.hashCode), title.hashCode), url.hashCode),
+            decription.hashCode),
+        avatar.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('ClubContentModel')
+          ..add('source', source)
+          ..add('title', title)
+          ..add('url', url)
+          ..add('decription', decription)
+          ..add('avatar', avatar))
+        .toString();
+  }
+}
+
+class ClubContentModelBuilder
+    implements Builder<ClubContentModel, ClubContentModelBuilder> {
+  _$ClubContentModel _$v;
+
+  String _source;
+  String get source => _$this._source;
+  set source(String source) => _$this._source = source;
+
+  String _title;
+  String get title => _$this._title;
+  set title(String title) => _$this._title = title;
+
+  String _url;
+  String get url => _$this._url;
+  set url(String url) => _$this._url = url;
+
+  String _decription;
+  String get decription => _$this._decription;
+  set decription(String decription) => _$this._decription = decription;
+
+  String _avatar;
+  String get avatar => _$this._avatar;
+  set avatar(String avatar) => _$this._avatar = avatar;
+
+  ClubContentModelBuilder();
+
+  ClubContentModelBuilder get _$this {
+    if (_$v != null) {
+      _source = _$v.source;
+      _title = _$v.title;
+      _url = _$v.url;
+      _decription = _$v.decription;
+      _avatar = _$v.avatar;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(ClubContentModel other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$ClubContentModel;
+  }
+
+  @override
+  void update(void Function(ClubContentModelBuilder) updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$ClubContentModel build() {
+    final _$result = _$v ??
+        new _$ClubContentModel._(
+            source: source,
+            title: title,
+            url: url,
+            decription: decription,
+            avatar: avatar);
+    replace(_$result);
+    return _$result;
   }
 }
 

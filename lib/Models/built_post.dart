@@ -11,6 +11,35 @@ import 'enums/communityUserType.dart';
 
 part 'built_post.g.dart';
 
+abstract class ClubContentModel
+    implements Built<ClubContentModel, ClubContentModelBuilder> {
+  // fields go here
+
+  @nullable
+  String get source;
+  @nullable
+  String get title;
+  @nullable
+  String get url;
+  @nullable
+  String get decription;
+  @nullable
+  String get avatar;
+
+  ClubContentModel._();
+
+  factory ClubContentModel([updates(ClubContentModelBuilder b)]) =
+      _$ClubContentModel;
+
+  static ClubContentModel fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        ClubContentModel.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<ClubContentModel> get serializer =>
+      _$clubContentModelSerializer;
+}
+
 abstract class BuiltCommunityAndUser
     implements Built<BuiltCommunityAndUser, BuiltCommunityAndUserBuilder> {
   // fields go here

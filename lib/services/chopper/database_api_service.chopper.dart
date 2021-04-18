@@ -209,12 +209,48 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<dynamic>> createNewClub({BuiltClub body, String creatorId}) {
+  Future<Response<dynamic>> createNewGeneralClub(
+      {String creatorId, String type = "general", BuiltClub body}) {
     final $url = '/clubs/global/create/';
-    final $params = <String, dynamic>{'creatorId': creatorId};
+    final $params = <String, dynamic>{'creatorId': creatorId, 'type': type};
     final $body = body;
     final $request =
         Request('POST', $url, client.baseUrl, body: $body, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> createNewCommunityClub(
+      {String creatorId,
+      String type = "community",
+      String communityId,
+      BuiltClub body}) {
+    final $url = '/clubs/global/create/';
+    final $params = <String, dynamic>{
+      'creatorId': creatorId,
+      'type': type,
+      'communityId': communityId
+    };
+    final $body = body;
+    final $request =
+        Request('POST', $url, client.baseUrl, body: $body, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> createNewContentClub(
+      {String creatorId,
+      String type = "content",
+      String contentUrl,
+      String contentType = "news"}) {
+    final $url = '/clubs/global/create/';
+    final $params = <String, dynamic>{
+      'creatorId': creatorId,
+      'type': type,
+      'contentUrl': contentUrl,
+      'contentType': contentType
+    };
+    final $request = Request('POST', $url, client.baseUrl, parameters: $params);
     return client.send<dynamic, dynamic>($request);
   }
 
@@ -280,10 +316,30 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<BuiltSearchClubs>> getClubsOfContent(
+      {String contentUrl, String lastevaluatedkey}) {
+    final $url = '/clubs/global';
+    final $params = <String, dynamic>{'contentUrl': contentUrl};
+    final $headers = {'lastevaluatedkey': lastevaluatedkey};
+    final $request = Request('GET', $url, client.baseUrl,
+        parameters: $params, headers: $headers);
+    return client.send<BuiltSearchClubs, BuiltSearchClubs>($request);
+  }
+
+  @override
   Future<Response<dynamic>> getCategoryData() {
     final $url = '/clubs/global/category-data';
     final $request = Request('GET', $url, client.baseUrl);
     return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<BuiltList<ClubContentModel>>> getContentData(
+      {String type = "news"}) {
+    final $url = '/clubs/global/content-data';
+    final $params = <String, dynamic>{'type': type};
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client.send<BuiltList<ClubContentModel>, ClubContentModel>($request);
   }
 
   @override
