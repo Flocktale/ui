@@ -1,7 +1,9 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Widgets/summaryClubCard.dart';
+import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import 'NewClub.dart';
@@ -14,13 +16,41 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
+  Map<String, dynamic> newsClubsMap = {
+    'data': null,
+    'isLoading': true,
+  };
+  _fetchNewsClubs() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    newsClubsMap['data'] = (await service.getClubsOfContent(contentUrl: widget.news.url,
+    lastevaluatedkey: (newsClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey
+    ))
+        .body;
+    newsClubsMap['isLoading'] = false;
+    setState(() {});
+  }
+
+  _fetchMoreNewsClubs() async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final lastevaluatedkey =
+        (newsClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
+    if (lastevaluatedkey != null) {
+      await _fetchNewsClubs();
+    } else {
+      await Future.delayed(Duration(milliseconds: 200));
+      newsClubsMap['isLoading'] = false;
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchNewsClubs();
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    Map<String, dynamic> newsClubsMap = {
-      'data': null,
-      'isLoading': true,
-    };
+    String userId = Provider.of<UserData>(context,listen: false).userId;
     void _justRefresh([Function refresh]) {
       if (this.mounted) {
         if (refresh != null) {
@@ -39,25 +69,6 @@ class _NewsPageState extends State<NewsPage> {
       _justRefresh();
     }
 
-    _fetchNewsClubs() async {
-      final service = Provider.of<DatabaseApiService>(context, listen: false);
-      newsClubsMap['data'] = (await service.getContentData(type: "news"))
-          .body;
-      newsClubsMap['isLoading'] = false;
-      setState(() {});
-    }
-
-    _fetchMoreNewsClubs() async {
-      final service = Provider.of<DatabaseApiService>(context, listen: false);
-      final lastevaluatedkey =
-          (newsClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
-      if (lastevaluatedkey != null) {
-        await _fetchNewsClubs();
-      } else {
-        await Future.delayed(Duration(milliseconds: 200));
-        newsClubsMap['isLoading'] = false;
-      }
-    }
 
     Widget clubGrid() {
       final clubList = (newsClubsMap['data'] as BuiltSearchClubs)?.clubs;
@@ -210,24 +221,23 @@ class _NewsPageState extends State<NewsPage> {
             // ),
             // );
             // })),
-          InkWell(
-            onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => NewClub()))
-                  .then((value) => _fetchNewsClubs());
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Create CLub", style: TextStyle(fontFamily: "Lato")),
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_)=>NewClub()));
-                  },
-                  icon: Icon(Icons.add),
-                )
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Create CLub", style: TextStyle(fontFamily: "Lato")),
+              IconButton(
+                onPressed: () async{
+                  final resp = (await Provider.of<DatabaseApiService>(context,listen: false).createNewContentClub(creatorId: userId,contentUrl: widget.news.url, contentType: "news"));
+                  if(!resp.isSuccessful){
+                  Fluttertoast.showToast(msg: "Something went wrong...");
+                  }
+                  else{
+                  Fluttertoast.showToast(msg: "Club created");
+                  }
+                },
+                icon: Icon(Icons.add),
+              )
+            ],
           ),
           clubGrid()
             ],
