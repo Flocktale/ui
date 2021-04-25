@@ -5,6 +5,7 @@ import 'package:flocktale/Models/basic_enums.dart';
 import 'package:flocktale/Widgets/CommunityCard.dart';
 import 'package:flocktale/Widgets/introWidget.dart';
 import 'package:flocktale/pages/ClubSection.dart';
+import 'package:flocktale/pages/NewsTab.dart';
 import 'package:flocktale/pages/NotificationPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +45,8 @@ class _LandingPageState extends State<LandingPage>
   Future<void> _fetchCommunities() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     communityMap['data'] = (await service.getAllCommunities(
-        lastevaluatedkey:
-        (communityMap['data'] as BuiltCommunityList)?.lastevaluatedkey))
+            lastevaluatedkey:
+                (communityMap['data'] as BuiltCommunityList)?.lastevaluatedkey))
         .body;
     print(communityMap['data']);
     communityMap['isLoading'] = false;
@@ -65,8 +66,7 @@ class _LandingPageState extends State<LandingPage>
     setState(() {});
   }
 
-
-  Widget dummyCard(){
+  Widget dummyCard() {
     Size size = MediaQuery.of(context).size;
     return Container(
       margin: EdgeInsets.fromLTRB(0, 15, 15, 0),
@@ -77,8 +77,7 @@ class _LandingPageState extends State<LandingPage>
         shadowColor: shadow.withOpacity(0.2),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: () {
-          },
+          onTap: () {},
           child: Stack(
             children: <Widget>[
               Container(
@@ -145,9 +144,9 @@ class _LandingPageState extends State<LandingPage>
     final cuser = Provider.of<UserData>(context, listen: false).user;
     BuiltNotificationList tempNotificationList =
         (await service.getNotifications(
-          userId: cuser.userId,
-          lastevaluatedkey: null,
-        ))
+      userId: cuser.userId,
+      lastevaluatedkey: null,
+    ))
             .body;
     if (notificationList != null &&
         tempNotificationList.notifications.length >
@@ -176,7 +175,7 @@ class _LandingPageState extends State<LandingPage>
     BuiltList<BuiltClub> clubs,
   }) {
     assert(type != null,
-    'viewAllNavigationPage must not be null when viewAll is true and vice versa');
+        'viewAllNavigationPage must not be null when viewAll is true and vice versa');
 
     Size size = MediaQuery.of(context).size;
 
@@ -200,20 +199,20 @@ class _LandingPageState extends State<LandingPage>
             ),
             viewAll
                 ? InkWell(
-              onTap: () =>
-                  _navigateTo(ClubSection(type, category: title)),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  'View All >',
-                  style: TextStyle(
-                    fontSize: size.width / 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ),
-            )
+                    onTap: () =>
+                        _navigateTo(ClubSection(type, category: title)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        'View All >',
+                        style: TextStyle(
+                          fontSize: size.width / 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  )
                 : Container(),
           ],
         ),
@@ -265,9 +264,9 @@ class _LandingPageState extends State<LandingPage>
     }
   }
 
-  Widget tabPage(int index){
+  Widget tabPage(int index) {
     Size size = MediaQuery.of(context).size;
-    if(index==0){
+    if (index == 0) {
       return Stack(
         children: [
           Container(
@@ -300,29 +299,29 @@ class _LandingPageState extends State<LandingPage>
                     ),
                   Clubs != null
                       ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                    itemCount: Clubs?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      return Clubs[index].clubs.isNotEmpty
-                          ? sectionHeading(
-                        title: Clubs[index].category,
-                        viewAll: true,
-                        type: ClubSectionType.Category,
-                        clubs: Clubs[index].clubs,
-                      )
-                          : Container();
-                    },
-                  )
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: Clubs?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            return Clubs[index].clubs.isNotEmpty
+                                ? sectionHeading(
+                                    title: Clubs[index].category,
+                                    viewAll: true,
+                                    type: ClubSectionType.Category,
+                                    clubs: Clubs[index].clubs,
+                                  )
+                                : Container();
+                          },
+                        )
                       : Container(
-                    child: Center(
-                      child: Text(
-                        "Loading...",
-                        style: TextStyle(
-                            fontFamily: "Lato", color: Colors.grey),
-                      ),
-                    ),
-                  ),
+                          child: Center(
+                            child: Text(
+                              "Loading...",
+                              style: TextStyle(
+                                  fontFamily: "Lato", color: Colors.grey),
+                            ),
+                          ),
+                        ),
                   SizedBox(height: size.height / 10)
                 ],
               ),
@@ -331,8 +330,7 @@ class _LandingPageState extends State<LandingPage>
           Positioned(bottom: 0, child: MinClub(_navigateTo)),
         ],
       );
-    }
-    else if(index==1){
+    } else if (index == 1) {
       final communities =
           (communityMap['data'] as BuiltCommunityList)?.communities;
       final bool isLoading = communityMap['isLoading'];
@@ -379,182 +377,9 @@ class _LandingPageState extends State<LandingPage>
           Positioned(bottom: 0, child: MinClub(_navigateTo)),
         ],
       );
-    }
-    else if(index==2){
-      return Stack(
-        children: [
-          Container(
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: RefreshIndicator(
-              onRefresh: () => _fetchAllClubs(),
-              child: ListView(
-                children: [
-                  SizedBox(height: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "BREAKING",
-                            style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w500,
-                                fontSize: size.width / 18,
-                                color: Color(0xfff74040)
-                            ),
-                          ),
-                          Text(
-                            "View All",
-                            style: TextStyle(
-                              fontSize: size.width / 30,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          )
-                        ],
-                      ),
-                      Container(
-                        height: 185,
-                        child: ListView.builder(
-                          itemCount: 15,
-                          scrollDirection: Axis.horizontal,
-                          // children: <Widget>[
-                          itemBuilder: (context, index) {
-                            return dummyCard();
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "SPORTS",
-                            style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w500,
-                                fontSize: size.width / 18,
-                                color: Color(0xfff74040)
-                            ),
-                          ),
-                          Text(
-                            "View All",
-                            style: TextStyle(
-                              fontSize: size.width / 30,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          )
-                        ],
-                      ),
-                      Container(
-                        height: 185,
-                        child: ListView.builder(
-                          itemCount: 15,
-                          scrollDirection: Axis.horizontal,
-                          // children: <Widget>[
-                          itemBuilder: (context, index) {
-                            return dummyCard();
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "FINANCE",
-                            style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w500,
-                                fontSize: size.width / 18,
-                                color: Color(0xfff74040)
-                            ),
-                          ),
-                          Text(
-                            "View All",
-                            style: TextStyle(
-                              fontSize: size.width / 30,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          )
-                        ],
-                      ),
-                      Container(
-                        height: 185,
-                        child: ListView.builder(
-                          itemCount: 15,
-                          scrollDirection: Axis.horizontal,
-                          // children: <Widget>[
-                          itemBuilder: (context, index) {
-                            return dummyCard();
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "POLITICS",
-                            style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w500,
-                                fontSize: size.width / 18,
-                                color: Color(0xfff74040)
-                            ),
-                          ),
-                          Text(
-                            "View All",
-                            style: TextStyle(
-                              fontSize: size.width / 30,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          )
-                        ],
-                      ),
-                      Container(
-                        height: 185,
-                        child: ListView.builder(
-                          itemCount: 15,
-                          scrollDirection: Axis.horizontal,
-                          // children: <Widget>[
-                          itemBuilder: (context, index) {
-                            return dummyCard();
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: size.height / 10)
-                ],
-              ),
-            ),
-          ),
-          Positioned(bottom: 0, child: MinClub(_navigateTo)),
-        ],
-      );
-    }
-    else{
+    } else if (index == 2) {
+      return NewsTab();
+    } else {
       return Stack(
         children: [
           Container(
@@ -576,8 +401,7 @@ class _LandingPageState extends State<LandingPage>
                                 fontFamily: 'Lato',
                                 fontWeight: FontWeight.w500,
                                 fontSize: size.width / 18,
-                                color: Color(0xfff74040)
-                            ),
+                                color: Color(0xfff74040)),
                           ),
                           Text(
                             "View All",
@@ -614,8 +438,7 @@ class _LandingPageState extends State<LandingPage>
                                 fontFamily: 'Lato',
                                 fontWeight: FontWeight.w500,
                                 fontSize: size.width / 18,
-                                color: Color(0xfff74040)
-                            ),
+                                color: Color(0xfff74040)),
                           ),
                           Text(
                             "View All",
@@ -652,8 +475,7 @@ class _LandingPageState extends State<LandingPage>
                                 fontFamily: 'Lato',
                                 fontWeight: FontWeight.w500,
                                 fontSize: size.width / 18,
-                                color: Color(0xfff74040)
-                            ),
+                                color: Color(0xfff74040)),
                           ),
                           Text(
                             "View All",
@@ -690,8 +512,7 @@ class _LandingPageState extends State<LandingPage>
                                 fontFamily: 'Lato',
                                 fontWeight: FontWeight.w500,
                                 fontSize: size.width / 18,
-                                color: Color(0xfff74040)
-                            ),
+                                color: Color(0xfff74040)),
                           ),
                           Text(
                             "View All",
@@ -716,7 +537,6 @@ class _LandingPageState extends State<LandingPage>
                       )
                     ],
                   ),
-
                   SizedBox(height: size.height / 10)
                 ],
               ),
@@ -801,11 +621,14 @@ class _LandingPageState extends State<LandingPage>
             actions: [
               IconButton(
                 icon: hasNewNotifications == false
-                    ? Icon(Icons.notifications_none_outlined,color: Colors.black,)
+                    ? Icon(
+                        Icons.notifications_none_outlined,
+                        color: Colors.black,
+                      )
                     : Icon(
-                  Icons.notifications_active,
-                  color: Colors.redAccent,
-                ),
+                        Icons.notifications_active,
+                        color: Colors.redAccent,
+                      ),
                 onPressed: () {
                   hasNewNotifications = false;
                   setState(() {});
@@ -819,7 +642,7 @@ class _LandingPageState extends State<LandingPage>
               unselectedLabelColor: Colors.grey[700],
               labelColor: Colors.black,
               labelStyle:
-              TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                  TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
               indicator: UnderlineTabIndicator(
                 borderSide: BorderSide(color: Colors.black),
               ),
@@ -827,38 +650,27 @@ class _LandingPageState extends State<LandingPage>
               tabs: [
                 Text(
                   "CLUBS",
-                  style: TextStyle(
-                      fontFamily: "Lato",
-                      letterSpacing: 2.0
-                  ),
+                  style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
                 ),
                 Text(
                   "COMMUNITIES",
-                  style: TextStyle(
-                      fontFamily: "Lato",
-                      letterSpacing: 2.0
-                  ),
+                  style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
                 ),
                 Text(
                   "NEWS",
-                  style: TextStyle(
-                      fontFamily: "Lato",
-                      letterSpacing: 2.0
-                  ),
+                  style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
                 ),
                 Text(
                   "ECOMMERCE",
-                  style: TextStyle(
-                      fontFamily: "Lato",
-                      letterSpacing: 2.0
-                  ),
+                  style: TextStyle(fontFamily: "Lato", letterSpacing: 2.0),
                 )
               ],
             ),
             backgroundColor: Colors.white,
           ),
           body: TabBarView(
-              controller: _tabController, children: [tabPage(0), tabPage(1),tabPage(2),tabPage(3)]),
+              controller: _tabController,
+              children: [tabPage(0), tabPage(1), tabPage(2), tabPage(3)]),
         ),
       ),
     );
