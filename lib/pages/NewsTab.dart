@@ -3,7 +3,7 @@ import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
+import '../pages/NewsPage.dart';
 class NewsTab extends StatefulWidget {
   @override
   _NewsTabState createState() => _NewsTabState();
@@ -49,7 +49,11 @@ class _NewsTabState extends State<NewsTab> {
         }
 
         return InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>NewsPage(
+              news: data,
+            )));
+          },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Card(

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:flocktale/providers/userData.dart';
-
+import '../pages/NewsPage.dart';
 class CommunityCard extends StatefulWidget {
   final BuiltCommunity community;
   CommunityCard({this.community});
@@ -28,9 +28,12 @@ class _CommunityCardState extends State<CommunityCard> {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => CommunityPage(
+            builder: (_) =>
+                CommunityPage(
                   community: widget.community,
-                )));
+                )
+        )
+        );
       },
       child: ClipRRect(
         child: Container(
