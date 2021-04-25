@@ -26,6 +26,9 @@ abstract class ClubContentModel
   @nullable
   String get avatar;
 
+  @nullable
+  int get timestamp;
+
   ClubContentModel._();
 
   factory ClubContentModel([updates(ClubContentModelBuilder b)]) =

@@ -111,6 +111,12 @@ class _$ClubContentModelSerializer
         ..add(serializers.serialize(object.avatar,
             specifiedType: const FullType(String)));
     }
+    if (object.timestamp != null) {
+      result
+        ..add('timestamp')
+        ..add(serializers.serialize(object.timestamp,
+            specifiedType: const FullType(int)));
+    }
     return result;
   }
 
@@ -145,6 +151,10 @@ class _$ClubContentModelSerializer
         case 'avatar':
           result.avatar = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'timestamp':
+          result.timestamp = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -2675,13 +2685,20 @@ class _$ClubContentModel extends ClubContentModel {
   final String decription;
   @override
   final String avatar;
+  @override
+  final int timestamp;
 
   factory _$ClubContentModel(
           [void Function(ClubContentModelBuilder) updates]) =>
       (new ClubContentModelBuilder()..update(updates)).build();
 
   _$ClubContentModel._(
-      {this.source, this.title, this.url, this.decription, this.avatar})
+      {this.source,
+      this.title,
+      this.url,
+      this.decription,
+      this.avatar,
+      this.timestamp})
       : super._();
 
   @override
@@ -2700,15 +2717,18 @@ class _$ClubContentModel extends ClubContentModel {
         title == other.title &&
         url == other.url &&
         decription == other.decription &&
-        avatar == other.avatar;
+        avatar == other.avatar &&
+        timestamp == other.timestamp;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc($jc(0, source.hashCode), title.hashCode), url.hashCode),
-            decription.hashCode),
-        avatar.hashCode));
+        $jc(
+            $jc($jc($jc($jc(0, source.hashCode), title.hashCode), url.hashCode),
+                decription.hashCode),
+            avatar.hashCode),
+        timestamp.hashCode));
   }
 
   @override
@@ -2718,7 +2738,8 @@ class _$ClubContentModel extends ClubContentModel {
           ..add('title', title)
           ..add('url', url)
           ..add('decription', decription)
-          ..add('avatar', avatar))
+          ..add('avatar', avatar)
+          ..add('timestamp', timestamp))
         .toString();
   }
 }
@@ -2747,6 +2768,10 @@ class ClubContentModelBuilder
   String get avatar => _$this._avatar;
   set avatar(String avatar) => _$this._avatar = avatar;
 
+  int _timestamp;
+  int get timestamp => _$this._timestamp;
+  set timestamp(int timestamp) => _$this._timestamp = timestamp;
+
   ClubContentModelBuilder();
 
   ClubContentModelBuilder get _$this {
@@ -2756,6 +2781,7 @@ class ClubContentModelBuilder
       _url = _$v.url;
       _decription = _$v.decription;
       _avatar = _$v.avatar;
+      _timestamp = _$v.timestamp;
       _$v = null;
     }
     return this;
@@ -2782,7 +2808,8 @@ class ClubContentModelBuilder
             title: title,
             url: url,
             decription: decription,
-            avatar: avatar);
+            avatar: avatar,
+            timestamp: timestamp);
     replace(_$result);
     return _$result;
   }
