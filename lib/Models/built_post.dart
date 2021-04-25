@@ -515,13 +515,13 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
   ClubStatus get status;
 
   @nullable
-  int get timeWindow;
-
-  @nullable
   String get category;
 
   @nullable
   String get subCategory;
+
+  @nullable
+  BuiltCommunity get community;
 
   @nullable
   int get createdOn;
@@ -537,6 +537,9 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
 
   @nullable
   String get description;
+
+  @nullable
+  String get externalUrl;
 
   @nullable
   bool get isLocal;

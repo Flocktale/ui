@@ -1673,12 +1673,6 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         ..add(serializers.serialize(object.status,
             specifiedType: const FullType(ClubStatus)));
     }
-    if (object.timeWindow != null) {
-      result
-        ..add('timeWindow')
-        ..add(serializers.serialize(object.timeWindow,
-            specifiedType: const FullType(int)));
-    }
     if (object.category != null) {
       result
         ..add('category')
@@ -1690,6 +1684,12 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         ..add('subCategory')
         ..add(serializers.serialize(object.subCategory,
             specifiedType: const FullType(String)));
+    }
+    if (object.community != null) {
+      result
+        ..add('community')
+        ..add(serializers.serialize(object.community,
+            specifiedType: const FullType(BuiltCommunity)));
     }
     if (object.createdOn != null) {
       result
@@ -1719,6 +1719,12 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
       result
         ..add('description')
         ..add(serializers.serialize(object.description,
+            specifiedType: const FullType(String)));
+    }
+    if (object.externalUrl != null) {
+      result
+        ..add('externalUrl')
+        ..add(serializers.serialize(object.externalUrl,
             specifiedType: const FullType(String)));
     }
     if (object.isLocal != null) {
@@ -1795,10 +1801,6 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
           result.status = serializers.deserialize(value,
               specifiedType: const FullType(ClubStatus)) as ClubStatus;
           break;
-        case 'timeWindow':
-          result.timeWindow = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
         case 'category':
           result.category = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
@@ -1806,6 +1808,10 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
         case 'subCategory':
           result.subCategory = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'community':
+          result.community.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltCommunity)) as BuiltCommunity);
           break;
         case 'createdOn':
           result.createdOn = serializers.deserialize(value,
@@ -1825,6 +1831,10 @@ class _$BuiltClubSerializer implements StructuredSerializer<BuiltClub> {
           break;
         case 'description':
           result.description = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'externalUrl':
+          result.externalUrl = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'isLocal':
@@ -5330,11 +5340,11 @@ class _$BuiltClub extends BuiltClub {
   @override
   final ClubStatus status;
   @override
-  final int timeWindow;
-  @override
   final String category;
   @override
   final String subCategory;
+  @override
+  final BuiltCommunity community;
   @override
   final int createdOn;
   @override
@@ -5345,6 +5355,8 @@ class _$BuiltClub extends BuiltClub {
   final String clubAvatar;
   @override
   final String description;
+  @override
+  final String externalUrl;
   @override
   final bool isLocal;
   @override
@@ -5368,14 +5380,15 @@ class _$BuiltClub extends BuiltClub {
       this.clubName,
       this.creator,
       this.status,
-      this.timeWindow,
       this.category,
       this.subCategory,
+      this.community,
       this.createdOn,
       this.modifiedOn,
       this.scheduleTime,
       this.clubAvatar,
       this.description,
+      this.externalUrl,
       this.isLocal,
       this.isGlobal,
       this.isPrivate,
@@ -5400,14 +5413,15 @@ class _$BuiltClub extends BuiltClub {
         clubName == other.clubName &&
         creator == other.creator &&
         status == other.status &&
-        timeWindow == other.timeWindow &&
         category == other.category &&
         subCategory == other.subCategory &&
+        community == other.community &&
         createdOn == other.createdOn &&
         modifiedOn == other.modifiedOn &&
         scheduleTime == other.scheduleTime &&
         clubAvatar == other.clubAvatar &&
         description == other.description &&
+        externalUrl == other.externalUrl &&
         isLocal == other.isLocal &&
         isGlobal == other.isGlobal &&
         isPrivate == other.isPrivate &&
@@ -5437,25 +5451,19 @@ class _$BuiltClub extends BuiltClub {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc(
-                                                                                0,
-                                                                                clubId
-                                                                                    .hashCode),
-                                                                            clubName
-                                                                                .hashCode),
-                                                                        creator
-                                                                            .hashCode),
-                                                                    status
-                                                                        .hashCode),
-                                                                timeWindow
-                                                                    .hashCode),
-                                                            category.hashCode),
-                                                        subCategory.hashCode),
-                                                    createdOn.hashCode),
-                                                modifiedOn.hashCode),
-                                            scheduleTime.hashCode),
-                                        clubAvatar.hashCode),
-                                    description.hashCode),
+                                                                            $jc($jc(0, clubId.hashCode),
+                                                                                clubName.hashCode),
+                                                                            creator.hashCode),
+                                                                        status.hashCode),
+                                                                    category.hashCode),
+                                                                subCategory.hashCode),
+                                                            community.hashCode),
+                                                        createdOn.hashCode),
+                                                    modifiedOn.hashCode),
+                                                scheduleTime.hashCode),
+                                            clubAvatar.hashCode),
+                                        description.hashCode),
+                                    externalUrl.hashCode),
                                 isLocal.hashCode),
                             isGlobal.hashCode),
                         isPrivate.hashCode),
@@ -5472,14 +5480,15 @@ class _$BuiltClub extends BuiltClub {
           ..add('clubName', clubName)
           ..add('creator', creator)
           ..add('status', status)
-          ..add('timeWindow', timeWindow)
           ..add('category', category)
           ..add('subCategory', subCategory)
+          ..add('community', community)
           ..add('createdOn', createdOn)
           ..add('modifiedOn', modifiedOn)
           ..add('scheduleTime', scheduleTime)
           ..add('clubAvatar', clubAvatar)
           ..add('description', description)
+          ..add('externalUrl', externalUrl)
           ..add('isLocal', isLocal)
           ..add('isGlobal', isGlobal)
           ..add('isPrivate', isPrivate)
@@ -5511,10 +5520,6 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
   ClubStatus get status => _$this._status;
   set status(ClubStatus status) => _$this._status = status;
 
-  int _timeWindow;
-  int get timeWindow => _$this._timeWindow;
-  set timeWindow(int timeWindow) => _$this._timeWindow = timeWindow;
-
   String _category;
   String get category => _$this._category;
   set category(String category) => _$this._category = category;
@@ -5522,6 +5527,12 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
   String _subCategory;
   String get subCategory => _$this._subCategory;
   set subCategory(String subCategory) => _$this._subCategory = subCategory;
+
+  BuiltCommunityBuilder _community;
+  BuiltCommunityBuilder get community =>
+      _$this._community ??= new BuiltCommunityBuilder();
+  set community(BuiltCommunityBuilder community) =>
+      _$this._community = community;
 
   int _createdOn;
   int get createdOn => _$this._createdOn;
@@ -5542,6 +5553,10 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
   String _description;
   String get description => _$this._description;
   set description(String description) => _$this._description = description;
+
+  String _externalUrl;
+  String get externalUrl => _$this._externalUrl;
+  set externalUrl(String externalUrl) => _$this._externalUrl = externalUrl;
 
   bool _isLocal;
   bool get isLocal => _$this._isLocal;
@@ -5582,14 +5597,15 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       _clubName = _$v.clubName;
       _creator = _$v.creator?.toBuilder();
       _status = _$v.status;
-      _timeWindow = _$v.timeWindow;
       _category = _$v.category;
       _subCategory = _$v.subCategory;
+      _community = _$v.community?.toBuilder();
       _createdOn = _$v.createdOn;
       _modifiedOn = _$v.modifiedOn;
       _scheduleTime = _$v.scheduleTime;
       _clubAvatar = _$v.clubAvatar;
       _description = _$v.description;
+      _externalUrl = _$v.externalUrl;
       _isLocal = _$v.isLocal;
       _isGlobal = _$v.isGlobal;
       _isPrivate = _$v.isPrivate;
@@ -5625,14 +5641,15 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
               clubName: clubName,
               creator: _creator?.build(),
               status: status,
-              timeWindow: timeWindow,
               category: category,
               subCategory: subCategory,
+              community: _community?.build(),
               createdOn: createdOn,
               modifiedOn: modifiedOn,
               scheduleTime: scheduleTime,
               clubAvatar: clubAvatar,
               description: description,
+              externalUrl: externalUrl,
               isLocal: isLocal,
               isGlobal: isGlobal,
               isPrivate: isPrivate,
@@ -5645,6 +5662,9 @@ class BuiltClubBuilder implements Builder<BuiltClub, BuiltClubBuilder> {
       try {
         _$failedField = 'creator';
         _creator?.build();
+
+        _$failedField = 'community';
+        _community?.build();
 
         _$failedField = 'tags';
         _tags?.build();
