@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:flocktale/providers/userData.dart';
-
+import '../pages/NewsPage.dart';
 class CommunityCard extends StatefulWidget {
   final BuiltCommunity community;
   CommunityCard({this.community});
@@ -28,9 +28,12 @@ class _CommunityCardState extends State<CommunityCard> {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => CommunityPage(
+            builder: (_) =>
+                CommunityPage(
                   community: widget.community,
-                )));
+                )
+        )
+        );
       },
       child: ClipRRect(
         child: Container(
@@ -114,9 +117,19 @@ class _CommunityCardState extends State<CommunityCard> {
                 width: size.width,
                 child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 5,
+                    itemCount: widget.community.hosts!=null?widget.community.hosts.length>4?5:widget.community.hosts.length:0,
                     itemBuilder: (context, index) {
-                      return index == 4
+                      return widget.community.hosts.length>4?
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                        height: size.height / 22.5,
+                        width: size.height / 22.5,
+                        child: CustomImage(
+                          image: _userAvatar,
+                          radius: 2,
+                        ),
+                      ):
+                      index == 4
                           ? Container(
                               margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                               height: size.height / 22.5,
@@ -126,7 +139,7 @@ class _CommunityCardState extends State<CommunityCard> {
                                   color: Colors.black45),
                               child: Center(
                                 child: Text(
-                                  "+6",
+                                  (widget.community.hosts.length-4).toString(),
                                   style: TextStyle(
                                       fontFamily: "Lato", color: Colors.white),
                                 ),
@@ -153,7 +166,7 @@ class _CommunityCardState extends State<CommunityCard> {
                     child: Row(
                       children: [
                         Text(
-                          "15",
+                          widget.community.liveClubCount.toString(),
                           style: TextStyle(
                               fontFamily: "Lato", color: Colors.white),
                         ),
@@ -183,7 +196,7 @@ class _CommunityCardState extends State<CommunityCard> {
                     child: Row(
                       children: [
                         Text(
-                          "35",
+                          widget.community.scheduledClubCount.toString(),
                           style: TextStyle(
                               fontFamily: "Lato", color: Colors.white),
                         ),
@@ -212,7 +225,7 @@ class _CommunityCardState extends State<CommunityCard> {
                   child: Row(
                     children: [
                       Text(
-                        "15K",
+                        widget.community.memberCount.toString(),
                         style: TextStyle(
                             fontFamily: "Lato",
                             color: Colors.white,
@@ -223,21 +236,6 @@ class _CommunityCardState extends State<CommunityCard> {
                         color: Colors.white,
                         size: size.width / 25,
                       ),
-                      IconButton(
-                          icon: isMember
-                              ? Icon(
-                                  Icons.check,
-                                  color: Colors.green,
-                                )
-                              : Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                ),
-                          onPressed: () {
-                            setState(() {
-                              isMember = !isMember;
-                            });
-                          })
                     ],
                   ),
                 ))

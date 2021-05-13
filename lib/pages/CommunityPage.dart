@@ -146,7 +146,7 @@ class _CommunityPageState extends State<CommunityPage>
               color: Colors.grey[200],
               padding: EdgeInsets.fromLTRB(0, 0, 0, size.width / 20),
               child: ListView.builder(
-                  itemCount: 10,
+                  itemCount: widget.community.hosts!=null?widget.community.hosts.length:0,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
                     return Container(
@@ -154,8 +154,8 @@ class _CommunityPageState extends State<CommunityPage>
                       child: Column(
                         children: [
                           CircleAvatar(
-                            backgroundImage:
-                                AssetImage("assets/images/logo.png"),
+                            child:
+                                CustomImage(image: widget.community.creator.avatar,),
                             radius: size.width / 15,
                           ),
                           Container(
@@ -190,7 +190,9 @@ class _CommunityPageState extends State<CommunityPage>
                     children: [
                       Text("Create CLub", style: TextStyle(fontFamily: "Lato")),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>NewClub(community: widget.community,)));
+                        },
                         icon: Icon(Icons.add),
                       )
                     ],

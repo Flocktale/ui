@@ -17,6 +17,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'CommunityPage.dart';
 
 class NewClub extends StatefulWidget {
+  BuiltCommunity community;
+  NewClub({this.community});
   @override
   _NewClubState createState() => _NewClubState();
 }
@@ -165,10 +167,13 @@ class _NewClubState extends State<NewClub> with TickerProviderStateMixin{
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final userId = Provider.of<UserData>(context, listen: false).userId;
 
-    final resp = await service.createNewClub(
+    final resp =
+    widget.community==null?
+    await service.createNewGeneralClub(
       body: _newClubModel,
       creatorId: userId,
-    );
+    ):
+    await service.createNewCommunityClub(creatorId: userId, communityId: widget.community.communityId, body: _newClubModel);
     setState(() {
       isLoading = false;
     });
