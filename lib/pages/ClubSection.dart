@@ -99,21 +99,24 @@ class _ClubSectionState extends State<ClubSection> {
         return true;
       },
       child: Container(
-        margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-        child: GridView.builder(
-          shrinkWrap: true,
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-          itemCount: listClubs,
-          itemBuilder: (context, index) {
-            if (index == listClubs - 1) {
-              if (isLoading)
-                return Center(child: CircularProgressIndicator());
-              else
-                return Container();
-            }
-            return SummaryClubCard(clubList[index], _navigateTo);
-          },
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: listClubs,
+            itemBuilder: (context, index) {
+              if (index == listClubs - 1) {
+                if (isLoading)
+                  return Center(child: CircularProgressIndicator());
+                else
+                  return Container();
+              }
+              return Container(
+                  height: 180,
+                  child: SummaryClubCard(clubList[index], _navigateTo));
+            },
+          ),
         ),
       ),
     );
@@ -145,8 +148,10 @@ class _ClubSectionState extends State<ClubSection> {
             fontFamily: "Lato",
             fontWeight: FontWeight.bold,
             color: Colors.black,
+            fontSize: 28,
           ),
         ),
+        centerTitle: true,
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: clubGrid(),

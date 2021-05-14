@@ -251,17 +251,17 @@ class _LandingPageState extends State<LandingPage>
 
   _infinteClubFetching() async {
     await _fetchAllClubs(true);
-
-    while (true) {
-      final diff = DateTime.now()
-          .difference(_clubFetchedTime ?? DateTime.now())
-          .inSeconds;
-      if (diff < 30) {
-        await Future.delayed(Duration(seconds: max(30 - diff, 10)));
-      } else {
-        await _fetchAllClubs();
-      }
-    }
+//TODO: uncomment this
+    // while (true) {
+    //   final diff = DateTime.now()
+    //       .difference(_clubFetchedTime ?? DateTime.now())
+    //       .inSeconds;
+    //   if (diff < 30) {
+    //     await Future.delayed(Duration(seconds: max(30 - diff, 10)));
+    //   } else {
+    //     await _fetchAllClubs();
+    //   }
+    // }
   }
 
   Widget tabPage(int index) {
@@ -464,79 +464,6 @@ class _LandingPageState extends State<LandingPage>
                     ],
                   ),
                   SizedBox(height: 20),
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "KITCHEN",
-                            style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w500,
-                                fontSize: size.width / 18,
-                                color: Color(0xfff74040)),
-                          ),
-                          Text(
-                            "View All",
-                            style: TextStyle(
-                              fontSize: size.width / 30,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          )
-                        ],
-                      ),
-                      Container(
-                        height: 185,
-                        child: ListView.builder(
-                          itemCount: 15,
-                          scrollDirection: Axis.horizontal,
-                          // children: <Widget>[
-                          itemBuilder: (context, index) {
-                            return dummyCard();
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "DAILY ESSENTIALS",
-                            style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontWeight: FontWeight.w500,
-                                fontSize: size.width / 18,
-                                color: Color(0xfff74040)),
-                          ),
-                          Text(
-                            "View All",
-                            style: TextStyle(
-                              fontSize: size.width / 30,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          )
-                        ],
-                      ),
-                      Container(
-                        height: 185,
-                        child: ListView.builder(
-                          itemCount: 15,
-                          scrollDirection: Axis.horizontal,
-                          // children: <Widget>[
-                          itemBuilder: (context, index) {
-                            return dummyCard();
-                          },
-                        ),
-                      )
-                    ],
-                  ),
                   SizedBox(height: size.height / 10)
                 ],
               ),

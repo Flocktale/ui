@@ -14,7 +14,7 @@ class Carousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 185,
+      height: 220 * 3 / 4,
       child: ListView.builder(
         itemCount: Clubs.length,
         scrollDirection: Axis.horizontal,

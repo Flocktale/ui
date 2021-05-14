@@ -1,9 +1,11 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/pages/ClubDetail.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -60,12 +62,56 @@ class SummaryClubCard extends StatelessWidget {
   String _processTimestamp(int timestamp) {
     if (DateTime.now()
             .compareTo(DateTime.fromMillisecondsSinceEpoch(timestamp)) >
-        0) return "Waiting for start";
+        0) return "Waiting";
+
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day, 23, 59, 59);
+    if (today.compareTo(dateTime) >= 0) {
+      String formattedDate2 = DateFormat.Hm().format(dateTime) + " Hrs";
+      return formattedDate2;
+    }
 
     String formattedDate2 =
         DateFormat.MMMd().add_Hm().format(dateTime) + " Hrs";
     return formattedDate2;
+  }
+
+  Widget clubStatusWidget(ClubStatus status, int scheduleTime) {
+    final statusContainer =
+        ({Color color, String text, Color textColor}) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              color: color,
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: textColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            );
+
+    if (status == ClubStatus.Live)
+      return statusContainer(
+          color: Colors.red, text: ' LIVE ', textColor: Colors.white);
+    else if (status == ClubStatus.Concluded)
+      return statusContainer(
+          color: Colors.black54, text: 'Ended', textColor: Colors.white);
+    else
+      return Container(
+        color: Colors.black54,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.timer, color: Colors.white, size: 20),
+            statusContainer(
+                text: _processTimestamp(scheduleTime), textColor: Colors.white),
+          ],
+        ),
+      );
   }
 
   @override
@@ -75,128 +121,155 @@ class SummaryClubCard extends StatelessWidget {
     BuiltClub cuurentClub =
         Provider.of<AgoraController>(context, listen: false).club;
 
-    return Container(
-      margin: EdgeInsets.fromLTRB(0, 15, 15, 0),
-      //width: 200.0,
-      width: 150,
-      child: Card(
-        elevation: 10,
-        shadowColor: shadow.withOpacity(0.2),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: () {
-            if (cuurentClub != null) {
-              final cuser = Provider.of<UserData>(context, listen: false).user;
-              if (cuurentClub.creator.userId == cuser.userId &&
-                  cuurentClub.clubId != club.clubId) {
-                _showMaterialDialog(context);
-              } else {
-                navigateTo(ClubDetailPage(club: club));
-              }
-            } else {
-              navigateTo(ClubDetailPage(club: club));
-            }
-          },
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: 100,
-                width: size.width,
-                child: Image.network(
-                  club.clubAvatar,
-                  //      height: 130,
-                  //      width: 200,
-                  fit: BoxFit.fill,
+    return InkWell(
+      onTap: () {
+        if (cuurentClub != null) {
+          final cuser = Provider.of<UserData>(context, listen: false).user;
+          if (cuurentClub.creator.userId == cuser.userId &&
+              cuurentClub.clubId != club.clubId) {
+            _showMaterialDialog(context);
+          } else {
+            navigateTo(ClubDetailPage(club: club));
+          }
+        } else {
+          navigateTo(ClubDetailPage(club: club));
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.all(8),
+        width: 220,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            image: DecorationImage(
+              image: NetworkImage(club.clubAvatar),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black26,
+                  Colors.black38,
+                  Colors.black54,
+                  Colors.black.withOpacity(0.7),
+                  Colors.black87,
+                  Colors.black87,
+                ],
+                stops: [0.2, 0.4, 0.5, 0.6, 0.7, 1],
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: clubStatusWidget(club.status, club.scheduleTime),
                 ),
-              ),
-              Positioned(
-                top: 100,
-                left: 5,
-                child: Text(
-                  club.clubName,
-                  style: TextStyle(
-                      fontFamily: 'Lato', fontWeight: FontWeight.bold),
-                ),
-              ),
-              Positioned(
-                top: 120,
-                left: 5,
-                child: Row(children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(club.creator.avatar),
-                    radius: 10,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    club.creator.username,
-                    style: TextStyle(
-                        fontFamily: "Lato",
-                        fontWeight: FontWeight.bold,
-                        fontSize: 10,
-                        color: Colors.redAccent),
-                  ),
-                ]),
-              ),
-              club.status == ClubStatus.Live
-                  ? Positioned(
-                      // margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                      bottom: 5,
-                      left: 5,
-                      child: Text(
-                        "${club.estimatedAudience.toString()} LISTENERS",
-                        style: TextStyle(
-                            fontFamily: "Lato",
-                            fontSize: size.width / 40,
-                            color: Colors.grey[700]),
-                      ),
-                    )
-                  : Container(),
-              Positioned(
-                bottom: 5,
-                right: 5,
-                child: Row(
-                  children: [
-                    club.status == (ClubStatus.Waiting)
-                        ? Container(
-                            padding: EdgeInsets.all(2),
-                            child: Icon(
-                              Icons.timer,
-                              size: size.width / 40,
-                            ),
-                          )
-                        : Container(),
-                    Container(
-                      color: club.status == (ClubStatus.Live)
-                          ? Colors.red
-                          : club.status == (ClubStatus.Concluded)
-                              ? Colors.grey
-                              : Colors.white,
-                      padding: EdgeInsets.all(2),
-                      child: Text(
-                        club.status == (ClubStatus.Live)
-                            ? "LIVE"
-                            : club.status == (ClubStatus.Concluded)
-                                ? "ENDED"
-                                : _processTimestamp(club.scheduleTime),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        club.clubName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.bold,
-                          color: club.status == (ClubStatus.Live)
-                              ? Colors.white
-                              : club.status == (ClubStatus.Concluded)
-                                  ? Colors.white
-                                  : Colors.black,
-                          //   letterSpacing: 2.0,
-                          fontSize: size.width / 40,
+                          color: Colors.white,
                         ),
                       ),
-                    ),
-                  ],
+                      Text(
+                        club.creator.username,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Lato',
+                          color: Colors.white70,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Container(
+                        height: 32,
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 36 * 4.0,
+                              child: ListView.builder(
+                                // itemCount: club.participants.length > 3
+                                //     ? 4
+                                //     : club.participants.length,
+                                itemCount: 4,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (ctx, index) {
+                                  final avatarCard = (child) => Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 4),
+                                        child: Container(
+                                          height: 32,
+                                          width: 32,
+                                          child: child,
+                                        ),
+                                      );
+                                  if (index == 3) {
+                                    return avatarCard(Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          '+${club.participants.length - 3}',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ));
+                                  }
+                                  // final imageUrl = club.participants.toList()[index];
+                                  final imageUrl =
+                                      club.participants.toList()[0];
+                                  return avatarCard(CustomImage(
+                                    image: imageUrl,
+                                    radius: 4,
+                                  ));
+                                },
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.headset_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 2),
+                                Text(
+                                  '${club.estimatedAudience ?? 0}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

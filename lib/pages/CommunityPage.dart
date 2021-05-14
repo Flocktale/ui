@@ -40,21 +40,24 @@ class _CommunityPageState extends State<CommunityPage>
             return true;
           },
           child: Container(
-            margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-            child: GridView.builder(
-              shrinkWrap: true,
-              gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-              itemCount: listClubs,
-              itemBuilder: (context, index) {
-                if (index == listClubs - 1) {
-                  if (isLoading)
-                    return Center(child: CircularProgressIndicator());
-                  else
-                    return Container();
-                }
-                return SummaryClubCard(clubList[index], _navigateTo);
-              },
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: listClubs,
+                itemBuilder: (context, index) {
+                  if (index == listClubs - 1) {
+                    if (isLoading)
+                      return Center(child: CircularProgressIndicator());
+                    else
+                      return Container();
+                  }
+                  return Container(
+                      height: 180,
+                      child: SummaryClubCard(clubList[index], _navigateTo));
+                },
+              ),
             ),
           ),
         ),
@@ -146,7 +149,9 @@ class _CommunityPageState extends State<CommunityPage>
               color: Colors.grey[200],
               padding: EdgeInsets.fromLTRB(0, 0, 0, size.width / 20),
               child: ListView.builder(
-                  itemCount: widget.community.hosts!=null?widget.community.hosts.length:0,
+                  itemCount: widget.community.hosts != null
+                      ? widget.community.hosts.length
+                      : 0,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
                     return Container(
@@ -154,8 +159,9 @@ class _CommunityPageState extends State<CommunityPage>
                       child: Column(
                         children: [
                           CircleAvatar(
-                            child:
-                                CustomImage(image: widget.community.creator.avatar,),
+                            child: CustomImage(
+                              image: widget.community.creator.avatar,
+                            ),
                             radius: size.width / 15,
                           ),
                           Container(
@@ -191,7 +197,10 @@ class _CommunityPageState extends State<CommunityPage>
                       Text("Create CLub", style: TextStyle(fontFamily: "Lato")),
                       IconButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>NewClub(community: widget.community,)));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => NewClub(
+                                    community: widget.community,
+                                  )));
                         },
                         icon: Icon(Icons.add),
                       )

@@ -22,9 +22,10 @@ class _NewsPageState extends State<NewsPage> {
   };
   _fetchNewsClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    newsClubsMap['data'] = (await service.getClubsOfContent(contentUrl: widget.news.url,
-    lastevaluatedkey: (newsClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey
-    ))
+    newsClubsMap['data'] = (await service.getClubsOfContent(
+            contentUrl: widget.news.url,
+            lastevaluatedkey:
+                (newsClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey))
         .body;
     newsClubsMap['isLoading'] = false;
     setState(() {});
@@ -41,16 +42,18 @@ class _NewsPageState extends State<NewsPage> {
       newsClubsMap['isLoading'] = false;
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _fetchNewsClubs();
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    String userId = Provider.of<UserData>(context,listen: false).userId;
+    String userId = Provider.of<UserData>(context, listen: false).userId;
     void _justRefresh([Function refresh]) {
       if (this.mounted) {
         if (refresh != null) {
@@ -69,7 +72,6 @@ class _NewsPageState extends State<NewsPage> {
       _justRefresh();
     }
 
-
     Widget clubGrid() {
       final clubList = (newsClubsMap['data'] as BuiltSearchClubs)?.clubs;
       final bool isLoading = newsClubsMap['isLoading'];
@@ -85,33 +87,37 @@ class _NewsPageState extends State<NewsPage> {
               return true;
             },
             child: Container(
-              margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-              child: GridView.builder(
-                shrinkWrap: true,
-                gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                itemCount: listClubs,
-                itemBuilder: (context, index) {
-                  if (index == listClubs - 1) {
-                    if (isLoading)
-                      return Center(child: CircularProgressIndicator());
-                    else
-                      return Container();
-                  }
-                  return SummaryClubCard(clubList[index], _navigateTo);
-                },
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: listClubs,
+                  itemBuilder: (context, index) {
+                    if (index == listClubs - 1) {
+                      if (isLoading)
+                        return Center(child: CircularProgressIndicator());
+                      else
+                        return Container();
+                    }
+                    return Container(
+                        height: 180,
+                        child: SummaryClubCard(clubList[index], _navigateTo));
+                  },
+                ),
               ),
             ),
           ),
           onRefresh: () {});
     }
+
     return SafeArea(
       child: Scaffold(
         body: Container(
-          child: Column(
-            children: [
+            child: Column(
+          children: [
             Container(
-            height: size.height / 6,
+              height: size.height / 6,
               width: size.width,
               decoration: BoxDecoration(
                   image: DecorationImage(
@@ -120,72 +126,73 @@ class _NewsPageState extends State<NewsPage> {
             ),
             Container(
               padding: EdgeInsets.fromLTRB(size.width / 20, size.width / 20,
-              size.width / 20, size.width / 20),
+                  size.width / 20, size.width / 20),
               color: Colors.grey[200],
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                    backgroundImage: NetworkImage(widget.news.avatar),
-                    radius: size.width / 15,
-                    ),
-                    SizedBox(
-                    width: size.width / 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 250,
-                          child: Text(
-                      //  widget.community.name,
-                            widget.news.title,
-                            maxLines: 3,
-                            style: TextStyle(
-                            fontFamily: "Lato", fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(widget.news.avatar),
+                        radius: size.width / 15,
+                      ),
+                      SizedBox(
+                        width: size.width / 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 250,
+                            child: Text(
+                              //  widget.community.name,
+                              widget.news.title,
+                              maxLines: 3,
+                              style: TextStyle(
+                                  fontFamily: "Lato",
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        ),
-                        Text(
-                       // widget.community.creator.username,
-                          widget.news.source,
-                          style:
-                          TextStyle(fontFamily: "Lato", color: Colors.grey),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-                // Row(
-                // children: [
-                // Text(
-                // isMember ? "JOIN" : "Member",
-                // style: TextStyle(fontFamily: "Lato"),
-                // ),
-                // IconButton(
-                // icon: isMember
-                // ? Icon(Icons.add)
-                //     : Icon(
-                // Icons.check,
-                // color: Colors.green,
-                // ),
-                // onPressed: () async {
-                // isMember = !isMember;
-                // setState(() {});
-                // final resp = (await service.joinCommunityAsMember(
-                // widget.community.communityId,
-                // userId: userId));
-                // if (!resp.isSuccessful) {
-                // Fluttertoast.showToast(
-                // msg: 'Sorry something went wrong.');
-                // setState(() {
-                // isMember = !isMember;
-                // });
-                // }
-                // })
-                // ],
-                // )
+                          Text(
+                            // widget.community.creator.username,
+                            widget.news.source,
+                            style: TextStyle(
+                                fontFamily: "Lato", color: Colors.grey),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  // Row(
+                  // children: [
+                  // Text(
+                  // isMember ? "JOIN" : "Member",
+                  // style: TextStyle(fontFamily: "Lato"),
+                  // ),
+                  // IconButton(
+                  // icon: isMember
+                  // ? Icon(Icons.add)
+                  //     : Icon(
+                  // Icons.check,
+                  // color: Colors.green,
+                  // ),
+                  // onPressed: () async {
+                  // isMember = !isMember;
+                  // setState(() {});
+                  // final resp = (await service.joinCommunityAsMember(
+                  // widget.community.communityId,
+                  // userId: userId));
+                  // if (!resp.isSuccessful) {
+                  // Fluttertoast.showToast(
+                  // msg: 'Sorry something went wrong.');
+                  // setState(() {
+                  // isMember = !isMember;
+                  // });
+                  // }
+                  // })
+                  // ],
+                  // )
                 ],
               ),
             ),
@@ -221,28 +228,31 @@ class _NewsPageState extends State<NewsPage> {
             // ),
             // );
             // })),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Create CLub", style: TextStyle(fontFamily: "Lato")),
-              IconButton(
-                onPressed: () async{
-                  final resp = (await Provider.of<DatabaseApiService>(context,listen: false).createNewContentClub(creatorId: userId,contentUrl: widget.news.url, contentType: "news"));
-                  if(!resp.isSuccessful){
-                  Fluttertoast.showToast(msg: "Something went wrong...");
-                  }
-                  else{
-                  Fluttertoast.showToast(msg: "Club created");
-                  }
-                },
-                icon: Icon(Icons.add),
-              )
-            ],
-          ),
-          clubGrid()
-            ],
-            )
-        ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Create CLub", style: TextStyle(fontFamily: "Lato")),
+                IconButton(
+                  onPressed: () async {
+                    final resp = (await Provider.of<DatabaseApiService>(context,
+                            listen: false)
+                        .createNewContentClub(
+                            creatorId: userId,
+                            contentUrl: widget.news.url,
+                            contentType: "news"));
+                    if (!resp.isSuccessful) {
+                      Fluttertoast.showToast(msg: "Something went wrong...");
+                    } else {
+                      Fluttertoast.showToast(msg: "Club created");
+                    }
+                  },
+                  icon: Icon(Icons.add),
+                )
+              ],
+            ),
+            clubGrid()
+          ],
+        )),
       ),
     );
   }
