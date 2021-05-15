@@ -25,6 +25,13 @@ class _CommunityPageState extends State<CommunityPage>
     'data': null,
     'isLoading': true,
   };
+  void _navigateTo(Widget page) async {
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => page))
+        .then((value) {
+      setState(() {});
+    });
+  }
   Widget clubGrid() {
     final clubList = (communityClubsMap['data'] as BuiltSearchClubs)?.clubs;
     final bool isLoading = communityClubsMap['isLoading'];
@@ -61,7 +68,9 @@ class _CommunityPageState extends State<CommunityPage>
             ),
           ),
         ),
-        onRefresh: () {});
+        onRefresh: () {
+          return _fetchCommunityClubs();
+        });
   }
 
   Widget tabPage(int index) {
@@ -179,6 +188,9 @@ class _CommunityPageState extends State<CommunityPage>
                       ),
                     );
                   })),
+          Expanded(
+              child: clubGrid()
+          )
         ],
       );
     } else if (index == 1) {
@@ -227,15 +239,6 @@ class _CommunityPageState extends State<CommunityPage>
       }
       setState(() {});
     }
-  }
-
-  _navigateTo(Widget page) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => page,
-      ),
-    );
-    _justRefresh();
   }
 
   Future<void> _handleMenuButtons(String value) async {
