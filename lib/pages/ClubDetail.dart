@@ -18,6 +18,7 @@ import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/providers/webSocket.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
+import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -934,6 +935,12 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Widget _showMenuButtons() {
     return PopupMenuButton<String>(
+      color: Colors.white,
+      icon: Icon(
+        Icons.adaptive.more,
+        color: Colors.white,
+        size: 32,
+      ),
       onSelected: _handleMenuButtons,
       itemBuilder: (BuildContext context) {
         return _isOwner
@@ -987,83 +994,98 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Widget get _displayMicButton {
     final cuser = Provider.of<UserData>(context, listen: false).user;
-
-    return Container(
-      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-      child: FloatingActionButton(
-          heroTag: "mic btn",
-          onPressed: () => _toggleMuteOfParticpant(
-              Provider.of<UserData>(context, listen: false).userId),
+    return InkWell(
+      onTap: () => _toggleMuteOfParticpant(
+          Provider.of<UserData>(context, listen: false).userId),
+      child: Card(
+        elevation: 4,
+        shadowColor: Colors.redAccent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        child: CircleAvatar(
+          radius: 24,
+          backgroundColor: _isMuted ? Colors.black87 : Colors.white,
           child: !_isMuted
-              ? currentlySpeakingUsers != null &&
-                      currentlySpeakingUsers[cuser.username] != null &&
-                      currentlySpeakingUsers[cuser.username] > 0
-                  ? Icon(
-                      Icons.mic_rounded,
-                      color: Colors.redAccent,
-                    )
-                  : Icon(
-                      Icons.mic_none_rounded,
-                      color: Colors.black,
-                    )
+              ? Icon(
+                  Icons.mic_none_sharp,
+                  color: currentlySpeakingUsers != null &&
+                          currentlySpeakingUsers[cuser.username] != null &&
+                          currentlySpeakingUsers[cuser.username] > 0
+                      ? Colors.redAccent
+                      : Colors.black,
+                  size: 28,
+                )
               : Icon(
-                  Icons.mic_off_rounded,
-                  color: Colors.black,
+                  Icons.mic_off_outlined,
+                  color: Colors.white,
+                  size: 28,
                 ),
-          backgroundColor: Colors.white),
+        ),
+      ),
     );
   }
 
   Widget get _displayParticipationButton {
-    return Container(
-      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-      child: FloatingActionButton(
-        heroTag: "participation btn",
-        onPressed: () => _participationButtonHandler(),
-        child: _clubAudience.audienceData.status == AudienceStatus.Participant
-            ? Icon(
-                Icons.remove_from_queue,
-                color: Colors.redAccent,
-              )
-            : _clubAudience.audienceData.status !=
-                    AudienceStatus.ActiveJoinRequest
-                ? Icon(Icons.person_add)
-                : Icon(
-                    Icons.person_add_disabled,
-                    color: Colors.black,
-                  ),
-        backgroundColor:
-            _clubAudience.audienceData.status == AudienceStatus.Participant
-                ? Colors.white
-                : _clubAudience.audienceData.status !=
-                        AudienceStatus.ActiveJoinRequest
-                    ? participantList.length < 10
-                        ? Colors.redAccent
-                        : Colors.grey
-                    : Colors.white,
+    return InkWell(
+      onTap: () => _participationButtonHandler(),
+      child: Card(
+        elevation: 4,
+        shadowColor: Colors.redAccent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        child: CircleAvatar(
+          radius: 24,
+          backgroundColor:
+              _clubAudience.audienceData.status == AudienceStatus.Participant
+                  ? Colors.white
+                  : Colors.black87,
+          child: _clubAudience.audienceData.status == AudienceStatus.Participant
+              ? Icon(
+                  Icons.remove_from_queue,
+                  color: Colors.black,
+                  size: 24,
+                )
+              : _clubAudience.audienceData.status !=
+                      AudienceStatus.ActiveJoinRequest
+                  ? Icon(
+                      Icons.person_add,
+                      color: Colors.white,
+                      size: 24,
+                    )
+                  : Icon(
+                      Icons.person_add_disabled,
+                      color: Colors.black,
+                      size: 24,
+                    ),
+        ),
       ),
     );
   }
 
   Widget get _displayPlayButton {
-    return Container(
-      child: FloatingActionButton(
-        heroTag: "play btn",
-        onPressed: () {
-          DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(
-                      widget.club.scheduleTime)) >=
-                  0
-              ? _playButtonHandler()
-              : Fluttertoast.showToast(
-                  msg:
-                      'The club can be started only when the scheduled time has been reached.');
-        },
-        child: !_isPlaying ? Icon(Icons.play_arrow) : Icon(Icons.stop),
-        backgroundColor: _clubAudience.club.status == (ClubStatus.Live)
-            ? !_isPlaying
-                ? Colors.redAccent
-                : Colors.redAccent
-            : Colors.grey,
+    return InkWell(
+      onTap: () {
+        DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(
+                    widget.club.scheduleTime)) >=
+                0
+            ? _playButtonHandler()
+            : Fluttertoast.showToast(
+                msg:
+                    'The club can be started only when the scheduled time has been reached.');
+      },
+      child: Card(
+        elevation: 4,
+        shadowColor: Colors.redAccent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        child: CircleAvatar(
+          radius: 24,
+          backgroundColor: _clubAudience.club.status == (ClubStatus.Live)
+              ? Colors.redAccent
+              : Colors.black87,
+          child: Icon(
+            !_isPlaying ? Icons.play_arrow : Icons.stop,
+            color: Colors.white,
+            size: 28,
+          ),
+        ),
       ),
     );
   }
@@ -1096,6 +1118,434 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       }
       setState(() {});
     }
+  }
+
+  Widget clubDataDisplayWidget() {
+    return Container(
+      color: Colors.black87,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                image: DecorationImage(
+                  image: NetworkImage(widget.club.clubAvatar),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.62),
+                      Colors.black.withOpacity(0.62),
+                      Colors.black.withOpacity(0.7),
+                      Colors.black.withOpacity(0.7),
+                      Colors.black.withOpacity(0.7),
+                      Colors.black.withOpacity(0.7),
+                      Colors.black87,
+                      Colors.black87,
+                      Colors.black87,
+                      Colors.black87,
+                    ],
+                    stops: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+                  ),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.of(context).pop(),
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              if (_isOwner == false)
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.person_pin,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      '${widget.club.creator.username}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (_isOwner == true)
+                                    Container(
+                                      margin: const EdgeInsets.only(right: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black87,
+                                        border: Border.all(
+                                            color: _hasActiveJRs
+                                                ? Colors.redAccent
+                                                : Colors.black,
+                                            width: _hasActiveJRs ? 0.5 : 0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            blurRadius: _hasActiveJRs ? 1 : 0,
+                                            spreadRadius:
+                                                _hasActiveJRs ? 0.5 : 0,
+                                            color: Colors.redAccent,
+                                          ),
+                                        ],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: InkWell(
+                                        onTap: () async {
+                                          await _handleMenuButtons(
+                                              'Join Requests');
+                                          _justRefresh(() {
+                                            _hasActiveJRs = false;
+                                          });
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              'Join Requests',
+                                              style: TextStyle(
+                                                color: _hasActiveJRs
+                                                    ? Colors.white
+                                                    : Colors.grey,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4),
+                                            if (_hasActiveJRs)
+                                              Icon(
+                                                Icons.circle,
+                                                color: Colors.redAccent,
+                                                size: 10,
+                                              )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black87,
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          blurRadius: 1,
+                                          spreadRadius: 0.5,
+                                          color: Colors.redAccent,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Icon(
+                                        Icons.share,
+                                        color: Colors.redAccent,
+                                        size: 28,
+                                      ),
+                                    ),
+                                  ),
+                                  _showMenuButtons(),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            widget.club.clubName,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.multitrack_audio_sharp,
+                                color: Colors.white70,
+                                size: 28,
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  '${_clubAudience.club.description ?? ""}',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(),
+                              Container(
+                                height: 100,
+                                child: Center(
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: participantList.length * 12,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (ctx, index) {
+                                      //! if this is club owner
+                                      //! different decoration for club owner
+
+                                      // final participant = participantList[index];
+                                      final participant = participantList[0];
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 4.0),
+                                        child: InkWell(
+                                          onTap: () {
+                                            // show  summary profile of user in modal bottom sheet
+                                          },
+                                          onLongPress: _isOwner == false
+                                              ? null
+                                              : () {
+                                                  // for non-owner participant, dialog box to show mute button
+                                                  if (participant
+                                                          .audience.userId !=
+                                                      widget.club.creator
+                                                          .userId) {}
+                                                },
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                width: 72,
+                                                height: 72,
+                                                child: Stack(
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      child: Container(
+                                                        height: 64,
+                                                        width: 64,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        child: CustomImage(
+                                                          pinwheelPlaceholder:
+                                                              true,
+                                                          radius: 8,
+                                                          image: participant
+                                                              .audience.avatar,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.bottomRight,
+                                                      child: CircleAvatar(
+                                                        backgroundColor:
+                                                            participant.isMuted
+                                                                ? Colors.black
+                                                                    .withOpacity(
+                                                                        0.5)
+                                                                : Colors
+                                                                    .redAccent
+                                                                    .withOpacity(
+                                                                        0.5),
+                                                        radius: 10,
+                                                        child: Icon(
+                                                          participant.isMuted
+                                                              ? Icons
+                                                                  .mic_off_outlined
+                                                              : Icons
+                                                                  .mic_none_sharp,
+                                                          color: Colors.white,
+                                                          size: 14,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 84,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      width: 80,
+                                                      child: Text(
+                                                        participant
+                                                            .audience.username,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 11,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 4),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            color: Colors.black,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // heart reaction
+                    LikeButton(
+                      onTap: (val) async {
+                        _toggleClubHeart();
+                        return Future.value(!val);
+                      },
+                      countPostion: CountPostion.bottom,
+                      size: 32,
+                      isLiked: _clubAudience.reactionIndexValue == 2,
+                      likeCount: _heartCount,
+                      countBuilder: (count, _, __) {
+                        return Text(
+                          '$count',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                          ),
+                        );
+                      },
+                      likeBuilder: (bool isLiked) {
+                        return Icon(
+                          _clubAudience.reactionIndexValue == 2
+                              ? Icons.favorite
+                              : Icons.favorite_border_rounded,
+                          color: isLiked ? Colors.redAccent : Colors.white,
+                          size: 32,
+                        );
+                      },
+                    ),
+                    SizedBox(width: 16),
+                    LikeButton(
+                      onTap: (_) async {
+                        return Future.value(false);
+                      },
+                      countBuilder: (count, _, __) {
+                        return Text(
+                          '$count',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                          ),
+                        );
+                      },
+                      countPostion: CountPostion.bottom,
+                      size: 32,
+                      likeCount: 1000,
+                      likeBuilder: (_) {
+                        return Icon(
+                          Icons.headset,
+                          color: Colors.redAccent,
+                          size: 32,
+                        );
+                      },
+                    ),
+
+                    SizedBox(width: 4),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: _displayPlayButton,
+                    ),
+
+                    // dedicated button for mic
+                    if (_clubAudience.audienceData.status ==
+                            AudienceStatus.Participant &&
+                        _clubAudience.club.status == ClubStatus.Live)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: _displayMicButton,
+                      ),
+
+                    // dedicated button for sending join request or stepping down to become only listener
+                    if (_isOwner == false && _isPlaying == true)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: _displayParticipationButton,
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -1135,253 +1585,219 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          ),
-          actions: <Widget>[
-            if (_isOwner == true)
-              InkWell(
-                // style: ElevatedButton.styleFrom(
-                //   primary: Colors.white,
-                //   side: BorderSide(
-                //       color: Colors.redAccent, width: _hasActiveJRs ? 1 : 0.5),
-                //   elevation: _hasActiveJRs ? 4 : 0,
-                //   shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(8)),
-                // ),
-                onTap: () async {
-                  await _handleMenuButtons('Join Requests');
-                  _justRefresh(() {
-                    _hasActiveJRs = false;
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      'Join Requests',
-                      style: TextStyle(
-                        color: _hasActiveJRs ? Colors.redAccent : Colors.grey,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    if (_hasActiveJRs)
-                      Icon(
-                        Icons.circle,
-                        color: Colors.redAccent,
-                        size: 10,
-                      )
-                  ],
-                ),
-              ),
-            _showMenuButtons(),
-          ],
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-        ),
         body: SafeArea(
           child: _clubAudience != null
               ? Stack(
                   children: [
                     Container(
-                        //  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        child: ListView(
-                      physics: ScrollPhysics(),
-                      children: <Widget>[
-                        if (_clubAudience.audienceData.invitationId != null)
-                          _displayInvitation(),
-                        _detailClubCard,
-                        Container(
-                          margin:
-                              EdgeInsets.fromLTRB(15, size.height / 50, 15, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              FittedBox(
-                                child: InkWell(
-                                  onTap: () => _navigateTo(
-                                    ProfilePage(
-                                      userId: _clubAudience.club.creator.userId,
-                                    ),
-                                  ),
-                                  child: Row(children: <Widget>[
-                                    CircleAvatar(
-                                      radius: size.width / 17,
-                                      backgroundColor:
-                                          currentlySpeakingUsers != null &&
-                                                  currentlySpeakingUsers[widget
-                                                          .club
-                                                          .creator
-                                                          .username] !=
-                                                      null &&
-                                                  currentlySpeakingUsers[widget
-                                                          .club
-                                                          .creator
-                                                          .username] >
-                                                      0
-                                              ? Colors.redAccent
-                                              : Color(0xffFDCF09),
-                                      child: CircleAvatar(
-                                        radius: size.width / 20,
-                                        child: CustomImage(
-                                          image: _clubAudience
-                                                  .club.creator.avatar +
-                                              "_thumb",
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.fromLTRB(
-                                          size.width / 30, 0, 0, 0),
-                                      child: Text(
-                                        '@' +
-                                            _clubAudience.club.creator.username,
-                                        style: TextStyle(
-                                          fontFamily: 'Lato',
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: size.width / 25,
-                                          color: currentlySpeakingUsers !=
-                                                      null &&
-                                                  currentlySpeakingUsers[widget
-                                                          .club
-                                                          .creator
-                                                          .username] !=
-                                                      null &&
-                                                  currentlySpeakingUsers[widget
-                                                          .club
-                                                          .creator
-                                                          .username] >
-                                                      0
-                                              ? Colors.redAccent
-                                              : Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
-                                ),
-                              ),
-                              // if club is concluded no need to show play, mic and participation button
-                              if (_clubAudience.club.status !=
-                                  ClubStatus.Concluded)
-                                FittedBox(
-                                  child: Row(
-                                    children: [
-                                      _displayPlayButton,
+                      height: size.height,
+                      child: Column(
+                        children: <Widget>[
+                          if (_clubAudience.audienceData.invitationId != null)
+                            _displayInvitation(),
 
-                                      // dedicated button for mic
-                                      if (_clubAudience.audienceData.status ==
-                                              AudienceStatus.Participant &&
-                                          _clubAudience.club.status ==
-                                              ClubStatus.Live)
-                                        _displayMicButton,
-
-                                      // dedicated button for sending join request or stepping down to become only listener
-                                      if (_isOwner == false &&
-                                          _isPlaying == true)
-                                        _displayParticipationButton,
-                                    ],
-                                  ),
-                                ),
-                            ],
+                          Expanded(
+                            child: clubDataDisplayWidget(),
                           ),
-                        ),
-                        SizedBox(height: size.height / 50),
-                        CommentBox(
-                          size: size,
-                          comments: comments,
-                          listController: _listController,
-                          navigateTo: _navigateTo,
-                          processTimestamp: _processTimestamp,
-                          addComment: addComment,
-                          newCommentController: _newCommentController,
-                        ),
-                      ],
-                    )),
-                    if (MediaQuery.of(context).viewInsets.bottom == 0)
-                      SlidingUpPanel(
-                          controller: _panelController,
-                          minHeight: size.height / 16,
-                          maxHeight: size.height / 1.15,
-                          backdropEnabled: true,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(24),
-                              topRight: Radius.circular(24)),
-                          panelBuilder: (ScrollController sc) =>
-                              HallPanelBuilder(
-                                sc,
-                                currentlySpeakingUsers: currentlySpeakingUsers,
-                                club: _clubAudience?.club ?? widget.club,
-                                size: size,
-                                participantList: participantList,
-                                isOwner: _isOwner,
-                                hasSentJoinRequest:
-                                    _clubAudience.audienceData.status ==
-                                        AudienceStatus.ActiveJoinRequest,
-                                muteParticipant: _toggleMuteOfParticpant,
-                                removeParticipant: _kickParticpant,
-                                blockUser: _blockUser,
-                                sendJoinRequest: _sendJoinRequest,
-                                deleteJoinRequest: _deleteJoinRequest,
-                                audienceMap: _audienceMap,
-                                inviteAudience: (userId) async {
-                                  final response = await _service.inviteUsers(
-                                    clubId: widget.club.clubId,
-                                    sponsorId: _myUserId,
-                                    invite: BuiltInviteFormat(
-                                      (b) => b
-                                        ..invitee = BuiltList<String>([userId])
-                                            .toBuilder()
-                                        ..type = 'participant',
-                                    ),
-                                  );
-                                  if (response.isSuccessful) {
-                                    Fluttertoast.showToast(
-                                        msg: 'Invitation sent successfully');
-                                  } else {
-                                    Fluttertoast.showToast(
-                                        msg: 'Error in sending invitaion');
-                                  }
-                                },
-                                fetchMoreAudience: () async {
-                                  if (_audienceMap['isLoading'] == true) return;
 
-                                  _justRefresh(() {
-                                    _audienceMap['isLoading'] = true;
-                                  });
+                          // _detailClubCard,
+                          // Container(
+                          //   margin:
+                          //       EdgeInsets.fromLTRB(15, size.height / 50, 15, 0),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //     children: <Widget>[
+                          //       FittedBox(
+                          //         child: InkWell(
+                          //           onTap: () => _navigateTo(
+                          //             ProfilePage(
+                          //               userId: _clubAudience.club.creator.userId,
+                          //             ),
+                          //           ),
+                          //           child: Row(children: <Widget>[
+                          //             CircleAvatar(
+                          //               radius: size.width / 17,
+                          //               backgroundColor:
+                          //                   currentlySpeakingUsers != null &&
+                          //                           currentlySpeakingUsers[widget
+                          //                                   .club
+                          //                                   .creator
+                          //                                   .username] !=
+                          //                               null &&
+                          //                           currentlySpeakingUsers[widget
+                          //                                   .club
+                          //                                   .creator
+                          //                                   .username] >
+                          //                               0
+                          //                       ? Colors.redAccent
+                          //                       : Color(0xffFDCF09),
+                          //               child: CircleAvatar(
+                          //                 radius: size.width / 20,
+                          //                 child: CustomImage(
+                          //                   image: _clubAudience
+                          //                           .club.creator.avatar +
+                          //                       "_thumb",
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             Container(
+                          //               margin: EdgeInsets.fromLTRB(
+                          //                   size.width / 30, 0, 0, 0),
+                          //               child: Text(
+                          //                 '@' +
+                          //                     _clubAudience.club.creator.username,
+                          //                 style: TextStyle(
+                          //                   fontFamily: 'Lato',
+                          //                   fontWeight: FontWeight.bold,
+                          //                   fontSize: size.width / 25,
+                          //                   color: currentlySpeakingUsers !=
+                          //                               null &&
+                          //                           currentlySpeakingUsers[widget
+                          //                                   .club
+                          //                                   .creator
+                          //                                   .username] !=
+                          //                               null &&
+                          //                           currentlySpeakingUsers[widget
+                          //                                   .club
+                          //                                   .creator
+                          //                                   .username] >
+                          //                               0
+                          //                       ? Colors.redAccent
+                          //                       : Colors.black,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ]),
+                          //         ),
+                          //       ),
+                          //       // if club is concluded no need to show play, mic and participation button
+                          //       if (_clubAudience.club.status !=
+                          //           ClubStatus.Concluded)
+                          //         FittedBox(
+                          //           child: Row(
+                          //             children: [
+                          //               _displayPlayButton,
 
-                                  if (_audienceMap['lastlastevaluatedkey'] !=
-                                      null) {
-                                    (_audienceMap['list'] as List).addAll(
-                                        await _fetchAudienceList(
-                                            _audienceMap['lastevaluatedkey']));
-                                  } else {
-                                    await Future.delayed(
-                                        Duration(milliseconds: 200));
-                                  }
-                                  _justRefresh(() {
-                                    _audienceMap['isLoading'] = false;
-                                  });
-                                },
-                              ),
-                          collapsed: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.redAccent,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(24),
-                                topRight: Radius.circular(24),
-                              ),
+                          //               // dedicated button for mic
+                          //               if (_clubAudience.audienceData.status ==
+                          //                       AudienceStatus.Participant &&
+                          //                   _clubAudience.club.status ==
+                          //                       ClubStatus.Live)
+                          //                 _displayMicButton,
+
+                          //               // dedicated button for sending join request or stepping down to become only listener
+                          //               if (_isOwner == false &&
+                          //                   _isPlaying == true)
+                          //                 _displayParticipationButton,
+                          //             ],
+                          //           ),
+                          //         ),
+                          //     ],
+                          //   ),
+                          // ),
+                          Container(
+                            height: size.height / 1.9 -
+                                MediaQuery.of(context).viewInsets.bottom,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            color: Colors.black,
+                            child: CommentBox(
+                              size: size,
+                              comments: comments,
+                              listController: _listController,
+                              navigateTo: _navigateTo,
+                              processTimestamp: _processTimestamp,
+                              addComment: addComment,
+                              newCommentController: _newCommentController,
                             ),
-                            child: Center(
-                              child: Text(
-                                "HALL",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Lato',
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 2.0),
-                              ),
-                            ),
-                          )),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // if (MediaQuery.of(context).viewInsets.bottom == 0)
+                    // SlidingUpPanel(
+                    //     controller: _panelController,
+                    //     minHeight: size.height / 16,
+                    //     maxHeight: size.height / 1.15,
+                    //     backdropEnabled: true,
+                    //     borderRadius: BorderRadius.only(
+                    //         topLeft: Radius.circular(24),
+                    //         topRight: Radius.circular(24)),
+                    //     panelBuilder: (ScrollController sc) =>
+                    //         HallPanelBuilder(
+                    //           sc,
+                    //           currentlySpeakingUsers: currentlySpeakingUsers,
+                    //           club: _clubAudience?.club ?? widget.club,
+                    //           size: size,
+                    //           participantList: participantList,
+                    //           isOwner: _isOwner,
+                    //           hasSentJoinRequest:
+                    //               _clubAudience.audienceData.status ==
+                    //                   AudienceStatus.ActiveJoinRequest,
+                    //           muteParticipant: _toggleMuteOfParticpant,
+                    //           removeParticipant: _kickParticpant,
+                    //           blockUser: _blockUser,
+                    //           sendJoinRequest: _sendJoinRequest,
+                    //           deleteJoinRequest: _deleteJoinRequest,
+                    //           audienceMap: _audienceMap,
+                    //           inviteAudience: (userId) async {
+                    //             final response = await _service.inviteUsers(
+                    //               clubId: widget.club.clubId,
+                    //               sponsorId: _myUserId,
+                    //               invite: BuiltInviteFormat(
+                    //                 (b) => b
+                    //                   ..invitee = BuiltList<String>([userId])
+                    //                       .toBuilder()
+                    //                   ..type = 'participant',
+                    //               ),
+                    //             );
+                    //             if (response.isSuccessful) {
+                    //               Fluttertoast.showToast(
+                    //                   msg: 'Invitation sent successfully');
+                    //             } else {
+                    //               Fluttertoast.showToast(
+                    //                   msg: 'Error in sending invitaion');
+                    //             }
+                    //           },
+                    //           fetchMoreAudience: () async {
+                    //             if (_audienceMap['isLoading'] == true) return;
+
+                    //             _justRefresh(() {
+                    //               _audienceMap['isLoading'] = true;
+                    //             });
+
+                    //             if (_audienceMap['lastlastevaluatedkey'] !=
+                    //                 null) {
+                    //               (_audienceMap['list'] as List).addAll(
+                    //                   await _fetchAudienceList(
+                    //                       _audienceMap['lastevaluatedkey']));
+                    //             } else {
+                    //               await Future.delayed(
+                    //                   Duration(milliseconds: 200));
+                    //             }
+                    //             _justRefresh(() {
+                    //               _audienceMap['isLoading'] = false;
+                    //             });
+                    //           },
+                    //         ),
+                    //     collapsed: Container(
+                    //       decoration: BoxDecoration(
+                    //         color: Colors.redAccent,
+                    //         borderRadius: BorderRadius.only(
+                    //           topLeft: Radius.circular(24),
+                    //           topRight: Radius.circular(24),
+                    //         ),
+                    //       ),
+                    //       child: Center(
+                    //         child: Text(
+                    //           "HALL",
+                    //           style: TextStyle(
+                    //               color: Colors.white,
+                    //               fontFamily: 'Lato',
+                    //               fontWeight: FontWeight.bold,
+                    //               letterSpacing: 2.0),
+                    //         ),
+                    //       ),
+                    //     )),
                   ],
                 )
               : Container(
