@@ -1,3 +1,4 @@
+import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/comment.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
@@ -12,6 +13,8 @@ class CommentBox extends StatelessWidget {
   final Function(int, int) processTimestamp;
   final Function(String) addComment;
 
+  final Function(BuildContext, SummaryUser) displayShortProfile;
+
   final TextEditingController newCommentController;
 
   CommentBox({
@@ -22,6 +25,7 @@ class CommentBox extends StatelessWidget {
     this.processTimestamp,
     this.addComment,
     this.newCommentController,
+    this.displayShortProfile,
   });
 
   @override
@@ -42,47 +46,69 @@ class CommentBox extends StatelessWidget {
                   itemCount: comments.length,
                   controller: listController,
                   itemBuilder: (context, index) {
-                    var a = ListTile(
-                      leading: CircleAvatar(
-                        child: CustomImage(
-                          image: comments[index].user.avatar + "_thumb",
-                          radius: 8,
-                        ),
-                      ),
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    final comment = comments[index];
+                    bool continuation = false;
+                    if (index != comments.length - 1) {
+                      if (comment.user.userId ==
+                          comments[index + 1].user.userId) continuation = true;
+                    }
+
+                    return Container(
+                      margin: EdgeInsets.only(
+                          bottom: continuation ? 0 : 12, right: 32, top: 0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          InkWell(
-                            onTap: () => navigateTo(
-                              ProfilePage(
-                                userId: comments[index].user.userId,
+                          continuation
+                              ? SizedBox(width: 36)
+                              : Container(
+                                  height: 36,
+                                  width: 36,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      displayShortProfile(
+                                          context, comment.user);
+                                    },
+                                    child: CustomImage(
+                                      image: comment.user.avatar + "_thumb",
+                                      radius: 8,
+                                    ),
+                                  ),
+                                ),
+                          SizedBox(width: 8),
+                          Flexible(
+                              child: Card(
+                            elevation: 1,
+                            shadowColor: Colors.redAccent,
+                            color: Colors.black,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    comment.body,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 14),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${continuation ? "" : comment.user.username} · ${processTimestamp(comment.timestamp, 1)}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white54,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Text(
-                              comments[index].user.username,
-                              style: TextStyle(
-                                  fontFamily: "Lato", color: Colors.redAccent),
-                            ),
-                          ),
-                          Text(
-                            processTimestamp(comments[index].timestamp, 1),
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: size.width / 30,
-                              color: Colors.white,
-                            ),
-                          )
+                          ))
                         ],
                       ),
-                      subtitle: Text(
-                        comments[index].body,
-                        style: TextStyle(
-                          fontFamily: "Lato",
-                          color: Colors.white,
-                        ),
-                      ),
                     );
-                    return a;
                   }),
             ),
           ),

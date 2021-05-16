@@ -6,9 +6,9 @@ import 'package:flocktale/Models/enums/audienceStatus.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/Widgets/clubConcludeAlert.dart';
 import 'package:flocktale/Widgets/commentBox.dart';
-import 'package:flocktale/Widgets/detailClubCard.dart';
 import 'package:flocktale/Widgets/displayInvitationInClub.dart';
 import 'package:flocktale/Widgets/customImage.dart';
+import 'package:flocktale/Widgets/profileSummary.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/comment.dart';
@@ -1123,265 +1123,327 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   Widget clubDataDisplayWidget() {
     return Container(
       color: Colors.black87,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                image: DecorationImage(
-                  image: NetworkImage(widget.club.clubAvatar),
-                  fit: BoxFit.cover,
-                ),
-              ),
+      child: Builder(
+        builder: (context) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.62),
-                      Colors.black.withOpacity(0.62),
-                      Colors.black.withOpacity(0.7),
-                      Colors.black.withOpacity(0.7),
-                      Colors.black.withOpacity(0.7),
-                      Colors.black.withOpacity(0.7),
-                      Colors.black87,
-                      Colors.black87,
-                      Colors.black87,
-                      Colors.black87,
-                    ],
-                    stops: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+                  color: Colors.transparent,
+                  image: DecorationImage(
+                    image: NetworkImage(widget.club.clubAvatar),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              GestureDetector(
-                                onTap: () => Navigator.of(context).pop(),
-                                child: Icon(
-                                  Icons.arrow_back_ios,
-                                  color: Colors.white70,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.62),
+                        Colors.black.withOpacity(0.62),
+                        Colors.black.withOpacity(0.7),
+                        Colors.black.withOpacity(0.7),
+                        Colors.black.withOpacity(0.7),
+                        Colors.black.withOpacity(0.7),
+                        Colors.black87,
+                        Colors.black87,
+                        Colors.black87,
+                        Colors.black87,
+                      ],
+                      stops: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+                    ),
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => Navigator.of(context).pop(),
+                                  child: Icon(
+                                    Icons.arrow_back_ios,
+                                    color: Colors.white70,
+                                  ),
                                 ),
-                              ),
-                              if (_isOwner == false)
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.person_pin,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      '${widget.club.creator.username}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (_isOwner == true)
-                                    Container(
-                                      margin: const EdgeInsets.only(right: 16),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 8),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black87,
-                                        border: Border.all(
-                                            color: _hasActiveJRs
-                                                ? Colors.redAccent
-                                                : Colors.black,
-                                            width: _hasActiveJRs ? 0.5 : 0),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            blurRadius: _hasActiveJRs ? 1 : 0,
-                                            spreadRadius:
-                                                _hasActiveJRs ? 0.5 : 0,
-                                            color: Colors.redAccent,
-                                          ),
-                                        ],
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: InkWell(
-                                        onTap: () async {
-                                          await _handleMenuButtons(
-                                              'Join Requests');
-                                          _justRefresh(() {
-                                            _hasActiveJRs = false;
-                                          });
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              'Join Requests',
-                                              style: TextStyle(
-                                                color: _hasActiveJRs
-                                                    ? Colors.white
-                                                    : Colors.grey,
-                                              ),
-                                            ),
-                                            SizedBox(width: 4),
-                                            if (_hasActiveJRs)
-                                              Icon(
-                                                Icons.circle,
-                                                color: Colors.redAccent,
-                                                size: 10,
-                                              )
-                                          ],
+                                if (_isOwner == false)
+                                  InkWell(
+                                    onTap: () => displayShortProfile(
+                                        context, widget.club.creator),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.person_pin,
+                                          color: Colors.white,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.black87,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          blurRadius: 1,
-                                          spreadRadius: 0.5,
-                                          color: Colors.redAccent,
+                                        SizedBox(width: 4),
+                                        Text(
+                                          '${widget.club.creator.username}',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Icon(
-                                        Icons.share,
-                                        color: Colors.redAccent,
-                                        size: 28,
+                                  ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (_isOwner == true &&
+                                        _clubAudience.club.status ==
+                                            ClubStatus.Live)
+                                      Container(
+                                        margin:
+                                            const EdgeInsets.only(right: 16),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black87,
+                                          border: Border.all(
+                                              color: _hasActiveJRs
+                                                  ? Colors.redAccent
+                                                  : Colors.black,
+                                              width: _hasActiveJRs ? 0.5 : 0),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              blurRadius: _hasActiveJRs ? 1 : 0,
+                                              spreadRadius:
+                                                  _hasActiveJRs ? 0.5 : 0,
+                                              color: Colors.redAccent,
+                                            ),
+                                          ],
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: InkWell(
+                                          onTap: () async {
+                                            await _handleMenuButtons(
+                                                'Join Requests');
+                                            _justRefresh(() {
+                                              _hasActiveJRs = false;
+                                            });
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                'Join Requests',
+                                                style: TextStyle(
+                                                  color: _hasActiveJRs
+                                                      ? Colors.white
+                                                      : Colors.grey,
+                                                ),
+                                              ),
+                                              SizedBox(width: 4),
+                                              if (_hasActiveJRs)
+                                                Icon(
+                                                  Icons.circle,
+                                                  color: Colors.redAccent,
+                                                  size: 10,
+                                                )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.black87,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            blurRadius: 1,
+                                            spreadRadius: 0.5,
+                                            color: Colors.redAccent,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Icon(
+                                          Icons.share,
+                                          color: Colors.redAccent,
+                                          size: 28,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  _showMenuButtons(),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            widget.club.clubName,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                                    _showMenuButtons(),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                          SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.multitrack_audio_sharp,
-                                color: Colors.white70,
-                                size: 28,
+                            SizedBox(height: 8),
+                            Text(
+                              widget.club.clubName,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  '${_clubAudience.club.description ?? ""}',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 13,
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.multitrack_audio_sharp,
+                                  color: Colors.white70,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    '${_clubAudience.club.description ?? ""}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 13,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          width: double.infinity,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(),
-                              Container(
-                                height: 100,
-                                child: Center(
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: participantList.length * 12,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (ctx, index) {
-                                      //! if this is club owner
-                                      //! different decoration for club owner
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        if (_clubAudience.club.status != ClubStatus.Live)
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      if (_clubAudience.club.status !=
+                                          ClubStatus.Concluded)
+                                        Icon(
+                                          Icons.timer,
+                                          color: Colors.white,
+                                          size: 32,
+                                        ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        _clubAudience.club.status ==
+                                                ClubStatus.Concluded
+                                            ? "Concluded"
+                                            : DateTime.now().compareTo(DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                            _clubAudience.club
+                                                                .scheduleTime)) <
+                                                    0
+                                                ? "Scheduled: ${_processScheduledTimestamp(_clubAudience.club.scheduleTime)}"
+                                                : "Waiting for start",
+                                        style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              width: double.infinity,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(),
+                                  Container(
+                                    height: 100,
+                                    child: Center(
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: participantList.length * 12,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder: (ctx, index) {
+                                          //! if this is club owner
+                                          //! different decoration for club owner
 
-                                      // final participant = participantList[index];
-                                      final participant = participantList[0];
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 4.0),
-                                        child: InkWell(
-                                          onTap: () {
-                                            // show  summary profile of user in modal bottom sheet
-                                          },
-                                          onLongPress: _isOwner == false
-                                              ? null
-                                              : () {
-                                                  // for non-owner participant, dialog box to show mute button
-                                                  if (participant
-                                                          .audience.userId !=
-                                                      widget.club.creator
-                                                          .userId) {}
-                                                },
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                width: 72,
-                                                height: 72,
-                                                child: Stack(
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      child: Container(
-                                                        height: 64,
-                                                        width: 64,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
+                                          // final participant = participantList[index];
+                                          final participant =
+                                              participantList[0];
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 4.0),
+                                            child: InkWell(
+                                              onTap: () {
+                                                // show  summary profile of user in modal bottom sheet
+                                              },
+                                              onLongPress: _isOwner == false
+                                                  ? null
+                                                  : () {
+                                                      // for non-owner participant, dialog box to show mute button
+                                                      if (participant.audience
+                                                              .userId !=
+                                                          widget.club.creator
+                                                              .userId) {}
+                                                    },
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    width: 72,
+                                                    height: 72,
+                                                    child: Stack(
+                                                      children: [
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                          child: Container(
+                                                            height: 64,
+                                                            width: 64,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            child: CustomImage(
+                                                              pinwheelPlaceholder:
+                                                                  true,
+                                                              radius: 8,
+                                                              image: participant
+                                                                  .audience
+                                                                  .avatar,
+                                                            ),
+                                                          ),
                                                         ),
-                                                        child: CustomImage(
-                                                          pinwheelPlaceholder:
-                                                              true,
-                                                          radius: 8,
-                                                          image: participant
-                                                              .audience.avatar,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.bottomRight,
-                                                      child: CircleAvatar(
-                                                        backgroundColor:
-                                                            participant.isMuted
+                                                        Align(
+                                                          alignment: Alignment
+                                                              .bottomRight,
+                                                          child: CircleAvatar(
+                                                            backgroundColor: participant
+                                                                    .isMuted
                                                                 ? Colors.black
                                                                     .withOpacity(
                                                                         0.5)
@@ -1389,162 +1451,188 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                                                     .redAccent
                                                                     .withOpacity(
                                                                         0.5),
-                                                        radius: 10,
-                                                        child: Icon(
-                                                          participant.isMuted
-                                                              ? Icons
-                                                                  .mic_off_outlined
-                                                              : Icons
-                                                                  .mic_none_sharp,
-                                                          color: Colors.white,
-                                                          size: 14,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              Container(
-                                                width: 84,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      width: 80,
-                                                      child: Text(
-                                                        participant
-                                                            .audience.username,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 11,
-                                                        ),
-                                                      ),
+                                                            radius: 10,
+                                                            child: Icon(
+                                                              participant
+                                                                      .isMuted
+                                                                  ? Icons
+                                                                      .mic_off_outlined
+                                                                  : Icons
+                                                                      .mic_none_sharp,
+                                                              color:
+                                                                  Colors.white,
+                                                              size: 14,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
                                                     ),
-                                                    SizedBox(width: 4),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  Container(
+                                                    width: 84,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Container(
+                                                          width: 80,
+                                                          child: Text(
+                                                            participant.audience
+                                                                .username,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 11,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 4),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            color: Colors.black,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // heart reaction
-                    LikeButton(
-                      onTap: (val) async {
-                        _toggleClubHeart();
-                        return Future.value(!val);
-                      },
-                      countPostion: CountPostion.bottom,
-                      size: 32,
-                      isLiked: _clubAudience.reactionIndexValue == 2,
-                      likeCount: _heartCount,
-                      countBuilder: (count, _, __) {
-                        return Text(
-                          '$count',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                          ),
-                        );
-                      },
-                      likeBuilder: (bool isLiked) {
-                        return Icon(
-                          _clubAudience.reactionIndexValue == 2
-                              ? Icons.favorite
-                              : Icons.favorite_border_rounded,
-                          color: isLiked ? Colors.redAccent : Colors.white,
-                          size: 32,
-                        );
-                      },
-                    ),
-                    SizedBox(width: 16),
-                    LikeButton(
-                      onTap: (_) async {
-                        return Future.value(false);
-                      },
-                      countBuilder: (count, _, __) {
-                        return Text(
-                          '$count',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                          ),
-                        );
-                      },
-                      countPostion: CountPostion.bottom,
-                      size: 32,
-                      likeCount: 1000,
-                      likeBuilder: (_) {
-                        return Icon(
-                          Icons.headset,
-                          color: Colors.redAccent,
-                          size: 32,
-                        );
-                      },
-                    ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // heart reaction
+                      LikeButton(
+                        onTap: (val) async {
+                          _toggleClubHeart();
+                          return Future.value(!val);
+                        },
+                        countPostion: CountPostion.bottom,
+                        size: 32,
+                        isLiked: _clubAudience.reactionIndexValue == 2,
+                        likeCount: _heartCount,
+                        countBuilder: (count, _, __) {
+                          return Text(
+                            '${count ?? ""}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
+                          );
+                        },
+                        likeBuilder: (bool isLiked) {
+                          return Icon(
+                            _clubAudience.reactionIndexValue == 2
+                                ? Icons.favorite
+                                : Icons.favorite_border_rounded,
+                            color: isLiked ? Colors.redAccent : Colors.white,
+                            size: 32,
+                          );
+                        },
+                      ),
+                      SizedBox(width: 16),
+                      LikeButton(
+                        onTap: (_) async {
+                          Future.delayed(Duration(milliseconds: 1200), () {
+                            setState(() {});
+                          });
 
-                    SizedBox(width: 4),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: _displayPlayButton,
-                    ),
-
-                    // dedicated button for mic
-                    if (_clubAudience.audienceData.status ==
-                            AudienceStatus.Participant &&
-                        _clubAudience.club.status == ClubStatus.Live)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: _displayMicButton,
+                          return Future.value(true);
+                        },
+                        countDecoration: (_, count) {
+                          return Text(
+                            '${_clubAudience.club.estimatedAudience ?? ""}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
+                          );
+                        },
+                        isLiked: false,
+                        likeCount: _clubAudience.club.estimatedAudience,
+                        countPostion: CountPostion.bottom,
+                        size: 32,
+                        likeBuilder: (_) {
+                          return Icon(
+                            Icons.headset,
+                            color: Colors.redAccent,
+                            size: 32,
+                          );
+                        },
                       ),
 
-                    // dedicated button for sending join request or stepping down to become only listener
-                    if (_isOwner == false && _isPlaying == true)
+                      SizedBox(width: 4),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
-                        child: _displayParticipationButton,
+                        child: _displayPlayButton,
                       ),
-                  ],
-                ),
-              ],
+
+                      // dedicated button for mic
+                      if (_clubAudience.audienceData.status ==
+                              AudienceStatus.Participant &&
+                          _clubAudience.club.status == ClubStatus.Live)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: _displayMicButton,
+                        ),
+
+                      // dedicated button for sending join request or stepping down to become only listener
+                      if (_isOwner == false && _isPlaying == true)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: _displayParticipationButton,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  void displayShortProfile(BuildContext context, SummaryUser summaryUser) {
+    FocusManager.instance.primaryFocus.unfocus();
+
+    Scaffold.of(context).showBottomSheet(
+      (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.4,
+        maxChildSize: 0.8,
+        minChildSize: 0.4,
+        builder: (_, controller) => ProfileShortView(summaryUser, controller),
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     );
   }
 
@@ -1561,16 +1649,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
-    final _detailClubCard = DetailClubCard(
-      clubAudience: _clubAudience,
-      size: size,
-      heartCount: _heartCount,
-      toggleClubHeart: _toggleClubHeart,
-      dislikeCount: _dislikeCount,
-      toggleClubDislike: _toggleClubDislike,
-      processScheduledTimestamp: _processScheduledTimestamp,
-    );
 
     return WillPopScope(
       onWillPop: () async {
@@ -1595,106 +1673,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                         children: <Widget>[
                           if (_clubAudience.audienceData.invitationId != null)
                             _displayInvitation(),
-
                           Expanded(
                             child: clubDataDisplayWidget(),
                           ),
-
-                          // _detailClubCard,
-                          // Container(
-                          //   margin:
-                          //       EdgeInsets.fromLTRB(15, size.height / 50, 15, 0),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: <Widget>[
-                          //       FittedBox(
-                          //         child: InkWell(
-                          //           onTap: () => _navigateTo(
-                          //             ProfilePage(
-                          //               userId: _clubAudience.club.creator.userId,
-                          //             ),
-                          //           ),
-                          //           child: Row(children: <Widget>[
-                          //             CircleAvatar(
-                          //               radius: size.width / 17,
-                          //               backgroundColor:
-                          //                   currentlySpeakingUsers != null &&
-                          //                           currentlySpeakingUsers[widget
-                          //                                   .club
-                          //                                   .creator
-                          //                                   .username] !=
-                          //                               null &&
-                          //                           currentlySpeakingUsers[widget
-                          //                                   .club
-                          //                                   .creator
-                          //                                   .username] >
-                          //                               0
-                          //                       ? Colors.redAccent
-                          //                       : Color(0xffFDCF09),
-                          //               child: CircleAvatar(
-                          //                 radius: size.width / 20,
-                          //                 child: CustomImage(
-                          //                   image: _clubAudience
-                          //                           .club.creator.avatar +
-                          //                       "_thumb",
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //             Container(
-                          //               margin: EdgeInsets.fromLTRB(
-                          //                   size.width / 30, 0, 0, 0),
-                          //               child: Text(
-                          //                 '@' +
-                          //                     _clubAudience.club.creator.username,
-                          //                 style: TextStyle(
-                          //                   fontFamily: 'Lato',
-                          //                   fontWeight: FontWeight.bold,
-                          //                   fontSize: size.width / 25,
-                          //                   color: currentlySpeakingUsers !=
-                          //                               null &&
-                          //                           currentlySpeakingUsers[widget
-                          //                                   .club
-                          //                                   .creator
-                          //                                   .username] !=
-                          //                               null &&
-                          //                           currentlySpeakingUsers[widget
-                          //                                   .club
-                          //                                   .creator
-                          //                                   .username] >
-                          //                               0
-                          //                       ? Colors.redAccent
-                          //                       : Colors.black,
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //           ]),
-                          //         ),
-                          //       ),
-                          //       // if club is concluded no need to show play, mic and participation button
-                          //       if (_clubAudience.club.status !=
-                          //           ClubStatus.Concluded)
-                          //         FittedBox(
-                          //           child: Row(
-                          //             children: [
-                          //               _displayPlayButton,
-
-                          //               // dedicated button for mic
-                          //               if (_clubAudience.audienceData.status ==
-                          //                       AudienceStatus.Participant &&
-                          //                   _clubAudience.club.status ==
-                          //                       ClubStatus.Live)
-                          //                 _displayMicButton,
-
-                          //               // dedicated button for sending join request or stepping down to become only listener
-                          //               if (_isOwner == false &&
-                          //                   _isPlaying == true)
-                          //                 _displayParticipationButton,
-                          //             ],
-                          //           ),
-                          //         ),
-                          //     ],
-                          //   ),
-                          // ),
                           Container(
                             height: size.height / 1.9 -
                                 MediaQuery.of(context).viewInsets.bottom,
@@ -1708,6 +1689,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                               processTimestamp: _processTimestamp,
                               addComment: addComment,
                               newCommentController: _newCommentController,
+                              displayShortProfile: displayShortProfile,
                             ),
                           ),
                         ],
