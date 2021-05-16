@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
+import 'CommunityNewClubPage.dart';
+
 class CommunityPage extends StatefulWidget {
   BuiltCommunity community;
   CommunityPage({this.community});
@@ -86,7 +88,7 @@ class _CommunityPageState extends State<CommunityPage>
             decoration: BoxDecoration(
                 image: DecorationImage(
                     image: NetworkImage(widget.community.coverImage),
-                    fit: BoxFit.cover)),
+                    fit: BoxFit.fill)),
           ),
           Container(
             padding: EdgeInsets.fromLTRB(size.width / 20, size.width / 20,
@@ -200,7 +202,7 @@ class _CommunityPageState extends State<CommunityPage>
               ? InkWell(
                   onTap: () {
                     Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (_) => NewClub()))
+                        .push(MaterialPageRoute(builder: (_) => CommunityNewClubPage()))
                         .then((value) => _fetchCommunityClubs());
                   },
                   child: Row(
@@ -210,7 +212,7 @@ class _CommunityPageState extends State<CommunityPage>
                       IconButton(
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => NewClub(
+                              builder: (_) => CommunityNewClubPage(
                                     community: widget.community,
                                   )));
                         },

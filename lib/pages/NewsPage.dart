@@ -4,6 +4,7 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'NewClub.dart';
@@ -108,7 +109,9 @@ class _NewsPageState extends State<NewsPage> {
               ),
             ),
           ),
-          onRefresh: () {});
+          onRefresh: () {
+            return _fetchNewsClubs();
+          });
     }
 
     return SafeArea(
@@ -164,70 +167,9 @@ class _NewsPageState extends State<NewsPage> {
                       )
                     ],
                   ),
-                  // Row(
-                  // children: [
-                  // Text(
-                  // isMember ? "JOIN" : "Member",
-                  // style: TextStyle(fontFamily: "Lato"),
-                  // ),
-                  // IconButton(
-                  // icon: isMember
-                  // ? Icon(Icons.add)
-                  //     : Icon(
-                  // Icons.check,
-                  // color: Colors.green,
-                  // ),
-                  // onPressed: () async {
-                  // isMember = !isMember;
-                  // setState(() {});
-                  // final resp = (await service.joinCommunityAsMember(
-                  // widget.community.communityId,
-                  // userId: userId));
-                  // if (!resp.isSuccessful) {
-                  // Fluttertoast.showToast(
-                  // msg: 'Sorry something went wrong.');
-                  // setState(() {
-                  // isMember = !isMember;
-                  // });
-                  // }
-                  // })
-                  // ],
-                  // )
                 ],
               ),
             ),
-            // Container(
-            // height: size.height / 8,
-            // color: Colors.grey[200],
-            // padding: EdgeInsets.fromLTRB(0, 0, 0, size.width / 20),
-            // child: ListView.builder(
-            // itemCount: widget.community.hosts!=null?widget.community.hosts.length:0,
-            // scrollDirection: Axis.horizontal,
-            // itemBuilder: (context, index) {
-            // return Container(
-            // margin: EdgeInsets.fromLTRB(size.width / 20, 0, 0, 0),
-            // child: Column(
-            // children: [
-            // CircleAvatar(
-            // child:
-            // CustomImage(image: widget.community.creator.avatar,),
-            // radius: size.width / 15,
-            // ),
-            // Container(
-            // width: size.width / 10,
-            // child: FittedBox(
-            // child: Text(
-            // "Name ${index + 1}",
-            // style: TextStyle(
-            // fontFamily: "Lato",
-            // fontWeight: FontWeight.bold),
-            // ),
-            // ),
-            // )
-            // ],
-            // ),
-            // );
-            // })),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
