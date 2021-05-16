@@ -97,162 +97,159 @@ class _ProfileShortViewState extends State<ProfileShortView> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black87,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(top: 4, bottom: 12),
-              child: topSection,
-            ),
-            Expanded(
-              child: ListView(
-                controller: widget.controller,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 84,
-                        height: 84,
-                        child: CustomImage(
-                          image: _user.avatar + '_large',
-                          pinwheelPlaceholder: true,
-                          radius: 8,
-                        ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(top: 4, bottom: 12),
+            child: topSection,
+          ),
+          Expanded(
+            child: ListView(
+              controller: widget.controller,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 84,
+                      height: 84,
+                      child: CustomImage(
+                        image: _user.avatar + '_large',
+                        pinwheelPlaceholder: true,
+                        radius: 8,
                       ),
-                      if (_isFetching)
-                        Expanded(
-                            child: Center(
-                          child: CircularProgressIndicator(),
-                        ))
-                      else
-                        Expanded(
-                          child: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    socialCounts(_user.friendsCount, 'Friends'),
-                                    socialCounts(
-                                        _user.followerCount, 'Followers'),
-                                    socialCounts(
-                                        _user.followingCount, 'Following'),
-                                  ],
-                                ),
-                                if (_isMe == false) SizedBox(height: 12),
-                                if (_isMe == false)
-                                  _isLoading
-                                      ? CircularProgressIndicator()
-                                      : Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 32),
-                                          decoration: BoxDecoration(
-                                            color: _userRelations.B5
-                                                ? Colors.black.withOpacity(0.7)
-                                                : Colors.redAccent,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: InkWell(
-                                            onTap: () async {
-                                              setState(() {
-                                                _isLoading = true;
-                                              });
-                                              final socialInteraction =
-                                                  SocialInteraction(context,
-                                                      widget.summaryUser.userId,
-                                                      updateProfileFromResponse:
-                                                          _updateProfileFromResponse);
-                                              if (_userRelations.B5) {
-                                                await socialInteraction
-                                                    .sendUnFollow();
-                                              } else {
-                                                await socialInteraction
-                                                    .sendFollow();
-                                              }
-                                              setState(() {
-                                                _isLoading = false;
-                                              });
-                                            },
-                                            child: Container(
-                                              width: double.infinity,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8),
-                                              child: Text(
-                                                _userRelations.B5
-                                                    ? 'Following'
-                                                    : 'Follow',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
+                    ),
+                    if (_isFetching)
+                      Expanded(
+                          child: Center(
+                        child: CircularProgressIndicator(),
+                      ))
+                    else
+                      Expanded(
+                        child: Container(
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  socialCounts(_user.friendsCount, 'Friends'),
+                                  socialCounts(
+                                      _user.followerCount, 'Followers'),
+                                  socialCounts(
+                                      _user.followingCount, 'Following'),
+                                ],
+                              ),
+                              if (_isMe == false) SizedBox(height: 12),
+                              if (_isMe == false)
+                                _isLoading
+                                    ? CircularProgressIndicator()
+                                    : Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 32),
+                                        decoration: BoxDecoration(
+                                          color: _userRelations.B5
+                                              ? Colors.black.withOpacity(0.7)
+                                              : Colors.redAccent,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: InkWell(
+                                          onTap: () async {
+                                            setState(() {
+                                              _isLoading = true;
+                                            });
+                                            final socialInteraction =
+                                                SocialInteraction(context,
+                                                    widget.summaryUser.userId,
+                                                    updateProfileFromResponse:
+                                                        _updateProfileFromResponse);
+                                            if (_userRelations.B5) {
+                                              await socialInteraction
+                                                  .sendUnFollow();
+                                            } else {
+                                              await socialInteraction
+                                                  .sendFollow();
+                                            }
+                                            setState(() {
+                                              _isLoading = false;
+                                            });
+                                          },
+                                          child: Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8),
+                                            child: Text(
+                                              _userRelations.B5
+                                                  ? 'Following'
+                                                  : 'Follow',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
                                               ),
                                             ),
                                           ),
-                                        )
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  if (_isFetching == false)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _user.name,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        if ((_user.tagline ?? "").isNotEmpty)
-                          Row(
-                            children: [
-                              Container(
-                                height: 32,
-                                child: VerticalDivider(
-                                  thickness: 2,
-                                  width: 12,
-                                  color: Colors.redAccent,
-                                ),
-                              ),
-                              SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  _user.tagline,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
+                                        ),
+                                      )
                             ],
                           ),
-                        SizedBox(height: 16),
-                        Text(
-                          _user.bio ?? "",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                          ),
                         ),
-                      ],
-                    ),
-                ],
-              ),
+                      ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                if (_isFetching == false)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _user.name,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      if ((_user.tagline ?? "").isNotEmpty)
+                        Row(
+                          children: [
+                            Container(
+                              height: 32,
+                              child: VerticalDivider(
+                                thickness: 2,
+                                width: 12,
+                                color: Colors.redAccent,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                _user.tagline,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      SizedBox(height: 16),
+                      Text(
+                        _user.bio ?? "",
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

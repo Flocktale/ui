@@ -8,6 +8,8 @@ import 'package:flocktale/Widgets/clubConcludeAlert.dart';
 import 'package:flocktale/Widgets/commentBox.dart';
 import 'package:flocktale/Widgets/displayInvitationInClub.dart';
 import 'package:flocktale/Widgets/customImage.dart';
+import 'package:flocktale/Widgets/imageDialogLayout.dart';
+import 'package:flocktale/Widgets/participantActionDialog.dart';
 import 'package:flocktale/Widgets/profileSummary.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -1284,231 +1286,242 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                               ],
                             ),
                             SizedBox(height: 8),
-                            Text(
-                              widget.club.clubName,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.multitrack_audio_sharp,
-                                  color: Colors.white70,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    '${_clubAudience.club.description ?? ""}',
-                                    maxLines: 1,
+                            InkWell(
+                              onTap: () => displayFullClubData(context),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    widget.club.clubName,
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 13,
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        if (_clubAudience.club.status != ClubStatus.Live)
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 16,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black54,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
+                                  SizedBox(height: 8),
+                                  Row(
                                     children: [
-                                      if (_clubAudience.club.status !=
-                                          ClubStatus.Concluded)
-                                        Icon(
-                                          Icons.timer,
-                                          color: Colors.white,
-                                          size: 32,
-                                        ),
+                                      Icon(
+                                        Icons.multitrack_audio_sharp,
+                                        color: Colors.white70,
+                                        size: 20,
+                                      ),
                                       SizedBox(width: 8),
-                                      Text(
-                                        _clubAudience.club.status ==
-                                                ClubStatus.Concluded
-                                            ? "Concluded"
-                                            : DateTime.now().compareTo(DateTime
-                                                        .fromMillisecondsSinceEpoch(
-                                                            _clubAudience.club
-                                                                .scheduleTime)) <
-                                                    0
-                                                ? "Scheduled: ${_processScheduledTimestamp(_clubAudience.club.scheduleTime)}"
-                                                : "Waiting for start",
-                                        style: TextStyle(
-                                          fontFamily: 'Lato',
-                                          color: Colors.white,
-                                          fontSize: 16,
+                                      Expanded(
+                                        child: Text(
+                                          '${_clubAudience.club.description ?? ""}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 13,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          )
-                        else
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              width: double.infinity,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(),
-                                  Container(
-                                    height: 100,
-                                    child: Center(
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: participantList.length * 12,
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: (ctx, index) {
-                                          //! if this is club owner
-                                          //! different decoration for club owner
-
-                                          // final participant = participantList[index];
-                                          final participant =
-                                              participantList[0];
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 4.0),
-                                            child: InkWell(
-                                              onTap: () {
-                                                // show  summary profile of user in modal bottom sheet
-                                              },
-                                              onLongPress: _isOwner == false
-                                                  ? null
-                                                  : () {
-                                                      // for non-owner participant, dialog box to show mute button
-                                                      if (participant.audience
-                                                              .userId !=
-                                                          widget.club.creator
-                                                              .userId) {}
-                                                    },
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    width: 72,
-                                                    height: 72,
-                                                    child: Stack(
-                                                      children: [
-                                                        Align(
-                                                          alignment:
-                                                              Alignment.topLeft,
-                                                          child: Container(
-                                                            height: 64,
-                                                            width: 64,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                            ),
-                                                            child: CustomImage(
-                                                              pinwheelPlaceholder:
-                                                                  true,
-                                                              radius: 8,
-                                                              image: participant
-                                                                  .audience
-                                                                  .avatar,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .bottomRight,
-                                                          child: CircleAvatar(
-                                                            backgroundColor: participant
-                                                                    .isMuted
-                                                                ? Colors.black
-                                                                    .withOpacity(
-                                                                        0.5)
-                                                                : Colors
-                                                                    .redAccent
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                            radius: 10,
-                                                            child: Icon(
-                                                              participant
-                                                                      .isMuted
-                                                                  ? Icons
-                                                                      .mic_off_outlined
-                                                                  : Icons
-                                                                      .mic_none_sharp,
-                                                              color:
-                                                                  Colors.white,
-                                                              size: 14,
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width: 84,
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Container(
-                                                          width: 80,
-                                                          child: Text(
-                                                            participant.audience
-                                                                .username,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 11,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(width: 4),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        // if (_clubAudience.club.status != ClubStatus.Live)
+                        //   Expanded(
+                        //     child: Row(
+                        //       mainAxisAlignment: MainAxisAlignment.center,
+                        //       crossAxisAlignment: CrossAxisAlignment.center,
+                        //       children: [
+                        //         Container(
+                        //           padding: const EdgeInsets.symmetric(
+                        //             horizontal: 24,
+                        //             vertical: 16,
+                        //           ),
+                        //           decoration: BoxDecoration(
+                        //             color: Colors.black54,
+                        //             borderRadius: BorderRadius.circular(8),
+                        //           ),
+                        //           child: Row(
+                        //             children: [
+                        //               if (_clubAudience.club.status !=
+                        //                   ClubStatus.Concluded)
+                        //                 Icon(
+                        //                   Icons.timer,
+                        //                   color: Colors.white,
+                        //                   size: 32,
+                        //                 ),
+                        //               SizedBox(width: 8),
+                        //               Text(
+                        //                 _clubAudience.club.status ==
+                        //                         ClubStatus.Concluded
+                        //                     ? "Concluded"
+                        //                     : DateTime.now().compareTo(DateTime
+                        //                                 .fromMillisecondsSinceEpoch(
+                        //                                     _clubAudience.club
+                        //                                         .scheduleTime)) <
+                        //                             0
+                        //                         ? "Scheduled: ${_processScheduledTimestamp(_clubAudience.club.scheduleTime)}"
+                        //                         : "Waiting for start",
+                        //                 style: TextStyle(
+                        //                   fontFamily: 'Lato',
+                        //                   color: Colors.white,
+                        //                   fontSize: 16,
+                        //                 ),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   )
+                        // else
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(),
+                                Container(
+                                  height: 100,
+                                  child: Center(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: participantList.length,
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder: (ctx, index) {
+                                        //! if this is club owner
+                                        //! different decoration for club owner
+
+                                        final participant =
+                                            participantList[index];
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 4.0),
+                                          child: GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () {
+                                              // show  summary profile of user in modal bottom sheet
+                                            },
+                                            onLongPress:
+                                                // _isOwner == false
+                                                //     ? null
+                                                //     :
+                                                () {
+                                              // for non-owner participant, dialog box to show mute button
+
+                                              // if (participant.audience
+                                              //         .userId !=
+                                              //     widget.club.creator
+                                              //         .userId) {
+                                              actionOnParticipantDialogBox(
+                                                context,
+                                                participant,
+                                              );
+                                              // }
+                                            },
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  width: 72,
+                                                  height: 72,
+                                                  child: Stack(
+                                                    children: [
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: Container(
+                                                          height: 64,
+                                                          width: 64,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          child: CustomImage(
+                                                            pinwheelPlaceholder:
+                                                                true,
+                                                            radius: 8,
+                                                            image: participant
+                                                                .audience
+                                                                .avatar,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .bottomRight,
+                                                        child: CircleAvatar(
+                                                          backgroundColor: participant
+                                                                  .isMuted
+                                                              ? Colors.black
+                                                                  .withOpacity(
+                                                                      0.5)
+                                                              : Colors.redAccent
+                                                                  .withOpacity(
+                                                                      0.5),
+                                                          radius: 10,
+                                                          child: Icon(
+                                                            participant.isMuted
+                                                                ? Icons
+                                                                    .mic_off_outlined
+                                                                : Icons
+                                                                    .mic_none_sharp,
+                                                            color: Colors.white,
+                                                            size: 14,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 84,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Container(
+                                                        width: 80,
+                                                        child: Text(
+                                                          participant.audience
+                                                              .username,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 11,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 4),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                        ),
                       ],
                     ),
                   ),
@@ -1631,6 +1644,124 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         maxChildSize: 0.8,
         minChildSize: 0.4,
         builder: (_, controller) => ProfileShortView(summaryUser, controller),
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    );
+  }
+
+  void actionOnParticipantDialogBox(
+      BuildContext context, AudienceData participant) {
+    showDialog(
+      context: context,
+      builder: (ctx) => ParticipantActionDialog(participant),
+    );
+  }
+
+  void displayFullClubData(BuildContext context) {
+    FocusManager.instance.primaryFocus.unfocus();
+
+    if (_clubAudience == null) return;
+
+    Scaffold.of(context).showBottomSheet(
+      (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.6,
+        maxChildSize: 0.8,
+        minChildSize: 0.4,
+        builder: (_, controller) => Container(
+          color: Colors.black87,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: ListView(
+            controller: controller,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 6,
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+              ),
+              SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                height: 192,
+                child: CustomImage(
+                  image: widget.club.clubAvatar,
+                  pinwheelPlaceholder: true,
+                  radius: 0,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              SizedBox(height: 12),
+              Text(
+                widget.club.clubName,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(
+                    Icons.multitrack_audio_sharp,
+                    color: Colors.white70,
+                    size: 20,
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '${_clubAudience.club.description ?? ""}',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+                child: Card(
+                  elevation: 2,
+                  shadowColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.share,
+                          size: 24,
+                          color: Colors.redAccent,
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          'Share with your friends',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     );
