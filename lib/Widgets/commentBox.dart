@@ -1,6 +1,7 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/comment.dart';
 import 'package:flocktale/Widgets/customImage.dart';
+import 'package:flocktale/Widgets/profileSummary.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flutter/material.dart';
 
@@ -13,8 +14,6 @@ class CommentBox extends StatelessWidget {
   final Function(int, int) processTimestamp;
   final Function(String) addComment;
 
-  final Function(BuildContext, SummaryUser) displayShortProfile;
-
   final TextEditingController newCommentController;
 
   CommentBox({
@@ -25,7 +24,6 @@ class CommentBox extends StatelessWidget {
     this.processTimestamp,
     this.addComment,
     this.newCommentController,
-    this.displayShortProfile,
   });
 
   @override
@@ -67,7 +65,7 @@ class CommentBox extends StatelessWidget {
                                   width: 36,
                                   child: GestureDetector(
                                     onTap: () {
-                                      displayShortProfile(
+                                      ProfileShortView.display(
                                           context, comment.user);
                                     },
                                     child: CustomImage(

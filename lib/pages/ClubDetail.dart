@@ -4,11 +4,11 @@ import 'dart:math';
 import 'package:agora_rtc_engine/rtc_engine.dart' as RTC;
 import 'package:flocktale/Models/enums/audienceStatus.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
+import 'package:flocktale/Widgets/ClubUserCards.dart';
 import 'package:flocktale/Widgets/clubConcludeAlert.dart';
 import 'package:flocktale/Widgets/commentBox.dart';
 import 'package:flocktale/Widgets/displayInvitationInClub.dart';
 import 'package:flocktale/Widgets/customImage.dart';
-import 'package:flocktale/Widgets/imageDialogLayout.dart';
 import 'package:flocktale/Widgets/participantActionDialog.dart';
 import 'package:flocktale/Widgets/profileSummary.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'ProfilePage.dart';
 import 'ClubJoinRequests.dart';
 import 'package:intl/intl.dart';
 import 'BlockedUsersPage.dart';
@@ -39,6 +38,8 @@ class ClubDetailPage extends StatefulWidget {
 }
 
 class _ClubDetailPageState extends State<ClubDetailPage> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   String _myUserId;
   DatabaseApiService _service;
   String _authToken;
@@ -92,19 +93,30 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   void getActiveSpeakers(List<RTC.AudioVolumeInfo> speakers, _) {
     var speakingUsers = new Map<String, int>();
     speakers.forEach((e) {
-      //speakingUsers.putIfAbsent(integerUsernames[e.uid], () => e.volume);
-      speakingUsers[integerUsernames[e.uid]] = e.volume;
+      final username = integerUsernames[e.uid];
+      speakingUsers[username] = e.volume;
+
       print("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
-      print(integerUsernames[e.uid]);
-      print(speakingUsers[integerUsernames[e.uid]]);
+      print(username);
+      print(speakingUsers[username]);
     });
+
+// sorted in ascending order of volume
+// when iterating over this list from beginning, participantList is sorted every time with participant with greater volume at first position.
+    speakingUsers.entries.toList()
+      ..sort((a, b) => a.value - b.value)
+      ..forEach((element) {
+        participantList.sort((a, b) {
+          if (b.audience.username == element.key)
+            return 1;
+          else
+            return 0;
+        });
+      });
 
     _justRefresh(() {
       currentlySpeakingUsers = speakingUsers;
     });
-    // print('All Speaking users with their volume  $speakingUsers');
-    // TODO
-    // Bhaiya, Is list of speakingUsers me aapko jo bhi bol raha hai unke baare me sab mil jaaega.
   }
 
   void _getMostActiveSpeaker(int uid) {
@@ -392,7 +404,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   /// set [overridenMute] to true if host is muting panelist
-  void _toggleMuteOfParticpant(String userId,
+  Future<bool> _toggleMuteOfParticpant(String userId,
       [bool overridenMute = false]) async {
     // if user is unmuting himself. (_isMuted is true then till now)
     if (_isMuted && userId == _myUserId) {
@@ -402,7 +414,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         if (!status.isGranted) {
           Fluttertoast.showToast(
               msg: 'Please give microphone permissions from the settings');
-          return;
+          return false;
         }
       }
     }
@@ -410,7 +422,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     bool toMute = true;
 
     for (var participant in participantList) {
-      print(participant);
       if (participant.audience.userId == userId) {
         toMute = !participant.isMuted;
         break;
@@ -440,23 +451,27 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     Fluttertoast.showToast(msg: muteAction == 'mute' ? 'muted' : 'unmuted');
 
     _justRefresh();
+
+    return true;
   }
 
-  void _kickParticpant(String userId) async {
+  Future<bool> _kickParticpant(String userId) async {
     await Provider.of<DatabaseApiService>(context, listen: false)
         .kickOutParticipant(
       clubId: widget.club.clubId,
       audienceId: userId,
     );
     Fluttertoast.showToast(msg: 'Removed panelist');
+    return true;
   }
 
-  void _blockUser(String userId) async {
+  Future<bool> _blockUser(String userId) async {
     await _service.blockAudience(
       clubId: widget.club.clubId,
       audienceId: userId,
     );
     Fluttertoast.showToast(msg: 'Blocked user');
+    return true;
   }
 
   _sendJoinRequest() async {
@@ -1180,7 +1195,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                 ),
                                 if (_isOwner == false)
                                   InkWell(
-                                    onTap: () => displayShortProfile(
+                                    onTap: () => ProfileShortView.display(
                                         context, widget.club.creator),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -1392,126 +1407,49 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                   height: 100,
                                   child: Center(
                                     child: ListView.builder(
+                                      clipBehavior: Clip.none,
                                       shrinkWrap: true,
-                                      itemCount: participantList.length,
+                                      addSemanticIndexes: false,
+                                      itemCount: participantList.length * 5,
                                       scrollDirection: Axis.horizontal,
                                       itemBuilder: (ctx, index) {
                                         //! if this is club owner
                                         //! different decoration for club owner
 
-                                        final participant =
-                                            participantList[index];
+                                        final participant = participantList[0];
                                         return Padding(
                                           padding:
                                               const EdgeInsets.only(right: 4.0),
-                                          child: GestureDetector(
-                                            behavior: HitTestBehavior.opaque,
-                                            onTap: () {
-                                              // show  summary profile of user in modal bottom sheet
-                                            },
-                                            onLongPress:
-                                                // _isOwner == false
-                                                //     ? null
-                                                //     :
-                                                () {
+                                          child: ParticipantCard(
+                                            participant,
+                                            key: ObjectKey(
+                                                participant.audience.userId +
+                                                    '2$index'),
+                                            isHost:
+                                                participant.audience.userId ==
+                                                    widget.club.creator.userId,
+                                            onTap: () =>
+                                                ProfileShortView.display(
+                                                    context,
+                                                    participant.audience),
+                                            onLongPress: () {
                                               // for non-owner participant, dialog box to show mute button
 
-                                              // if (participant.audience
+                                              // if (_isOwner && participant.audience
                                               //         .userId !=
                                               //     widget.club.creator
                                               //         .userId) {
-                                              actionOnParticipantDialogBox(
+                                              ParticipantActionDialog.display(
                                                 context,
                                                 participant,
+                                                muteParticipant:
+                                                    _toggleMuteOfParticpant,
+                                                removeParticipant:
+                                                    _kickParticpant,
+                                                blockUser: _blockUser,
                                               );
                                               // }
                                             },
-                                            child: Column(
-                                              children: [
-                                                Container(
-                                                  width: 72,
-                                                  height: 72,
-                                                  child: Stack(
-                                                    children: [
-                                                      Align(
-                                                        alignment:
-                                                            Alignment.topLeft,
-                                                        child: Container(
-                                                          height: 64,
-                                                          width: 64,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          child: CustomImage(
-                                                            pinwheelPlaceholder:
-                                                                true,
-                                                            radius: 8,
-                                                            image: participant
-                                                                .audience
-                                                                .avatar,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .bottomRight,
-                                                        child: CircleAvatar(
-                                                          backgroundColor: participant
-                                                                  .isMuted
-                                                              ? Colors.black
-                                                                  .withOpacity(
-                                                                      0.5)
-                                                              : Colors.redAccent
-                                                                  .withOpacity(
-                                                                      0.5),
-                                                          radius: 10,
-                                                          child: Icon(
-                                                            participant.isMuted
-                                                                ? Icons
-                                                                    .mic_off_outlined
-                                                                : Icons
-                                                                    .mic_none_sharp,
-                                                            color: Colors.white,
-                                                            size: 14,
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: 84,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Container(
-                                                        width: 80,
-                                                        child: Text(
-                                                          participant.audience
-                                                              .username,
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 11,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 4),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
                                           ),
                                         );
                                       },
@@ -1534,71 +1472,95 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // heart reaction
-                      LikeButton(
-                        onTap: (val) async {
-                          _toggleClubHeart();
-                          return Future.value(!val);
-                        },
-                        countPostion: CountPostion.bottom,
+                  LikeButton(
+                    onTap: (val) async {
+                      _toggleClubHeart();
+                      return Future.value(!val);
+                    },
+                    countPostion: CountPostion.bottom,
+                    size: 32,
+                    isLiked: _clubAudience.reactionIndexValue == 2,
+                    likeCount: _heartCount,
+                    countBuilder: (count, _, __) {
+                      return Text(
+                        '${count ?? ""}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
+                      );
+                    },
+                    likeBuilder: (bool isLiked) {
+                      return Icon(
+                        _clubAudience.reactionIndexValue == 2
+                            ? Icons.favorite
+                            : Icons.favorite_border_rounded,
+                        color: isLiked ? Colors.redAccent : Colors.white,
                         size: 32,
-                        isLiked: _clubAudience.reactionIndexValue == 2,
-                        likeCount: _heartCount,
-                        countBuilder: (count, _, __) {
-                          return Text(
-                            '${count ?? ""}',
+                      );
+                    },
+                  ),
+                  LikeButton(
+                    onTap: (_) async {
+                      Future.delayed(Duration(milliseconds: 1200), () {
+                        setState(() {});
+                      });
+
+                      //TODO: uncomment this
+
+                      // if (_clubAudience.club.status != ClubStatus.Live)
+                      //   return Future.value(true);
+
+                      if (FocusManager.instance.primaryFocus.hasFocus) {
+                        FocusManager.instance.primaryFocus.unfocus();
+
+                        // time delay to let unfocus action complete
+                        Future.delayed(Duration(milliseconds: 200), () {
+                          _displayHallPanel(context);
+                        });
+                      } else
+                        _displayHallPanel(context);
+
+                      return Future.value(true);
+                    },
+                    countDecoration: (_, count) {
+                      String txt =
+                          _clubAudience.club.estimatedAudience?.toString() ??
+                              "";
+                      if (txt.isNotEmpty) {
+                        txt += ' listeners';
+                      }
+                      return Column(
+                        children: [
+                          Text(
+                            txt,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 13,
                             ),
-                          );
-                        },
-                        likeBuilder: (bool isLiked) {
-                          return Icon(
-                            _clubAudience.reactionIndexValue == 2
-                                ? Icons.favorite
-                                : Icons.favorite_border_rounded,
-                            color: isLiked ? Colors.redAccent : Colors.white,
-                            size: 32,
-                          );
-                        },
-                      ),
-                      SizedBox(width: 16),
-                      LikeButton(
-                        onTap: (_) async {
-                          Future.delayed(Duration(milliseconds: 1200), () {
-                            setState(() {});
-                          });
-
-                          return Future.value(true);
-                        },
-                        countDecoration: (_, count) {
-                          return Text(
-                            '${_clubAudience.club.estimatedAudience ?? ""}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
+                          ),
+                          if (_clubAudience.club.status == ClubStatus.Live)
+                            Text(
+                              '(click)',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 11,
+                              ),
                             ),
-                          );
-                        },
-                        isLiked: false,
-                        likeCount: _clubAudience.club.estimatedAudience,
-                        countPostion: CountPostion.bottom,
+                        ],
+                      );
+                    },
+                    isLiked: false,
+                    likeCount: _clubAudience.club.estimatedAudience,
+                    countPostion: CountPostion.bottom,
+                    size: 32,
+                    likeBuilder: (_) {
+                      return Icon(
+                        Icons.headset,
+                        color: Colors.green,
                         size: 32,
-                        likeBuilder: (_) {
-                          return Icon(
-                            Icons.headset,
-                            color: Colors.redAccent,
-                            size: 32,
-                          );
-                        },
-                      ),
-
-                      SizedBox(width: 4),
-                    ],
+                      );
+                    },
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -1634,36 +1596,14 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     );
   }
 
-  void displayShortProfile(BuildContext context, SummaryUser summaryUser) {
-    FocusManager.instance.primaryFocus.unfocus();
-
-    Scaffold.of(context).showBottomSheet(
-      (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.4,
-        maxChildSize: 0.8,
-        minChildSize: 0.4,
-        builder: (_, controller) => ProfileShortView(summaryUser, controller),
-      ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-    );
-  }
-
-  void actionOnParticipantDialogBox(
-      BuildContext context, AudienceData participant) {
-    showDialog(
-      context: context,
-      builder: (ctx) => ParticipantActionDialog(participant),
-    );
-  }
-
   void displayFullClubData(BuildContext context) {
     FocusManager.instance.primaryFocus.unfocus();
-
     if (_clubAudience == null) return;
 
-    Scaffold.of(context).showBottomSheet(
-      (context) => DraggableScrollableSheet(
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) => DraggableScrollableSheet(
         expand: false,
         initialChildSize: 0.6,
         maxChildSize: 0.8,
@@ -1767,6 +1707,77 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     );
   }
 
+  void _displayHallPanel(BuildContext context) {
+    FocusManager.instance.primaryFocus.unfocus();
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.6,
+        maxChildSize: 0.9,
+        minChildSize: 0.4,
+        builder: (_, controller) => Container(
+          child: HallPanelBuilder(
+            controller,
+            currentlySpeakingUsers: currentlySpeakingUsers,
+            club: _clubAudience?.club ?? widget.club,
+            size: MediaQuery.of(context).size,
+            participantList: participantList,
+            isOwner: _isOwner,
+            hasSentJoinRequest: _clubAudience.audienceData.status ==
+                AudienceStatus.ActiveJoinRequest,
+            muteParticipant: _toggleMuteOfParticpant,
+            removeParticipant: _kickParticpant,
+            blockUser: _blockUser,
+            sendJoinRequest: _sendJoinRequest,
+            deleteJoinRequest: _deleteJoinRequest,
+            audienceMap: _audienceMap,
+            inviteAudience: (userId) async {
+              final response = await _service.inviteUsers(
+                clubId: widget.club.clubId,
+                sponsorId: _myUserId,
+                invite: BuiltInviteFormat(
+                  (b) => b
+                    ..invitee = BuiltList<String>([userId]).toBuilder()
+                    ..type = 'participant',
+                ),
+              );
+              if (response.isSuccessful) {
+                Fluttertoast.showToast(msg: 'Invitation sent successfully');
+              } else {
+                Fluttertoast.showToast(msg: 'Error in sending invitaion');
+              }
+            },
+            fetchMoreAudience: () async {
+              if (_audienceMap['isLoading'] == true) return;
+
+              _justRefresh(() {
+                _audienceMap['isLoading'] = true;
+              });
+
+              if (_audienceMap['lastlastevaluatedkey'] != null) {
+                (_audienceMap['list'] as List).addAll(
+                    await _fetchAudienceList(_audienceMap['lastevaluatedkey']));
+              } else {
+                await Future.delayed(Duration(milliseconds: 200));
+              }
+              _justRefresh(() {
+                _audienceMap['isLoading'] = false;
+              });
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     this._myUserId = Provider.of<UserData>(context, listen: false).userId;
@@ -1793,6 +1804,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         return true;
       },
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.white,
         body: SafeArea(
           child: _clubAudience != null
@@ -1820,97 +1832,11 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                               processTimestamp: _processTimestamp,
                               addComment: addComment,
                               newCommentController: _newCommentController,
-                              displayShortProfile: displayShortProfile,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    // if (MediaQuery.of(context).viewInsets.bottom == 0)
-                    // SlidingUpPanel(
-                    //     controller: _panelController,
-                    //     minHeight: size.height / 16,
-                    //     maxHeight: size.height / 1.15,
-                    //     backdropEnabled: true,
-                    //     borderRadius: BorderRadius.only(
-                    //         topLeft: Radius.circular(24),
-                    //         topRight: Radius.circular(24)),
-                    //     panelBuilder: (ScrollController sc) =>
-                    //         HallPanelBuilder(
-                    //           sc,
-                    //           currentlySpeakingUsers: currentlySpeakingUsers,
-                    //           club: _clubAudience?.club ?? widget.club,
-                    //           size: size,
-                    //           participantList: participantList,
-                    //           isOwner: _isOwner,
-                    //           hasSentJoinRequest:
-                    //               _clubAudience.audienceData.status ==
-                    //                   AudienceStatus.ActiveJoinRequest,
-                    //           muteParticipant: _toggleMuteOfParticpant,
-                    //           removeParticipant: _kickParticpant,
-                    //           blockUser: _blockUser,
-                    //           sendJoinRequest: _sendJoinRequest,
-                    //           deleteJoinRequest: _deleteJoinRequest,
-                    //           audienceMap: _audienceMap,
-                    //           inviteAudience: (userId) async {
-                    //             final response = await _service.inviteUsers(
-                    //               clubId: widget.club.clubId,
-                    //               sponsorId: _myUserId,
-                    //               invite: BuiltInviteFormat(
-                    //                 (b) => b
-                    //                   ..invitee = BuiltList<String>([userId])
-                    //                       .toBuilder()
-                    //                   ..type = 'participant',
-                    //               ),
-                    //             );
-                    //             if (response.isSuccessful) {
-                    //               Fluttertoast.showToast(
-                    //                   msg: 'Invitation sent successfully');
-                    //             } else {
-                    //               Fluttertoast.showToast(
-                    //                   msg: 'Error in sending invitaion');
-                    //             }
-                    //           },
-                    //           fetchMoreAudience: () async {
-                    //             if (_audienceMap['isLoading'] == true) return;
-
-                    //             _justRefresh(() {
-                    //               _audienceMap['isLoading'] = true;
-                    //             });
-
-                    //             if (_audienceMap['lastlastevaluatedkey'] !=
-                    //                 null) {
-                    //               (_audienceMap['list'] as List).addAll(
-                    //                   await _fetchAudienceList(
-                    //                       _audienceMap['lastevaluatedkey']));
-                    //             } else {
-                    //               await Future.delayed(
-                    //                   Duration(milliseconds: 200));
-                    //             }
-                    //             _justRefresh(() {
-                    //               _audienceMap['isLoading'] = false;
-                    //             });
-                    //           },
-                    //         ),
-                    //     collapsed: Container(
-                    //       decoration: BoxDecoration(
-                    //         color: Colors.redAccent,
-                    //         borderRadius: BorderRadius.only(
-                    //           topLeft: Radius.circular(24),
-                    //           topRight: Radius.circular(24),
-                    //         ),
-                    //       ),
-                    //       child: Center(
-                    //         child: Text(
-                    //           "HALL",
-                    //           style: TextStyle(
-                    //               color: Colors.white,
-                    //               fontFamily: 'Lato',
-                    //               fontWeight: FontWeight.bold,
-                    //               letterSpacing: 2.0),
-                    //         ),
-                    //       ),
-                    //     )),
                   ],
                 )
               : Container(

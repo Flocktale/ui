@@ -9,6 +9,22 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class ProfileShortView extends StatefulWidget {
+  static void display(BuildContext context, SummaryUser summaryUser) async {
+    FocusManager.instance.primaryFocus.unfocus();
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.4,
+        maxChildSize: 0.7,
+        minChildSize: 0.4,
+        builder: (_, controller) => ProfileShortView(summaryUser, controller),
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    );
+  }
+
   final SummaryUser summaryUser;
   final ScrollController controller;
   const ProfileShortView(this.summaryUser, this.controller);

@@ -3,8 +3,32 @@ import 'package:flocktale/Widgets/imageDialogLayout.dart';
 import 'package:flutter/material.dart';
 
 class ParticipantActionDialog extends StatefulWidget {
+  static void display(
+    BuildContext context,
+    AudienceData participant, {
+    Future<bool> Function(String, bool) muteParticipant,
+    Future<bool> Function(String) removeParticipant,
+    Future<bool> Function(String) blockUser,
+  }) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.7),
+      builder: (ctx) => ParticipantActionDialog(
+        participant,
+        muteParticipant: muteParticipant,
+        removeParticipant: removeParticipant,
+        blockUser: blockUser,
+      ),
+    );
+  }
+
+  final Future<bool> Function(String, bool) muteParticipant;
+  final Future<bool> Function(String) removeParticipant;
+  final Future<bool> Function(String) blockUser;
+
   final AudienceData participant;
-  const ParticipantActionDialog(this.participant);
+  const ParticipantActionDialog(this.participant,
+      {this.muteParticipant, this.removeParticipant, this.blockUser});
   @override
   _ParticipantActionDialogState createState() =>
       _ParticipantActionDialogState();
@@ -51,7 +75,18 @@ class _ParticipantActionDialogState extends State<ParticipantActionDialog> {
                           borderRadius: BorderRadius.circular(50)),
                       child: InkWell(
                         splashColor: Colors.redAccent,
-                        onTap: _participant.isMuted ? null : () {},
+                        onTap: _participant.isMuted
+                            ? null
+                            : () async {
+                                final res = await widget.muteParticipant(
+                                    widget.participant.audience.userId, true);
+                                if (res == true) {
+                                  setState(() {
+                                    _participant = _participant
+                                        .rebuild((b) => b..isMuted = true);
+                                  });
+                                }
+                              },
                         child: CircleAvatar(
                           radius: 40,
                           backgroundColor: _participant.isMuted
@@ -88,18 +123,27 @@ class _ParticipantActionDialogState extends State<ParticipantActionDialog> {
               ),
               Column(
                 children: [
-                  Card(
-                    elevation: 4,
-                    shadowColor: Colors.redAccent,
-                    color: Colors.black87,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8),
-                      child: Text(
-                        'Demote',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                  InkWell(
+                    onLongPress: () async {
+                      final res = await widget
+                          .removeParticipant(_participant.audience.userId);
+                      if (res == true) {
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shadowColor: Colors.redAccent,
+                      color: Colors.black87,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 8),
+                        child: Text(
+                          'Demote',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
                       ),
                     ),
                   ),
@@ -118,33 +162,42 @@ class _ParticipantActionDialogState extends State<ParticipantActionDialog> {
                     ),
                   ),
                   SizedBox(height: 24),
-                  Card(
-                    elevation: 4,
-                    shadowColor: Colors.redAccent,
-                    color: Colors.black87,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.block,
-                            color: Colors.redAccent,
-                            size: 20,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            'Block',
-                            style: TextStyle(
+                  InkWell(
+                    onLongPress: () async {
+                      final res =
+                          await widget.blockUser(_participant.audience.userId);
+                      if (res == true) {
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shadowColor: Colors.redAccent,
+                      color: Colors.black87,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.block,
                               color: Colors.redAccent,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              size: 20,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 4),
+                            Text(
+                              'Block',
+                              style: TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
