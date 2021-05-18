@@ -19,13 +19,11 @@ class HallPanelBuilder extends StatelessWidget {
   final bool hasSentJoinRequest;
   final List<AudienceData> participantList;
   final bool isOwner;
-  final Map<String, int> currentlySpeakingUsers;
+  final ValueNotifier<Map<String, int>> currentlySpeakingUsers;
 
-  final Future<bool> Function(String, bool) muteParticipant;
-  final Future<bool> Function(String) removeParticipant;
+  final GestureDetector Function(AudienceData) participantCardStackGesture;
 
   final Function(String) inviteAudience;
-  final Future<bool> Function(String) blockUser;
 
   final Function() sendJoinRequest;
   final Function() deleteJoinRequest;
@@ -42,10 +40,8 @@ class HallPanelBuilder extends StatelessWidget {
     @required this.participantList,
     @required this.isOwner,
     @required this.hasSentJoinRequest,
-    @required this.muteParticipant,
-    @required this.removeParticipant,
+    this.participantCardStackGesture,
     @required this.inviteAudience,
-    @required this.blockUser,
     @required this.sendJoinRequest,
     @required this.deleteJoinRequest,
     @required this.audienceMap,
@@ -65,17 +61,8 @@ class HallPanelBuilder extends StatelessWidget {
 
   void _handleMenuButtons(String value, String userId) {
     switch (value) {
-      case 'Mute':
-        muteParticipant(userId, true);
-        break;
-      case 'Remove':
-        removeParticipant(userId);
-        break;
       case 'Invite':
         inviteAudience(userId);
-        break;
-      case 'Block':
-        blockUser(userId);
         break;
     }
   }
@@ -151,7 +138,11 @@ class HallPanelBuilder extends StatelessWidget {
         else if (club?.status == ClubStatus.Live && participantList.length < 9)
           Text(
             !hasSentJoinRequest ? "Ask to join" : "Cancel join request",
-            style: TextStyle(fontFamily: "Lato", fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontFamily: "Lato",
+              color: Colors.white,
+              fontSize: 12,
+            ),
           )
       ],
     );
@@ -233,28 +224,35 @@ class HallPanelBuilder extends StatelessWidget {
                   }
 
                   final participant = participantList[index];
-                  return ParticipantCard(
-                    participant,
-                    key: ObjectKey(participant.audience.userId + '$index'),
-                    isHost: participant.audience.userId == club.creator.userId,
-                    onTap: () {
-                      print('asdfffffffffffffffffffffffffffffffs');
-                      ProfileShortView.display(context, participant.audience);
-                    },
-                    onLongPress: () {
-                      // for non-owner participant, dialog box to show mute button
-                      if (isOwner &&
-                          participant.audience.userId != club.creator.userId) {
-                        ParticipantActionDialog.display(
-                          context,
-                          participant,
+
+                  return ValueListenableBuilder(
+                      valueListenable: currentlySpeakingUsers,
+                      child: participantCardStackGesture(participant),
+                      builder: (_, speakers, stackGesture) {
+                        return Stack(
+                          fit: StackFit.passthrough,
+                          children: [
+                            ParticipantCard(
+                              participant,
+                              key: ObjectKey(
+                                  participant.audience.userId + '$index'),
+                              isHost: participant.audience.userId ==
+                                  club.creator.userId,
+                              volume: (speakers ?? const {})[
+                                      participant.audience.username] ??
+                                  0,
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                height: 72,
+                                width: 72,
+                                child: stackGesture,
+                              ),
+                            ),
+                          ],
                         );
-                      }
-                    },
-                    volume: (currentlySpeakingUsers ??
-                            const {})[participant.audience.username] ??
-                        0,
-                  );
+                      });
                 },
               ),
             ),
@@ -282,6 +280,7 @@ class HallPanelBuilder extends StatelessWidget {
               Container(
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                 child: GridView.builder(
+                  clipBehavior: Clip.none,
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -291,8 +290,14 @@ class HallPanelBuilder extends StatelessWidget {
                   itemCount: (audienceList?.length ?? 0),
                   itemBuilder: (context, index) {
                     final audience = audienceList[index].audience;
+
+                    return AudienceCard(
+                      audience,
+                      onTap: () => ProfileShortView.display(context, audience),
+                      onLongPress: () {},
+                    );
+
                     return Container(
-                      // color: Colors.red,
                       child: Stack(
                         children: [
                           InkWell(

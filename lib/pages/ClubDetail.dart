@@ -53,7 +53,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   bool newMessage = false;
 
   Map<int, String> integerUsernames = {};
-  Map<String, int> currentlySpeakingUsers;
+
+  bool emptySpeakerList = false;
+  ValueNotifier<Map<String, int>> currentlySpeakingUsers = ValueNotifier({});
 
   bool _isMuted;
 
@@ -91,14 +93,16 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void getActiveSpeakers(List<RTC.AudioVolumeInfo> speakers, _) {
+    if (speakers.isEmpty && emptySpeakerList == false) {
+      emptySpeakerList = true;
+      return;
+    } else
+      emptySpeakerList = false;
+
     var speakingUsers = new Map<String, int>();
     speakers.forEach((e) {
       final username = integerUsernames[e.uid];
       speakingUsers[username] = e.volume;
-
-      print("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
-      print(username);
-      print(speakingUsers[username]);
     });
 
 // sorted in ascending order of volume
@@ -106,6 +110,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     speakingUsers.entries.toList()
       ..sort((a, b) => a.value - b.value)
       ..forEach((element) {
+        if (element.value < 50) return;
         participantList.sort((a, b) {
           if (b.audience.username == element.key)
             return 1;
@@ -114,9 +119,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         });
       });
 
-    _justRefresh(() {
-      currentlySpeakingUsers = speakingUsers;
-    });
+    print(speakingUsers);
+
+    currentlySpeakingUsers.value = speakingUsers;
   }
 
   void _getMostActiveSpeaker(int uid) {
@@ -1011,33 +1016,37 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Widget get _displayMicButton {
     final cuser = Provider.of<UserData>(context, listen: false).user;
-    return InkWell(
-      onTap: () => _toggleMuteOfParticpant(
-          Provider.of<UserData>(context, listen: false).userId),
-      child: Card(
-        elevation: 4,
-        shadowColor: Colors.redAccent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        child: CircleAvatar(
-          radius: 24,
-          backgroundColor: _isMuted ? Colors.black87 : Colors.white,
-          child: !_isMuted
-              ? Icon(
-                  Icons.mic_none_sharp,
-                  color: currentlySpeakingUsers != null &&
-                          currentlySpeakingUsers[cuser.username] != null &&
-                          currentlySpeakingUsers[cuser.username] > 0
-                      ? Colors.redAccent
-                      : Colors.black,
-                  size: 28,
-                )
-              : Icon(
-                  Icons.mic_off_outlined,
-                  color: Colors.white,
-                  size: 28,
-                ),
-        ),
-      ),
+    return ValueListenableBuilder(
+      valueListenable: currentlySpeakingUsers,
+      builder: (_, speakers, __) {
+        return InkWell(
+          onTap: () => _toggleMuteOfParticpant(
+              Provider.of<UserData>(context, listen: false).userId),
+          child: Card(
+            elevation: 4,
+            shadowColor: Colors.redAccent,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            child: CircleAvatar(
+              radius: 24,
+              backgroundColor: _isMuted ? Colors.black87 : Colors.white,
+              child: !_isMuted
+                  ? Icon(
+                      Icons.mic_none_sharp,
+                      color: ((speakers ?? const {})[cuser.username] ?? 0) > 30
+                          ? Colors.redAccent
+                          : Colors.black,
+                      size: 28,
+                    )
+                  : Icon(
+                      Icons.mic_off_outlined,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -1060,18 +1069,14 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                   color: Colors.black,
                   size: 24,
                 )
-              : _clubAudience.audienceData.status !=
-                      AudienceStatus.ActiveJoinRequest
-                  ? Icon(
-                      Icons.person_add,
-                      color: Colors.white,
-                      size: 24,
-                    )
-                  : Icon(
-                      Icons.person_add_disabled,
-                      color: Colors.black,
-                      size: 24,
-                    ),
+              : Icon(
+                  _clubAudience.audienceData.status !=
+                          AudienceStatus.ActiveJoinRequest
+                      ? Icons.person_add
+                      : Icons.person_add_disabled,
+                  color: Colors.white,
+                  size: 24,
+                ),
         ),
       ),
     );
@@ -1136,6 +1141,30 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       setState(() {});
     }
   }
+
+  /// due to quick updation of widgets (because of our need here), long press can't be used within listenable builder
+  /// widget is re-rendered many times amidst a single timespan of long press
+  /// above reasoning also satisfies doubleTap (not if double tap is done quicker than updation, which is very cumbersome here)
+  /// so using a gesture detector to be stacked over main widget
+  /// main widget => keeps updating, stacked gesture => remains constant so works well
+
+  GestureDetector _participantCardStackGesture(AudienceData participant) =>
+      GestureDetector(
+        onDoubleTap: _isOwner &&
+                participant.audience.userId != widget.club.creator.userId
+            ? () {
+                // for non-owner participant, dialog box to show mute button
+                ParticipantActionDialog.display(
+                  context,
+                  participant,
+                  muteParticipant: _toggleMuteOfParticpant,
+                  removeParticipant: _kickParticpant,
+                  blockUser: _blockUser,
+                );
+              }
+            : null,
+        onTap: () => ProfileShortView.display(context, participant.audience),
+      );
 
   Widget clubDataDisplayWidget() {
     return Container(
@@ -1345,121 +1374,133 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                           ],
                         ),
                         SizedBox(height: 16),
-                        // if (_clubAudience.club.status != ClubStatus.Live)
-                        //   Expanded(
-                        //     child: Row(
-                        //       mainAxisAlignment: MainAxisAlignment.center,
-                        //       crossAxisAlignment: CrossAxisAlignment.center,
-                        //       children: [
-                        //         Container(
-                        //           padding: const EdgeInsets.symmetric(
-                        //             horizontal: 24,
-                        //             vertical: 16,
-                        //           ),
-                        //           decoration: BoxDecoration(
-                        //             color: Colors.black54,
-                        //             borderRadius: BorderRadius.circular(8),
-                        //           ),
-                        //           child: Row(
-                        //             children: [
-                        //               if (_clubAudience.club.status !=
-                        //                   ClubStatus.Concluded)
-                        //                 Icon(
-                        //                   Icons.timer,
-                        //                   color: Colors.white,
-                        //                   size: 32,
-                        //                 ),
-                        //               SizedBox(width: 8),
-                        //               Text(
-                        //                 _clubAudience.club.status ==
-                        //                         ClubStatus.Concluded
-                        //                     ? "Concluded"
-                        //                     : DateTime.now().compareTo(DateTime
-                        //                                 .fromMillisecondsSinceEpoch(
-                        //                                     _clubAudience.club
-                        //                                         .scheduleTime)) <
-                        //                             0
-                        //                         ? "Scheduled: ${_processScheduledTimestamp(_clubAudience.club.scheduleTime)}"
-                        //                         : "Waiting for start",
-                        //                 style: TextStyle(
-                        //                   fontFamily: 'Lato',
-                        //                   color: Colors.white,
-                        //                   fontSize: 16,
-                        //                 ),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   )
-                        // else
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            width: double.infinity,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        if (_clubAudience.club.status != ClubStatus.Live)
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Container(),
                                 Container(
-                                  height: 100,
-                                  child: Center(
-                                    child: ListView.builder(
-                                      clipBehavior: Clip.none,
-                                      shrinkWrap: true,
-                                      addSemanticIndexes: false,
-                                      itemCount: participantList.length * 5,
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (ctx, index) {
-                                        //! if this is club owner
-                                        //! different decoration for club owner
-
-                                        final participant = participantList[0];
-                                        return Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 4.0),
-                                          child: ParticipantCard(
-                                            participant,
-                                            key: ObjectKey(
-                                                participant.audience.userId +
-                                                    '2$index'),
-                                            isHost:
-                                                participant.audience.userId ==
-                                                    widget.club.creator.userId,
-                                            onTap: () =>
-                                                ProfileShortView.display(
-                                                    context,
-                                                    participant.audience),
-                                            onLongPress: () {
-                                              // for non-owner participant, dialog box to show mute button
-
-                                              // if (_isOwner && participant.audience
-                                              //         .userId !=
-                                              //     widget.club.creator
-                                              //         .userId) {
-                                              ParticipantActionDialog.display(
-                                                context,
-                                                participant,
-                                                muteParticipant:
-                                                    _toggleMuteOfParticpant,
-                                                removeParticipant:
-                                                    _kickParticpant,
-                                                blockUser: _blockUser,
-                                              );
-                                              // }
-                                            },
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      if (_clubAudience.club.status !=
+                                          ClubStatus.Concluded)
+                                        Icon(
+                                          Icons.timer,
+                                          color: Colors.white,
+                                          size: 32,
+                                        ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        _clubAudience.club.status ==
+                                                ClubStatus.Concluded
+                                            ? "Concluded"
+                                            : DateTime.now().compareTo(DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                            _clubAudience.club
+                                                                .scheduleTime)) <
+                                                    0
+                                                ? "Scheduled: ${_processScheduledTimestamp(_clubAudience.club.scheduleTime)}"
+                                                : "Waiting for start",
+                                        style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
+                          )
+                        else
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              width: double.infinity,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(),
+                                  Container(
+                                    height: 100,
+                                    child: Center(
+                                      child: ListView.builder(
+                                        clipBehavior: Clip.none,
+                                        shrinkWrap: true,
+                                        addSemanticIndexes: false,
+                                        itemCount: participantList.length,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder: (ctx, index) {
+                                          //! if this is club owner
+                                          //! different decoration for club owner
+
+                                          final participant =
+                                              participantList[index];
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 4.0),
+                                            child: ValueListenableBuilder(
+                                                valueListenable:
+                                                    currentlySpeakingUsers,
+                                                child:
+                                                    _participantCardStackGesture(
+                                                        participant),
+                                                builder: (context, speakers,
+                                                    stackGesture) {
+                                                  return Stack(
+                                                    fit: StackFit.passthrough,
+                                                    children: [
+                                                      ParticipantCard(
+                                                        participant,
+                                                        key: ObjectKey(
+                                                            participant.audience
+                                                                    .userId +
+                                                                ' 2 $index'),
+                                                        isHost: participant
+                                                                .audience
+                                                                .userId ==
+                                                            widget.club.creator
+                                                                .userId,
+                                                        volume: (speakers ??
+                                                                    const {})[
+                                                                participant
+                                                                    .audience
+                                                                    .username] ??
+                                                            0,
+                                                      ),
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Container(
+                                                          height: 72,
+                                                          width: 72,
+                                                          child: stackGesture,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -1733,9 +1774,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
             isOwner: _isOwner,
             hasSentJoinRequest: _clubAudience.audienceData.status ==
                 AudienceStatus.ActiveJoinRequest,
-            muteParticipant: _toggleMuteOfParticpant,
-            removeParticipant: _kickParticpant,
-            blockUser: _blockUser,
+            participantCardStackGesture: _participantCardStackGesture,
             sendJoinRequest: _sendJoinRequest,
             deleteJoinRequest: _deleteJoinRequest,
             audienceMap: _audienceMap,
