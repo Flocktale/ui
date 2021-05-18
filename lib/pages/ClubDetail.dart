@@ -25,7 +25,6 @@ import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'ClubJoinRequests.dart';
 import 'package:intl/intl.dart';
 import 'BlockedUsersPage.dart';
@@ -42,7 +41,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   String _myUserId;
   DatabaseApiService _service;
-  String _authToken;
 
   BuiltClubAndAudience _clubAudience;
   bool _isOwner;
@@ -61,7 +59,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   bool _hasActiveJRs = false;
 
-  BuiltList<BuiltClub> Clubs;
   List<AudienceData> participantList = [];
 
   final Map<String, dynamic> _audienceMap = {
@@ -70,11 +67,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     'isLoading': false,
   };
 
-  final PanelController _panelController = PanelController();
-
   // reaction counts
-  int _dislikeCount;
-  int _likeCount;
   int _heartCount;
 
   List<Comment> comments = [];
@@ -210,11 +203,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     int count = (event['count']);
     int ind = (event['indexValue']);
-    if (ind == 0) {
-      _dislikeCount = count;
-    } else if (ind == 1) {
-      _likeCount = count;
-    } else if (ind == 2) {
+
+    if (ind == 2) {
       _heartCount = count;
     }
 
@@ -338,20 +328,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         Provider.of<UserData>(context, listen: false).user.userId);
   }
 
-  void _resetReactionValueInClubAudience(int value) {
-    _clubAudience = _clubAudience.rebuild((b) => b
-      ..reactionIndexValue =
-          _clubAudience.reactionIndexValue == value ? null : value);
-    _justRefresh();
-  }
-
   void _toggleClubHeart() async {
     if (_clubAudience.reactionIndexValue == 2)
       _heartCount -= 1;
     else {
-      if (_clubAudience.reactionIndexValue == 1) _likeCount -= 1;
-      if (_clubAudience.reactionIndexValue == 0) _dislikeCount -= 1;
-
       _heartCount += 1;
     }
 
@@ -360,52 +340,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       audienceId: _myUserId,
       indexValue: 2,
     );
-    _resetReactionValueInClubAudience(2);
-  }
+    _clubAudience = _clubAudience.rebuild((b) => b
+      ..reactionIndexValue = _clubAudience.reactionIndexValue == 2 ? null : 2);
 
-  void toggleClubLike() async {
-    if (_clubAudience.reactionIndexValue == 1)
-      _likeCount -= 1;
-    else {
-      if (_clubAudience.reactionIndexValue == 2) _heartCount -= 1;
-      if (_clubAudience.reactionIndexValue == 0) _dislikeCount -= 1;
-
-      _likeCount += 1;
-    }
-
-    _service.postReaction(
-      clubId: widget.club.clubId,
-      audienceId: _myUserId,
-      indexValue: 1,
-    );
-    _resetReactionValueInClubAudience(1);
-  }
-
-  void _toggleClubDislike() async {
-    if (_clubAudience.reactionIndexValue == 0)
-      _dislikeCount -= 1;
-    else {
-      if (_clubAudience.reactionIndexValue == 2) _heartCount -= 1;
-      if (_clubAudience.reactionIndexValue == 1) _likeCount -= 1;
-
-      _dislikeCount += 1;
-    }
-
-    _service.postReaction(
-      clubId: widget.club.clubId,
-      audienceId: _myUserId,
-      indexValue: 0,
-    );
-    _resetReactionValueInClubAudience(0);
-  }
-
-  _fetchAllOwnerClubs() async {
-    Clubs = (await _service.getMyOrganizedClubs(
-      userId: widget.club.creator.userId,
-      lastevaluatedkey: null,
-    ))
-        .body
-        .clubs;
+    _justRefresh();
   }
 
   /// set [overridenMute] to true if host is muting panelist
@@ -520,18 +458,19 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   void reportClub() {}
 
   Future<void> _joinClubAsPanelist() async {
-    String username =
-        Provider.of<UserData>(context, listen: false).user.username;
+    // TODO: uncomment this
+    // String username =
+    //     Provider.of<UserData>(context, listen: false).user.username;
 
-    Provider.of<AgoraController>(context, listen: false).club =
-        _clubAudience.club;
+    // Provider.of<AgoraController>(context, listen: false).club =
+    //     _clubAudience.club;
 
-    await Provider.of<AgoraController>(context, listen: false)
-        .joinAsParticipant(
-      clubId: _clubAudience.club.clubId,
-      token: _clubAudience.club.agoraToken,
-      integerUsername: convertToInt(username),
-    );
+    // await Provider.of<AgoraController>(context, listen: false)
+    //     .joinAsParticipant(
+    //   clubId: _clubAudience.club.clubId,
+    //   token: _clubAudience.club.agoraToken,
+    //   integerUsername: convertToInt(username),
+    // );
   }
 
   Future<void> _joinClubAsAudience() async {
@@ -737,7 +676,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   Future<void> _handleMenuButtons(String value) async {
     switch (value) {
       case 'Join Requests':
-        await _navigateTo(ClubJoinRequests(club: widget.club));
+        // await _navigateTo(ClubJoinRequests(club: widget.club));
+        _showRightSideSheet(context: context);
         break;
 
       case 'Invite Panelist':
@@ -1817,6 +1757,45 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
           ),
         ),
       ),
+    );
+  }
+
+  _showRightSideSheet({
+    BuildContext context,
+  }) {
+    showGeneralDialog(
+      barrierLabel: "Barrier",
+      barrierDismissible: true,
+      barrierColor: Colors.black54,
+      transitionDuration: Duration(milliseconds: 300),
+      context: context,
+      pageBuilder: (context, animation1, animation2) {
+        return SafeArea(
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              height: double.infinity,
+              width: MediaQuery.of(context).size.width * 0.75,
+              decoration: BoxDecoration(
+                color: Colors.black87,
+                border: Border(
+                  left: BorderSide(
+                    color: Colors.white54,
+                  ),
+                ),
+              ),
+              child: ClubJoinRequests(club: widget.club),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        return SlideTransition(
+          position:
+              Tween(begin: Offset(1, 0), end: Offset(0, 0)).animate(animation1),
+          child: child,
+        );
+      },
     );
   }
 

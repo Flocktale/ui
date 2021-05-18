@@ -1,8 +1,6 @@
 import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/Widgets/ClubUserCards.dart';
 import 'package:flocktale/Widgets/audienceActionDialog.dart';
-import 'package:flocktale/Widgets/customImage.dart';
-import 'package:flocktale/Widgets/participantActionDialog.dart';
 import 'package:flocktale/Widgets/profileSummary.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +8,6 @@ import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/InviteScreen.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
-
-import '../pages/ProfilePage.dart';
 
 class HallPanelBuilder extends StatelessWidget {
   final ScrollController scrollController;
