@@ -150,6 +150,90 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
         ),
       );
 
+  Widget requesterList(BuiltActiveJoinRequests currentRequests) {
+    final listLength = currentRequests?.activeJoinRequestUsers?.length ?? 0;
+    if (listLength == 0)
+      return Center(
+        child: Text(
+          'No Requests...',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 18,
+          ),
+        ),
+      );
+
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: currentRequests?.activeJoinRequestUsers?.length ?? 0,
+      itemBuilder: (context, index) {
+        final requester =
+            currentRequests.activeJoinRequestUsers[index].audience;
+
+        return Container(
+          key: ValueKey(requester.userId + ' $index'),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                onTap: () => ProfileShortView.display(context, requester),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  child: CustomImage(
+                    image: requester.avatar,
+                    radius: 8,
+                  ),
+                ),
+              ),
+              Text(
+                requester.username,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+              InkWell(
+                onTap: () async {
+                  await acceptJoinRequest(requester.userId);
+
+                  final list = currentRequests.activeJoinRequestUsers
+                      .toBuilder()
+                        ..removeAt(index);
+
+                  currentRequests = currentRequests
+                      .rebuild((b) => b..activeJoinRequestUsers = list);
+
+                  if (isSearching) {
+                    {
+                      filteredJoinRequests = currentRequests;
+
+                      // this removed requester might also be present in non-filtered list so removing from that list too.
+
+                      joinRequests = joinRequests.rebuild(
+                        (b) => b
+                          ..activeJoinRequestUsers =
+                              (joinRequests.activeJoinRequestUsers.toBuilder()
+                                ..removeWhere((r) =>
+                                    r.audience.userId == requester.userId)),
+                      );
+                    }
+                  } else
+                    joinRequests = currentRequests;
+
+                  setState(() {});
+                },
+                child: acceptCard,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     this._service = Provider.of<DatabaseApiService>(context, listen: false);
@@ -197,84 +281,7 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                         }
                         return true;
                       },
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount:
-                            currentRequests?.activeJoinRequestUsers?.length ??
-                                0,
-                        itemBuilder: (context, index) {
-                          final requester = currentRequests
-                              .activeJoinRequestUsers[index].audience;
-
-                          return Container(
-                            key: ValueKey(requester.userId + ' $index'),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 12),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                InkWell(
-                                  onTap: () => ProfileShortView.display(
-                                      context, requester),
-                                  child: Container(
-                                    width: 36,
-                                    height: 36,
-                                    child: CustomImage(
-                                      image: requester.avatar,
-                                      radius: 8,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  requester.username,
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    await acceptJoinRequest(requester.userId);
-
-                                    final list = currentRequests
-                                        .activeJoinRequestUsers
-                                        .toBuilder()
-                                          ..removeAt(index);
-
-                                    currentRequests = currentRequests.rebuild(
-                                        (b) =>
-                                            b..activeJoinRequestUsers = list);
-
-                                    if (isSearching) {
-                                      {
-                                        filteredJoinRequests = currentRequests;
-
-                                        // this removed requester might also be present in non-filtered list so removing from that list too.
-
-                                        joinRequests = joinRequests.rebuild(
-                                          (b) => b
-                                            ..activeJoinRequestUsers =
-                                                (joinRequests
-                                                    .activeJoinRequestUsers
-                                                    .toBuilder()
-                                                      ..removeWhere((r) =>
-                                                          r.audience.userId ==
-                                                          requester.userId)),
-                                        );
-                                      }
-                                    } else
-                                      joinRequests = currentRequests;
-
-                                    setState(() {});
-                                  },
-                                  child: acceptCard,
-                                )
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                      child: requesterList(currentRequests),
                     ),
             ),
           ],

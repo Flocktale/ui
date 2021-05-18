@@ -11,6 +11,7 @@ import 'package:flocktale/Widgets/displayInvitationInClub.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/Widgets/participantActionDialog.dart';
 import 'package:flocktale/Widgets/profileSummary.dart';
+import 'package:flocktale/Widgets/rightSideSheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/comment.dart';
@@ -676,8 +677,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   Future<void> _handleMenuButtons(String value) async {
     switch (value) {
       case 'Join Requests':
-        // await _navigateTo(ClubJoinRequests(club: widget.club));
-        _showRightSideSheet(context: context);
+        RightSideSheet.display(context,
+            child: ClubJoinRequests(club: widget.club));
         break;
 
       case 'Invite Panelist':
@@ -695,7 +696,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         break;
 
       case 'Show Blocked Users':
-        await _navigateTo(BlockedUsersPage(club: widget.club));
+        await RightSideSheet.display(context,
+            child: BlockedUsersPage(club: widget.club));
         break;
     }
   }
@@ -1757,45 +1759,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
           ),
         ),
       ),
-    );
-  }
-
-  _showRightSideSheet({
-    BuildContext context,
-  }) {
-    showGeneralDialog(
-      barrierLabel: "Barrier",
-      barrierDismissible: true,
-      barrierColor: Colors.black54,
-      transitionDuration: Duration(milliseconds: 300),
-      context: context,
-      pageBuilder: (context, animation1, animation2) {
-        return SafeArea(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              height: double.infinity,
-              width: MediaQuery.of(context).size.width * 0.75,
-              decoration: BoxDecoration(
-                color: Colors.black87,
-                border: Border(
-                  left: BorderSide(
-                    color: Colors.white54,
-                  ),
-                ),
-              ),
-              child: ClubJoinRequests(club: widget.club),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        return SlideTransition(
-          position:
-              Tween(begin: Offset(1, 0), end: Offset(0, 0)).animate(animation1),
-          child: child,
-        );
-      },
     );
   }
 
