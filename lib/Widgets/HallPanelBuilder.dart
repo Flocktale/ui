@@ -1,5 +1,6 @@
 import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/Widgets/ClubUserCards.dart';
+import 'package:flocktale/Widgets/audienceActionDialog.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/Widgets/participantActionDialog.dart';
 import 'package:flocktale/Widgets/profileSummary.dart';
@@ -23,7 +24,8 @@ class HallPanelBuilder extends StatelessWidget {
 
   final GestureDetector Function(AudienceData) participantCardStackGesture;
 
-  final Function(String) inviteAudience;
+  final Future<bool> Function(String) inviteAudience;
+  final Future<bool> Function(String) blockUser;
 
   final Function() sendJoinRequest;
   final Function() deleteJoinRequest;
@@ -42,6 +44,7 @@ class HallPanelBuilder extends StatelessWidget {
     @required this.hasSentJoinRequest,
     this.participantCardStackGesture,
     @required this.inviteAudience,
+    @required this.blockUser,
     @required this.sendJoinRequest,
     @required this.deleteJoinRequest,
     @required this.audienceMap,
@@ -289,57 +292,21 @@ class HallPanelBuilder extends StatelessWidget {
                   ),
                   itemCount: (audienceList?.length ?? 0),
                   itemBuilder: (context, index) {
-                    final audience = audienceList[index].audience;
+                    final audience = audienceList[0].audience;
 
                     return AudienceCard(
                       audience,
                       onTap: () => ProfileShortView.display(context, audience),
-                      onLongPress: () {},
-                    );
-
-                    return Container(
-                      child: Stack(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => ProfilePage(
-                                    userId: audience.userId,
-                                  ),
-                                ),
+                      onDoubleTap: isOwner
+                          ? () {
+                              AudienceActionDialog.display(
+                                context,
+                                audience,
+                                inviteAudience: inviteAudience,
+                                blockUser: blockUser,
                               );
-                            },
-                            child: Column(
-                              children: [
-                                Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: size.width / 11,
-                                      child: CustomImage(
-                                        image: audience.avatar,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      audience.username,
-                                      style: TextStyle(
-                                          fontFamily: "Lato",
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          // display menu to owner only.
-                          if (isOwner)
-                            popMenuForOwner(
-                              audience.userId,
-                              false,
-                            ),
-                        ],
-                      ),
+                            }
+                          : null,
                     );
                   },
                 ),

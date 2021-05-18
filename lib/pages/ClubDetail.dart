@@ -1790,10 +1790,13 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
               );
               if (response.isSuccessful) {
                 Fluttertoast.showToast(msg: 'Invitation sent successfully');
+                return true;
               } else {
                 Fluttertoast.showToast(msg: 'Error in sending invitaion');
+                return false;
               }
             },
+            blockUser: _blockUser,
             fetchMoreAudience: () async {
               if (_audienceMap['isLoading'] == true) return;
 

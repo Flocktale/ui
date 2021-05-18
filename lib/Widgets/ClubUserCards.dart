@@ -111,19 +111,19 @@ class ParticipantCard extends StatelessWidget {
 class AudienceCard extends StatelessWidget {
   final SummaryUser audience;
   final Function onTap;
-  final Function onLongPress;
+  final Function onDoubleTap;
 
   const AudienceCard(
     this.audience, {
     this.onTap,
-    this.onLongPress,
+    this.onDoubleTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      onLongPress: onLongPress,
+      onDoubleTap: onDoubleTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
