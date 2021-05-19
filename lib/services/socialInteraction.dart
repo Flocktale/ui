@@ -28,7 +28,7 @@ class SocialInteraction {
 
     updateProfileFromResponse(resp.body);
 
-    Fluttertoast.showToast(msg: 'Follow Request Sent');
+    Fluttertoast.showToast(msg: 'Following');
   }
 
   Future<void> sendUnFollow() async {

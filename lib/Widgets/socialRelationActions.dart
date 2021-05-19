@@ -1,6 +1,5 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
-import 'package:flocktale/services/LocalStorage/InviteBox.dart';
 import 'package:flocktale/services/socialInteraction.dart';
 import 'package:flutter/material.dart';
 

@@ -4,12 +4,14 @@ class CustomImage extends StatelessWidget {
   final String image;
   final bool pinwheelPlaceholder;
   final double radius;
+  final BoxFit fit;
 
   const CustomImage(
       {Key key,
       this.image,
       this.pinwheelPlaceholder = false,
-      this.radius = 100})
+      this.radius = 100,
+      this.fit = BoxFit.fill})
       : super(key: key);
 
   @override
@@ -25,7 +27,7 @@ class CustomImage extends StatelessWidget {
         imageErrorBuilder: (ctx, _, __) {
           return Image.asset(
             'assets/images/logo.png',
-            fit: BoxFit.fill,
+            fit: fit,
           );
         },
       ),
