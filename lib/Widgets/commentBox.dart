@@ -1,7 +1,7 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/comment.dart';
 import 'package:flocktale/Widgets/customImage.dart';
-import 'package:flocktale/Widgets/profileSummary.dart';
+import 'package:flocktale/Widgets/ProfileShortView.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flutter/material.dart';
 

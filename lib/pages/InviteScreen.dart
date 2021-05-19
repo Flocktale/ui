@@ -1,8 +1,9 @@
 import 'package:chopper/chopper.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flocktale/Widgets/customImage.dart';
-import 'package:flocktale/Widgets/profileSummary.dart';
+import 'package:flocktale/Widgets/ProfileShortView.dart';
 import 'package:flocktale/services/LocalStorage/InviteBox.dart';
+import 'package:flocktale/services/shareApp.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flocktale/Models/built_post.dart';
@@ -10,7 +11,6 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:share/share.dart';
 
 class InviteScreen extends StatefulWidget {
   final BuiltClub club;
@@ -47,32 +47,6 @@ class _InviteScreenState extends State<InviteScreen>
   bool _isInviting = false;
 
   Map<String, bool> _selectedUserIds = {};
-
-  share(BuildContext context) {
-    //  final RenderBox box = context.findRenderObject();
-    String text;
-
-    if (widget.forPanelist) {
-//owner is sending participation ivnitation
-      text =
-          'Hi! Be a panelist for my club "${widget.club.clubName}" on FlockTale.';
-    } else {
-      if (widget.club.creator.userId ==
-          Provider.of<UserData>(context, listen: false).userId) {
-        text =
-            'Hey, come and join us in Hall of "${widget.club.clubName}" on Flocktale.';
-      } else {
-        text =
-            'Hi, let\'s listen to "${widget.club.clubName}" together on Flocktale. The panelists are really interesting.';
-      }
-    }
-    String subject = 'Link to the app: ';
-    Share.share(
-      text,
-      subject: subject,
-      // sharePositionOrigin: box.localToGlobal(Offset.zero)&box.size
-    );
-  }
 
   _fetchContacts() async {
     contacts = (await InviteBox.fetchContactsFromPhone());
@@ -361,7 +335,8 @@ class _InviteScreenState extends State<InviteScreen>
                 ),
               ),
               InkWell(
-                onTap: () => share(context),
+                onTap: () => ShareApp(context).club(widget.club.clubName,
+                    forPanelist: widget.forPanelist),
                 child: Card(
                   color: Colors.white,
                   shadowColor: Colors.redAccent,

@@ -1,5 +1,5 @@
 import 'package:flocktale/Widgets/customImage.dart';
-import 'package:flocktale/Widgets/profileSummary.dart';
+import 'package:flocktale/Widgets/ProfileShortView.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

@@ -4,14 +4,16 @@ import 'dart:math';
 import 'package:agora_rtc_engine/rtc_engine.dart' as RTC;
 import 'package:flocktale/Models/enums/audienceStatus.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
+import 'package:flocktale/Widgets/ClubFulllDataSheet.dart';
 import 'package:flocktale/Widgets/ClubUserCards.dart';
 import 'package:flocktale/Widgets/clubConcludeAlert.dart';
 import 'package:flocktale/Widgets/commentBox.dart';
 import 'package:flocktale/Widgets/displayInvitationInClub.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/Widgets/participantActionDialog.dart';
-import 'package:flocktale/Widgets/profileSummary.dart';
+import 'package:flocktale/Widgets/ProfileShortView.dart';
 import 'package:flocktale/Widgets/rightSideSheet.dart';
+import 'package:flocktale/services/shareApp.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/comment.dart';
@@ -26,6 +28,7 @@ import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:share/share.dart';
 import 'ClubJoinRequests.dart';
 import 'package:intl/intl.dart';
 import 'BlockedUsersPage.dart';
@@ -459,19 +462,18 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   void reportClub() {}
 
   Future<void> _joinClubAsPanelist() async {
-    // TODO: uncomment this
-    // String username =
-    //     Provider.of<UserData>(context, listen: false).user.username;
+    String username =
+        Provider.of<UserData>(context, listen: false).user.username;
 
-    // Provider.of<AgoraController>(context, listen: false).club =
-    //     _clubAudience.club;
+    Provider.of<AgoraController>(context, listen: false).club =
+        _clubAudience.club;
 
-    // await Provider.of<AgoraController>(context, listen: false)
-    //     .joinAsParticipant(
-    //   clubId: _clubAudience.club.clubId,
-    //   token: _clubAudience.club.agoraToken,
-    //   integerUsername: convertToInt(username),
-    // );
+    await Provider.of<AgoraController>(context, listen: false)
+        .joinAsParticipant(
+      clubId: _clubAudience.club.clubId,
+      token: _clubAudience.club.agoraToken,
+      integerUsername: convertToInt(username),
+    );
   }
 
   Future<void> _joinClubAsAudience() async {
@@ -1245,24 +1247,29 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                           ),
                                         ),
                                       ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black87,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            blurRadius: 1,
-                                            spreadRadius: 0.5,
+                                    InkWell(
+                                      onTap: () => ShareApp(context)
+                                          .club(widget.club.clubName),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black87,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              blurRadius: 1,
+                                              spreadRadius: 0.5,
+                                              color: Colors.redAccent,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Icon(
+                                            Icons.share,
                                             color: Colors.redAccent,
+                                            size: 28,
                                           ),
-                                        ],
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: Icon(
-                                          Icons.share,
-                                          color: Colors.redAccent,
-                                          size: 28,
                                         ),
                                       ),
                                     ),
@@ -1273,7 +1280,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                             ),
                             SizedBox(height: 8),
                             InkWell(
-                              onTap: () => displayFullClubData(context),
+                              onTap: _clubAudience == null
+                                  ? null
+                                  : () => ClubFullDataSheet.display(
+                                      context, _clubAudience.club),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
@@ -1489,10 +1499,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                         setState(() {});
                       });
 
-                      //TODO: uncomment this
-
-                      // if (_clubAudience.club.status != ClubStatus.Live)
-                      //   return Future.value(true);
+                      if (_clubAudience.club.status != ClubStatus.Live)
+                        return Future.value(true);
 
                       if (FocusManager.instance.primaryFocus.hasFocus) {
                         FocusManager.instance.primaryFocus.unfocus();
@@ -1576,117 +1584,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
           ],
         ),
       ),
-    );
-  }
-
-  void displayFullClubData(BuildContext context) {
-    FocusManager.instance.primaryFocus.unfocus();
-    if (_clubAudience == null) return;
-
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.6,
-        maxChildSize: 0.8,
-        minChildSize: 0.4,
-        builder: (_, controller) => Container(
-          color: Colors.black87,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: ListView(
-            controller: controller,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 6,
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                ),
-              ),
-              SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                height: 192,
-                child: CustomImage(
-                  image: widget.club.clubAvatar,
-                  pinwheelPlaceholder: true,
-                  radius: 0,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              SizedBox(height: 12),
-              Text(
-                widget.club.clubName,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(
-                    Icons.multitrack_audio_sharp,
-                    color: Colors.white70,
-                    size: 20,
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      '${_clubAudience.club.description ?? ""}',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
-                child: Card(
-                  elevation: 2,
-                  shadowColor: Colors.redAccent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.share,
-                          size: 24,
-                          color: Colors.redAccent,
-                        ),
-                        SizedBox(width: 12),
-                        Text(
-                          'Share with your friends',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     );
   }
 
