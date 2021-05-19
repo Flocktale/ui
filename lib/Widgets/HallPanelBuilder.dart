@@ -20,7 +20,7 @@ class HallPanelBuilder extends StatelessWidget {
 
   final GestureDetector Function(AudienceData) participantCardStackGesture;
 
-  final Future<bool> Function(String) inviteAudience;
+  final Future<bool> Function(String) inviteToSpeak;
   final Future<bool> Function(String) blockUser;
 
   final Function() sendJoinRequest;
@@ -39,7 +39,7 @@ class HallPanelBuilder extends StatelessWidget {
     @required this.isOwner,
     @required this.hasSentJoinRequest,
     this.participantCardStackGesture,
-    @required this.inviteAudience,
+    @required this.inviteToSpeak,
     @required this.blockUser,
     @required this.sendJoinRequest,
     @required this.deleteJoinRequest,
@@ -56,14 +56,6 @@ class HallPanelBuilder extends StatelessWidget {
       }
     }
     return false;
-  }
-
-  void _handleMenuButtons(String value, String userId) {
-    switch (value) {
-      case 'Invite':
-        inviteAudience(userId);
-        break;
-    }
   }
 
   bool isOwnerMuted() {
@@ -101,11 +93,9 @@ class HallPanelBuilder extends StatelessWidget {
               height: 68,
               width: 68,
               child: Icon(
-                isOwner
+                isOwner || !hasSentJoinRequest
                     ? Icons.person_add
-                    : !hasSentJoinRequest
-                        ? Icons.person_add
-                        : Icons.person_add_disabled,
+                    : Icons.person_add_disabled,
                 color: Colors.white,
                 size: 32,
               ),
@@ -123,11 +113,7 @@ class HallPanelBuilder extends StatelessWidget {
         SizedBox(height: 4),
         if (isOwner)
           Text(
-            isOwner
-                ? "Invite Panelists"
-                : !hasSentJoinRequest
-                    ? "Ask to join"
-                    : "Cancel request",
+            "Invite Panelists",
             style: TextStyle(
               fontFamily: "Lato",
               color: Colors.white,
@@ -147,33 +133,62 @@ class HallPanelBuilder extends StatelessWidget {
     );
   }
 
-  Widget popMenuForOwner(String userId, bool isParticipant) {
-    Set<String> menu = {};
-    if (isParticipant)
-      menu = {'Mute', 'Remove', 'Block'};
-    else
-      menu = {'Invite', 'Block'};
+  Widget participantGridBuilder(context) {
+    final myUserId = Provider.of<UserData>(context, listen: false).userId;
 
-    return Positioned(
-      right: 10,
-      child: PopupMenuButton<String>(
-        onSelected: (val) => _handleMenuButtons(val, userId),
-        itemBuilder: (BuildContext context) {
-          return menu.map((String choice) {
-            return PopupMenuItem<String>(
-              value: choice,
-              child: Text(choice),
-            );
-          }).toList();
-        },
+    return GridView.builder(
+      clipBehavior: Clip.none,
+      shrinkWrap: true,
+      physics: ScrollPhysics(),
+      itemCount: (participantList.length < 10
+          ? participantList.length + 1
+          : participantList.length),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 7 / 8,
       ),
+      itemBuilder: (context, index) {
+        if (index == participantList.length) {
+          return !_isParticipant(myUserId) || isOwner
+              ? _inviteOrRequestButtonForUser(context)
+              : Container();
+        }
+
+        final participant = participantList[index];
+
+        return ValueListenableBuilder(
+            valueListenable: currentlySpeakingUsers,
+            child: participantCardStackGesture(participant),
+            builder: (_, speakers, stackGesture) {
+              return Stack(
+                fit: StackFit.passthrough,
+                children: [
+                  ParticipantCard(
+                    participant,
+                    key: ObjectKey(participant.audience.userId + '$index'),
+                    isHost: participant.audience.userId == club.creator.userId,
+                    volume:
+                        (speakers ?? const {})[participant.audience.username] ??
+                            0,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      height: 72,
+                      width: 72,
+                      child: stackGesture,
+                    ),
+                  ),
+                ],
+              );
+            });
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final myUserId = Provider.of<UserData>(context, listen: false).userId;
 
     final List<AudienceData> audienceList = audienceMap['list'];
 
@@ -202,59 +217,8 @@ class HallPanelBuilder extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-              child: GridView.builder(
-                clipBehavior: Clip.none,
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemCount: (participantList.length < 10
-                    ? participantList.length + 1
-                    : participantList.length),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 7 / 8,
-                ),
-                itemBuilder: (context, index) {
-                  if (index == participantList.length) {
-                    return !_isParticipant(myUserId) || isOwner
-                        ? _inviteOrRequestButtonForUser(context)
-                        : Container();
-                  }
-
-                  final participant = participantList[index];
-
-                  return ValueListenableBuilder(
-                      valueListenable: currentlySpeakingUsers,
-                      child: participantCardStackGesture(participant),
-                      builder: (_, speakers, stackGesture) {
-                        return Stack(
-                          fit: StackFit.passthrough,
-                          children: [
-                            ParticipantCard(
-                              participant,
-                              key: ObjectKey(
-                                  participant.audience.userId + '$index'),
-                              isHost: participant.audience.userId ==
-                                  club.creator.userId,
-                              volume: (speakers ?? const {})[
-                                      participant.audience.username] ??
-                                  0,
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: Container(
-                                height: 72,
-                                width: 72,
-                                child: stackGesture,
-                              ),
-                            ),
-                          ],
-                        );
-                      });
-                },
-              ),
-            ),
+            SizedBox(height: 20),
+            participantGridBuilder(context),
             Center(
               child: Text("Audience",
                   style: TextStyle(
@@ -298,7 +262,7 @@ class HallPanelBuilder extends StatelessWidget {
                               AudienceActionDialog.display(
                                 context,
                                 audience,
-                                inviteAudience: inviteAudience,
+                                inviteToSpeak: inviteToSpeak,
                                 blockUser: blockUser,
                               );
                             }

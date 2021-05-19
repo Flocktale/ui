@@ -6,7 +6,7 @@ class AudienceActionDialog extends StatelessWidget {
   static void display(
     BuildContext context,
     SummaryUser audience, {
-    Future<bool> Function(String) inviteAudience,
+    Future<bool> Function(String) inviteToSpeak,
     Future<bool> Function(String) blockUser,
   }) {
     showDialog(
@@ -14,20 +14,20 @@ class AudienceActionDialog extends StatelessWidget {
       barrierColor: Colors.black.withOpacity(0.7),
       builder: (ctx) => AudienceActionDialog(
         audience,
-        inviteAudience: inviteAudience,
+        inviteToSpeak: inviteToSpeak,
         blockUser: blockUser,
       ),
     );
   }
 
-  final Future<bool> Function(String) inviteAudience;
+  final Future<bool> Function(String) inviteToSpeak;
   final Future<bool> Function(String) blockUser;
 
   final SummaryUser audience;
 
   const AudienceActionDialog(
     this.audience, {
-    this.inviteAudience,
+    this.inviteToSpeak,
     this.blockUser,
   });
 
@@ -64,7 +64,7 @@ class AudienceActionDialog extends StatelessWidget {
                       child: InkWell(
                         splashColor: Colors.redAccent,
                         onTap: () async {
-                          final res = await inviteAudience(audience.userId);
+                          final res = await inviteToSpeak(audience.userId);
                           if (res == true) {
                             Navigator.of(context).pop();
                           }

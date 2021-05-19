@@ -104,17 +104,22 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                     width: 36,
                     height: 36,
                     child: CustomImage(
-                      image: _user.avatar,
+                      image: _user.avatar + "_thumb",
                       radius: 8,
                     ),
                   ),
                 ),
-                Text(
-                  _user.username,
-                  overflow: TextOverflow.clip,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      _user.username,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
                 ),
                 InkWell(

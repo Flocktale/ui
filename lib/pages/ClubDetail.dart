@@ -1710,7 +1710,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
           child: HallPanelBuilder(
             controller,
             currentlySpeakingUsers: currentlySpeakingUsers,
-            club: _clubAudience?.club ?? widget.club,
+            club: widget.club,
             size: MediaQuery.of(context).size,
             participantList: participantList,
             isOwner: _isOwner,
@@ -1720,7 +1720,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
             sendJoinRequest: _sendJoinRequest,
             deleteJoinRequest: _deleteJoinRequest,
             audienceMap: _audienceMap,
-            inviteAudience: (userId) async {
+            inviteToSpeak: (userId) async {
               final response = await _service.inviteUsers(
                 clubId: widget.club.clubId,
                 sponsorId: _myUserId,

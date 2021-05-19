@@ -182,17 +182,22 @@ class _ClubJoinRequestsState extends State<ClubJoinRequests> {
                   width: 36,
                   height: 36,
                   child: CustomImage(
-                    image: requester.avatar,
+                    image: requester.avatar + "_thumb",
                     radius: 8,
                   ),
                 ),
               ),
-              Text(
-                requester.username,
-                overflow: TextOverflow.clip,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    requester.username,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               ),
               InkWell(
