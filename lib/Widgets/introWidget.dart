@@ -19,7 +19,7 @@ class IntroWidget extends StatelessWidget {
             textStyle: TextStyle(
               fontSize: 30.0,
               fontFamily: "Lato",
-              fontWeight: FontWeight.w300,
+              fontWeight: FontWeight.w400,
               color: Colors.red,
             ),
             textAlign: TextAlign.start,

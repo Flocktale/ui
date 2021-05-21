@@ -71,16 +71,16 @@ class _HomePageState extends State<HomePage> {
         onPageChanged: _onPageChanged,
         physics: NeverScrollableScrollPhysics(),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          navItem('Home', Icons.home, 0),
-          navItem('Create', Icons.add, 1),
-          navItem('Search', Icons.search, 2),
-          navItem('Profile', Icons.person, 3),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   onTap: _onItemTapped,
+      //   type: BottomNavigationBarType.fixed,
+      //   items: [
+      //     navItem('Home', Icons.home, 0),
+      //     navItem('Create', Icons.add, 1),
+      //     navItem('Search', Icons.search, 2),
+      //     navItem('Profile', Icons.person, 3),
+      //   ],
+      // ),
     );
   }
 }

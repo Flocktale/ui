@@ -192,8 +192,9 @@ class _LandingPageState extends State<LandingPage>
                 title,
                 style: TextStyle(
                   fontFamily: 'Lato',
-                  fontWeight: FontWeight.w500,
+                 // fontWeight: FontWeight.w500,
                   fontSize: size.width / 18,
+                  color: Colors.redAccent
                 ),
               ),
             ),
@@ -208,7 +209,7 @@ class _LandingPageState extends State<LandingPage>
                         style: TextStyle(
                           fontSize: size.width / 30,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
+                          color: Colors.grey[700],
                         ),
                       ),
                     ),
@@ -270,10 +271,14 @@ class _LandingPageState extends State<LandingPage>
       return Stack(
         children: [
           Container(
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          //  color: Colors.black,
+             margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
             child: RefreshIndicator(
+              backgroundColor: Colors.black87,
+              color: Colors.redAccent,
               onRefresh: () => _fetchAllClubs(),
               child: ListView(
+                physics: BouncingScrollPhysics(),
                 children: [
                   SizedBox(height: 20),
                   FittedBox(child: IntroWidget()),
@@ -491,44 +496,6 @@ class _LandingPageState extends State<LandingPage>
         initialIndex: 0,
         length: 4,
         child: Scaffold(
-          // appBar: PreferredSize(
-          //   preferredSize: Size.fromHeight(50.0),
-          //   child: Material(
-          //     elevation: 1,
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //       children: <Widget>[
-          //         IconButton(
-          //           icon: Image.asset('assets/images/inverted_logo.png'),
-          //           onPressed: null,
-          //         ),
-          //         Text(
-          //           'Flocktale',
-          //           style: TextStyle(
-          //             fontWeight: FontWeight.bold,
-          //             color: Colors.redAccent,
-          //             fontSize: size.width / 20,
-          //             letterSpacing: 0.0,
-          //             fontFamily: 'Montserrat',
-          //           ),
-          //         ),
-          //         IconButton(
-          //           icon: hasNewNotifications == false
-          //               ? Icon(Icons.notifications_none_outlined)
-          //               : Icon(
-          //                   Icons.notifications_active,
-          //                   color: Colors.redAccent,
-          //                 ),
-          //           onPressed: () {
-          //             hasNewNotifications = false;
-          //             setState(() {});
-          //             _navigateTo(NotificationPage());
-          //           },
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
           appBar: AppBar(
             leading: IconButton(
               icon: Image.asset('assets/images/inverted_logo.png'),
@@ -550,7 +517,7 @@ class _LandingPageState extends State<LandingPage>
                 icon: hasNewNotifications == false
                     ? Icon(
                         Icons.notifications_none_outlined,
-                        color: Colors.black,
+                        color: Colors.redAccent,
                       )
                     : Icon(
                         Icons.notifications_active,
@@ -567,7 +534,7 @@ class _LandingPageState extends State<LandingPage>
               controller: _tabController,
               isScrollable: true,
               unselectedLabelColor: Colors.grey[700],
-              labelColor: Colors.black,
+              labelColor: Colors.redAccent,
               labelStyle:
                   TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
               indicator: UnderlineTabIndicator(
@@ -593,7 +560,6 @@ class _LandingPageState extends State<LandingPage>
                 )
               ],
             ),
-            backgroundColor: Colors.white,
           ),
           body: TabBarView(
               controller: _tabController,

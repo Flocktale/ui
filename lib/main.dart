@@ -87,9 +87,15 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flocktale',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primaryColor: Colors.red,
-          accentColor: Colors.redAccent,
+        // theme: ThemeData(
+        //   primaryColor: Colors.red,
+        //   accentColor: Colors.redAccent,
+        // ),
+        theme: new ThemeData(
+          scaffoldBackgroundColor: Colors.black,
+          appBarTheme: AppBarTheme(
+            color: Colors.black
+          )
         ),
         home: Initiation(),
       ),
