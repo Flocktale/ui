@@ -38,7 +38,7 @@ class MySocket with ChangeNotifier {
   }
 
   Future<void> closeConnection() async {
-    await this.channel?.close();
+    await this.channel?.close(1000, 'App closed');
   }
 
   void playClub(String clubId) async {
@@ -90,11 +90,18 @@ class MySocket with ChangeNotifier {
       executeWhatFunction(what, event);
   }
 
-  connectWs({int retries = 1}) async {
+  connectWs({bool reconnect = false, int retries = 1}) async {
+    final Map<String, dynamic> headers = {"userid": userId};
+
+    if (reconnect || retries > 1) {
+      headers.addAll({'reconnect': true});
+    }
+
     try {
       final ch = await WebSocket.connect(
-          "wss://0pxxpxq71b.execute-api.ap-south-1.amazonaws.com/Dev",
-          headers: {"userid": userId});
+        "wss://0pxxpxq71b.execute-api.ap-south-1.amazonaws.com/Dev",
+        headers: headers,
+      );
       return ch;
     } catch (e) {
       print("Error! can not connect WS connectWs " + e.toString());
@@ -104,7 +111,7 @@ class MySocket with ChangeNotifier {
       await Future.delayed(Duration(
         seconds: min(2 * retries, 15),
       ));
-      return await connectWs(retries: retries + 1);
+      return await connectWs(retries: retries + 1, reconnect: true);
     }
   }
 
@@ -116,7 +123,7 @@ class MySocket with ChangeNotifier {
     print('reconnecting-----------------------');
     if (this.channel != null) {
       // add in a reconnect delay
-      await Future.delayed(Duration(seconds: 4));
+      await Future.delayed(Duration(seconds: 2));
     }
 
     await init(userId);
@@ -139,10 +146,11 @@ class MySocket with ChangeNotifier {
     }
   }
 
-  Future<void> init(String userId) async {
+  Future<void> init(String userId, {bool reconnect = false}) async {
     this.userId = userId;
 
-    this.channel = await connectWs();
+    this.channel = await connectWs(reconnect: reconnect);
+    this.channel.pingInterval = Duration(seconds: 5);
 
     this.channel.listen(
       _wsEventListener,

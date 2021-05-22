@@ -9,7 +9,6 @@ import 'package:flocktale/Widgets/ClubUserCards.dart';
 import 'package:flocktale/Widgets/clubConcludeAlert.dart';
 import 'package:flocktale/Widgets/commentBox.dart';
 import 'package:flocktale/Widgets/displayInvitationInClub.dart';
-import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/Widgets/participantActionDialog.dart';
 import 'package:flocktale/Widgets/ProfileShortView.dart';
 import 'package:flocktale/Widgets/rightSideSheet.dart';
@@ -28,7 +27,6 @@ import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share/share.dart';
 import 'ClubJoinRequests.dart';
 import 'package:intl/intl.dart';
 import 'BlockedUsersPage.dart';
@@ -550,9 +548,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     _joinClubInWebsocket();
 
     if (this._isPlaying == false &&
-        (this._isOwner == false ||
-            _clubAudience.club.status == ClubStatus.Live)) {
-      // if club is not playing already then play it automatically for non-owner.
+        _clubAudience.club.status == ClubStatus.Live) {
+      // if club is Live and not playing already then play it automatically.
       await _playButtonHandler();
     }
 
