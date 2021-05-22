@@ -119,31 +119,30 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     currentlySpeakingUsers.value = speakingUsers;
   }
 
-  void _getMostActiveSpeaker(int uid) {
-    // String username = integerUsernames[uid];
-
-    // print('$username is the dominating speaker');
-  }
+// this map is used for the case when remote audio state callback is fired before websocket message containing new participant
+// for such case, we are saving the mute status of that user beforehand in this map.
+  final Map<int, bool> _remoteAudioMuteStatesWithUid = {};
 
   void _onRemoteAudioStateChanged(
       int uid, _, RTC.AudioRemoteStateReason reason, __) {
+    // for remote user: 5 when muted and 6 when unmuted
+    if (reason.index != 5 && reason.index != 6) return;
+
+    bool isMuted;
+    if (reason.index == 5)
+      isMuted = true;
+    else if (reason.index == 6) isMuted = false;
+
+    _remoteAudioMuteStatesWithUid[uid] = isMuted;
+
     if (integerUsernames[uid] != null) {
-      // for remote user: 5 when muted and 6 when unmuted
-      if (reason.index == 5 || reason.index == 6) {
-        bool isMuted;
-        if (reason.index == 5)
-          isMuted = true;
-        else if (reason.index == 6) isMuted = false;
-
-        for (int i = 0; i < participantList.length; i++) {
-          var participant = participantList[i];
-          if (participant.audience.username == integerUsernames[uid]) {
-            participantList[i] = participantList[i]
-                .rebuild((b) => b..isMuted = isMuted ?? false);
-
-            _justRefresh();
-            break;
-          }
+      for (int i = 0; i < participantList.length; i++) {
+        var participant = participantList[i];
+        if (participant.audience.username == integerUsernames[uid]) {
+          participantList[i] =
+              participantList[i].rebuild((b) => b..isMuted = isMuted ?? false);
+          _justRefresh();
+          break;
         }
       }
     }
@@ -156,31 +155,69 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   void _setParticipantList(event) {
     if (event['clubId'] != widget.club.clubId) return;
 
-    participantList = [];
-    event['participantList'].forEach((e) {
-      AudienceData participant = AudienceData(
-        (r) => r
-          ..isMuted = e['isMuted']
-          ..audience = SummaryUser((b) => b
-            ..userId = e['audience']['userId']
-            ..username = e['audience']['username']
-            ..avatar = e['audience']['avatar']).toBuilder(),
-      );
-      participantList.add(participant);
+    final prtUser = (Map user) {
+      final username = user['username'];
+      integerUsernames.putIfAbsent(convertToInt(username), () => username);
 
+      final participant = AudienceData(
+        (r) => r
+          ..isMuted =
+              _remoteAudioMuteStatesWithUid[convertToInt(username)] ?? false
+          ..audience = SummaryUser((b) => b
+            ..userId = user['userId']
+            ..username = user['username']
+            ..avatar = user['avatar']).toBuilder(),
+      );
+
+      return participant;
+    };
+
+    final removePrtUserFromAudienceList = (String prtUserId) {
 // removing audience if he has become participant (since audience list is fetched by long polling for now)
       final audienceList = (_audienceMap['list'] as List<AudienceData>)
-          .where((element) =>
-              element.audience.userId != participant.audience.userId)
+          .where((element) => element.audience.userId != prtUserId)
           .toList();
 
       _audienceMap['list'] = audienceList;
+    };
 
-      // convertT
-      // print(convertToInt(participant.audience.username));
-      integerUsernames.putIfAbsent(convertToInt(participant.audience.username),
-          () => participant.audience.username);
-    });
+    final subAction = event['subAction'];
+
+    if (subAction == 'All') {
+      participantList = [];
+      event['participantList'].forEach((e) {
+        AudienceData participant = prtUser(e);
+
+        participantList.add(participant);
+        removePrtUserFromAudienceList(participant.audience.userId);
+        // convert
+      });
+    } else if (subAction == 'Add') {
+      final userId = event['user']['userId'];
+
+      AudienceData participant = prtUser(event['user']);
+      final searchedResult = participantList.firstWhere(
+          (element) => element.audience.userId == userId,
+          orElse: () => null);
+      if (searchedResult != null) {
+        participantList.add(participant);
+      }
+      removePrtUserFromAudienceList(participant.audience.userId);
+    } else if (subAction == 'Remove') {
+      final userId = event['user']['userId'];
+      bool isPresent = false;
+      participantList.removeWhere((element) {
+        if (element.audience.userId == userId) {
+          isPresent = true;
+          return true;
+        } else
+          return false;
+      });
+      if (isPresent) {
+        (_audienceMap['list'] as List<AudienceData>)
+          ..add(prtUser(event['user']));
+      }
+    }
 
     integerUsernames.putIfAbsent(
         0, () => Provider.of<UserData>(context, listen: false).user.username);
