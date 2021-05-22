@@ -725,7 +725,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         await _startClub();
       }
 
-      if (_clubAudience.audienceData.status == AudienceStatus.Participant) {
+      if (_clubAudience.audienceData.status == AudienceStatus.Participant ||
+          _isOwner == true) {
         await _joinClubAsPanelist();
       } else {
         await _joinClubAsAudience();
