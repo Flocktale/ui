@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:chopper/chopper.dart';
 import 'package:flocktale/Models/basic_enums.dart';
 import 'package:flocktale/Widgets/CommunityCard.dart';
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/Widgets/introWidget.dart';
 import 'package:flocktale/pages/ClubSection.dart';
 import 'package:flocktale/pages/NewsTab.dart';
 import 'package:flocktale/pages/NotificationPage.dart';
+import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Widgets/Carousel.dart';
@@ -490,6 +492,7 @@ class _LandingPageState extends State<LandingPage>
 
   @override
   Widget build(BuildContext context) {
+    final cuser = Provider.of<UserData>(context,listen:false).user;
     Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: DefaultTabController(
@@ -497,9 +500,24 @@ class _LandingPageState extends State<LandingPage>
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: Image.asset('assets/images/inverted_logo.png'),
-              onPressed: null,
+            leading: InkWell(
+              onTap:(){
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        ProfilePage(
+                          userId: cuser.userId,
+                        )
+                  ),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: CustomImage(
+                    image: cuser.avatar,
+                  radius: size.width/10,
+                ),
+              ),
             ),
             title: Text(
               'Flocktale',
