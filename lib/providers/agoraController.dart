@@ -14,6 +14,13 @@ class AgoraController {
   bool isMicMuted;
   BuiltClub club;
 
+  // this map is used for the case when remote audio state callback is fired before websocket message containing new participant
+// for such case, we are saving the mute status of that user beforehand in this map.
+  final Map<int, bool> remoteAudioMuteStatesWithUid = {};
+
+// encrypted integer equivalent mapped to  their usernames
+  final Map<int, String> integerUsernames = {};
+
   AgoraController create({bool isMuted = false}) {
     isMicMuted = isMuted;
 

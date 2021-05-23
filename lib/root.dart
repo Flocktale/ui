@@ -32,7 +32,9 @@ class RootPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                          'Do you really want to quit ${currentClub.clubName ?? ""}'),
+                        'Do you really want to quit ${currentClub.clubName ?? ""}',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

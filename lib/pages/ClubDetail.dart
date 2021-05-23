@@ -52,8 +52,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   bool newMessage = false;
 
-  Map<int, String> integerUsernames = {};
-
   bool emptySpeakerList = false;
   ValueNotifier<Map<String, int>> currentlySpeakingUsers = ValueNotifier({});
 
@@ -94,6 +92,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     } else
       emptySpeakerList = false;
 
+    final integerUsernames =
+        Provider.of<AgoraController>(context, listen: false).integerUsernames;
+
     var speakingUsers = new Map<String, int>();
     speakers.forEach((e) {
       final username = integerUsernames[e.uid];
@@ -114,14 +115,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         });
       });
 
-    print(speakingUsers);
+    // print(speakingUsers);
 
     currentlySpeakingUsers.value = speakingUsers;
   }
-
-// this map is used for the case when remote audio state callback is fired before websocket message containing new participant
-// for such case, we are saving the mute status of that user beforehand in this map.
-  final Map<int, bool> _remoteAudioMuteStatesWithUid = {};
 
   void _onRemoteAudioStateChanged(
       int uid, _, RTC.AudioRemoteStateReason reason, __) {
@@ -133,7 +130,13 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       isMuted = true;
     else if (reason.index == 6) isMuted = false;
 
-    _remoteAudioMuteStatesWithUid[uid] = isMuted;
+    final remoteAudioMuteStatesWithUid =
+        Provider.of<AgoraController>(context, listen: false)
+            .remoteAudioMuteStatesWithUid;
+    final integerUsernames =
+        Provider.of<AgoraController>(context, listen: false).integerUsernames;
+
+    remoteAudioMuteStatesWithUid[uid] = isMuted;
 
     if (integerUsernames[uid] != null) {
       for (int i = 0; i < participantList.length; i++) {
@@ -155,6 +158,13 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   void _setParticipantList(event) {
     if (event['clubId'] != widget.club.clubId) return;
 
+    final integerUsernames =
+        Provider.of<AgoraController>(context, listen: false).integerUsernames;
+
+    final remoteAudioMuteStatesWithUid =
+        Provider.of<AgoraController>(context, listen: false)
+            .remoteAudioMuteStatesWithUid;
+
     final prtUser = (Map user) {
       final username = user['username'];
       integerUsernames.putIfAbsent(convertToInt(username), () => username);
@@ -162,7 +172,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       final participant = AudienceData(
         (r) => r
           ..isMuted =
-              _remoteAudioMuteStatesWithUid[convertToInt(username)] ?? false
+              remoteAudioMuteStatesWithUid[convertToInt(username)] ?? false
           ..audience = SummaryUser((b) => b
             ..userId = user['userId']
             ..username = user['username']
@@ -199,24 +209,14 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       final searchedResult = participantList.firstWhere(
           (element) => element.audience.userId == userId,
           orElse: () => null);
-      if (searchedResult != null) {
+      if (searchedResult == null) {
         participantList.add(participant);
       }
       removePrtUserFromAudienceList(participant.audience.userId);
     } else if (subAction == 'Remove') {
       final userId = event['user']['userId'];
-      bool isPresent = false;
-      participantList.removeWhere((element) {
-        if (element.audience.userId == userId) {
-          isPresent = true;
-          return true;
-        } else
-          return false;
-      });
-      if (isPresent) {
-        (_audienceMap['list'] as List<AudienceData>)
-          ..add(prtUser(event['user']));
-      }
+      participantList
+          .removeWhere((element) => element.audience.userId == userId);
     }
 
     integerUsernames.putIfAbsent(
@@ -443,6 +443,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       clubId: widget.club.clubId,
       audienceId: userId,
     );
+
+    participantList.removeWhere((element) => element.audience.userId == userId);
+    _justRefresh();
+
     Fluttertoast.showToast(msg: 'Removed panelist');
     return true;
   }
@@ -574,6 +578,13 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     _infiniteAudienceListRefresh(init: true);
 
     _clubAudience = resp.body;
+
+    if (_clubAudience.audienceData.audience.userId ==
+            widget.club.creator.userId &&
+        _clubAudience.audienceData.status != AudienceStatus.Participant) {
+      _clubAudience = _clubAudience
+          .rebuild((b) => b..audienceData.status = AudienceStatus.Participant);
+    }
 
     // setting current mic status of user.
     this._isMuted = _clubAudience.audienceData.isMuted;
@@ -1409,7 +1420,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                               ],
                             ),
                           )
-                        else
+                        else if (_clubAudience.audienceData.invitationId ==
+                            null)
                           Expanded(
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -1591,10 +1603,11 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: _displayPlayButton,
-                      ),
+                      if (_clubAudience.club.status != ClubStatus.Concluded)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: _displayPlayButton,
+                        ),
 
                       // dedicated button for mic
                       if (_clubAudience.audienceData.status ==

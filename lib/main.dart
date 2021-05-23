@@ -9,13 +9,12 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
-import 'route_generator.dart';
 import 'services/chopper/database_api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _setupHive();
-  _setupLogging();
+  // _setupLogging();
   _configureFCM();
   runApp(Phoenix(child: MyApp()));
   // runApp(NotificationTesting());
