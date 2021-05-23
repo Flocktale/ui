@@ -352,6 +352,14 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
+  Future<Response<AgoraToken>> getAgoraToken({String clubId, int uid}) {
+    final $url = '/clubs/$clubId/token';
+    final $params = <String, dynamic>{'uid': uid};
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client.send<AgoraToken, AgoraToken>($request);
+  }
+
+  @override
   Future<Response<BuiltSearchClubs>> getMyHistoryClubs(
       {String userId, String lastevaluatedkey}) {
     final $url = '/myclubs/$userId/history';

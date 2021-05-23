@@ -271,6 +271,12 @@ abstract class DatabaseApiService extends ChopperService {
     @required @Query() String userId,
   });
 
+  @Get(path: '/clubs/{clubId}/token')
+  Future<Response<AgoraToken>> getAgoraToken({
+    @required @Path() String clubId,
+    @required @Query() int uid, // encrypted integer equivalent of username
+  });
+
   @Get(path: '/myclubs/{userId}/history')
   Future<Response<BuiltSearchClubs>> getMyHistoryClubs({
     @required @Path('userId') String userId,

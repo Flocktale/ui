@@ -11,6 +11,27 @@ import 'enums/communityUserType.dart';
 
 part 'built_post.g.dart';
 
+abstract class AgoraToken implements Built<AgoraToken, AgoraTokenBuilder> {
+  // fields go here
+  @nullable
+  String get agoraToken;
+
+  AgoraToken._();
+
+  factory AgoraToken([updates(AgoraTokenBuilder b)]) = _$AgoraToken;
+
+  String toJson() {
+    return json.encode(serializers.serializeWith(AgoraToken.serializer, this));
+  }
+
+  static AgoraToken fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        AgoraToken.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<AgoraToken> get serializer => _$agoraTokenSerializer;
+}
+
 abstract class ClubContentModel
     implements Built<ClubContentModel, ClubContentModelBuilder> {
   // fields go here
@@ -555,9 +576,6 @@ abstract class BuiltClub implements Built<BuiltClub, BuiltClubBuilder> {
 
   @nullable
   BuiltList<String> get tags;
-
-  @nullable
-  String get agoraToken;
 
   @nullable
   int get estimatedAudience;

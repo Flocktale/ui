@@ -13,6 +13,7 @@ class AgoraController {
 
   bool isMicMuted;
   BuiltClub club;
+  AgoraToken token;
 
   // this map is used for the case when remote audio state callback is fired before websocket message containing new participant
 // for such case, we are saving the mute status of that user beforehand in this map.
@@ -41,30 +42,44 @@ class AgoraController {
 
   Future<void> joinAsAudience({
     @required String clubId,
-    @required String token,
-    @required int integerUsername,
+    @required AgoraToken agoraToken,
+    @required String username,
   }) async {
-    assert(clubId != null && token != null);
-    await _agoraHandler.joinClub(clubId, token,
-        integerUsername: integerUsername ?? 0);
+    assert(clubId != null && token?.agoraToken != null);
+
+    this.token = agoraToken;
+
+    await _agoraHandler.joinClub(
+      clubId,
+      token.agoraToken,
+      integerUsername: convertToInt(username),
+    );
 
     // _agoraHandler._eventHandler.audioVolumeIndication = audioVolumeIndication;
   }
 
   Future<void> joinAsParticipant({
     @required String clubId,
-    @required String token,
-    @required int integerUsername,
+    @required AgoraToken agoraToken,
+    @required String username,
   }) async {
-    assert(clubId != null && token != null);
-    await _agoraHandler.joinClub(clubId, token,
-        isHost: true, integerUsername: integerUsername ?? 0);
+    assert(clubId != null && token?.agoraToken != null);
+
+    this.token = agoraToken;
+
+    await _agoraHandler.joinClub(
+      clubId,
+      token.agoraToken,
+      isHost: true,
+      integerUsername: convertToInt(username),
+    );
   }
 
   Future<void> stop() async {
     if (club != null) {
       await _agoraHandler.leaveClub();
       club = null;
+      token = null;
     }
   }
 
@@ -85,5 +100,17 @@ class AgoraController {
 
     isMicMuted = muteAction;
     await _agoraHandler.muteSwitchMic(muteAction);
+  }
+
+  int convertToInt(String username) {
+    int hash = 0;
+    const int p = 53;
+    const int m = 1000000009;
+    int pPow = 1;
+    username.runes.forEach((c) {
+      hash = (hash + (c - 94 + 1) * pPow) % m;
+      pPow = (pPow * p) % m;
+    });
+    return hash;
   }
 }

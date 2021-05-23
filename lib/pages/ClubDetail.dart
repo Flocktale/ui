@@ -45,6 +45,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   DatabaseApiService _service;
 
   BuiltClubAndAudience _clubAudience;
+  AgoraToken agoraToken;
+
   bool _isOwner;
 
   ScrollController _listController = ScrollController();
@@ -72,18 +74,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   List<Comment> comments = [];
   final TextEditingController _newCommentController = TextEditingController();
-
-  int convertToInt(String username) {
-    int hash = 0;
-    const int p = 53;
-    const int m = 1000000009;
-    int pPow = 1;
-    username.runes.forEach((c) {
-      hash = (hash + (c - 94 + 1) * pPow) % m;
-      pPow = (pPow * p) % m;
-    });
-    return hash;
-  }
 
   void getActiveSpeakers(List<RTC.AudioVolumeInfo> speakers, _) {
     if (speakers.isEmpty && emptySpeakerList == false) {
@@ -167,12 +157,16 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     final prtUser = (Map user) {
       final username = user['username'];
-      integerUsernames.putIfAbsent(convertToInt(username), () => username);
+
+      final integerUsername =
+          Provider.of<AgoraController>(context, listen: false)
+              .convertToInt(username);
+
+      integerUsernames.putIfAbsent(integerUsername, () => username);
 
       final participant = AudienceData(
         (r) => r
-          ..isMuted =
-              remoteAudioMuteStatesWithUid[convertToInt(username)] ?? false
+          ..isMuted = remoteAudioMuteStatesWithUid[integerUsername] ?? false
           ..audience = SummaryUser((b) => b
             ..userId = user['userId']
             ..username = user['username']
@@ -285,29 +279,28 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     _justRefresh();
   }
 
-  void _clubStartedByOwner(event) {
+  void _clubStartedByOwner(event) async {
     if (event['clubId'] != _clubAudience.club.clubId) return;
     Fluttertoast.showToast(msg: "This Club is live now");
 
-    _justRefresh(() {
-      _clubAudience = _clubAudience.rebuild(
-        (b) => b
-          ..club.agoraToken = event['agoraToken']
-          ..club.status = ClubStatus.Live,
-      );
-    });
+    _clubAudience = _clubAudience.rebuild(
+      (b) => b..club.status = ClubStatus.Live,
+    );
+
+    await _getAgoraToken();
 
     if (_isOwner == false) {
       _playButtonHandler();
     }
+
+    _justRefresh();
   }
 
   void _clubConcludedByOwner(event) async {
     if (event['clubId'] != _clubAudience.club.clubId) return;
 
-    _clubAudience = _clubAudience.rebuild((b) => b
-      ..club.agoraToken = null
-      ..club.status = ClubStatus.Concluded);
+    _clubAudience =
+        _clubAudience.rebuild((b) => b..club.status = ClubStatus.Concluded);
 
     await _stopClub();
 
@@ -510,8 +503,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     await Provider.of<AgoraController>(context, listen: false)
         .joinAsParticipant(
       clubId: _clubAudience.club.clubId,
-      token: _clubAudience.club.agoraToken,
-      integerUsername: convertToInt(username),
+      agoraToken: this.agoraToken,
+      username: username,
     );
   }
 
@@ -524,8 +517,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
       await Provider.of<AgoraController>(context, listen: false).joinAsAudience(
         clubId: _clubAudience.club.clubId,
-        token: _clubAudience.club.agoraToken,
-        integerUsername: convertToInt(username),
+        agoraToken: agoraToken,
+        username: username,
       );
     } else {
       Fluttertoast.showToast(msg: "Club is null error");
@@ -677,6 +670,18 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     );
   }
 
+  Future<void> _getAgoraToken() async {
+    final username =
+        Provider.of<UserData>(context, listen: false).user.username;
+    final integerUsername = Provider.of<AgoraController>(context, listen: false)
+        .convertToInt(username);
+    agoraToken = (await _service.getAgoraToken(
+      clubId: widget.club.clubId,
+      uid: integerUsername,
+    ))
+        .body;
+  }
+
   Future<void> _startClub() async {
     final data = await _service.startClub(
       clubId: widget.club.clubId,
@@ -684,10 +689,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     );
     print(data.body['agoraToken']);
     _clubAudience = _clubAudience.rebuild(
-      (b) => b
-        ..club.agoraToken = data.body['agoraToken']
-        ..club.status = (ClubStatus.Live),
+      (b) => b..club.status = (ClubStatus.Live),
     );
+    await _getAgoraToken();
 
     _justRefresh();
   }
@@ -698,9 +702,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       creatorId: _myUserId,
     );
     _clubAudience = _clubAudience.rebuild(
-      (b) => b
-        ..club.agoraToken = null
-        ..club.status = ClubStatus.Concluded,
+      (b) => b..club.status = ClubStatus.Concluded,
     );
 
     await _stopClub();
@@ -771,6 +773,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       if (_clubAudience.club.status != (ClubStatus.Live) && _isOwner == true) {
         // club is being started by owner for first time.
         await _startClub();
+      } else if (this.agoraToken?.agoraToken == null) {
+        // getting agora token
+        await _getAgoraToken();
       }
 
       if (_clubAudience.audienceData.status == AudienceStatus.Participant ||

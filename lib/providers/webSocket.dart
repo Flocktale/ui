@@ -183,17 +183,25 @@ class MySocket with ChangeNotifier {
       funcs[what](event);
     } else if (agoraController.club?.clubId != null &&
         clubId == agoraController.club.clubId) {
-      final agoraToken = agoraController.club.agoraToken;
+      final agoraToken = agoraController.token;
 
       if (what == "muteParticipant") {
         final bool isMuted = event['isMuted'];
         agoraController.hardMuteAction(isMuted);
         Fluttertoast.showToast(msg: " You are ${isMuted ? 'mute' : 'unmute'}d");
       } else if (what == "JR#Resp#accept") {
-        agoraController.joinAsParticipant(clubId: clubId, token: agoraToken);
+        agoraController.joinAsParticipant(
+          clubId: clubId,
+          agoraToken: agoraToken,
+          username: userData.user.username,
+        );
         Fluttertoast.showToast(msg: 'You are now a Panelist');
       } else if (what == "kickedOut") {
-        agoraController.joinAsAudience(clubId: clubId, token: agoraToken);
+        agoraController.joinAsAudience(
+          clubId: clubId,
+          agoraToken: agoraToken,
+          username: userData.user.username,
+        );
 
         Fluttertoast.showToast(msg: 'You are now a listener only');
       } else if (what == "blocked") {
