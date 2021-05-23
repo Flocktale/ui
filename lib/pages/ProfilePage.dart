@@ -1,7 +1,5 @@
 import 'package:flocktale/Authentication/logOut.dart';
 import 'package:flocktale/Models/basic_enums.dart';
-import 'package:flocktale/Widgets/CommunityCard.dart';
-import 'package:flocktale/Widgets/ProfileTopBackground.dart';
 import 'package:flocktale/Widgets/socialRelationActions.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/pages/ClubSection.dart';
@@ -106,6 +104,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _handleMenuButtons(String value) async {
     switch (value) {
+      case 'Edit':
+        _navigateTo(EditProfile(user: _user));
+        break;
       case 'Invite contacts':
         await _inviteContacts();
         break;
@@ -135,35 +136,14 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       onSelected: _handleMenuButtons,
       itemBuilder: (BuildContext context) {
-        return {'Invite contacts', 'Settings', 'Log Out'}.map((String choice) {
+        return {'Edit', 'Invite contacts', 'Settings', 'Log Out'}
+            .map((String choice) {
           return PopupMenuItem<String>(
             value: choice,
             child: Text(choice),
           );
         }).toList();
       },
-    );
-  }
-
-  Widget _editProfileButton() {
-    Size size = MediaQuery.of(context).size;
-
-    return ButtonTheme(
-      minWidth: size.width / 1.5,
-      child: RaisedButton(
-        onPressed: () => _navigateTo(EditProfile(user: _user)),
-        color: Colors.white,
-        child: Text('EDIT PROFILE',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.red[600],
-            )),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18.0),
-          side: BorderSide(color: Colors.red[600]),
-        ),
-        elevation: 0.0,
-      ),
     );
   }
 
@@ -207,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
         SizedBox(height: size.height / 50),
         _Clubs != null
             ? Carousel(Clubs: _Clubs, navigateTo: _navigateTo)
-   //         ?CommunityCard()
+            //         ?CommunityCard()
             : Container(
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                 child: Center(
@@ -221,6 +201,48 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _imageContainer() {
+    return Container(
+      height: 200,
+      color: Colors.transparent,
+      child: Expanded(
+        child: Row(
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back_outlined),
+                  color: Colors.white,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                height: 96,
+                width: 96,
+                child: CustomImage(
+                  image: _user.avatar + '_large',
+                  radius: 16,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.topRight,
+                child: _isMe ? _profileDropDownMenu() : Container(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     this._socialInteraction = SocialInteraction(context, widget.userId,
@@ -231,216 +253,224 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
   }
 
+  Widget profileUI() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.center,
+          colors: [
+            Colors.black87,
+            Colors.black,
+          ],
+          tileMode: TileMode.repeated, // repeats the gradient over the canvas
+        ),
+      ),
+      child: Expanded(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              top: 200 / 2, // half of image container
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.elliptical(108, 36),
+                    topRight: Radius.elliptical(108, 36),
+                  ),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.elliptical(108, 36),
+                      topRight: Radius.elliptical(108, 36),
+                    ),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 48), // half of image size
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.elliptical(108, 36),
+                        topRight: Radius.elliptical(108, 36),
+                      ),
+                    ),
+                    child: profileDataColumn(),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _imageContainer(),
+            ),
+            Positioned(
+              bottom: 0,
+              child: MinClub((Widget page) async {
+                await Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (_) => page));
+                _fetchAllClubs();
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget profileDataColumn() {
+    Size size = MediaQuery.of(context).size;
+
+    return Column(
+      children: <Widget>[
+        SizedBox(height: 12),
+        Text(
+          _user.name ?? '',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: size.width / 20,
+            color: Colors.redAccent,
+          ),
+        ),
+        SizedBox(height: size.height / 130),
+        Text(
+          '@${_user.username}',
+          style: TextStyle(fontSize: size.width / 26, color: Colors.grey[400]),
+        ),
+        SizedBox(height: size.height / 130),
+        Center(
+          child: Text(
+            _user.tagline ?? '',
+            style: TextStyle(
+                fontFamily: "Lato",
+                fontWeight: FontWeight.bold,
+                color: Colors.grey),
+          ),
+        ),
+        SizedBox(height: size.height / 50),
+        Container(
+          margin:
+              EdgeInsets.only(left: size.width / 20, right: size.width / 20),
+          child: Text(
+            _user.bio ?? '...',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: size.width / 26,
+              color: Colors.white70,
+            ),
+          ),
+        ),
+        SizedBox(height: size.height / 30),
+        if (_isMe == false)
+          SocialRelationActions(
+              _socialInteraction, _userRelations, size, _user.username),
+        SizedBox(height: size.height / 30),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            InkWell(
+              onTap: () => _navigateTo(
+                SocialRelationPage(
+                  initpos: 0,
+                  user: _user,
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Text('${_user.friendsCount ?? 0}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600],
+                        fontSize: size.width / 20,
+                      )),
+                  Text(
+                    'Friends',
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: size.width / 26,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            VerticalDivider(
+              color: Colors.grey[400],
+            ),
+            InkWell(
+              onTap: () => _navigateTo(SocialRelationPage(
+                initpos: 1,
+                user: _user,
+              )),
+              child: Column(
+                children: <Widget>[
+                  Text('${_user.followerCount ?? 0}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600],
+                        fontSize: size.width / 20,
+                      )),
+                  Text(
+                    'Followers',
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: size.width / 26,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            VerticalDivider(
+              color: Colors.grey[400],
+            ),
+            InkWell(
+              onTap: () => _navigateTo(
+                SocialRelationPage(
+                  initpos: 2,
+                  user: _user,
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Text('${_user.followingCount ?? 0}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600],
+                        fontSize: size.width / 20,
+                      )),
+                  Text(
+                    'Following',
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: size.width / 26,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 16),
+        _showProfileClubs(),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print('isme=$_isMe');
-
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.redAccent,
+        backgroundColor: Colors.white,
         body: _user != null
-            ? Column(
-                children: [
-                  Expanded(
-                    child: Stack(fit: StackFit.expand, children: <Widget>[
-                      ProfileTopBackground(),
-                      _isMe == false
-                          ? Positioned(
-                              left: 0,
-                              top: 0,
-                              child: IconButton(
-                                icon: Icon(Icons.arrow_back_outlined),
-                                color: Colors.white,
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            )
-                          : Positioned(
-                              right: 10,
-                              top: 0,
-                              child: _profileDropDownMenu(),
-                            ),
-                      Positioned(
-                        top: ((size.height / 14) +
-                            (size.height / 9) -
-                            (size.height / 25)),
-                        height: size.height -
-                            ((size.height / 14) +
-                                (size.height / 9) -
-                                (size.height / 25)),
-                        width: size.width,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.elliptical(
-                                  size.width / 2, size.height / 20),
-                            ),
-                          ),
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(height: size.height / 20),
-                              Text(
-                                _user.name ?? _user.username,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: size.width / 20,
-                                  color: Colors.redAccent,
-                                ),
-                              ),
-                              SizedBox(height: size.height / 130),
-                              Text(
-                                '@${_user.username}',
-                                style: TextStyle(
-                                    fontSize: size.width / 26,
-                                    color: Colors.grey[400]),
-                              ),
-                              SizedBox(height: size.height / 130),
-                              Center(
-                                child: Text(
-                                  _user.tagline ?? '',
-                                  style: TextStyle(
-                                      fontFamily: "Lato",
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey),
-                                ),
-                              ),
-                              SizedBox(height: size.height / 50),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    left: size.width / 20,
-                                    right: size.width / 20),
-                                child: Text(
-                                  _user.bio ?? '',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: size.width / 26,
-                                      color: Colors.grey[500]),
-                                ),
-                              ),
-                              SizedBox(height: size.height / 30),
-                              (_isMe == false)
-                                  ? SocialRelationActions(_socialInteraction,
-                                      _userRelations, size, _user.username)
-                                  : _editProfileButton(),
-                              SizedBox(height: size.height / 30),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                //crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  InkWell(
-                                    onTap: () => _navigateTo(
-                                      SocialRelationPage(
-                                        initpos: 0,
-                                        user: _user,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text('${_user.friendsCount ?? 0}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey[600],
-                                              fontSize: size.width / 20,
-                                            )),
-                                        Text(
-                                          'Friends',
-                                          style: TextStyle(
-                                            color: Colors.redAccent,
-                                            fontSize: size.width / 26,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  VerticalDivider(
-                                    color: Colors.grey[400],
-                                  ),
-                                  InkWell(
-                                    onTap: () => _navigateTo(SocialRelationPage(
-                                      initpos: 1,
-                                      user: _user,
-                                    )),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text('${_user.followerCount ?? 0}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey[600],
-                                              fontSize: size.width / 20,
-                                            )),
-                                        Text(
-                                          'Followers',
-                                          style: TextStyle(
-                                            color: Colors.redAccent,
-                                            fontSize: size.width / 26,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  VerticalDivider(
-                                    color: Colors.grey[400],
-                                  ),
-                                  InkWell(
-                                    onTap: () => _navigateTo(
-                                      SocialRelationPage(
-                                        initpos: 2,
-                                        user: _user,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text('${_user.followingCount ?? 0}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey[600],
-                                              fontSize: size.width / 20,
-                                            )),
-                                        Text(
-                                          'Following',
-                                          style: TextStyle(
-                                            color: Colors.redAccent,
-                                            fontSize: size.width / 26,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: size.height / 20),
-                              _showProfileClubs(),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: size.height / 14,
-                        left: ((size.width / 2) - (size.width / 9)),
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: size.height / 18,
-                          child: CustomImage(
-                            image: _user.avatar + '_large',
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        child: MinClub((Widget page) async {
-                          await Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (_) => page));
-                          _fetchAllClubs();
-                        }),
-                      )
-                    ]),
-                  ),
-                ],
-              )
+            ? profileUI()
             : Center(
                 child: Container(
                     height: size.height / 10,
