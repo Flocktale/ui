@@ -6,6 +6,7 @@ import 'package:flocktale/Widgets/CommunityCard.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/Widgets/introWidget.dart';
 import 'package:flocktale/pages/ClubSection.dart';
+import 'package:flocktale/pages/NewClub.dart';
 import 'package:flocktale/pages/NewsTab.dart';
 import 'package:flocktale/pages/NotificationPage.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
@@ -331,6 +332,21 @@ class _LandingPageState extends State<LandingPage>
                         ),
                   SizedBox(height: size.height / 10)
                 ],
+              ),
+            ),
+          ),
+          Positioned(
+            right:size.width/20,
+            bottom: size.height/8,
+            child: InkWell(
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (_)=>NewClub()));
+              },
+              child: FloatingActionButton(
+                backgroundColor: Colors.redAccent,
+                child: Icon(
+                  Icons.add
+                ),
               ),
             ),
           ),
