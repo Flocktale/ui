@@ -71,11 +71,11 @@ class InviteBox {
   static List<Contact> getData() {
     List<Contact> res = [];
     contactBox.values.forEach((element) {
-      print(element);
+      // print(element);
       res.add(Contact.fromJson(json.decode(element)));
       // print(element);
     });
-    print(res);
+    // print(res);
     return res;
   }
 

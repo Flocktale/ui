@@ -4,10 +4,10 @@ import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flocktale/services/LocalStorage/InviteBox.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
-import 'package:contacts_service/contacts_service.dart';
+import 'package:contacts_service/contacts_service.dart' as CONTACT;
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../Models/contacts.dart' as CONTACT;
+import '../Models/contacts.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
@@ -22,22 +22,19 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-  List<Contact> contacts = [];
-  List<Contact> contactsFiltered = [];
-  List<CONTACT.Contact> flockContacts = [];
+  // always used filtered Contacts for displaying purpose
+  List<Contact> contactsFlockFiltered = [];
+  List<Contact> flockContacts = [];
+  List<CONTACT.Contact> phoneContacts = [];
+  List<CONTACT.Contact> phoneFilteredContacts = [];
   Map<String, bool> buttonPressed = new Map<String, bool>();
-  List<CONTACT.Contact> flockContactsFiltered = [];
-  // List<bool> flockUsersContactsFollowingButtonPressed = [];
-  // List<bool> flockUsersContactsFollowingButtonPressedfiltered = [];
+
+
   String text = 'Hi! Join me on FlockTale.';
   String subject = 'Link to the app:';
   TextEditingController searchController = new TextEditingController();
 
-  _fetchContacts() async {
-    setState(() {
-      contacts = InviteBox.getContacts();
-      flockContacts = InviteBox.getData();
-    });
+  void setFollowButtonStatus() {
     for (int j = 0; j < flockContacts.length; j++) {
       if (FollowingDatabase.isFollowing(flockContacts[j].userId)) {
         buttonPressed[flockContacts[j].userId] = true;
@@ -47,61 +44,61 @@ class _ContactsPageState extends State<ContactsPage> {
         // flockUsersContactsFollowingButtonPressed.add(false);
       }
     }
-    List<Contact> _contacts = [];
-    _contacts.addAll(contacts);
-    for (int i = 0; i < contacts.length; i++) {
-      if (contacts[i] == null ||
-          contacts[i].phones == null ||
-          contacts[i].phones.length == 0) {
-        continue;
+  }
+  
+  void removeFlockContactsFromPhoneContacts(){
+	  flockContacts.forEach((flockContact) {
+      for (int i = 0; i < phoneContacts.length; i++) {
+        bool present = false;
+        phoneContacts[i].phones.forEach((element) {
+          String phoneNo = element.value;
+
+          if (phoneNo[0] != '+') return;
+          if (phoneNo == flockContact) {
+            present = true;
+          }
+        });
+		if(present){
+			phoneContacts.remove(phoneContacts[i]);
+			break;
+		}
       }
-      for (int j = 0; j < flockContacts.length; j++) {
-        if (contacts[i] != null &&
-            contacts[i].phones != null &&
-            contacts[i].phones.length != 0 &&
-            flockContacts[j].phoneNo ==
-                contacts[i].phones.elementAt(0).value.replaceAll(' ', '')) {
-          _contacts.remove(contacts[i]);
-        }
-      }
-    }
-    setState(() {
-      contacts = _contacts;
     });
   }
-
-  Future<void> getPermissions() async {
-//    await InviteBox.clearContactDatabase();
-    await InviteBox.getNonSavedPhoneNumbers(context);
-    final userId = Provider.of<UserData>(context, listen: false).userId;
-    await FollowingDatabase.fetchList(userId, context);
-    _fetchContacts();
+  void _fetchContacts() async {
+    flockContacts = InviteBox.getData();
+    phoneContacts = InviteBox.getContacts();
+    setFollowButtonStatus();
+	removeFlockContactsFromPhoneContacts();
+	// setFiltered values as original values
+	contactsFlockFiltered = [...flockContacts];
+	phoneFilteredContacts = [...phoneContacts];
   }
 
+  void _filterText(){
+	contactsFlockFiltered = [...flockContacts];
+	phoneFilteredContacts = [...phoneContacts];
+  }
+
+ 
   filterContacts() {
     final now = DateTime.now();
-
-    List<Contact> _contacts = [];
-    _contacts.addAll(contacts);
-
-    List<CONTACT.Contact> _flockUsersContacts = [];
-    _flockUsersContacts.addAll(flockContacts);
+	contactsFlockFiltered = [...flockContacts];
+	phoneFilteredContacts = [...phoneContacts];
 
     if (searchController.text.isNotEmpty) {
-      _contacts.retainWhere((contact) {
-        String searchTerm = searchController.text.toLowerCase();
-        String contactName = contact?.displayName?.toLowerCase();
-        return contactName?.contains(searchTerm);
-      });
-
-      _flockUsersContacts.retainWhere((contact) {
+      contactsFlockFiltered.retainWhere((contact) {
         String searchTerm = searchController.text.toLowerCase();
         String contactName = contact?.name?.toLowerCase();
         return contactName?.contains(searchTerm);
       });
+
+      phoneFilteredContacts.retainWhere((contact) {
+        String searchTerm = searchController.text.toLowerCase();
+        String contactName = contact?.displayName?.toLowerCase();
+        return contactName?.contains(searchTerm);
+      });
       setState(() {
-        contactsFiltered = _contacts;
-        flockContactsFiltered = _flockUsersContacts;
       });
     }
     print('milliseconds : ${DateTime.now().difference(now).inMilliseconds}');
@@ -221,7 +218,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                               builder: (_) => ProfilePage(
                                                     userId: contact.userId,
                                                   )))
-                                          .then((value) => _fetchContacts());
+                                          .then((value) => print('Hi'));
                                     },
                                     child: ListTile(
                                       leading: CustomImage(
