@@ -91,11 +91,10 @@ class MyApp extends StatelessWidget {
         //   accentColor: Colors.redAccent,
         // ),
         theme: new ThemeData(
-          scaffoldBackgroundColor: Colors.black,
-          appBarTheme: AppBarTheme(
-            color: Colors.black
-          )
-        ),
+            scaffoldBackgroundColor: Colors.black87,
+            appBarTheme: AppBarTheme(
+              color: Colors.black87,
+            )),
         home: Initiation(),
       ),
     );

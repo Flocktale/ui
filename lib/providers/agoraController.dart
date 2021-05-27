@@ -45,7 +45,7 @@ class AgoraController {
     @required AgoraToken agoraToken,
     @required String username,
   }) async {
-    assert(clubId != null && token?.agoraToken != null);
+    assert(clubId != null && agoraToken?.agoraToken != null);
 
     this.token = agoraToken;
 
@@ -63,7 +63,7 @@ class AgoraController {
     @required AgoraToken agoraToken,
     @required String username,
   }) async {
-    assert(clubId != null && token?.agoraToken != null);
+    assert(clubId != null && agoraToken?.agoraToken != null);
 
     this.token = agoraToken;
 

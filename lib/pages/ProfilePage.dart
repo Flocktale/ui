@@ -325,6 +325,36 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _getSocialCountWidget({int count, String title, int initpos}) {
+    Size size = MediaQuery.of(context).size;
+
+    return InkWell(
+      onTap: () => _navigateTo(
+        SocialRelationPage(
+          initpos: initpos ?? 0,
+          user: _user,
+        ),
+      ),
+      child: Column(
+        children: <Widget>[
+          Text('${count ?? 0}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[600],
+                fontSize: size.width / 20,
+              )),
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.redAccent,
+              fontSize: size.width / 26,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget profileDataColumn() {
     Size size = MediaQuery.of(context).size;
 
@@ -373,88 +403,15 @@ class _ProfilePageState extends State<ProfilePage> {
               _socialInteraction, _userRelations, size, _user.username),
         SizedBox(height: size.height / 30),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           //crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            InkWell(
-              onTap: () => _navigateTo(
-                SocialRelationPage(
-                  initpos: 0,
-                  user: _user,
-                ),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Text('${_user.friendsCount ?? 0}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                        fontSize: size.width / 20,
-                      )),
-                  Text(
-                    'Friends',
-                    style: TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: size.width / 26,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            VerticalDivider(
-              color: Colors.grey[400],
-            ),
-            InkWell(
-              onTap: () => _navigateTo(SocialRelationPage(
-                initpos: 1,
-                user: _user,
-              )),
-              child: Column(
-                children: <Widget>[
-                  Text('${_user.followerCount ?? 0}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                        fontSize: size.width / 20,
-                      )),
-                  Text(
-                    'Followers',
-                    style: TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: size.width / 26,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            VerticalDivider(
-              color: Colors.grey[400],
-            ),
-            InkWell(
-              onTap: () => _navigateTo(
-                SocialRelationPage(
-                  initpos: 2,
-                  user: _user,
-                ),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Text('${_user.followingCount ?? 0}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                        fontSize: size.width / 20,
-                      )),
-                  Text(
-                    'Following',
-                    style: TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: size.width / 26,
-                    ),
-                  )
-                ],
-              ),
-            ),
+            _getSocialCountWidget(
+                count: _user.friendsCount, title: 'Friends', initpos: 0),
+            _getSocialCountWidget(
+                count: _user.followerCount, title: 'Followers', initpos: 1),
+            _getSocialCountWidget(
+                count: _user.followingCount, title: 'Following', initpos: 2),
           ],
         ),
         SizedBox(height: 16),
