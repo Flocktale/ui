@@ -19,12 +19,10 @@ class InviteBox {
 
   static Future<List<String>> getNonSavedPhoneNumbers(
       BuildContext context) async {
-
-      
     await init();
     if (await Permission.contacts.request().isGranted) {
-      Map<String,String> phoneToName = {};
-       _contacts = await fetchContactsFromPhone();
+      Map<String, String> phoneToName = {};
+      _contacts = await fetchContactsFromPhone();
       List<String> phoneNumbers = [];
       int ind = -1;
       _contacts.forEach((element) {
@@ -45,14 +43,14 @@ class InviteBox {
       BuiltContacts b = BuiltContacts(
           (b) => b..contacts = BuiltList<String>(phoneNumbers).toBuilder());
 
-
       final result =
           (await Provider.of<DatabaseApiService>(context, listen: false)
                   .syncContactsByPost(body: b))
               .body;
 
       result.forEach((element) {
-        addContact(element.phone, element.userId, element.avatar,phoneToName[element.phone]);
+        addContact(element.phone, element.userId, element.avatar,
+            phoneToName[element.phone]);
       });
     } else {
       Fluttertoast.showToast(
@@ -79,16 +77,17 @@ class InviteBox {
     return res;
   }
 
-  static List<CONTACT.Contact> getContacts(){
+  static List<CONTACT.Contact> getContacts() {
     return _contacts;
   }
 
-  static void addContact(String phoneNo, String userId, String userAvatar,String name) {
-    Contact c = new Contact(userId, userAvatar, phoneNo,name);
+  static void addContact(
+      String phoneNo, String userId, String userAvatar, String name) {
+    Contact c = new Contact(userId, userAvatar, phoneNo, name);
     contactBox.put(phoneNo, c.toJson());
   }
 
-  static void clearContactDatabase() async{
+  static void clearContactDatabase() async {
     await init();
     contactBox.clear();
   }

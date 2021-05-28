@@ -284,7 +284,7 @@ class _ProfileShortViewState extends State<ProfileShortView> {
             ),
           ),
           Text(
-            widget.summaryUser.username,
+            '${_user.username ?? ""}',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

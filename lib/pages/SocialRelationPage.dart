@@ -429,24 +429,24 @@ class _SocialRelationPageState extends State<SocialRelationPage>
 
                   final _user = relationUsers[ind];
 
-                  return InkWell(
+                  return Container(
                     key: UniqueKey(),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => ProfilePage(
-                            userId: _user.userId,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(top: 16),
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Row(
+                    margin: EdgeInsets.only(top: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ProfilePage(
+                                  userId: _user.userId,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
@@ -486,13 +486,13 @@ class _SocialRelationPageState extends State<SocialRelationPage>
                               SizedBox(width: 16),
                             ],
                           ),
-                          if (isMe)
-                            socialActionButtonForLocalUser(
-                                currentTypeIndex, ind, relationUsers, _user)
-                          else
-                            socialActionButtonForRemoteUser(_user),
-                        ],
-                      ),
+                        ),
+                        if (isMe)
+                          socialActionButtonForLocalUser(
+                              currentTypeIndex, ind, relationUsers, _user)
+                        else
+                          socialActionButtonForRemoteUser(_user),
+                      ],
                     ),
                   );
                 }),
