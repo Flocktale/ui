@@ -828,27 +828,49 @@ class _$NotificationDataSerializer
   @override
   Iterable<Object> serialize(Serializers serializers, NotificationData object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
-      'type',
-      serializers.serialize(object.type, specifiedType: const FullType(String)),
-      'title',
-      serializers.serialize(object.title,
-          specifiedType: const FullType(String)),
-      'avatar',
-      serializers.serialize(object.avatar,
-          specifiedType: const FullType(String)),
-      'timestamp',
-      serializers.serialize(object.timestamp,
-          specifiedType: const FullType(int)),
-      'targetResourceId',
-      serializers.serialize(object.targetResourceId,
-          specifiedType: const FullType(String)),
-      'notificationId',
-      serializers.serialize(object.notificationId,
-          specifiedType: const FullType(String)),
-      'opened',
-      serializers.serialize(object.opened, specifiedType: const FullType(bool)),
-    ];
+    final result = <Object>[];
+    if (object.type != null) {
+      result
+        ..add('type')
+        ..add(serializers.serialize(object.type,
+            specifiedType: const FullType(NotificationType)));
+    }
+    if (object.title != null) {
+      result
+        ..add('title')
+        ..add(serializers.serialize(object.title,
+            specifiedType: const FullType(String)));
+    }
+    if (object.avatar != null) {
+      result
+        ..add('avatar')
+        ..add(serializers.serialize(object.avatar,
+            specifiedType: const FullType(String)));
+    }
+    if (object.timestamp != null) {
+      result
+        ..add('timestamp')
+        ..add(serializers.serialize(object.timestamp,
+            specifiedType: const FullType(int)));
+    }
+    if (object.targetResourceId != null) {
+      result
+        ..add('targetResourceId')
+        ..add(serializers.serialize(object.targetResourceId,
+            specifiedType: const FullType(String)));
+    }
+    if (object.notificationId != null) {
+      result
+        ..add('notificationId')
+        ..add(serializers.serialize(object.notificationId,
+            specifiedType: const FullType(String)));
+    }
+    if (object.opened != null) {
+      result
+        ..add('opened')
+        ..add(serializers.serialize(object.opened,
+            specifiedType: const FullType(bool)));
+    }
     if (object.secondaryAvatar != null) {
       result
         ..add('secondaryAvatar')
@@ -872,7 +894,8 @@ class _$NotificationDataSerializer
       switch (key) {
         case 'type':
           result.type = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+                  specifiedType: const FullType(NotificationType))
+              as NotificationType;
           break;
         case 'title':
           result.title = serializers.deserialize(value,
@@ -3972,7 +3995,7 @@ class RelationActionResponseBuilder
 
 class _$NotificationData extends NotificationData {
   @override
-  final String type;
+  final NotificationType type;
   @override
   final String title;
   @override
@@ -4001,30 +4024,7 @@ class _$NotificationData extends NotificationData {
       this.notificationId,
       this.opened,
       this.secondaryAvatar})
-      : super._() {
-    if (type == null) {
-      throw new BuiltValueNullFieldError('NotificationData', 'type');
-    }
-    if (title == null) {
-      throw new BuiltValueNullFieldError('NotificationData', 'title');
-    }
-    if (avatar == null) {
-      throw new BuiltValueNullFieldError('NotificationData', 'avatar');
-    }
-    if (timestamp == null) {
-      throw new BuiltValueNullFieldError('NotificationData', 'timestamp');
-    }
-    if (targetResourceId == null) {
-      throw new BuiltValueNullFieldError(
-          'NotificationData', 'targetResourceId');
-    }
-    if (notificationId == null) {
-      throw new BuiltValueNullFieldError('NotificationData', 'notificationId');
-    }
-    if (opened == null) {
-      throw new BuiltValueNullFieldError('NotificationData', 'opened');
-    }
-  }
+      : super._();
 
   @override
   NotificationData rebuild(void Function(NotificationDataBuilder) updates) =>
@@ -4083,9 +4083,9 @@ class NotificationDataBuilder
     implements Builder<NotificationData, NotificationDataBuilder> {
   _$NotificationData _$v;
 
-  String _type;
-  String get type => _$this._type;
-  set type(String type) => _$this._type = type;
+  NotificationType _type;
+  NotificationType get type => _$this._type;
+  set type(NotificationType type) => _$this._type = type;
 
   String _title;
   String get title => _$this._title;

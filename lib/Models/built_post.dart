@@ -5,6 +5,7 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:flocktale/Models/enums/audienceStatus.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
+import 'package:flocktale/Models/enums/notificationType.dart';
 import 'package:flocktale/services/chopper/serializers.dart';
 
 import 'enums/communityUserType.dart';
@@ -263,12 +264,19 @@ abstract class RelationActionResponse
 
 abstract class NotificationData
     implements Built<NotificationData, NotificationDataBuilder> {
-  String get type;
+  @nullable
+  NotificationType get type;
+  @nullable
   String get title;
+  @nullable
   String get avatar;
+  @nullable
   int get timestamp;
+  @nullable
   String get targetResourceId;
+  @nullable
   String get notificationId;
+  @nullable
   bool get opened;
 
   @nullable

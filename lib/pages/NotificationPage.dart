@@ -1,3 +1,4 @@
+import 'package:flocktale/Models/enums/notificationType.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/ClubDetail.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,7 +19,8 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   BuiltNotificationList notificationList;
   BuiltClub club;
-  Future getNotifications() async {
+
+  Future _getNotifications() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final cuser = Provider.of<UserData>(context, listen: false).user;
     String lastEvalustedKey;
@@ -38,9 +41,11 @@ class _NotificationPageState extends State<NotificationPage> {
 
     temp.sort((a, b) {
       var t1 = (a.timestamp >= curTime &&
-          (a.type == "CLUB#INV#prt" || a.type == "CLUB#INV#adc"));
+          (a.type == NotificationType.CLUB_PARTICIPATION_INV ||
+              a.type == NotificationType.CLUB_AUDIENCE_INV));
       var t2 = (b.timestamp >= curTime &&
-          (b.type == "CLUB#INV#prt" || b.type == "CLUB#INV#adc"));
+          (b.type == NotificationType.CLUB_PARTICIPATION_INV ||
+              b.type == NotificationType.CLUB_AUDIENCE_INV));
       print('${a.type} :: $t1 :: ${b.type} :: $t2');
       var res = (t1 != t2 ? t1 == true : a.timestamp > b.timestamp);
       if (res) {
@@ -58,15 +63,6 @@ class _NotificationPageState extends State<NotificationPage> {
       b.lastevaluatedkey = lastevaluatedkey;
     });
 
-    setState(() {});
-  }
-
-  respondNotifications(String notifId) async {
-    final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final cuser = Provider.of<UserData>(context, listen: false).user;
-    notificationList = (await service.responseToNotification(
-            userId: cuser.userId, notificationId: notifId, action: 'accept'))
-        .body;
     setState(() {});
   }
 
@@ -97,7 +93,7 @@ class _NotificationPageState extends State<NotificationPage> {
     return str;
   }
 
-  getClub(String clubId) async {
+  _getClub(String clubId) async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
     final cuserId = Provider.of<UserData>(context, listen: false).userId;
     club = (await service.getClubByClubId(
@@ -106,287 +102,232 @@ class _NotificationPageState extends State<NotificationPage> {
     ))
         .body
         .club;
+  }
+
+  Future<void> _respondToFriendRequest(
+      NotificationData notif, String response, int index) async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+    final cuser = Provider.of<UserData>(context, listen: false).user;
+
+    final resp = (await service.responseToNotification(
+        userId: cuser.userId,
+        notificationId: notif.notificationId,
+        action: response));
+
+    if (resp.isSuccessful) {
+      final allNotification = notificationList.notifications.toBuilder();
+
+      if (response == 'accept') {
+        allNotification[index] =
+            allNotification[index].rebuild((b) => b..opened = true);
+
+        _navigateToTargeResourceId(notif);
+      } else if (response == 'cancel') {
+        allNotification.removeAt(index);
+      }
+      notificationList =
+          notificationList.rebuild((b) => b..notifications = allNotification);
+    } else {
+      Fluttertoast.showToast(msg: "Some error occured ");
+    }
     setState(() {});
+  }
+
+  Widget _whenNotificationNotOpened(NotificationData notif, int index) {
+    if (notif.type == NotificationType.CLUB_PARTICIPATION_INV) {
+      return InkWell(
+        onTap: () => _navigateToTargeResourceId(notif),
+        child: _notificationButton(
+          title: 'Go to Club',
+          textColor: Colors.white,
+          buttonColor: Colors.red[600],
+        ),
+      );
+    } else if (notif.type == NotificationType.NEW_FRIEND_REQUEST) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          InkWell(
+            onTap: () => _respondToFriendRequest(notif, 'accept', index),
+            child: _notificationButton(
+              title: 'Accept',
+              textColor: Colors.white,
+              buttonColor: Colors.red[600],
+            ),
+          ),
+          InkWell(
+            onTap: () => _respondToFriendRequest(notif, 'cancel', index),
+            child: _notificationButton(
+              title: 'Decline',
+              textColor: Colors.redAccent,
+              buttonColor: Colors.white,
+            ),
+          )
+        ],
+      );
+    } else
+      return Container();
+  }
+
+  Widget _notificationButton({
+    String title,
+    Color textColor = Colors.white,
+    Color buttonColor = Colors.redAccent,
+  }) {
+    return Card(
+      shadowColor: Colors.redAccent,
+      elevation: 2,
+      color: buttonColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToTargeResourceId(NotificationData notif) async {
+    Widget page;
+    if (notif.type == NotificationType.NEW_FRIEND_REQUEST ||
+        notif.type == NotificationType.FRIEND_REQUEST_ACCEPTED ||
+        notif.type == NotificationType.NEW_FOLLOWER) {
+      // navigating to user profile
+
+      page = ProfilePage(
+        userId: notif.targetResourceId,
+      );
+    } else if (notif.type == NotificationType.CLUB_AUDIENCE_INV ||
+        notif.type == NotificationType.CLUB_PARTICIPATION_INV) {
+      // navigating to club
+
+      page = ClubDetailPage(
+        club: await _getClub(notif.targetResourceId),
+      );
+    }
+
+    if (page != null) {
+      await Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+      // resetting the notifications
+      setState(() {
+        notificationList = null;
+      });
+
+      _getNotifications();
+    }
+  }
+
+  Widget _displayNotificationList() {
+    return ListView.builder(
+      itemCount: notificationList.notifications.length,
+      itemBuilder: (context, index) {
+        final notif = notificationList.notifications[index];
+
+        return Container(
+          key: ValueKey(notif.title),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: InkWell(
+            onTap: () => _navigateToTargeResourceId(notif),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  child: CustomImage(
+                    image: notif.avatar + '_thumb',
+                    radius: 8,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          child: RichText(
+                            text: TextSpan(
+                              text: notif.title,
+                              style: TextStyle(
+                                fontFamily: "Lato",
+                                color: Colors.white,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: '\t' +
+                                        _processCommentTimestamp(
+                                            notificationList
+                                                .notifications[index]
+                                                .timestamp),
+                                    style: TextStyle(
+                                      fontFamily: "Lato",
+                                      color: Colors.white70,
+                                    ))
+                              ],
+                            ),
+                          ),
+                        ),
+                        notif.opened == false
+                            ? _whenNotificationNotOpened(notif, index)
+                            : Container(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
   void initState() {
-    getNotifications();
+    _getNotifications();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    bool hasAccepted = false;
-    bool hasJoined = false;
     return SafeArea(
+      child: Container(
+        color: Colors.white,
         child: Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Notifications',
-          style: TextStyle(
-            fontFamily: 'Lato',
-            color: Colors.black,
-          ),
-        ),
-        iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Colors.white,
-      ),
-      body: notificationList != null
-          ? RefreshIndicator(
-              onRefresh: getNotifications,
-              child: Container(
-                child: ListView.builder(
-                  itemCount: notificationList.notifications.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-                      child: ListTile(
-                        onTap: notificationList.notifications[index].type ==
-                                    "FR#new" ||
-                                notificationList.notifications[index].type ==
-                                    "FR#accepted" ||
-                                notificationList.notifications[index].type ==
-                                    "FLW#new"
-                            ? () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => ProfilePage(
-                                          userId: notificationList
-                                              .notifications[index]
-                                              .targetResourceId,
-                                        )));
-                              }
-                            : () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => ClubDetailPage(
-                                          club: getClub(notificationList
-                                              .notifications[index]
-                                              .targetResourceId),
-                                        )));
-                              },
-                        leading:
-                            notificationList.notifications[index].avatar != null
-                                ? CircleAvatar(
-                                    child: CustomImage(
-                                      image: notificationList
-                                              .notifications[index].avatar +
-                                          "_thumb",
-                                    ),
-                                  )
-                                : CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                  ),
-                        title: Column(
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                  text: notificationList
-                                      .notifications[index].title,
-                                  style: TextStyle(
-                                      fontFamily: "Lato", color: Colors.black),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                        text: _processCommentTimestamp(
-                                            notificationList
-                                                .notifications[index]
-                                                .timestamp),
-                                        style: TextStyle(
-                                            fontFamily: "Lato",
-                                            color: Colors.grey))
-                                  ]),
-                            ),
-                            notificationList.notifications[index].opened ==
-                                    false
-                                ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      notificationList
-                                                  .notifications[index].type ==
-                                              "FR#new"
-                                          ? ButtonTheme(
-                                              minWidth: size.width / 3.5,
-                                              child: RaisedButton(
-                                                onPressed: () async {
-                                                  final service = Provider.of<
-                                                          DatabaseApiService>(
-                                                      context,
-                                                      listen: false);
-                                                  final cuser =
-                                                      Provider.of<UserData>(
-                                                              context,
-                                                              listen: false)
-                                                          .user;
-
-                                                  final resp = (await service
-                                                      .responseToNotification(
-                                                          userId: cuser.userId,
-                                                          notificationId:
-                                                              notificationList
-                                                                  .notifications[
-                                                                      index]
-                                                                  .notificationId,
-                                                          action: "accept"));
-                                                  if (resp.isSuccessful) {
-                                                    hasAccepted = !hasAccepted;
-                                                    setState(() {});
-                                                    Navigator.of(context).push(
-                                                        MaterialPageRoute(
-                                                            builder: (_) =>
-                                                                ProfilePage(
-                                                                  userId: notificationList
-                                                                      .notifications[
-                                                                          index]
-                                                                      .targetResourceId,
-                                                                )));
-                                                  } else {
-                                                    Fluttertoast.showToast(
-                                                        msg:
-                                                            "Some error occured ");
-                                                  }
-                                                },
-                                                color: hasAccepted == false
-                                                    ? Colors.red[600]
-                                                    : Colors.grey,
-                                                child: Text(
-                                                    hasAccepted == false
-                                                        ? 'Accept'
-                                                        : 'Accepted',
-                                                    style: TextStyle(
-                                                      color:
-                                                          hasAccepted == false
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontFamily: 'Lato',
-                                                    )),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5.0),
-                                                  //side: BorderSide(color: Colors.red[600]),
-                                                ),
-                                              ),
-                                            )
-                                          : notificationList
-                                                      .notifications[index]
-                                                      .type ==
-                                                  "CLUB#INV#prt"
-                                              ? ButtonTheme(
-                                                  minWidth: size.width / 3.5,
-                                                  child: RaisedButton(
-                                                    onPressed: () async {
-                                                      Navigator.of(context).push(MaterialPageRoute(
-                                                          builder: (_) => ClubDetailPage(
-                                                              club: getClub(
-                                                                  notificationList
-                                                                      .notifications[
-                                                                          index]
-                                                                      .targetResourceId))));
-                                                    },
-                                                    color: hasJoined == false
-                                                        ? Colors.red[600]
-                                                        : Colors.grey,
-                                                    child: Text('Go to Club',
-                                                        style: TextStyle(
-                                                          color: hasJoined ==
-                                                                  false
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontFamily: 'Lato',
-                                                        )),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5.0),
-                                                      //side: BorderSide(color: Colors.red[600]),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(),
-                                      notificationList
-                                                  .notifications[index].type ==
-                                              "FR#new"
-                                          ? ButtonTheme(
-                                              minWidth: size.width / 3.5,
-                                              child: RaisedButton(
-                                                onPressed: () async {
-                                                  final service = Provider.of<
-                                                          DatabaseApiService>(
-                                                      context,
-                                                      listen: false);
-                                                  final cuser =
-                                                      Provider.of<UserData>(
-                                                              context,
-                                                              listen: false)
-                                                          .user;
-
-                                                  final resp = (await service
-                                                      .responseToNotification(
-                                                          userId: cuser.userId,
-                                                          notificationId:
-                                                              notificationList
-                                                                  .notifications[
-                                                                      index]
-                                                                  .notificationId,
-                                                          action: "cancel"));
-                                                  if (resp.isSuccessful) {
-                                                    final allNotification =
-                                                        notificationList
-                                                            .notifications
-                                                            .toBuilder();
-                                                    allNotification
-                                                        .removeAt(index);
-                                                    notificationList =
-                                                        notificationList
-                                                            .rebuild((b) => b
-                                                              ..notifications =
-                                                                  allNotification);
-                                                    setState(() {});
-                                                  } else {
-                                                    Fluttertoast.showToast(
-                                                        msg:
-                                                            "Something went wrong");
-                                                  }
-                                                },
-                                                color: Colors.white,
-                                                child: Text('Decline',
-                                                    style: TextStyle(
-                                                      color: Colors.redAccent,
-                                                      fontFamily: 'Lato',
-                                                    )),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5.0),
-                                                  //side: BorderSide(color: Colors.red[600]),
-                                                ),
-                                              ),
-                                            )
-                                          : Container()
-                                    ],
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+          backgroundColor: Colors.black87,
+          appBar: AppBar(
+            title: Text(
+              'Notifications',
+              style: TextStyle(
+                fontFamily: 'Lato',
+                color: Colors.white,
               ),
-            )
-          : Container(
-              child: Center(
-                  child: Text(
-                "Loading..",
-                style: TextStyle(fontFamily: 'Lato', color: Colors.grey),
-              )),
             ),
-    ));
+            centerTitle: true,
+            iconTheme: IconThemeData(color: Colors.white),
+          ),
+          body: notificationList != null
+              ? RefreshIndicator(
+                  onRefresh: _getNotifications,
+                  child: Container(
+                    child: _displayNotificationList(),
+                  ),
+                )
+              : Container(
+                  child: Center(
+                    child: SpinKitChasingDots(
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                ),
+        ),
+      ),
+    );
   }
 }
