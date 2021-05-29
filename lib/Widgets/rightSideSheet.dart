@@ -40,9 +40,8 @@ class RightSideSheet extends StatelessWidget {
               BoxDecoration(
                 color: Colors.black87,
                 border: Border(
-                  left: BorderSide(
-                    color: Colors.white54,
-                  ),
+                  left: BorderSide(color: Colors.white54),
+                  top: BorderSide(color: Colors.white24),
                 ),
               ),
           child: child,

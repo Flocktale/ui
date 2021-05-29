@@ -1,11 +1,14 @@
 import 'package:flocktale/Widgets/HomePageTopSection.dart';
 import 'package:flocktale/Widgets/MinClub.dart';
 import 'package:flocktale/Widgets/createClubFAB.dart';
+import 'package:flocktale/Widgets/customImage.dart';
+import 'package:flocktale/Widgets/homePageDrawer.dart';
 import 'package:flocktale/Widgets/homePageTabBar.dart';
 import 'package:flocktale/pages/LandingPageClubs.dart';
 import 'package:flocktale/pages/LandingPageCommerceProducts.dart';
 import 'package:flocktale/pages/LandingPageCommunities.dart';
 import 'package:flocktale/pages/LandingPageNewsArticles.dart';
+import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flocktale/services/DBHelper.dart';
 import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +22,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   TabController _tabController;
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> _navigateTo(Widget page) async {
     await Navigator.of(context)
@@ -45,9 +50,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Container(
         color: Colors.white,
         child: Scaffold(
+          key: _scaffoldKey,
           backgroundColor: Colors.black,
           floatingActionButton: CreateClubFAB(this._tabController),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          drawer: HomePageDrawer(),
           body: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Stack(
@@ -55,7 +62,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    HomePageTopSection(),
+                    HomePageTopSection(scaffoldKey: _scaffoldKey),
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: HomePageTabBar(_tabController),

@@ -146,7 +146,7 @@ class _LandingPageClubsState extends State<LandingPageClubs> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      margin: EdgeInsets.symmetric(vertical: 8),
       child: RefreshIndicator(
         backgroundColor: Colors.black87,
         color: Colors.redAccent,

@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomePageTopSection extends StatelessWidget {
+  final GlobalKey<ScaffoldState> scaffoldKey;
+
+  const HomePageTopSection({Key key, this.scaffoldKey}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final cuser = Provider.of<UserData>(context, listen: false).user;
@@ -12,9 +16,7 @@ class HomePageTopSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         InkWell(
-          onTap: () {
-            // TODO: open drawer
-          },
+          onTap: () => scaffoldKey.currentState.openDrawer(),
           child: Container(
             width: 36,
             height: 36,
