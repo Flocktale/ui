@@ -401,7 +401,7 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
   AppBar get _appBar => AppBar(
-        backgroundColor: Colors.black87,
+        backgroundColor: Colors.black,
         title: Text(
           "Connect with contacts",
           style: TextStyle(
@@ -451,7 +451,7 @@ class _ContactsPageState extends State<ContactsPage> {
       backgroundColor: Colors.white,
       appBar: _appBar,
       body: Container(
-        color: Colors.black87,
+        color: Colors.black,
         padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: _initialFetching
             ? Center(

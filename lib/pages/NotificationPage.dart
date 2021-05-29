@@ -300,7 +300,7 @@ class _NotificationPageState extends State<NotificationPage> {
       child: Container(
         color: Colors.white,
         child: Scaffold(
-          backgroundColor: Colors.black87,
+          backgroundColor: Colors.black,
           appBar: AppBar(
             title: Text(
               'Notifications',

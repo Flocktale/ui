@@ -257,10 +257,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.center,
+          begin: Alignment.topLeft,
+          end: Alignment.centerRight,
           colors: [
+            Colors.black,
             Colors.black87,
+            Colors.black,
             Colors.black,
           ],
           tileMode: TileMode.repeated, // repeats the gradient over the canvas
@@ -285,7 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black87,
+                    color: Colors.black,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.elliptical(108, 36),
                       topRight: Radius.elliptical(108, 36),
@@ -340,7 +342,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Text('${count ?? 0}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+                color: Colors.white,
                 fontSize: size.width / 20,
               )),
           Text(

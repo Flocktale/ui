@@ -241,6 +241,7 @@ class _InviteScreenState extends State<InviteScreen>
                     activeColor: Colors.white,
                     activeTrackColor: Colors.redAccent,
                     inactiveThumbColor: Colors.white,
+                    inactiveTrackColor: Colors.white24,
                     activeThumbImage: NetworkImage(_user.avatar + "_thumb"),
                     value: _selectedUserIds[_user.userId] ?? false,
                     onChanged: (val) async {
@@ -442,7 +443,7 @@ class _InviteScreenState extends State<InviteScreen>
         initialIndex: 0,
         length: 2,
         child: Scaffold(
-          backgroundColor: Colors.black87,
+          backgroundColor: Colors.black,
           body: Column(
             children: [
               Row(

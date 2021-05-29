@@ -1,3 +1,4 @@
+import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/ClubDetail.dart';
@@ -31,60 +32,66 @@ class _MinClubState extends State<MinClub> {
 
     final size = MediaQuery.of(context).size;
 
-    return club != null
-        ? InkWell(
-            onTap: () async {
-              if (widget.navigateTo != null) {
-                await widget.navigateTo(ClubDetailPage(club: club));
-              } else {
-                await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => ClubDetailPage(club: club)));
-              }
-              if (this.mounted) {
-                setState(() {});
-              }
-            },
-            child: Container(
-              height: size.height / 12,
-              width: size.width,
-              color: Colors.white,
-              child: Row(children: [
-                Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                    child: Image.network(club.clubAvatar)),
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 20, size.width - 250, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        club.clubName,
-                        style: TextStyle(
-                            fontFamily: "Lato", fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        club.creator.username,
-                        style: TextStyle(
-                          fontFamily: "Lato",
-                          color: Colors.grey,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                // Container(
-                //     child: IconButton(
-                //         iconSize: size.width / 10,
-                //         icon: Icon(Icons.stop),
-                //         onPressed: () {
-                //           stopClub();
-                //         }))
-              ]),
+    if (club == null) return Container(height: 0);
+
+    return InkWell(
+      onTap: () async {
+        if (widget.navigateTo != null) {
+          await widget.navigateTo(ClubDetailPage(club: club));
+        } else {
+          await Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => ClubDetailPage(club: club)));
+        }
+        if (this.mounted) {
+          setState(() {});
+        }
+      },
+      child: Container(
+        color: Colors.white,
+        child: Container(
+          height: size.height / 12,
+          width: size.width,
+          color: Colors.black.withOpacity(0.7),
+          child: Row(children: [
+            Container(
+              child: CustomImage(
+                image: club.clubAvatar,
+                radius: 0,
+              ),
             ),
-          )
-        : Container(
-            height: 0,
-            color: Colors.redAccent,
-          );
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                alignment: Alignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        club.clubName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontFamily: "Lato",
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ),
+                    Text(
+                      club.creator.username,
+                      style: TextStyle(
+                        fontFamily: "Lato",
+                        color: Colors.white70,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ]),
+        ),
+      ),
+    );
   }
 }

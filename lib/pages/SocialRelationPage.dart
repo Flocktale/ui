@@ -541,7 +541,7 @@ class _SocialRelationPageState extends State<SocialRelationPage>
           initialIndex: widget.initpos,
           length: tabs.length,
           child: Scaffold(
-            backgroundColor: Colors.black87,
+            backgroundColor: Colors.black,
             body: Column(
               children: [
                 Row(

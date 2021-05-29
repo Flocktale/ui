@@ -1,9 +1,14 @@
+import 'package:flocktale/Widgets/HomePageTopSection.dart';
+import 'package:flocktale/Widgets/MinClub.dart';
+import 'package:flocktale/Widgets/createClubFAB.dart';
+import 'package:flocktale/Widgets/homePageTabBar.dart';
+import 'package:flocktale/pages/LandingPageClubs.dart';
+import 'package:flocktale/pages/LandingPageCommerceProducts.dart';
+import 'package:flocktale/pages/LandingPageCommunities.dart';
+import 'package:flocktale/pages/LandingPageNewsArticles.dart';
+import 'package:flocktale/services/DBHelper.dart';
 import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flutter/material.dart';
-import 'package:flocktale/pages/LandingPage.dart';
-import 'package:flocktale/pages/NewClub.dart';
-import 'package:flocktale/pages/ProfilePage.dart';
-import 'package:flocktale/pages/SearchPage.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
 
@@ -12,18 +17,15 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  PageController _pageController = PageController();
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  TabController _tabController;
 
-  int selectedIndex = 0;
-  void _onPageChanged(int index) {
-    setState(() {
-      selectedIndex = index;
+  Future<void> _navigateTo(Widget page) async {
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => page))
+        .then((value) {
+      setState(() {});
     });
-  }
-
-  void _onItemTapped(int selectedIndex) {
-    _pageController.jumpToPage(selectedIndex);
   }
 
   @override
@@ -31,56 +33,52 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     String userId = Provider.of<UserData>(context, listen: false).user.userId;
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
 
-    // TODO: UNCOMMENT THIS
-    // DBHelper.fetchList(userId, context);
+    DBHelper.fetchList(userId, context);
     FollowingDatabase.fetchList(userId, context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final cuser = Provider.of<UserData>(context, listen: false).user;
-    List<Widget> _screens = [
-      LandingPage(),
-      NewClub(),
-      SearchPage(user: cuser),
-      ProfilePage(userId: cuser.userId)
-    ];
-
-    BottomNavigationBarItem navItem(
-            String title, IconData iconData, int index) =>
-        BottomNavigationBarItem(
-          icon: Icon(
-            iconData,
-            color: selectedIndex == index ? Colors.redAccent : Colors.grey,
-          ),
-          title: Text(
-            title,
-            style: TextStyle(
-              color: selectedIndex == index ? Colors.redAccent : Colors.grey,
-              fontFamily: 'Lato',
+    return SafeArea(
+      child: Container(
+        color: Colors.white,
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          floatingActionButton: CreateClubFAB(this._tabController),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          body: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Stack(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    HomePageTopSection(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: HomePageTabBar(_tabController),
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          LandingPageClubs(),
+                          LandingPageCommunities(),
+                          LandingPageNewsArticles(),
+                          LandingPageCommerceProducts(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Positioned(bottom: 0, child: MinClub(_navigateTo)),
+              ],
             ),
           ),
-          //backgroundColor: Colors.redAccent,
-        );
-
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        children: _screens,
-        onPageChanged: _onPageChanged,
-        physics: NeverScrollableScrollPhysics(),
+        ),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   onTap: _onItemTapped,
-      //   type: BottomNavigationBarType.fixed,
-      //   items: [
-      //     navItem('Home', Icons.home, 0),
-      //     navItem('Create', Icons.add, 1),
-      //     navItem('Search', Icons.search, 2),
-      //     navItem('Profile', Icons.person, 3),
-      //   ],
-      // ),
     );
   }
 }
