@@ -1,4 +1,3 @@
-import 'package:flocktale/Authentication/logOut.dart';
 import 'package:flocktale/Models/basic_enums.dart';
 import 'package:flocktale/Widgets/socialRelationActions.dart';
 import 'package:flocktale/Widgets/customImage.dart';
@@ -7,7 +6,6 @@ import 'package:flocktale/services/socialInteraction.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flocktale/Models/built_post.dart';
-import 'package:flocktale/pages/ContactsPage.dart';
 import 'package:flocktale/pages/SocialRelationPage.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
@@ -99,52 +97,12 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {});
   }
 
-  Future _inviteContacts() async => await Navigator.of(context)
-      .push(MaterialPageRoute(builder: (_) => ContactsPage()));
-
-  void _handleMenuButtons(String value) async {
-    switch (value) {
-      case 'Edit':
-        _navigateTo(EditProfile(user: _user));
-        break;
-      case 'Invite contacts':
-        await _inviteContacts();
-        break;
-
-      case 'Settings':
-        break;
-
-      case 'Log Out':
-        await logOutUser(context);
-        break;
-    }
-  }
-
   void _navigateTo(Widget page) async {
     await Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => page))
         .then((value) {
       _fetchUser();
     });
-  }
-
-  PopupMenuButton<String> _profileDropDownMenu() {
-    return PopupMenuButton<String>(
-      icon: Icon(
-        Icons.menu_sharp,
-        color: Colors.white,
-      ),
-      onSelected: _handleMenuButtons,
-      itemBuilder: (BuildContext context) {
-        return {'Edit', 'Invite contacts', 'Settings', 'Log Out'}
-            .map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
-          );
-        }).toList();
-      },
-    );
   }
 
   Widget _showProfileClubs() {
@@ -234,7 +192,33 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Align(
                 alignment: Alignment.topRight,
-                child: _isMe ? _profileDropDownMenu() : Container(),
+                child: _isMe
+                    ? InkWell(
+                        onTap: () {
+                          _navigateTo(EditProfile(user: _user));
+                        },
+                        splashColor: Colors.redAccent,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                'Edit',
+                                style: TextStyle(
+                                  color: Colors.white54,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
               ),
             ),
           ],
