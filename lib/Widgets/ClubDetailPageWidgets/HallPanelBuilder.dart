@@ -2,14 +2,16 @@ import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/Widgets/ClubDetailPageWidgets/ClubUserCards.dart';
 import 'package:flocktale/Widgets/ClubDetailPageWidgets/audienceActionDialog.dart';
 import 'package:flocktale/Widgets/ProfileShortView.dart';
+import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/ClubDetailPages/InviteScreen.dart';
 import 'package:flocktale/providers/userData.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
-class HallPanelBuilder extends StatelessWidget {
+class HallPanelBuilder extends StatefulWidget {
   final ScrollController scrollController;
 
   final Size size;
@@ -27,9 +29,6 @@ class HallPanelBuilder extends StatelessWidget {
   final Function() deleteJoinRequest;
   final BuiltClub club;
 
-  final Map<String, dynamic> audienceMap;
-  final Function fetchMoreAudience;
-
   const HallPanelBuilder(
     this.scrollController, {
     @required this.currentlySpeakingUsers,
@@ -43,25 +42,65 @@ class HallPanelBuilder extends StatelessWidget {
     @required this.blockUser,
     @required this.sendJoinRequest,
     @required this.deleteJoinRequest,
-    @required this.audienceMap,
-    @required this.fetchMoreAudience,
   });
 
+  @override
+  _HallPanelBuilderState createState() => _HallPanelBuilderState();
+}
+
+class _HallPanelBuilderState extends State<HallPanelBuilder> {
+  List<AudienceData> _audienceList = [];
+  String _lastevaluatedkey;
+  bool _isLoading = true;
+
+  DatabaseApiService _service;
+
+  void _fetchMoreAudience() async {
+    if (_isLoading == true) return;
+    setState(() {
+      _isLoading = true;
+    });
+
+    if (_lastevaluatedkey != null) {
+      _audienceList.addAll(await _fetchAudienceList(_lastevaluatedkey));
+    } else {
+      await Future.delayed(Duration(milliseconds: 200));
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<List<AudienceData>> _fetchAudienceList(String lastevaluatedkey) async {
+    final resp = await _service.getAudienceList(
+      clubId: widget.club.clubId,
+      lastevaluatedkey: lastevaluatedkey,
+    );
+
+    _lastevaluatedkey = resp.body.lastevaluatedkey;
+
+    setState(() {
+      _isLoading = false;
+    });
+    return resp.body.audience.asList();
+  }
+
   bool _isParticipant(String userId) {
-    if (userId == club.creator.userId)
+    if (userId == widget.club.creator.userId)
       return false;
     else {
-      for (int i = 0; i < participantList.length; i++) {
-        if (participantList[i].audience.userId == userId) return true;
+      for (int i = 0; i < widget.participantList.length; i++) {
+        if (widget.participantList[i].audience.userId == userId) return true;
       }
     }
     return false;
   }
 
   bool isOwnerMuted() {
-    for (int i = 0; i < participantList.length; i++) {
-      if (participantList[i].audience.userId == club.creator.userId) {
-        return participantList[i].isMuted;
+    for (int i = 0; i < widget.participantList.length; i++) {
+      if (widget.participantList[i].audience.userId ==
+          widget.club.creator.userId) {
+        return widget.participantList[i].isMuted;
       }
     }
     return false;
@@ -73,16 +112,16 @@ class HallPanelBuilder extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            isOwner
+            widget.isOwner
                 ? Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) =>
-                          InviteScreen(club: club, forPanelist: true),
+                          InviteScreen(club: widget.club, forPanelist: true),
                     ),
                   )
-                : !hasSentJoinRequest
-                    ? sendJoinRequest()
-                    : deleteJoinRequest();
+                : !widget.hasSentJoinRequest
+                    ? widget.sendJoinRequest()
+                    : widget.deleteJoinRequest();
           },
           child: Container(
             decoration: new BoxDecoration(
@@ -93,7 +132,7 @@ class HallPanelBuilder extends StatelessWidget {
               height: 68,
               width: 68,
               child: Icon(
-                isOwner || !hasSentJoinRequest
+                widget.isOwner || !widget.hasSentJoinRequest
                     ? Icons.person_add
                     : Icons.person_add_disabled,
                 color: Colors.white,
@@ -111,7 +150,7 @@ class HallPanelBuilder extends StatelessWidget {
           ),
         ),
         SizedBox(height: 4),
-        if (isOwner)
+        if (widget.isOwner)
           Text(
             "Invite Panelists",
             style: TextStyle(
@@ -120,9 +159,10 @@ class HallPanelBuilder extends StatelessWidget {
               fontSize: 12,
             ),
           )
-        else if (club?.status == ClubStatus.Live && participantList.length < 9)
+        else if (widget.club?.status == ClubStatus.Live &&
+            widget.participantList.length < 9)
           Text(
-            !hasSentJoinRequest ? "Ask to join" : "Cancel join request",
+            !widget.hasSentJoinRequest ? "Ask to join" : "Cancel join request",
             style: TextStyle(
               fontFamily: "Lato",
               color: Colors.white,
@@ -140,25 +180,25 @@ class HallPanelBuilder extends StatelessWidget {
       clipBehavior: Clip.none,
       shrinkWrap: true,
       physics: ScrollPhysics(),
-      itemCount: (participantList.length < 10
-          ? participantList.length + 1
-          : participantList.length),
+      itemCount: (widget.participantList.length < 10
+          ? widget.participantList.length + 1
+          : widget.participantList.length),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         childAspectRatio: 7 / 8,
       ),
       itemBuilder: (context, index) {
-        if (index == participantList.length) {
-          return !_isParticipant(myUserId) || isOwner
+        if (index == widget.participantList.length) {
+          return !_isParticipant(myUserId) || widget.isOwner
               ? _inviteOrRequestButtonForUser(context)
               : Container();
         }
 
-        final participant = participantList[index];
+        final participant = widget.participantList[index];
 
         return ValueListenableBuilder(
-            valueListenable: currentlySpeakingUsers,
-            child: participantCardStackGesture(participant),
+            valueListenable: widget.currentlySpeakingUsers,
+            child: widget.participantCardStackGesture(participant),
             builder: (_, speakers, stackGesture) {
               return Stack(
                 fit: StackFit.passthrough,
@@ -166,7 +206,8 @@ class HallPanelBuilder extends StatelessWidget {
                   ParticipantCard(
                     participant,
                     key: ObjectKey(participant.audience.userId + '$index'),
-                    isHost: participant.audience.userId == club.creator.userId,
+                    isHost: participant.audience.userId ==
+                        widget.club.creator.userId,
                     volume:
                         (speakers ?? const {})[participant.audience.username] ??
                             0,
@@ -187,10 +228,15 @@ class HallPanelBuilder extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    this._service = Provider.of<DatabaseApiService>(context, listen: false);
+    _fetchAudienceList(null).then((list) => _audienceList = list);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
-    final List<AudienceData> audienceList = audienceMap['list'];
 
     return Container(
       decoration: BoxDecoration(
@@ -200,12 +246,12 @@ class HallPanelBuilder extends StatelessWidget {
       child: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            fetchMoreAudience();
+            _fetchMoreAudience();
           }
           return true;
         },
         child: ListView(
-          controller: scrollController,
+          controller: widget.scrollController,
           children: [
             Center(
               child: Container(
@@ -227,7 +273,7 @@ class HallPanelBuilder extends StatelessWidget {
                       fontSize: size.width / 20,
                       color: Colors.redAccent)),
             ),
-            if ((audienceList?.length ?? 0) == 0)
+            if ((_audienceList?.length ?? 0) == 0)
               Column(
                 children: [
                   SizedBox(height: 80),
@@ -250,43 +296,43 @@ class HallPanelBuilder extends StatelessWidget {
                     crossAxisCount: 4,
                     childAspectRatio: 7 / 8,
                   ),
-                  itemCount: (audienceList?.length ?? 0),
+                  itemCount: _audienceList?.length ?? 0,
                   itemBuilder: (context, index) {
-                    final audience = audienceList[0].audience;
+                    final audience = _audienceList[index].audience;
 
                     return AudienceCard(
                       audience,
                       onTap: () => ProfileShortView.display(context, audience),
-                      onDoubleTap: isOwner
+                      onDoubleTap: widget.isOwner
                           ? () {
-                              AudienceActionDialog.display(
-                                context,
-                                audience,
-                                inviteToSpeak: inviteToSpeak,
-                                blockUser: blockUser,
-                              );
+                              AudienceActionDialog.display(context, audience,
+                                  inviteToSpeak: widget.inviteToSpeak,
+                                  blockUser: (String userId) async {
+                                final res = await widget.blockUser(userId);
+                                if (res == true) {
+                                  _audienceList.removeWhere((element) =>
+                                      element.audience.userId == userId);
+                                }
+                                return res;
+                              });
                             }
                           : null,
                     );
                   },
                 ),
               ),
-            ListView.builder(
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemCount: audienceMap['isLoading'] == true ? 2 : 1,
-                itemBuilder: (ctx, index) {
-                  if (index == 0)
-                    return Container(
-                      height: 100,
-                      color: Colors.transparent,
-                    );
-                  else
-                    return Container(
-                      height: 100,
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                }),
+            Container(
+              height: 100,
+              color: Colors.transparent,
+            ),
+            if (_isLoading == true)
+              Container(
+                height: 100,
+                child: Center(
+                    child: SpinKitChasingDots(
+                  color: Colors.redAccent,
+                )),
+              ),
           ],
         ),
       ),

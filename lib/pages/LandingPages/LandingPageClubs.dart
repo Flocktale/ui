@@ -80,24 +80,29 @@ class _LandingPageClubsState extends State<LandingPageClubs>
               child: Text(
                 title,
                 style: TextStyle(
-                    fontFamily: 'Lato',
-                    // fontWeight: FontWeight.w500,
-                    fontSize: size.width / 18,
-                    color: Colors.redAccent),
+                  fontFamily: 'Lato',
+                  fontSize: 24,
+                  color: Colors.redAccent,
+                ),
               ),
             ),
             viewAll
                 ? InkWell(
                     onTap: () =>
                         _navigateTo(ClubSection(type, category: title)),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        'View All >',
-                        style: TextStyle(
-                          fontSize: size.width / 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[700],
+                    child: Card(
+                      shadowColor: Colors.white,
+                      color: Colors.black,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 4),
+                        child: Text(
+                          'View All >',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white70,
+                          ),
                         ),
                       ),
                     ),

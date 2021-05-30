@@ -17,16 +17,13 @@ class ClubSection extends StatefulWidget {
 }
 
 class _ClubSectionState extends State<ClubSection> {
-  Map<String, dynamic> clubMap = {
-    'data': null,
-    'isLoading': true,
-  };
+  BuiltSearchClubs _clubs;
+  bool _isLoading = true;
 
   Future<void> _fetchClubs() async {
     final userId = Provider.of<UserData>(context, listen: false).userId;
 
-    final lastevaluatedkey =
-        (clubMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
+    final lastevaluatedkey = _clubs?.lastevaluatedkey;
 
     final databaseService =
         Provider.of<DatabaseApiService>(context, listen: false);
@@ -63,38 +60,36 @@ class _ClubSectionState extends State<ClubSection> {
       );
     }
 
-    clubMap['data'] = response.body;
+    _clubs = response.body;
 
-    clubMap['isLoading'] = false;
+    _isLoading = false;
     setState(() {});
   }
 
   Future<void> _fetchMoreClubs() async {
-    if (clubMap['isLoading'] == true) return;
+    if (_isLoading == true) return;
     setState(() {});
 
-    final lastEvaluatedKey =
-        (clubMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
+    final lastEvaluatedKey = _clubs?.lastevaluatedkey;
 
     if (lastEvaluatedKey != null) {
       await _fetchClubs();
     } else {
       await Future.delayed(Duration(milliseconds: 200));
-      clubMap['isLoading'] = false;
+      _isLoading = false;
     }
     setState(() {});
   }
 
   Widget clubGrid() {
-    final clubList = (clubMap['data'] as BuiltSearchClubs)?.clubs;
-    final bool isLoading = clubMap['isLoading'];
+    final clubList = _clubs?.clubs;
     final listClubs = (clubList?.length ?? 0) + 1;
 
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
         if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
           _fetchMoreClubs();
-          clubMap['isLoading'] = true;
+          _isLoading = true;
         }
         return true;
       },
@@ -107,7 +102,7 @@ class _ClubSectionState extends State<ClubSection> {
             itemCount: listClubs,
             itemBuilder: (context, index) {
               if (index == listClubs - 1) {
-                if (isLoading)
+                if (_isLoading)
                   return Center(child: CircularProgressIndicator());
                 else
                   return Container();
@@ -141,18 +136,18 @@ class _ClubSectionState extends State<ClubSection> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         title: Text(
           widget.category,
           style: TextStyle(
             fontFamily: "Lato",
             fontWeight: FontWeight.bold,
-            color: Colors.black,
-            fontSize: 28,
+            color: Colors.white,
+            fontSize: 24,
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: clubGrid(),
     );

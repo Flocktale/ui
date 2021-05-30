@@ -22,6 +22,7 @@ import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/providers/webSocket.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:built_collection/built_collection.dart';
@@ -63,12 +64,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   bool _hasActiveJRs = false;
 
   List<AudienceData> participantList = [];
-
-  final Map<String, dynamic> _audienceMap = {
-    'list': <AudienceData>[],
-    'lastevaluatedkey': null,
-    'isLoading': false,
-  };
 
   // reaction counts
   int _heartCount;
@@ -177,15 +172,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       return participant;
     };
 
-    final removePrtUserFromAudienceList = (String prtUserId) {
-// removing audience if he has become participant (since audience list is fetched by long polling for now)
-      final audienceList = (_audienceMap['list'] as List<AudienceData>)
-          .where((element) => element.audience.userId != prtUserId)
-          .toList();
-
-      _audienceMap['list'] = audienceList;
-    };
-
     final subAction = event['subAction'];
 
     if (subAction == 'All') {
@@ -194,7 +180,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         AudienceData participant = prtUser(e);
 
         participantList.add(participant);
-        removePrtUserFromAudienceList(participant.audience.userId);
         // convert
       });
     } else if (subAction == 'Add') {
@@ -207,7 +192,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       if (searchedResult == null) {
         participantList.add(participant);
       }
-      removePrtUserFromAudienceList(participant.audience.userId);
     } else if (subAction == 'Remove') {
       final userId = event['user']['userId'];
       participantList
@@ -573,9 +557,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         Provider.of<AgoraController>(context, listen: false).club?.clubId ==
             widget.clubId;
 
-    // fetching audience list
-    _infiniteAudienceListRefresh(init: true);
-
     if (_clubAudience.audienceData.audience.userId ==
             _clubAudience.club.creator.userId &&
         _clubAudience.audienceData.status != AudienceStatus.Participant) {
@@ -870,66 +851,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       );
       if (terminate) break;
     }
-  }
-
-  Future<List<AudienceData>> _fetchAudienceList(String lastevaluatedkey) async {
-    final resp = await _service.getAudienceList(
-      clubId: widget.clubId,
-      lastevaluatedkey: lastevaluatedkey,
-    );
-
-    _audienceMap['lastevaluatedkey'] = resp.body.lastevaluatedkey;
-
-    return resp.body.audience.asList();
-  }
-
-  void _infiniteAudienceListRefresh({bool init = false}) async {
-    if (init) {
-      final resp = await _service.getAudienceList(
-        clubId: widget.clubId,
-        lastevaluatedkey: null,
-      );
-
-      _audienceMap['list'] = resp.body.audience.asList();
-      _justRefresh();
-    }
-
-    while (true) {
-      bool terminate = false;
-      int delay;
-      if (_audienceMap['list'].length <= 20)
-        delay = Random().nextInt(10) + 10;
-      else if (_audienceMap['list'].length <= 30)
-        delay = Random().nextInt(15) + 15;
-      else if (_audienceMap['list'].length <= 50)
-        delay = Random().nextInt(25) + 25;
-      else if (_audienceMap['list'].length <= 100)
-        delay = Random().nextInt(35) + 35;
-      else
-        delay = Random().nextInt(60) + 60;
-
-      await Future.delayed(
-        Duration(seconds: delay),
-        () async {
-          if (this.mounted == true &&
-              _clubAudience?.club?.status == ClubStatus.Live) {
-            if (this.mounted)
-              _audienceMap['list'] = await _fetchAudienceList(null);
-
-            if (this.mounted)
-              _justRefresh();
-            else
-              terminate = true;
-          } else
-            terminate = true;
-        },
-      );
-      if (terminate) break;
-    }
-
-    _audienceMap['list'] = <AudienceData>[];
-    _audienceMap['lastevaluatedkey'] = null;
-    if (this.mounted) _justRefresh();
   }
 
   _showMaterialDialog() {
@@ -1656,10 +1577,11 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       ),
       builder: (context) => DraggableScrollableSheet(
         expand: false,
-        initialChildSize: 0.6,
-        maxChildSize: 0.9,
-        minChildSize: 0.4,
+        initialChildSize: 0.95,
+        maxChildSize: 0.95,
+        minChildSize: 0.95,
         builder: (_, controller) => Container(
+          key: UniqueKey(),
           child: HallPanelBuilder(
             controller,
             currentlySpeakingUsers: currentlySpeakingUsers,
@@ -1672,7 +1594,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
             participantCardStackGesture: _participantCardStackGesture,
             sendJoinRequest: _sendJoinRequest,
             deleteJoinRequest: _deleteJoinRequest,
-            audienceMap: _audienceMap,
             inviteToSpeak: (userId) async {
               final response = await _service.inviteUsers(
                 clubId: widget.clubId,
@@ -1692,23 +1613,6 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
               }
             },
             blockUser: _blockUser,
-            fetchMoreAudience: () async {
-              if (_audienceMap['isLoading'] == true) return;
-
-              _justRefresh(() {
-                _audienceMap['isLoading'] = true;
-              });
-
-              if (_audienceMap['lastlastevaluatedkey'] != null) {
-                (_audienceMap['list'] as List).addAll(
-                    await _fetchAudienceList(_audienceMap['lastevaluatedkey']));
-              } else {
-                await Future.delayed(Duration(milliseconds: 200));
-              }
-              _justRefresh(() {
-                _audienceMap['isLoading'] = false;
-              });
-            },
           ),
         ),
       ),
@@ -1741,7 +1645,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       },
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         body: SafeArea(
           child: _clubAudience != null
               ? Container(
@@ -1772,7 +1676,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                   ),
                 )
               : Container(
-                  child: Center(child: Text("Loading...")),
+                  child: Center(
+                      child: SpinKitChasingDots(
+                    color: Colors.redAccent,
+                  )),
                 ),
           //        ),
         ),

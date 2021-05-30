@@ -119,23 +119,32 @@ class _ProfilePageState extends State<ProfilePage> {
               Text(
                 'Clubs',
                 style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.redAccent),
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.redAccent,
+                ),
               ),
               InkWell(
                 onTap: () => _navigateTo(
                   ClubSection(
                     ClubSectionType.User,
-                    category: 'Clubs of ${_user.name ?? _user.username}',
+                    category: 'Clubs of ${_user.username}',
                   ),
                 ),
-                child: Text(
-                  'View All',
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[600],
+                child: Card(
+                  shadowColor: Colors.white,
+                  color: Colors.black,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 4),
+                    child: Text(
+                      'View All >',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white70,
+                      ),
+                    ),
                   ),
                 ),
               ),
