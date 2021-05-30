@@ -94,7 +94,7 @@ class _SearchAllClubsState extends State<SearchAllClubs> {
                   title: InkWell(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => ClubDetailPage(club: _club)));
+                          builder: (_) => ClubDetailPage(_club.clubId)));
                     },
                     child: Text(
                       _club.clubName,
@@ -104,8 +104,11 @@ class _SearchAllClubsState extends State<SearchAllClubs> {
                   ),
                   subtitle: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => ClubDetailPage(club: _club)));
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ClubDetailPage(_club.clubId),
+                        ),
+                      );
                     },
                     child: Text(
                       _club.category != null ? _club.category : "Club",

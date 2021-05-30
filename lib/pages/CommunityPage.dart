@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-import 'CommunityNewClubPage.dart';
-
 class CommunityPage extends StatefulWidget {
   BuiltCommunity community;
   CommunityPage({this.community});
@@ -34,6 +32,7 @@ class _CommunityPageState extends State<CommunityPage>
       setState(() {});
     });
   }
+
   Widget clubGrid() {
     final clubList = (communityClubsMap['data'] as BuiltSearchClubs)?.clubs;
     final bool isLoading = communityClubsMap['isLoading'];
@@ -190,9 +189,7 @@ class _CommunityPageState extends State<CommunityPage>
                       ),
                     );
                   })),
-          Expanded(
-              child: clubGrid()
-          )
+          Expanded(child: clubGrid())
         ],
       );
     } else if (index == 1) {
@@ -201,22 +198,31 @@ class _CommunityPageState extends State<CommunityPage>
           isHost
               ? InkWell(
                   onTap: () {
+                    // TODO: Uncomment this
                     Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (_) => CommunityNewClubPage()))
+                        .push(MaterialPageRoute(
+                            builder: (_) =>
+                                NewClub(community: widget.community)))
                         .then((value) => _fetchCommunityClubs());
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Create CLub", style: TextStyle(fontFamily: "Lato")),
+                      Text("Create CLub",
+                          style: TextStyle(
+                              fontFamily: "Lato", color: Colors.white)),
                       IconButton(
                         onPressed: () {
+                          // TODO: Uncomment this
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => CommunityNewClubPage(
+                              builder: (_) => NewClub(
                                     community: widget.community,
                                   )));
                         },
-                        icon: Icon(Icons.add),
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                        ),
                       )
                     ],
                   ),

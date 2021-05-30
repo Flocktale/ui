@@ -55,7 +55,7 @@ class SummaryClubCard extends StatelessWidget {
         });
 
     if (res == true) {
-      navigateTo(ClubDetailPage(club: activeClub));
+      navigateTo(ClubDetailPage(activeClub.clubId));
     }
   }
 
@@ -129,10 +129,10 @@ class SummaryClubCard extends StatelessWidget {
               cuurentClub.clubId != club.clubId) {
             _showMaterialDialog(context);
           } else {
-            navigateTo(ClubDetailPage(club: club));
+            navigateTo(ClubDetailPage(club.clubId));
           }
         } else {
-          navigateTo(ClubDetailPage(club: club));
+          navigateTo(ClubDetailPage(club.clubId));
         }
       },
       child: Container(

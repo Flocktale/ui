@@ -93,17 +93,6 @@ class _NotificationPageState extends State<NotificationPage> {
     return str;
   }
 
-  _getClub(String clubId) async {
-    final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final cuserId = Provider.of<UserData>(context, listen: false).userId;
-    club = (await service.getClubByClubId(
-      clubId: clubId,
-      userId: cuserId,
-    ))
-        .body
-        .club;
-  }
-
   Future<void> _respondToFriendRequest(
       NotificationData notif, String response, int index) async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
@@ -206,9 +195,7 @@ class _NotificationPageState extends State<NotificationPage> {
         notif.type == NotificationType.CLUB_PARTICIPATION_INV) {
       // navigating to club
 
-      page = ClubDetailPage(
-        club: await _getClub(notif.targetResourceId),
-      );
+      page = ClubDetailPage(notif.targetResourceId);
     }
 
     if (page != null) {

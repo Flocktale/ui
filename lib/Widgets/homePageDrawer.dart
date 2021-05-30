@@ -2,9 +2,12 @@ import 'package:flocktale/Authentication/logOut.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/pages/ContactsPage.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
+import 'package:flocktale/pages/settings.dart';
 import 'package:flocktale/providers/userData.dart';
+import 'package:flocktale/services/shareApp.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePageDrawer extends StatelessWidget {
   Widget _bottomPanel(BuildContext context) {
@@ -16,6 +19,7 @@ class HomePageDrawer extends StatelessWidget {
     }) =>
         InkWell(
           onTap: () => (onTap ?? () {})(),
+          splashColor: Colors.redAccent,
           child: Card(
             color: Colors.black,
             shadowColor: Colors.white,
@@ -48,7 +52,7 @@ class HomePageDrawer extends StatelessWidget {
             title: "Settings",
             icon: Icons.settings,
             contentColor: Colors.white,
-            onTap: null,
+            onTap: () => _navigateTo(SettingsPage(), context),
           ),
           SizedBox(height: 16),
           bottomButtonCard(
@@ -67,40 +71,29 @@ class HomePageDrawer extends StatelessWidget {
   Widget _drawerButtons({
     String title,
     Function onTap,
-    Widget prefix,
-    Widget suffix,
+    IconData suffixIcon,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Icon(
-            Icons.arrow_forward_ios,
-            color: Colors.redAccent.withOpacity(0.5),
-          ),
-          InkWell(
-            onTap: () => (onTap ?? () {})(),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (prefix != null) prefix,
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                ),
-                if (suffix != null) suffix,
-              ],
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      child: InkWell(
+        splashColor: Colors.redAccent,
+        onTap: () => (onTap ?? () {})(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
             ),
-          ),
-          Icon(
-            Icons.arrow_back_ios,
-            color: Colors.redAccent.withOpacity(0.5),
-          ),
-        ],
+            Icon(
+              suffixIcon,
+              color: Colors.white,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -183,29 +176,30 @@ class HomePageDrawer extends StatelessWidget {
                 ),
                 Divider(color: Colors.white70),
                 SizedBox(height: 12),
-                _drawerButtons(title: "Create Community", onTap: null),
                 _drawerButtons(
-                    title: "Invite",
-                    onTap: () {
-                      _navigateTo(ContactsPage(), context);
-                    },
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Icon(
-                        Icons.people_outline_sharp,
-                        color: Colors.white,
-                      ),
-                    )),
+                  title: "Create Community",
+                  suffixIcon: Icons.add,
+                  onTap: () {
+                    try {
+                      launch(
+                          'https://docs.google.com/forms/d/e/1FAIpQLSfRrRTaSJ2_1n3cCSShRYpDmd4FaJqdm50s3wTR69PMHqCHcw/viewform');
+                    } catch (e) {}
+                  },
+                ),
                 _drawerButtons(
-                    title: "Share",
-                    onTap: null,
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Icon(
-                        Icons.share_outlined,
-                        color: Colors.white,
-                      ),
-                    )),
+                  title: "Invite",
+                  onTap: () {
+                    _navigateTo(ContactsPage(), context);
+                  },
+                  suffixIcon: Icons.people_outline_sharp,
+                ),
+                _drawerButtons(
+                  title: "Share",
+                  onTap: () {
+                    ShareApp(context).app();
+                  },
+                  suffixIcon: Icons.share_outlined,
+                ),
               ],
             ),
             _bottomPanel(context),

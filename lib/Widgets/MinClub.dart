@@ -37,10 +37,15 @@ class _MinClubState extends State<MinClub> {
     return InkWell(
       onTap: () async {
         if (widget.navigateTo != null) {
-          await widget.navigateTo(ClubDetailPage(club: club));
+          await widget.navigateTo(
+            ClubDetailPage(club.clubId),
+          );
         } else {
           await Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => ClubDetailPage(club: club)));
+            MaterialPageRoute(
+              builder: (_) => ClubDetailPage(club.clubId),
+            ),
+          );
         }
         if (this.mounted) {
           setState(() {});

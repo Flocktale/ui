@@ -338,12 +338,13 @@ class DataSearch extends SearchDelegate<String> {
                                                 .clubs[index].creator.username)
                                             : Text("Club"),
                                     onTap: () {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (_) => ClubDetailPage(
-                                                    club: allSearches
-                                                        .clubs[index],
-                                                  )));
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => ClubDetailPage(
+                                            allSearches.clubs[index].clubId,
+                                          ),
+                                        ),
+                                      );
                                     },
                                   );
                                 },

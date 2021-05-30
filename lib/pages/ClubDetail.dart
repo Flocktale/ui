@@ -32,8 +32,9 @@ import 'package:intl/intl.dart';
 import 'BlockedUsersPage.dart';
 
 class ClubDetailPage extends StatefulWidget {
-  final BuiltClub club;
-  const ClubDetailPage({this.club});
+  final String clubId;
+  const ClubDetailPage(this.clubId)
+      : assert(clubId != null, 'ClubId must not be null');
   @override
   _ClubDetailPageState createState() => _ClubDetailPageState();
 }
@@ -146,7 +147,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void _setParticipantList(event) {
-    if (event['clubId'] != widget.club.clubId) return;
+    if (event['clubId'] != widget.clubId) return;
 
     final integerUsernames =
         Provider.of<AgoraController>(context, listen: false).integerUsernames;
@@ -222,7 +223,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void _setAudienceCount(event) {
-    if (event['clubId'] != widget.club.clubId) return;
+    if (event['clubId'] != widget.clubId) return;
 
     if (event['count'] != null)
       _clubAudience = _clubAudience
@@ -232,7 +233,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void _setReactionCounters(event) {
-    if (event['clubId'] != widget.club.clubId) return;
+    if (event['clubId'] != widget.clubId) return;
 
     int count = (event['count']);
     int ind = (event['indexValue']);
@@ -245,10 +246,10 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void _youAreBlocked(event) async {
-    if (event['clubId'] != widget.club.clubId) return;
+    if (event['clubId'] != widget.clubId) return;
 
     // block if the current Club is blocked
-    if (event['clubId'] == widget.club.clubId) {
+    if (event['clubId'] == widget.clubId) {
       await _stopClub();
 
       Navigator.pop(context);
@@ -356,7 +357,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   void addComment(String message) {
     Provider.of<MySocket>(context, listen: false).addComment(
         message,
-        widget.club.clubId,
+        widget.clubId,
         Provider.of<UserData>(context, listen: false).user.userId);
   }
 
@@ -368,7 +369,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     }
 
     _service.postReaction(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       audienceId: _myUserId,
       indexValue: 2,
     );
@@ -411,7 +412,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     }
 
     await _service.muteActionOnParticipant(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       who: 'participant',
       participantId: userId,
       muteAction: muteAction,
@@ -433,7 +434,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   Future<bool> _kickParticpant(String userId) async {
     await Provider.of<DatabaseApiService>(context, listen: false)
         .kickOutParticipant(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       audienceId: userId,
     );
 
@@ -446,7 +447,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Future<bool> _blockUser(String userId) async {
     await _service.blockAudience(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       audienceId: userId,
     );
     Fluttertoast.showToast(msg: 'Blocked user');
@@ -461,7 +462,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     }
 
     final resp = await _service.sendJoinRequest(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       userId: _myUserId,
     );
     if (resp.isSuccessful) {
@@ -477,7 +478,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   _deleteJoinRequest() async {
     final resp = await _service.deleteJoinRequet(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       userId: _myUserId,
     );
     if (resp.isSuccessful) {
@@ -542,19 +543,9 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     _agoraEventHandler.remoteAudioStateChanged = null;
   }
 
-  Future<void> _enterClub() async {
-    _initAgoraCallbacks();
-
-    this._isOwner = Provider.of<UserData>(context, listen: false).userId ==
-        widget.club.creator.userId;
-
-//if current club in agora controller is this very club, then this club is being currently played;
-    this._isPlaying =
-        Provider.of<AgoraController>(context, listen: false).club?.clubId ==
-            widget.club.clubId;
-
+  Future<void> _fetchClub() async {
     final resp = await _service.getClubByClubId(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       userId: _myUserId,
     );
 
@@ -566,14 +557,27 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       Navigator.of(context).pop();
       return;
     }
+    _clubAudience = resp.body;
+  }
+
+  Future<void> _enterClub() async {
+    await _fetchClub();
+
+    _initAgoraCallbacks();
+
+    this._isOwner = Provider.of<UserData>(context, listen: false).userId ==
+        _clubAudience.club.creator.userId;
+
+//if current club in agora controller is this very club, then this club is being currently played;
+    this._isPlaying =
+        Provider.of<AgoraController>(context, listen: false).club?.clubId ==
+            widget.clubId;
 
     // fetching audience list
     _infiniteAudienceListRefresh(init: true);
 
-    _clubAudience = resp.body;
-
     if (_clubAudience.audienceData.audience.userId ==
-            widget.club.creator.userId &&
+            _clubAudience.club.creator.userId &&
         _clubAudience.audienceData.status != AudienceStatus.Participant) {
       _clubAudience = _clubAudience
           .rebuild((b) => b..audienceData.status = AudienceStatus.Participant);
@@ -598,7 +602,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void _newJRArrived(event) {
-    if (event['clubId'] != widget.club.clubId) return;
+    if (event['clubId'] != widget.clubId) return;
 
     final username = event['username'];
     if (username != null)
@@ -610,7 +614,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void _yourJRAccepted(event) {
-    if (event['clubId'] != widget.club.clubId) return;
+    if (event['clubId'] != widget.clubId) return;
 
     Fluttertoast.showToast(msg: 'You are now a Panelist');
     _clubAudience = _clubAudience
@@ -622,7 +626,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void _yourJRcancelledByOwner(event) {
-    if (event['clubId'] != widget.club.clubId) return;
+    if (event['clubId'] != widget.clubId) return;
 
     Fluttertoast.showToast(msg: 'You request to speak has been cancelled.');
     _clubAudience = _clubAudience.rebuild((b) => b..audienceData.status = null);
@@ -631,7 +635,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void _youAreKickedOut(event) {
-    if (event['clubId'] != widget.club.clubId) return;
+    if (event['clubId'] != widget.clubId) return;
     Fluttertoast.showToast(msg: 'You are now a listener only');
     _clubAudience = _clubAudience.rebuild((b) => b..audienceData.status = null);
 
@@ -640,7 +644,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   }
 
   void _youAreInvited(event) {
-    if (event['clubId'] != widget.club.clubId) return;
+    if (event['clubId'] != widget.clubId) return;
 
     _clubAudience = _clubAudience
         .rebuild((b) => b..audienceData.invitationId = event['invitationId']);
@@ -652,7 +656,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   void _joinClubInWebsocket() {
     Provider.of<MySocket>(context, listen: false).joinClub(
-      widget.club.clubId,
+      widget.clubId,
       putNewComment: _putNewComment,
       addOldComments: _addOldComments,
       setReactionCounters: _setReactionCounters,
@@ -676,7 +680,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     final integerUsername = Provider.of<AgoraController>(context, listen: false)
         .convertToInt(username);
     agoraToken = (await _service.getAgoraToken(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       uid: integerUsername,
     ))
         .body;
@@ -684,7 +688,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Future<void> _startClub() async {
     final data = await _service.startClub(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       userId: _myUserId,
     );
     print(data.body['agoraToken']);
@@ -698,7 +702,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Future<void> _concludeClub() async {
     await _service.concludeClub(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       creatorId: _myUserId,
     );
     _clubAudience = _clubAudience.rebuild(
@@ -727,26 +731,26 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     switch (value) {
       case 'Join Requests':
         RightSideSheet.display(context,
-            child: ClubJoinRequests(club: widget.club));
+            child: ClubJoinRequests(club: _clubAudience.club));
         break;
 
       case 'Invite Panelist':
         await _navigateTo(InviteScreen(
-          club: widget.club,
+          club: _clubAudience.club,
           forPanelist: true,
         ));
         break;
 
       case 'Invite Audience':
         await _navigateTo(InviteScreen(
-          club: widget.club,
+          club: _clubAudience.club,
           forPanelist: false,
         ));
         break;
 
       case 'Show Blocked Users':
         await RightSideSheet.display(context,
-            child: BlockedUsersPage(club: widget.club));
+            child: BlockedUsersPage(club: _clubAudience.club));
         break;
     }
   }
@@ -786,8 +790,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
       }
 
       //sending websocket message to indicate about club being played event
-      Provider.of<MySocket>(context, listen: false)
-          .playClub(widget.club.clubId);
+      Provider.of<MySocket>(context, listen: false).playClub(widget.clubId);
       _isPlaying = true;
     }
 
@@ -796,7 +799,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Future<void> _leavePanel() async {
     final resp = (await _service.kickOutParticipant(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       audienceId: _myUserId,
       isSelf: 'true',
     ));
@@ -871,7 +874,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Future<List<AudienceData>> _fetchAudienceList(String lastevaluatedkey) async {
     final resp = await _service.getAudienceList(
-      clubId: widget.club.clubId,
+      clubId: widget.clubId,
       lastevaluatedkey: lastevaluatedkey,
     );
 
@@ -883,7 +886,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   void _infiniteAudienceListRefresh({bool init = false}) async {
     if (init) {
       final resp = await _service.getAudienceList(
-        clubId: widget.club.clubId,
+        clubId: widget.clubId,
         lastevaluatedkey: null,
       );
 
@@ -1081,7 +1084,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     return InkWell(
       onTap: () {
         DateTime.now().compareTo(DateTime.fromMillisecondsSinceEpoch(
-                    widget.club.scheduleTime)) >=
+                    _clubAudience.club.scheduleTime)) >=
                 0
             ? _playButtonHandler()
             : Fluttertoast.showToast(
@@ -1109,7 +1112,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
   Future<void> _stopClub() async {
     // stop msg to websocket
-    Provider.of<MySocket>(context, listen: false).stopClub(widget.club.clubId);
+    Provider.of<MySocket>(context, listen: false).stopClub(widget.clubId);
 
     // stopping from agora
     await Provider.of<AgoraController>(context, listen: false).stop();
@@ -1146,7 +1149,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
   GestureDetector _participantCardStackGesture(AudienceData participant) =>
       GestureDetector(
         onDoubleTap: _isOwner &&
-                participant.audience.userId != widget.club.creator.userId
+                participant.audience.userId != _clubAudience.club.creator.userId
             ? () {
                 // for non-owner participant, dialog box to show mute button
                 ParticipantActionDialog.display(
@@ -1173,7 +1176,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   image: DecorationImage(
-                    image: NetworkImage(widget.club.clubAvatar),
+                    image: NetworkImage(_clubAudience.club.clubAvatar),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -1220,7 +1223,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                 if (_isOwner == false)
                                   InkWell(
                                     onTap: () => ProfileShortView.display(
-                                        context, widget.club.creator),
+                                        context, _clubAudience.club.creator),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -1231,7 +1234,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                         ),
                                         SizedBox(width: 4),
                                         Text(
-                                          '${widget.club.creator.username}',
+                                          '${_clubAudience.club.creator.username}',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 18,
@@ -1300,7 +1303,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                       ),
                                     InkWell(
                                       onTap: () => ShareApp(context)
-                                          .club(widget.club.clubName),
+                                          .club(_clubAudience.club.clubName),
                                       child: Container(
                                         decoration: BoxDecoration(
                                           color: Colors.black87,
@@ -1340,7 +1343,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    widget.club.clubName,
+                                    _clubAudience.club.clubName,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -1475,8 +1478,8 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                                                         isHost: participant
                                                                 .audience
                                                                 .userId ==
-                                                            widget.club.creator
-                                                                .userId,
+                                                            _clubAudience.club
+                                                                .creator.userId,
                                                         volume: (speakers ??
                                                                     const {})[
                                                                 participant
@@ -1660,7 +1663,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
           child: HallPanelBuilder(
             controller,
             currentlySpeakingUsers: currentlySpeakingUsers,
-            club: widget.club,
+            club: _clubAudience.club,
             size: MediaQuery.of(context).size,
             participantList: participantList,
             isOwner: _isOwner,
@@ -1672,7 +1675,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
             audienceMap: _audienceMap,
             inviteToSpeak: (userId) async {
               final response = await _service.inviteUsers(
-                clubId: widget.club.clubId,
+                clubId: widget.clubId,
                 sponsorId: _myUserId,
                 invite: BuiltInviteFormat(
                   (b) => b
@@ -1728,8 +1731,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
 
     return WillPopScope(
       onWillPop: () async {
-        Provider.of<MySocket>(context, listen: false)
-            .leaveClub(widget.club.clubId);
+        Provider.of<MySocket>(context, listen: false).leaveClub(widget.clubId);
         Provider.of<AgoraController>(context, listen: false)
             .agoraEventHandler
             .audioVolumeIndication = null;
@@ -1742,36 +1744,32 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         backgroundColor: Colors.white,
         body: SafeArea(
           child: _clubAudience != null
-              ? Stack(
-                  children: [
-                    Container(
-                      height: size.height,
-                      child: Column(
-                        children: <Widget>[
-                          if (_clubAudience.audienceData.invitationId != null)
-                            _displayInvitation(),
-                          Expanded(
-                            child: clubDataDisplayWidget(),
-                          ),
-                          Container(
-                            height: size.height / 1.9 -
-                                MediaQuery.of(context).viewInsets.bottom,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            color: Colors.black,
-                            child: CommentBox(
-                              size: size,
-                              comments: comments,
-                              listController: _listController,
-                              navigateTo: _navigateTo,
-                              processTimestamp: _processTimestamp,
-                              addComment: addComment,
-                              newCommentController: _newCommentController,
-                            ),
-                          ),
-                        ],
+              ? Container(
+                  height: size.height,
+                  child: Column(
+                    children: <Widget>[
+                      if (_clubAudience.audienceData.invitationId != null)
+                        _displayInvitation(),
+                      Expanded(
+                        child: clubDataDisplayWidget(),
                       ),
-                    ),
-                  ],
+                      Container(
+                        height: size.height / 1.9 -
+                            MediaQuery.of(context).viewInsets.bottom,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        color: Colors.black,
+                        child: CommentBox(
+                          size: size,
+                          comments: comments,
+                          listController: _listController,
+                          navigateTo: _navigateTo,
+                          processTimestamp: _processTimestamp,
+                          addComment: addComment,
+                          newCommentController: _newCommentController,
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               : Container(
                   child: Center(child: Text("Loading...")),
