@@ -114,10 +114,54 @@ class SummaryClubCard extends StatelessWidget {
       );
   }
 
+  Widget _paticipantListBuilder() {
+    final totalParticipants = (club?.participants?.length ?? 0);
+
+    // we are showing at max 3 participants
+
+    int invisibleParticipantCount = 0;
+    if (totalParticipants >= 4) {
+      invisibleParticipantCount = totalParticipants - 3;
+    }
+
+    return ListView.builder(
+      itemCount: totalParticipants >= 4 ? 4 : totalParticipants,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (ctx, index) {
+        final avatarCard = (child) => Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: Container(
+                height: 32,
+                width: 32,
+                child: child,
+              ),
+            );
+        if (index == 3) {
+          return avatarCard(Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Center(
+              child: Text(
+                '+${invisibleParticipantCount.toString()}',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ));
+        }
+        // final imageUrl = club.participants.toList()[index];
+        final imageUrl = club.participants.toList()[0];
+        return avatarCard(CustomImage(
+          image: imageUrl,
+          radius: 4,
+        ));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     BuiltClub cuurentClub =
         Provider.of<AgoraController>(context, listen: false).club;
 
@@ -204,45 +248,7 @@ class SummaryClubCard extends StatelessWidget {
                           children: [
                             Container(
                               width: 36 * 4.0,
-                              child: ListView.builder(
-                                // itemCount: club.participants.length > 3
-                                //     ? 4
-                                //     : club.participants.length,
-                                itemCount: 4,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (ctx, index) {
-                                  final avatarCard = (child) => Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 4),
-                                        child: Container(
-                                          height: 32,
-                                          width: 32,
-                                          child: child,
-                                        ),
-                                      );
-                                  if (index == 3) {
-                                    return avatarCard(Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '+${club.participants.length - 3}',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ));
-                                  }
-                                  // final imageUrl = club.participants.toList()[index];
-                                  final imageUrl =
-                                      club.participants.toList()[0];
-                                  return avatarCard(CustomImage(
-                                    image: imageUrl,
-                                    radius: 4,
-                                  ));
-                                },
-                              ),
+                              child: _paticipantListBuilder(),
                             ),
                             Row(
                               mainAxisSize: MainAxisSize.min,

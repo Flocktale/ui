@@ -1,18 +1,19 @@
+import 'package:flocktale/Widgets/createClubButton.dart';
 import 'package:flocktale/pages/NewClub.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CreateClubFAB extends StatefulWidget {
+class CreateClubHomeFAB extends StatefulWidget {
   final TabController tabController;
 
-  const CreateClubFAB(this.tabController);
+  const CreateClubHomeFAB(this.tabController);
 
   @override
-  _CreateClubFABState createState() => _CreateClubFABState();
+  _CreateClubHomeFABState createState() => _CreateClubHomeFABState();
 }
 
-class _CreateClubFABState extends State<CreateClubFAB> {
+class _CreateClubHomeFABState extends State<CreateClubHomeFAB> {
   @override
   void initState() {
     widget.tabController.addListener(() {
@@ -30,14 +31,11 @@ class _CreateClubFABState extends State<CreateClubFAB> {
 
     // no FAB when either a club is already playing or current page in landingPageClubs.
     if (tabIndex != 0 || club != null) return Container();
-
-    return FloatingActionButton(
-      backgroundColor: Colors.redAccent,
-      onPressed: () {
+    return CreateClubButton(
+      onTap: () {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (_) => NewClub()));
       },
-      child: Icon(Icons.add),
     );
   }
 }

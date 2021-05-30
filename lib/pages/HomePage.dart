@@ -1,14 +1,12 @@
 import 'package:flocktale/Widgets/HomePageTopSection.dart';
 import 'package:flocktale/Widgets/MinClub.dart';
 import 'package:flocktale/Widgets/createClubFAB.dart';
-import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/Widgets/homePageDrawer.dart';
 import 'package:flocktale/Widgets/homePageTabBar.dart';
 import 'package:flocktale/pages/LandingPages/LandingPageClubs.dart';
 import 'package:flocktale/pages/LandingPages/LandingPageCommerceProducts.dart';
 import 'package:flocktale/pages/LandingPages/LandingPageCommunities.dart';
 import 'package:flocktale/pages/LandingPages/LandingPageNewsArticles.dart';
-import 'package:flocktale/pages/ProfilePage.dart';
 import 'package:flocktale/services/DBHelper.dart';
 import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +50,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.black,
-          floatingActionButton: CreateClubFAB(this._tabController),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          floatingActionButton: CreateClubHomeFAB(this._tabController),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
           drawer: HomePageDrawer(),
           body: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -62,7 +61,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    HomePageTopSection(scaffoldKey: _scaffoldKey),
+                    HomePageTopSection(
+                      scaffoldKey: _scaffoldKey,
+                      navigateTo: _navigateTo,
+                    ),
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: HomePageTabBar(_tabController),

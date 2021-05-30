@@ -1,12 +1,18 @@
 import 'package:flocktale/Widgets/customImage.dart';
+import 'package:flocktale/pages/NotificationPage.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomePageTopSection extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
+  final Function navigateTo;
 
-  const HomePageTopSection({Key key, this.scaffoldKey}) : super(key: key);
+  const HomePageTopSection({
+    Key key,
+    this.scaffoldKey,
+    this.navigateTo,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +44,9 @@ class HomePageTopSection extends StatelessWidget {
         ),
         IconButton(
           onPressed: () {
-// TODO: uncomment this
-            // _navigateTo(NotificationPage());
+            if (navigateTo != null) {
+              navigateTo(NotificationPage());
+            }
           },
           icon: Icon(
             Icons.notifications_none_outlined,

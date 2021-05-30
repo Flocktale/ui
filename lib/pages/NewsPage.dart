@@ -1,52 +1,133 @@
 import 'package:flocktale/Models/built_post.dart';
+import 'package:flocktale/Widgets/createClubButton.dart';
 import 'package:flocktale/Widgets/summaryClubCard.dart';
+import 'package:flocktale/pages/ClubDetailPages/ClubDetail.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import 'NewClub.dart';
-
 class NewsPage extends StatefulWidget {
-  ClubContentModel news;
+  final ClubContentModel news;
   NewsPage({this.news});
   @override
   _NewsPageState createState() => _NewsPageState();
 }
 
 class _NewsPageState extends State<NewsPage> {
-  Map<String, dynamic> newsClubsMap = {
-    'data': null,
-    'isLoading': true,
-  };
+  BuiltSearchClubs _newsClubs;
+  bool _isLoading = true;
+
   _fetchNewsClubs() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
-    newsClubsMap['data'] = (await service.getClubsOfContent(
+    _newsClubs = (await service.getClubsOfContent(
             contentUrl: widget.news.url,
-            lastevaluatedkey:
-                (newsClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey))
+            lastevaluatedkey: _newsClubs?.lastevaluatedkey))
         .body;
-    newsClubsMap['isLoading'] = false;
+    _isLoading = false;
     setState(() {});
   }
 
   _fetchMoreNewsClubs() async {
-    final service = Provider.of<DatabaseApiService>(context, listen: false);
-    final lastevaluatedkey =
-        (newsClubsMap['data'] as BuiltSearchClubs)?.lastevaluatedkey;
+    final lastevaluatedkey = _newsClubs?.lastevaluatedkey;
     if (lastevaluatedkey != null) {
       await _fetchNewsClubs();
     } else {
       await Future.delayed(Duration(milliseconds: 200));
-      newsClubsMap['isLoading'] = false;
+      _isLoading = false;
+    }
+  }
+
+  void _justRefresh([Function refresh]) {
+    if (this.mounted) {
+      if (refresh != null) {
+        refresh();
+      }
+      setState(() {});
+    }
+  }
+
+  _navigateTo(Widget page) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => page,
+      ),
+    );
+    _justRefresh();
+  }
+
+  Widget _clubGrid() {
+    final clubList = _newsClubs?.clubs;
+    final bool isLoading = _isLoading;
+    final listClubs = (clubList?.length ?? 0) + 1;
+    return RefreshIndicator(
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.pixels ==
+                scrollInfo.metrics.maxScrollExtent) {
+              _fetchMoreNewsClubs();
+              _isLoading = true;
+            }
+            return true;
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ListView(
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                children: [
+                  ListView.builder(
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: listClubs,
+                    itemBuilder: (context, index) {
+                      if (index == listClubs - 1) {
+                        if (isLoading)
+                          return Center(child: CircularProgressIndicator());
+                        else
+                          return Container();
+                      }
+                      return Container(
+                          height: 180,
+                          child: SummaryClubCard(clubList[index], _navigateTo));
+                    },
+                  ),
+                  SizedBox(height: 100),
+                ],
+              ),
+            ),
+          ),
+        ),
+        onRefresh: () {
+          return _fetchNewsClubs();
+        });
+  }
+
+  void _createClub() async {
+    String userId = Provider.of<UserData>(context, listen: false).userId;
+
+    final resp = (await Provider.of<DatabaseApiService>(context, listen: false)
+        .createNewContentClub(
+            creatorId: userId,
+            contentUrl: widget.news.url,
+            contentType: "news"));
+    if (!resp.isSuccessful) {
+      Fluttertoast.showToast(msg: "Something went wrong...");
+    } else {
+      Fluttertoast.showToast(msg: "Club created");
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => ClubDetailPage(resp.body['clubId']),
+        ),
+      );
     }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchNewsClubs();
   }
@@ -54,145 +135,53 @@ class _NewsPageState extends State<NewsPage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    String userId = Provider.of<UserData>(context, listen: false).userId;
-    void _justRefresh([Function refresh]) {
-      if (this.mounted) {
-        if (refresh != null) {
-          refresh();
-        }
-        setState(() {});
-      }
-    }
-
-    _navigateTo(Widget page) async {
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => page,
-        ),
-      );
-      _justRefresh();
-    }
-
-    Widget clubGrid() {
-      final clubList = (newsClubsMap['data'] as BuiltSearchClubs)?.clubs;
-      final bool isLoading = newsClubsMap['isLoading'];
-      final listClubs = (clubList?.length ?? 0) + 1;
-      return RefreshIndicator(
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification scrollInfo) {
-              if (scrollInfo.metrics.pixels ==
-                  scrollInfo.metrics.maxScrollExtent) {
-                _fetchMoreNewsClubs();
-                newsClubsMap['isLoading'] = true;
-              }
-              return true;
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: listClubs,
-                  itemBuilder: (context, index) {
-                    if (index == listClubs - 1) {
-                      if (isLoading)
-                        return Center(child: CircularProgressIndicator());
-                      else
-                        return Container();
-                    }
-                    return Container(
-                        height: 180,
-                        child: SummaryClubCard(clubList[index], _navigateTo));
-                  },
-                ),
-              ),
-            ),
-          ),
-          onRefresh: () {
-            return _fetchNewsClubs();
-          });
-    }
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.black,
+        floatingActionButton: CreateClubButton(
+          onTap: () => _createClub(),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: Container(
-            child: Column(
+            child: ListView(
           children: [
             Container(
-              height: size.height / 6,
+              height: size.width * 9 / 16,
               width: size.width,
               decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(widget.news.avatar),
-                      fit: BoxFit.cover)),
+                image: DecorationImage(
+                  image: NetworkImage(widget.news.avatar),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            Container(
-              padding: EdgeInsets.fromLTRB(size.width / 20, size.width / 20,
-                  size.width / 20, size.width / 20),
-              color: Colors.grey[200],
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(widget.news.avatar),
-                        radius: size.width / 15,
-                      ),
-                      SizedBox(
-                        width: size.width / 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 250,
-                            child: Text(
-                              //  widget.community.name,
-                              widget.news.title,
-                              maxLines: 3,
-                              style: TextStyle(
-                                  fontFamily: "Lato",
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Text(
-                            // widget.community.creator.username,
-                            widget.news.source,
-                            style: TextStyle(
-                                fontFamily: "Lato", color: Colors.grey),
-                          )
-                        ],
-                      )
-                    ],
+                  Text(
+                    widget.news.title,
+                    style: TextStyle(
+                      fontFamily: "Lato",
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
                   ),
+                  Text(
+                    '~ ' + widget.news.source,
+                    style: TextStyle(
+                      fontFamily: "Lato",
+                      color: Colors.white70,
+                    ),
+                  )
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Create CLub", style: TextStyle(fontFamily: "Lato")),
-                IconButton(
-                  onPressed: () async {
-                    final resp = (await Provider.of<DatabaseApiService>(context,
-                            listen: false)
-                        .createNewContentClub(
-                            creatorId: userId,
-                            contentUrl: widget.news.url,
-                            contentType: "news"));
-                    if (!resp.isSuccessful) {
-                      Fluttertoast.showToast(msg: "Something went wrong...");
-                    } else {
-                      Fluttertoast.showToast(msg: "Club created");
-                    }
-                  },
-                  icon: Icon(Icons.add),
-                )
-              ],
-            ),
-            clubGrid()
+            _clubGrid()
           ],
         )),
       ),

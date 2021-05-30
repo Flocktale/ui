@@ -1,6 +1,7 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/enums/communityUserType.dart';
 import 'package:flocktale/Widgets/CommunityPageTopSection.dart';
+import 'package:flocktale/Widgets/createClubButton.dart';
 import 'package:flocktale/Widgets/summaryClubCard.dart';
 import 'package:flocktale/pages/NewClub.dart';
 import 'package:flocktale/providers/userData.dart';
@@ -34,7 +35,7 @@ class _CommunityPageState extends State<CommunityPage>
     });
   }
 
-  Widget clubGrid() {
+  Widget _clubGrid() {
     final clubList = _communityClubs?.clubs;
     final bool isLoading = _isClubsLoading;
     final listClubs = (clubList?.length ?? 0) + 1;
@@ -54,66 +55,29 @@ class _CommunityPageState extends State<CommunityPage>
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
           child: Align(
             alignment: Alignment.topCenter,
-            child: ListView.builder(
+            child: ListView(
+              physics: ScrollPhysics(),
               shrinkWrap: true,
-              itemCount: listClubs,
-              itemBuilder: (context, index) {
-                if (index == listClubs - 1) {
-                  if (isLoading)
-                    return Center(child: CircularProgressIndicator());
-                  else
-                    return Container();
-                }
-                return Container(
-                    height: 180,
-                    child: SummaryClubCard(clubList[index], _navigateTo));
-              },
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: listClubs,
+                  physics: ScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    if (index == listClubs - 1) {
+                      if (isLoading)
+                        return Center(child: CircularProgressIndicator());
+                      else
+                        return Container();
+                    }
+                    return Container(
+                        height: 180,
+                        child: SummaryClubCard(clubList[index], _navigateTo));
+                  },
+                ),
+                SizedBox(height: 100),
+              ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _createClubButton() {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(
-                builder: (_) => NewClub(community: _community)))
-            .then(
-              (value) => _fetchCommunityClubs(refresh: true),
-            );
-      },
-      child: Card(
-        elevation: 8,
-        shadowColor: Colors.redAccent,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            color: Colors.black87,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text("Create Club",
-                  style: TextStyle(
-                    fontFamily: "Lato",
-                    color: Colors.white,
-                    fontSize: 16,
-                  )),
-              SizedBox(width: 8),
-              Icon(
-                Icons.add,
-                color: Colors.white,
-              )
-            ],
           ),
         ),
       ),
@@ -215,6 +179,19 @@ class _CommunityPageState extends State<CommunityPage>
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
+        floatingActionButton: _isOwner == false
+            ? Container()
+            : CreateClubButton(
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(
+                          builder: (_) => NewClub(community: _community)))
+                      .then(
+                        (value) => _fetchCommunityClubs(refresh: true),
+                      );
+                },
+              ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: Column(
           children: [
             CommunityPageTopSection(
@@ -222,8 +199,7 @@ class _CommunityPageState extends State<CommunityPage>
               isMember: _isMember,
               toggleIsMember: _toggleIsMember,
             ),
-            if (_isOwner) _createClubButton(),
-            Expanded(child: clubGrid())
+            Expanded(child: _clubGrid())
           ],
         ),
       ),
