@@ -12,7 +12,8 @@ class LandingPageCommerceProducts extends StatefulWidget {
 }
 
 class _LandingPageCommerceProductsState
-    extends State<LandingPageCommerceProducts> {
+    extends State<LandingPageCommerceProducts>
+    with AutomaticKeepAliveClientMixin {
   List<ClubContentModel> contentList;
 
   DatabaseApiService service;
@@ -32,6 +33,8 @@ class _LandingPageCommerceProductsState
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     if (contentList == null) return Center(child: CircularProgressIndicator());
     return ListView(
       shrinkWrap: true,
@@ -66,4 +69,7 @@ class _LandingPageCommerceProductsState
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

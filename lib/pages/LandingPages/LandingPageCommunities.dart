@@ -9,7 +9,8 @@ class LandingPageCommunities extends StatefulWidget {
   _LandingPageCommunitiesState createState() => _LandingPageCommunitiesState();
 }
 
-class _LandingPageCommunitiesState extends State<LandingPageCommunities> {
+class _LandingPageCommunitiesState extends State<LandingPageCommunities>
+    with AutomaticKeepAliveClientMixin {
   BuiltCommunityList _communities;
   bool _isLoading = false;
 
@@ -43,6 +44,8 @@ class _LandingPageCommunitiesState extends State<LandingPageCommunities> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final communities = _communities?.communities;
 
     final listLength = (communities?.length ?? 0) + 1;
@@ -92,4 +95,7 @@ class _LandingPageCommunitiesState extends State<LandingPageCommunities> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

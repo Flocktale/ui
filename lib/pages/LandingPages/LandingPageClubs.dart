@@ -13,7 +13,8 @@ class LandingPageClubs extends StatefulWidget {
   _LandingPageClubsState createState() => _LandingPageClubsState();
 }
 
-class _LandingPageClubsState extends State<LandingPageClubs> {
+class _LandingPageClubsState extends State<LandingPageClubs>
+    with AutomaticKeepAliveClientMixin {
   BuiltList<CategoryClubsList> _clubs;
   DateTime _clubFetchedTime = DateTime.now();
 
@@ -145,6 +146,8 @@ class _LandingPageClubsState extends State<LandingPageClubs> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8),
       child: RefreshIndicator(
@@ -164,4 +167,7 @@ class _LandingPageClubsState extends State<LandingPageClubs> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

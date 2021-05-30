@@ -11,7 +11,8 @@ class LandingPageNewsArticles extends StatefulWidget {
       _LandingPageNewsArticlesState();
 }
 
-class _LandingPageNewsArticlesState extends State<LandingPageNewsArticles> {
+class _LandingPageNewsArticlesState extends State<LandingPageNewsArticles>
+    with AutomaticKeepAliveClientMixin {
   List<ClubContentModel> contentList;
   DatabaseApiService service;
 
@@ -29,6 +30,8 @@ class _LandingPageNewsArticlesState extends State<LandingPageNewsArticles> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     if (contentList == null) return Center(child: CircularProgressIndicator());
     return ListView(
       shrinkWrap: true,
@@ -62,4 +65,7 @@ class _LandingPageNewsArticlesState extends State<LandingPageNewsArticles> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
