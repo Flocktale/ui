@@ -7,7 +7,7 @@ import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:provider/provider.dart';
 
 import '../Widgets/MinClub.dart';
-import 'ClubDetail.dart';
+import 'ClubDetailPages/ClubDetail.dart';
 import 'SearchAllClubsPage.dart';
 
 class SearchPage extends StatefulWidget {

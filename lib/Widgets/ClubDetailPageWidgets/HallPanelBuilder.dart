@@ -1,11 +1,11 @@
 import 'package:flocktale/Models/enums/clubStatus.dart';
-import 'package:flocktale/Widgets/ClubUserCards.dart';
-import 'package:flocktale/Widgets/audienceActionDialog.dart';
+import 'package:flocktale/Widgets/ClubDetailPageWidgets/ClubUserCards.dart';
+import 'package:flocktale/Widgets/ClubDetailPageWidgets/audienceActionDialog.dart';
 import 'package:flocktale/Widgets/ProfileShortView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
-import 'package:flocktale/pages/InviteScreen.dart';
+import 'package:flocktale/pages/ClubDetailPages/InviteScreen.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
 

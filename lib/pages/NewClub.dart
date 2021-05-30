@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flocktale/providers/agoraController.dart';
-import 'ClubDetail.dart';
+import 'ClubDetailPages/ClubDetail.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class NewClub extends StatefulWidget {

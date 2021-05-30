@@ -3,7 +3,7 @@ import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:flocktale/pages/ClubDetail.dart';
+import 'package:flocktale/pages/ClubDetailPages/ClubDetail.dart';
 import 'package:provider/provider.dart';
 
 class SearchAllClubs extends StatefulWidget {

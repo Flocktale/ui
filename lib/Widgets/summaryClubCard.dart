@@ -1,7 +1,7 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/Widgets/customImage.dart';
-import 'package:flocktale/pages/ClubDetail.dart';
+import 'package:flocktale/pages/ClubDetailPages/ClubDetail.dart';
 import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flutter/material.dart';
