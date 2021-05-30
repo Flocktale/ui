@@ -1,4 +1,5 @@
 import 'package:chopper/chopper.dart';
+import 'package:flocktale/Models/enums/communityUserType.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../Models/built_post.dart';
@@ -487,12 +488,12 @@ abstract class DatabaseApiService extends ChopperService {
   @Get(path: '/communities/{communityId}/users')
   Future<Response<BuiltSearchUsers>> getCommunityUsers(
     @Path() String communityId, {
-    @required @Query() type, //["HOST","MEMBER"]
+    @required @Query() CommunityUserType type,
     @Header() String lastevaluatedkey,
   });
 
   @Get(path: '/communities/{communityId}/users?type=MEMBER')
-  Future<Response<BuiltSearchUsers>> seachCommunityMember(
+  Future<Response<BuiltSearchUsers>> searchCommunityMember(
     @Path() String communityId, {
     @required @Query() String searchString,
     @Header() String lastevaluatedkey,
@@ -527,8 +528,8 @@ abstract class DatabaseApiService extends ChopperService {
   @Delete(path: '/communities/{communityId}/users')
   Future<Response> removeCommunityUser(
     @Path() String communityId, {
-    @required @Query() type, //["HOST","MEMBER"]
-    @required @Query() userId,
+    @required @Query() CommunityUserType type,
+    @required @Query() String userId,
   });
 
   @Post(path: '/communities/{communityId}/image/')

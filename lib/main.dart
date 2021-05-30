@@ -14,7 +14,7 @@ import 'services/chopper/database_api_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _setupHive();
-  // _setupLogging();
+  _setupLogging();
   _configureFCM();
   runApp(Phoenix(child: MyApp()));
   // runApp(NotificationTesting());

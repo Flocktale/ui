@@ -633,7 +633,7 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<BuiltSearchUsers>> getCommunityUsers(String communityId,
-      {dynamic type, String lastevaluatedkey}) {
+      {CommunityUserType type, String lastevaluatedkey}) {
     final $url = '/communities/$communityId/users';
     final $params = <String, dynamic>{'type': type};
     final $headers = {'lastevaluatedkey': lastevaluatedkey};
@@ -643,7 +643,7 @@ class _$DatabaseApiService extends DatabaseApiService {
   }
 
   @override
-  Future<Response<BuiltSearchUsers>> seachCommunityMember(String communityId,
+  Future<Response<BuiltSearchUsers>> searchCommunityMember(String communityId,
       {String searchString, String lastevaluatedkey}) {
     final $url = '/communities/$communityId/users?type=MEMBER';
     final $params = <String, dynamic>{'searchString': searchString};
@@ -695,7 +695,7 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<dynamic>> removeCommunityUser(String communityId,
-      {dynamic type, dynamic userId}) {
+      {CommunityUserType type, String userId}) {
     final $url = '/communities/$communityId/users';
     final $params = <String, dynamic>{'type': type, 'userId': userId};
     final $request =
