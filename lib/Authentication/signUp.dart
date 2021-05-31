@@ -155,7 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: TextStyle(
                           fontSize: size.width / 5,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                          color: Colors.redAccent),
                       children: [
                         TextSpan(
                           text: '.',
@@ -183,7 +183,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ? Icon(
                                   Icons.add_a_photo,
                                   size: size.width / 15,
-                                  color: Colors.black,
+                                  color: Colors.redAccent,
                                 )
                               : Align(
                                   alignment: Alignment.topRight,
@@ -196,7 +196,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       backgroundColor: Colors.transparent,
                                       child: Icon(
                                         Icons.cancel,
-                                        color: Colors.black,
+                                        color: Colors.redAccent,
                                         size: size.width / 15,
                                       ),
                                     ),
