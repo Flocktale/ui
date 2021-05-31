@@ -790,7 +790,7 @@ abstract class BuiltUnifiedSearchResults
   String get clublastevaluatedkey;
 
   @nullable
-  BuiltList<BuiltCommunityUser> get communities;
+  BuiltList<BuiltCommunity> get communities;
   @nullable
   String get communitylastevaluatedkey;
 

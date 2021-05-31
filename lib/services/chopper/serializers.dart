@@ -5,12 +5,14 @@ import 'package:flocktale/Models/enums/audienceStatus.dart';
 import 'package:flocktale/Models/enums/clubStatus.dart';
 import 'package:flocktale/Models/enums/communityUserType.dart';
 import 'package:flocktale/Models/enums/notificationType.dart';
+import 'package:flocktale/Models/enums/queryType.dart';
 
 import '../../Models/built_post.dart';
 
 part 'serializers.g.dart';
 
 @SerializersFor(const [
+  QueryType,
   AgoraToken,
   ClubContentModel,
   BuiltCommunityAndUser,

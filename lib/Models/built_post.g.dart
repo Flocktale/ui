@@ -2568,7 +2568,7 @@ class _$BuiltUnifiedSearchResultsSerializer
         ..add('communities')
         ..add(serializers.serialize(object.communities,
             specifiedType: const FullType(
-                BuiltList, const [const FullType(BuiltCommunityUser)])));
+                BuiltList, const [const FullType(BuiltCommunity)])));
     }
     if (object.communitylastevaluatedkey != null) {
       result
@@ -2614,7 +2614,7 @@ class _$BuiltUnifiedSearchResultsSerializer
         case 'communities':
           result.communities.replace(serializers.deserialize(value,
                   specifiedType: const FullType(
-                      BuiltList, const [const FullType(BuiltCommunityUser)]))
+                      BuiltList, const [const FullType(BuiltCommunity)]))
               as BuiltList<Object>);
           break;
         case 'communitylastevaluatedkey':
@@ -6904,7 +6904,7 @@ class _$BuiltUnifiedSearchResults extends BuiltUnifiedSearchResults {
   @override
   final String clublastevaluatedkey;
   @override
-  final BuiltList<BuiltCommunityUser> communities;
+  final BuiltList<BuiltCommunity> communities;
   @override
   final String communitylastevaluatedkey;
 
@@ -6992,10 +6992,10 @@ class BuiltUnifiedSearchResultsBuilder
   set clublastevaluatedkey(String clublastevaluatedkey) =>
       _$this._clublastevaluatedkey = clublastevaluatedkey;
 
-  ListBuilder<BuiltCommunityUser> _communities;
-  ListBuilder<BuiltCommunityUser> get communities =>
-      _$this._communities ??= new ListBuilder<BuiltCommunityUser>();
-  set communities(ListBuilder<BuiltCommunityUser> communities) =>
+  ListBuilder<BuiltCommunity> _communities;
+  ListBuilder<BuiltCommunity> get communities =>
+      _$this._communities ??= new ListBuilder<BuiltCommunity>();
+  set communities(ListBuilder<BuiltCommunity> communities) =>
       _$this._communities = communities;
 
   String _communitylastevaluatedkey;

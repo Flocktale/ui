@@ -40,6 +40,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(JoinRequests.serializer)
       ..add(NotificationData.serializer)
       ..add(NotificationType.serializer)
+      ..add(QueryType.serializer)
       ..add(ReactionUser.serializer)
       ..add(RelationActionResponse.serializer)
       ..add(RelationIndexObject.serializer)
@@ -92,8 +93,8 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(BuiltList, const [const FullType(BuiltClub)]),
           () => new ListBuilder<BuiltClub>())
       ..addBuilderFactory(
-          const FullType(BuiltList, const [const FullType(BuiltCommunityUser)]),
-          () => new ListBuilder<BuiltCommunityUser>())
+          const FullType(BuiltList, const [const FullType(BuiltCommunity)]),
+          () => new ListBuilder<BuiltCommunity>())
       ..addBuilderFactory(
           const FullType(BuiltSet, const [const FullType(String)]),
           () => new SetBuilder<String>()))

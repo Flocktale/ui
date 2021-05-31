@@ -563,7 +563,7 @@ class _$DatabaseApiService extends DatabaseApiService {
 
   @override
   Future<Response<BuiltUnifiedSearchResults>> unifiedQueryRoutes(
-      {String searchString, String type, String lastevaluatedkey}) {
+      {String searchString, QueryType type, String lastevaluatedkey}) {
     final $url = '/query/';
     final $params = <String, dynamic>{
       'searchString': searchString,

@@ -1,5 +1,6 @@
 import 'package:chopper/chopper.dart';
 import 'package:flocktale/Models/enums/communityUserType.dart';
+import 'package:flocktale/Models/enums/queryType.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../Models/built_post.dart';
@@ -445,7 +446,7 @@ abstract class DatabaseApiService extends ChopperService {
   @Get(path: '/query/')
   Future<Response<BuiltUnifiedSearchResults>> unifiedQueryRoutes({
     @required @Query() String searchString,
-    @required @Query() String type, //["unified","clubs","users","communities"]
+    @required @Query() QueryType type,
     @Header() String lastevaluatedkey,
   });
 
