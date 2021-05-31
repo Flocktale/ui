@@ -21,8 +21,8 @@ class HomePageTopSection extends StatelessWidget {
 
     return Card(
       color: Colors.black,
-      shadowColor: Colors.white,
-      elevation: 4,
+     // shadowColor: Colors.white,
+     // elevation: 4,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
