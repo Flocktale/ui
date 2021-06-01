@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
 
     String userId = Provider.of<UserData>(context, listen: false).user.userId;
-    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
 
     DBHelper.fetchList(userId, context);
     FollowingDatabase.fetchList(userId, context);
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           LandingPageClubs(),
                           LandingPageCommunities(),
                           LandingPageNewsArticles(),
-                          LandingPageCommerceProducts(),
+                          // LandingPageCommerceProducts(),
                         ],
                       ),
                     ),

@@ -142,280 +142,297 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final size = MediaQuery.of(context).size;
     return _loading
         ? Center(child: CircularProgressIndicator())
-        : Scaffold(
-            body: ListView(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                      size.width / 20, size.height / 20, 0, 0),
-                  child: RichText(
-                    text: TextSpan(
-                      text: "Register",
-                      style: TextStyle(
-                          fontSize: size.width / 5,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.redAccent),
-                      children: [
-                        TextSpan(
-                          text: '.',
-                          style: TextStyle(color: Colors.red),
-                        )
-                      ],
+        : SafeArea(
+            child: Scaffold(
+                body: ListView(
+                    // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        size.width / 20, size.height / 20, 0, 0),
+                    child: RichText(
+                      text: TextSpan(
+                        text: "Register",
+                        style: TextStyle(
+                            fontSize: size.width / 5,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.redAccent),
+                        children: [
+                          TextSpan(
+                            text: '.',
+                            style: TextStyle(color: Colors.red),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, size.height / 50, 0, 0),
-                    child: GestureDetector(
-                      onTap: getImage,
-                      behavior: HitTestBehavior.deferToChild,
-                      child: CircleAvatar(
-                        radius: size.height / 14.7,
-                        backgroundColor: Colors.red,
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(0, size.height / 50, 0, 0),
+                      child: GestureDetector(
+                        onTap: getImage,
+                        behavior: HitTestBehavior.deferToChild,
                         child: CircleAvatar(
-                          radius: size.height / 15,
-                          backgroundImage:
-                              image == null ? null : FileImage(image),
-                          backgroundColor: Colors.white,
-                          child: image == null
-                              ? Icon(
-                                  Icons.add_a_photo,
-                                  size: size.width / 15,
-                                  color: Colors.redAccent,
-                                )
-                              : Align(
-                                  alignment: Alignment.topRight,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      image = null;
-                                      setState(() {});
-                                    },
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.transparent,
-                                      child: Icon(
-                                        Icons.cancel,
-                                        color: Colors.redAccent,
-                                        size: size.width / 15,
+                          radius: size.height / 14.7,
+                          backgroundColor: Colors.red,
+                          child: CircleAvatar(
+                            radius: size.height / 15,
+                            backgroundImage:
+                                image == null ? null : FileImage(image),
+                            backgroundColor: Colors.white,
+                            child: image == null
+                                ? Icon(
+                                    Icons.add_a_photo,
+                                    size: size.width / 15,
+                                    color: Colors.redAccent,
+                                  )
+                                : Align(
+                                    alignment: Alignment.topRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        image = null;
+                                        setState(() {});
+                                      },
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.transparent,
+                                        child: Icon(
+                                          Icons.cancel,
+                                          color: Colors.redAccent,
+                                          size: size.width / 15,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(
-                      top: size.height / 50,
-                      left: size.width / 20,
-                      right: size.width / 20),
-                  child: Column(children: <Widget>[
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        children: <Widget>[
-                          TextFormField(
-                            controller: _nameController,
-                            decoration: InputDecoration(
-                                labelText: 'NAME',
-                                labelStyle: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[400]),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red))),
-                            validator: (val) {
-                              if (val.isEmpty) return 'Please fill this field';
-                              if (val.length < 3)
-                                return 'Minimum length should be 3';
+                  Container(
+                    padding: EdgeInsets.only(
+                        top: size.height / 50,
+                        left: size.width / 20,
+                        right: size.width / 20),
+                    child: Column(children: <Widget>[
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          children: <Widget>[
+                            TextFormField(
+                              controller: _nameController,
+                              style: TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                  labelText: 'NAME',
+                                  labelStyle: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[400]),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.red))),
+                              validator: (val) {
+                                if (val.isEmpty)
+                                  return 'Please fill this field';
+                                if (val.length < 3)
+                                  return 'Minimum length should be 3';
 
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: size.height / 50),
-                          TextFormField(
-                            controller: _usernameController,
-                            decoration: InputDecoration(
-                                labelText: 'USER NAME ',
-                                labelStyle: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[400]),
-                                helperText: _usernameController.text.length > 3
-                                    ? usernameAvailable
-                                        ? "Username is available"
-                                        : "Username is not available"
-                                    : "Allowed Characters: a-z 0-9 _ (Min length: 3)",
-                                helperStyle: !usernameAvailable ||
-                                        _usernameController.text.length <= 3
-                                    ? TextStyle(
-                                        fontFamily: "Lato", color: Colors.red)
-                                    : TextStyle(
-                                        fontFamily: "Lato",
-                                        color: Colors.green),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: _usernameController
-                                                .text.length >
-                                            3
-                                        ? usernameAvailable
-                                            ? BorderSide(color: Colors.green)
-                                            : BorderSide(
-                                                color: Colors.redAccent)
-                                        : BorderSide(color: Colors.redAccent))),
-                            textCapitalization: TextCapitalization.none,
-                            textInputAction: TextInputAction.done,
-                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                            maxLength: 25,
-                            onChanged: (val) async {
-                              if (val.isEmpty) return;
-                              val = val.toLowerCase();
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: size.height / 50),
+                            TextFormField(
+                              controller: _usernameController,
+                              style: TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                  labelText: 'USER NAME ',
+                                  labelStyle: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[400]),
+                                  helperText: _usernameController.text.length >
+                                          3
+                                      ? usernameAvailable
+                                          ? "Username is available"
+                                          : "Username is not available"
+                                      : "Allowed Characters: a-z 0-9 _ (Min length: 3)",
+                                  helperStyle: !usernameAvailable ||
+                                          _usernameController.text.length <= 3
+                                      ? TextStyle(
+                                          fontFamily: "Lato", color: Colors.red)
+                                      : TextStyle(
+                                          fontFamily: "Lato",
+                                          color: Colors.green),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: _usernameController
+                                                  .text.length >
+                                              3
+                                          ? usernameAvailable
+                                              ? BorderSide(color: Colors.green)
+                                              : BorderSide(
+                                                  color: Colors.redAccent)
+                                          : BorderSide(
+                                              color: Colors.redAccent))),
+                              textCapitalization: TextCapitalization.none,
+                              textInputAction: TextInputAction.done,
+                              maxLengthEnforcement:
+                                  MaxLengthEnforcement.enforced,
+                              maxLength: 25,
+                              onChanged: (val) async {
+                                if (val.isEmpty) return;
+                                val = val.toLowerCase();
 
-                              String newVal = '';
+                                String newVal = '';
 
-                              for (int i = 0; i < val.length; i++) {
-                                if (RegExp(r'[a-zA-Z0-9_]').hasMatch(val[i]) ==
-                                    true) {
-                                  newVal += val[i];
+                                for (int i = 0; i < val.length; i++) {
+                                  if (RegExp(r'[a-zA-Z0-9_]')
+                                          .hasMatch(val[i]) ==
+                                      true) {
+                                    newVal += val[i];
+                                  }
                                 }
-                              }
 
-                              val = newVal;
+                                val = newVal;
 
-                              _usernameController.text = val;
-                              _usernameController.selection =
-                                  TextSelection.fromPosition(TextPosition(
-                                      offset: _usernameController.text.length));
+                                _usernameController.text = val;
+                                _usernameController.selection =
+                                    TextSelection.fromPosition(TextPosition(
+                                        offset:
+                                            _usernameController.text.length));
 
-                              if (val.length < 4) {
-                                usernameAvailable = false;
-                                return;
-                              }
-
-                              final service = Provider.of<DatabaseApiService>(
-                                  context,
-                                  listen: false);
-
-                              UsernameAvailability resp =
-                                  (await service.isThisUsernameAvailable(
-                                username: val,
-                              ))
-                                      .body;
-                              if (resp?.isAvailable == true &&
-                                  _usernameController.text.length > 3) {
-                                setState(() {
-                                  usernameAvailable = true;
-                                });
-                              } else {
-                                setState(() {
+                                if (val.length < 4) {
                                   usernameAvailable = false;
-                                });
-                              }
-                            },
-                            validator: (val) {
-                              if (val.isEmpty) return 'Please fill this field';
-                              if (val.length <= 3)
-                                return 'Minimum length should be 3';
+                                  return;
+                                }
 
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: size.height / 50),
-                          TextFormField(
-                            controller: _tagLineController,
-                            minLines: 1,
-                            maxLines: 3,
-                            maxLength: 100,
-                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                            decoration: InputDecoration(
-                                labelText: 'TAGLINE',
-                                hintText: "Describe yourself in one line.",
-                                hintStyle: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontWeight: FontWeight.w200,
-                                    color: Colors.grey[400]),
-                                labelStyle: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[400]),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red))),
-                          ),
-                          // SizedBox(height: size.height/100),
-                          TextFormField(
-                            controller: _bioController,
-                            minLines: 3,
-                            maxLines: 15,
-                            decoration: InputDecoration(
-                                labelText: 'BIO',
-                                hintText: "Tell something about yourself.",
-                                hintStyle: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontWeight: FontWeight.w200,
-                                    color: Colors.grey[400]),
-                                labelStyle: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[400]),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red))),
-                          ),
-                          SizedBox(height: 50),
-                          InkWell(
-                            onTap: () => _signUpWithBackend(),
-                            child: Container(
-                                height: 40.0,
-                                child: Material(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  shadowColor: Colors.redAccent,
-                                  color: Colors.red,
-                                  elevation: 7.0,
-                                  child: Center(
-                                    child: Text(
-                                      'SUBMIT',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Lato'),
+                                final service = Provider.of<DatabaseApiService>(
+                                    context,
+                                    listen: false);
+
+                                UsernameAvailability resp =
+                                    (await service.isThisUsernameAvailable(
+                                  username: val,
+                                ))
+                                        .body;
+                                if (resp?.isAvailable == true &&
+                                    _usernameController.text.length > 3) {
+                                  setState(() {
+                                    usernameAvailable = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    usernameAvailable = false;
+                                  });
+                                }
+                              },
+                              validator: (val) {
+                                if (val.isEmpty)
+                                  return 'Please fill this field';
+                                if (val.length <= 3)
+                                  return 'Minimum length should be 3';
+
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: size.height / 50),
+                            TextFormField(
+                              controller: _tagLineController,
+                              minLines: 1,
+                              maxLines: 3,
+                              maxLength: 100,
+                              maxLengthEnforcement:
+                                  MaxLengthEnforcement.enforced,
+                              style: TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                  labelText: 'TAGLINE',
+                                  hintText: "Describe yourself in one line.",
+                                  hintStyle: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w200,
+                                      color: Colors.grey[400]),
+                                  labelStyle: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[400]),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.red))),
+                            ),
+                            // SizedBox(height: size.height/100),
+                            TextFormField(
+                              controller: _bioController,
+                              minLines: 3,
+                              maxLines: 15,
+                              style: TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                  labelText: 'BIO',
+                                  hintText: "Tell something about yourself.",
+                                  hintStyle: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w200,
+                                      color: Colors.grey[400]),
+                                  labelStyle: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[400]),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.red))),
+                            ),
+                            SizedBox(height: 50),
+                            InkWell(
+                              onTap: () => _signUpWithBackend(),
+                              child: Container(
+                                  height: 40.0,
+                                  child: Material(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    shadowColor: Colors.redAccent,
+                                    color: Colors.red,
+                                    elevation: 7.0,
+                                    child: Center(
+                                      child: Text(
+                                        'SUBMIT',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Lato'),
+                                      ),
                                     ),
-                                  ),
-                                )),
-                          ),
-                          SizedBox(
-                            height: size.height / 50,
-                          ),
-                          InkWell(
-                            onTap: () async {
-                              //TODO
-                              //Progress Indicator here
-                              await logOutUser(context);
-                            },
-                            child: Container(
-                                height: size.height / 20,
-                                child: Material(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  shadowColor: Colors.redAccent,
-                                  color: Colors.white,
-                                  elevation: 7.0,
-                                  child: Center(
-                                    child: Text(
-                                      'Log out',
-                                      style: TextStyle(
-                                          color: Colors.redAccent,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Lato'),
+                                  )),
+                            ),
+                            SizedBox(
+                              height: size.height / 50,
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                //TODO
+                                //Progress Indicator here
+                                await logOutUser(context);
+                              },
+                              child: Container(
+                                  height: size.height / 20,
+                                  child: Material(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    shadowColor: Colors.redAccent,
+                                    color: Colors.white,
+                                    elevation: 7.0,
+                                    child: Center(
+                                      child: Text(
+                                        'Log out',
+                                        style: TextStyle(
+                                            color: Colors.redAccent,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Lato'),
+                                      ),
                                     ),
-                                  ),
-                                )),
-                          ),
-                          SizedBox(height: 100),
-                        ],
+                                  )),
+                            ),
+                            SizedBox(height: 100),
+                          ],
+                        ),
                       ),
-                    ),
-                  ]),
-                )
-              ]));
+                    ]),
+                  )
+                ])),
+          );
   }
 }

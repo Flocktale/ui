@@ -39,8 +39,7 @@ class _PhoneLoginState extends State<PhoneLogin> {
                         fontFamily: 'Lato',
                         fontSize: size.width / 5,
                         fontWeight: FontWeight.bold,
-                        color: Colors.redAccent
-                    ),
+                        color: Colors.redAccent),
                   ),
                 ),
                 Container(
@@ -51,8 +50,7 @@ class _PhoneLoginState extends State<PhoneLogin> {
                         fontFamily: 'Lato',
                         fontSize: size.width / 5,
                         fontWeight: FontWeight.bold,
-                        color: Colors.redAccent
-                    ),
+                        color: Colors.redAccent),
                   ),
                 ),
                 Container(
@@ -117,16 +115,13 @@ class _PhoneLoginState extends State<PhoneLogin> {
                                   ),
                                   labelText: "Phone Number for login",
                                   labelStyle: TextStyle(
-                                    fontFamily: "Lato",
-                                    color: Colors.white
-                                  ),
+                                      fontFamily: "Lato", color: Colors.white),
                                 ),
                                 style: TextStyle(
                                     fontFamily: "Lato",
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 2.0,
-                                    color: Colors.white
-                                ),
+                                    color: Colors.white),
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.allow(
                                       RegExp(r'[0-9]'))
@@ -149,8 +144,9 @@ class _PhoneLoginState extends State<PhoneLogin> {
                                   defaultBorderColor: Colors.white,
                                   highlightColor: Colors.redAccent,
                                   pinTextStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: "Lato"
+                                    color: Colors.black,
+                                    fontFamily: "Lato",
+                                    fontWeight: FontWeight.bold,
                                   ),
                                   hasError: hasError,
                                   onDone: (value) {

@@ -2,6 +2,7 @@ import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Widgets/CommunityCard.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 class LandingPageCommunities extends StatefulWidget {
@@ -12,7 +13,9 @@ class LandingPageCommunities extends StatefulWidget {
 class _LandingPageCommunitiesState extends State<LandingPageCommunities>
     with AutomaticKeepAliveClientMixin {
   BuiltCommunityList _communities;
-  bool _isLoading = false;
+  bool _isLoading = true;
+
+  bool _isFetchingMore = false;
 
   Future<void> _fetchCommunities() async {
     final service = Provider.of<DatabaseApiService>(context, listen: false);
@@ -27,12 +30,17 @@ class _LandingPageCommunitiesState extends State<LandingPageCommunities>
 
   void _fetchMoreCommunities() async {
     final lastEvaluatedKey = _communities?.lastevaluatedkey;
-    if (lastEvaluatedKey != null) {
+
+    if (lastEvaluatedKey != null && _isFetchingMore == false) {
+      setState(() {
+        _isFetchingMore = true;
+      });
       await _fetchCommunities();
     } else {
       await Future.delayed(Duration(milliseconds: 200));
       _isLoading = false;
     }
+    _isFetchingMore = false;
     setState(() {});
   }
 
@@ -46,9 +54,13 @@ class _LandingPageCommunitiesState extends State<LandingPageCommunities>
   Widget build(BuildContext context) {
     super.build(context);
 
-    final communities = _communities?.communities;
-
-    final listLength = (communities?.length ?? 0) + 1;
+    if (_isLoading) {
+      return Center(
+        child: SpinKitChasingDots(
+          color: Colors.redAccent,
+        ),
+      );
+    }
 
     return Container(
       child: ListView(
@@ -59,6 +71,8 @@ class _LandingPageCommunitiesState extends State<LandingPageCommunities>
             onRefresh: () {
               // resetting community list
               _communities = null;
+              _isLoading = true;
+              setState(() {});
               _fetchCommunities();
               return;
             },
@@ -67,30 +81,33 @@ class _LandingPageCommunitiesState extends State<LandingPageCommunities>
                 if (scrollInfo.metrics.pixels ==
                     scrollInfo.metrics.maxScrollExtent) {
                   _fetchMoreCommunities();
-                  _isLoading = true;
                 }
                 return true;
               },
-              child: ListView.builder(
+              child: ListView(
                 shrinkWrap: true,
-                itemCount: listLength,
-                itemBuilder: (context, index) {
-                  if (index == listLength - 1) {
-                    if (_isLoading)
-                      return Container(
-                        margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    else
-                      return Container();
-                  }
-                  final _community = communities[index];
-                  return CommunityCard(community: _community);
-                },
+                physics: ScrollPhysics(),
+                children: [
+                  ListView.builder(
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: _communities?.communities?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final _community = _communities.communities[index];
+                      return CommunityCard(community: _community);
+                    },
+                  ),
+                  SizedBox(height: 80),
+                  if (_isFetchingMore)
+                    Center(
+                      child: SpinKitChasingDots(
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
-          SizedBox(height: 100),
         ],
       ),
     );

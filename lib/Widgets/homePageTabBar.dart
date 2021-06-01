@@ -26,7 +26,7 @@ class HomePageTabBar extends StatelessWidget {
         _tabText("CLUBS"),
         _tabText("COMMUNITIES"),
         _tabText("NEWS"),
-        _tabText("ECOMMERCE"),
+        // _tabText("ECOMMERCE"),
       ],
     );
   }

@@ -9,8 +9,8 @@ class CreateClubButton extends StatelessWidget {
     return InkWell(
       onTap: () => (onTap ?? () {})(),
       child: Card(
-        elevation: 4,
-        shadowColor: Colors.white,
+        elevation: 2,
+        shadowColor: Colors.white70,
         color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),

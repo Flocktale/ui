@@ -29,6 +29,8 @@ class MySocket with ChangeNotifier {
   bool _inTheClub = false;
   bool _isPlaying = false;
 
+  bool _isSocketClosedOnPurpose = false;
+
   Map<String, Function> funcs = {"newComment": () => print("hi")};
 
   void update(String userId) {
@@ -38,6 +40,9 @@ class MySocket with ChangeNotifier {
   }
 
   Future<void> closeConnection() async {
+    print('closing websocket directly');
+    _isSocketClosedOnPurpose = true;
+
     await this.channel?.close(1000, 'App closed');
   }
 
@@ -147,6 +152,8 @@ class MySocket with ChangeNotifier {
   }
 
   Future<void> init(String userId, {bool reconnect = false}) async {
+    _isSocketClosedOnPurpose = false;
+
     this.userId = userId;
 
     this.channel = await connectWs(reconnect: reconnect);
@@ -156,10 +163,14 @@ class MySocket with ChangeNotifier {
       _wsEventListener,
       onError: (obj, stacktrace) {
         print('error in websocket stream: $obj, stacktrace: $stacktrace');
+        if (_isSocketClosedOnPurpose) return;
+
         _reConnect();
       },
       onDone: () {
         print('!!!websocket connection is closed!!!');
+        if (_isSocketClosedOnPurpose) return;
+
         _reConnect();
       },
       cancelOnError: true,
