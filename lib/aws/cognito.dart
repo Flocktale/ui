@@ -96,6 +96,7 @@ class AuthUser {
     try {
       await _cognitoUser
           .initiateAuth(AuthenticationDetails(authParameters: []));
+
       return false;
     } on CognitoUserCustomChallengeException catch (e) {
       // the package (amazon_cognito_identity_dart_2) generates this error for custom_challenge

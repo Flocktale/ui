@@ -1092,7 +1092,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         builder: (context) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
+            Container(
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.transparent,
@@ -1302,131 +1302,125 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                         ),
                         SizedBox(height: 16),
                         if (_clubAudience.club.status != ClubStatus.Live)
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 16,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black54,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      if (_clubAudience.club.status !=
-                                          ClubStatus.Concluded)
-                                        Icon(
-                                          Icons.timer,
-                                          color: Colors.white,
-                                          size: 32,
-                                        ),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        _clubAudience.club.status ==
-                                                ClubStatus.Concluded
-                                            ? "Concluded"
-                                            : DateTime.now().compareTo(DateTime
-                                                        .fromMillisecondsSinceEpoch(
-                                                            _clubAudience.club
-                                                                .scheduleTime)) <
-                                                    0
-                                                ? "Scheduled: ${_processScheduledTimestamp(_clubAudience.club.scheduleTime)}"
-                                                : "Waiting for start",
-                                        style: TextStyle(
-                                          fontFamily: 'Lato',
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 16,
                                 ),
-                              ],
-                            ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    if (_clubAudience.club.status !=
+                                        ClubStatus.Concluded)
+                                      Icon(
+                                        Icons.timer,
+                                        color: Colors.white,
+                                        size: 32,
+                                      ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      _clubAudience.club.status ==
+                                              ClubStatus.Concluded
+                                          ? "Concluded"
+                                          : DateTime.now().compareTo(DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                          _clubAudience.club
+                                                              .scheduleTime)) <
+                                                  0
+                                              ? "Scheduled: ${_processScheduledTimestamp(_clubAudience.club.scheduleTime)}"
+                                              : "Waiting for start",
+                                      style: TextStyle(
+                                        fontFamily: 'Lato',
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           )
                         else if (_clubAudience.audienceData.invitationId ==
                             null)
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              width: double.infinity,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(),
-                                  Container(
-                                    height: 100,
-                                    child: Center(
-                                      child: ListView.builder(
-                                        clipBehavior: Clip.none,
-                                        shrinkWrap: true,
-                                        addSemanticIndexes: false,
-                                        itemCount: participantList.length,
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: (ctx, index) {
-                                          //! if this is club owner
-                                          //! different decoration for club owner
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(),
+                                Container(
+                                  height: 100,
+                                  child: Center(
+                                    child: ListView.builder(
+                                      clipBehavior: Clip.none,
+                                      shrinkWrap: true,
+                                      addSemanticIndexes: false,
+                                      itemCount: participantList.length,
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder: (ctx, index) {
+                                        //! if this is club owner
+                                        //! different decoration for club owner
 
-                                          final participant =
-                                              participantList[index];
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 4.0),
-                                            child: ValueListenableBuilder(
-                                                valueListenable:
-                                                    currentlySpeakingUsers,
-                                                child:
-                                                    _participantCardStackGesture(
-                                                        participant),
-                                                builder: (context, speakers,
-                                                    stackGesture) {
-                                                  return Stack(
-                                                    fit: StackFit.passthrough,
-                                                    children: [
-                                                      ParticipantCard(
-                                                        participant,
-                                                        key: ObjectKey(
-                                                            participant.audience
-                                                                    .userId +
-                                                                ' 2 $index'),
-                                                        isHost: participant
-                                                                .audience
-                                                                .userId ==
-                                                            _clubAudience.club
-                                                                .creator.userId,
-                                                        volume: (speakers ??
-                                                                    const {})[
-                                                                participant
-                                                                    .audience
-                                                                    .username] ??
-                                                            0,
+                                        final participant =
+                                            participantList[index];
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 4.0),
+                                          child: ValueListenableBuilder(
+                                              valueListenable:
+                                                  currentlySpeakingUsers,
+                                              child:
+                                                  _participantCardStackGesture(
+                                                      participant),
+                                              builder: (context, speakers,
+                                                  stackGesture) {
+                                                return Stack(
+                                                  fit: StackFit.passthrough,
+                                                  children: [
+                                                    ParticipantCard(
+                                                      participant,
+                                                      key: ObjectKey(participant
+                                                              .audience.userId +
+                                                          ' 2 $index'),
+                                                      isHost: participant
+                                                              .audience
+                                                              .userId ==
+                                                          _clubAudience.club
+                                                              .creator.userId,
+                                                      volume: (speakers ??
+                                                                  const {})[
+                                                              participant
+                                                                  .audience
+                                                                  .username] ??
+                                                          0,
+                                                    ),
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Container(
+                                                        height: 72,
+                                                        width: 72,
+                                                        child: stackGesture,
                                                       ),
-                                                      Align(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Container(
-                                                          height: 72,
-                                                          width: 72,
-                                                          child: stackGesture,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );
-                                                }),
-                                          );
-                                        },
-                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              }),
+                                        );
+                                      },
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                       ],
@@ -1654,23 +1648,25 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                     children: <Widget>[
                       if (_clubAudience.audienceData.invitationId != null)
                         _displayInvitation(),
+                      clubDataDisplayWidget(),
                       Expanded(
-                        child: clubDataDisplayWidget(),
-                      ),
-                      Container(
-                        height: size.height / 1.9 -
-                            MediaQuery.of(context).viewInsets.bottom,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        color: Colors.black,
-                        child: CommentBox(
-                          size: size,
-                          comments: comments,
-                          listController: _listController,
-                          navigateTo: _navigateTo,
-                          processTimestamp: _processTimestamp,
-                          addComment: addComment,
-                          newCommentController: _newCommentController,
-                        ),
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          return Container(
+                            height: constraints.maxHeight -
+                                MediaQuery.of(context).viewInsets.bottom,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            color: Colors.black,
+                            child: CommentBox(
+                              size: size,
+                              comments: comments,
+                              listController: _listController,
+                              navigateTo: _navigateTo,
+                              processTimestamp: _processTimestamp,
+                              addComment: addComment,
+                              newCommentController: _newCommentController,
+                            ),
+                          );
+                        }),
                       ),
                     ],
                   ),

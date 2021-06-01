@@ -122,10 +122,6 @@ class MySocket with ChangeNotifier {
 
   void _reConnect() async {
     print('reconnecting-----------------------');
-    print('reconnecting-----------------------');
-    print('reconnecting-----------------------');
-    print('reconnecting-----------------------');
-    print('reconnecting-----------------------');
     if (this.channel != null) {
       // add in a reconnect delay
       await Future.delayed(Duration(seconds: 2));

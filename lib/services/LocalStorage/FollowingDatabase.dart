@@ -37,7 +37,7 @@ class FollowingDatabase {
     followingBox.values.forEach((element) {
       res.add(element);
     });
-    print(res);
+    // print(res);
     return res;
   }
 

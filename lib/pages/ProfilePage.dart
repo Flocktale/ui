@@ -360,23 +360,28 @@ class _ProfilePageState extends State<ProfilePage> {
           _user.name ?? '',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: size.width / 20,
+            fontSize: 20,
             color: Colors.redAccent,
           ),
         ),
         SizedBox(height: size.height / 130),
         Text(
           '@${_user.username}',
-          style: TextStyle(fontSize: size.width / 26, color: Colors.grey[400]),
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+          ),
         ),
         SizedBox(height: size.height / 130),
         Center(
           child: Text(
             _user.tagline ?? '',
             style: TextStyle(
-                fontFamily: "Lato",
-                fontWeight: FontWeight.bold,
-                color: Colors.grey),
+              fontFamily: "Lato",
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 16,
+            ),
           ),
         ),
         SizedBox(height: size.height / 50),

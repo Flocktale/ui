@@ -7,7 +7,8 @@ class ShareApp {
   final BuildContext context;
   ShareApp(this.context);
 
-  final String appLink = 'Link to the app: ';
+  final String appLink =
+      'Link to the app: https://play.google.com/store/apps/details?id=com.flocktale.android';
 
   void _share(String text) {
     Share.share(
