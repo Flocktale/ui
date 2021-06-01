@@ -1,5 +1,7 @@
 import 'package:flocktale/Models/enums/queryType.dart';
+import 'package:flocktale/Widgets/CommunityCard.dart';
 import 'package:flocktale/Widgets/customImage.dart';
+import 'package:flocktale/Widgets/summaryClubCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
@@ -75,6 +77,50 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     });
   }
 
+  void _fetchMoreClubs() async {
+    if (_isFetchingMoreClubs || _searchResults.clublastevaluatedkey == null)
+      return;
+
+    setState(() {
+      _isFetchingMoreClubs = true;
+    });
+    final res = await _fetchSearchResults(_searchController.text,
+        QueryType.clubs, _searchResults.clublastevaluatedkey);
+
+    final newClubList = (_searchResults?.clubs?.toList() ?? [])
+      ..addAll(res?.clubs?.toList() ?? []);
+
+    _searchResults = _searchResults.rebuild((b) => b
+      ..clubs = newClubList.toBuiltList().toBuilder()
+      ..clublastevaluatedkey = res?.clublastevaluatedkey);
+
+    setState(() {
+      _isFetchingMoreClubs = false;
+    });
+  }
+
+  void _fetchMoreCommunities() async {
+    if (_isFetchingMoreCommunities ||
+        _searchResults.communitylastevaluatedkey == null) return;
+
+    setState(() {
+      _isFetchingMoreCommunities = true;
+    });
+    final res = await _fetchSearchResults(_searchController.text,
+        QueryType.communities, _searchResults.communitylastevaluatedkey);
+
+    final newCommunityList = (_searchResults?.communities?.toList() ?? [])
+      ..addAll(res?.communities?.toList() ?? []);
+
+    _searchResults = _searchResults.rebuild((b) => b
+      ..communities = newCommunityList.toBuiltList().toBuilder()
+      ..communitylastevaluatedkey = res?.communitylastevaluatedkey);
+
+    setState(() {
+      _isFetchingMoreCommunities = false;
+    });
+  }
+
   Widget get _loadingWidget => Container(
         height: 80,
         child: Center(
@@ -83,6 +129,79 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           ),
         ),
       );
+
+  Widget _searchCommunitiesTab() {
+    if (_isLoading) return Center(child: _loadingWidget);
+
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+          _fetchMoreCommunities();
+        }
+        return true;
+      },
+      child: ListView(
+        physics: ScrollPhysics(),
+        shrinkWrap: true,
+        children: [
+          ListView.builder(
+            physics: ScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: _searchResults?.communities?.length ?? 0,
+            itemBuilder: (context, index) {
+              final community = _searchResults.communities[index];
+
+              return CommunityCard(community: community);
+            },
+          ),
+          SizedBox(height: 80),
+          if (_isFetchingMoreClubs) _loadingWidget
+        ],
+      ),
+    );
+  }
+
+  Widget _searchClubsTab() {
+    if (_isLoading) return Center(child: _loadingWidget);
+
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+          _fetchMoreClubs();
+        }
+        return true;
+      },
+      child: ListView(
+        physics: ScrollPhysics(),
+        shrinkWrap: true,
+        children: [
+          ListView.builder(
+            physics: ScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: _searchResults?.clubs?.length ?? 0,
+            itemBuilder: (context, index) {
+              final club = _searchResults.clubs[index];
+
+              return Container(
+                height: 180,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 8),
+                child: SummaryClubCard(
+                  club,
+                  (Widget page) async {
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => ClubDetailPage(club.clubId)));
+                  },
+                ),
+              );
+            },
+          ),
+          SizedBox(height: 80),
+          if (_isFetchingMoreClubs) _loadingWidget
+        ],
+      ),
+    );
+  }
 
   Widget _searchUsersTab() {
     if (_isLoading) return Center(child: _loadingWidget);
@@ -106,49 +225,62 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
               final user = _searchResults.users[index];
 
               return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 64,
-                      width: 64,
-                      color: Colors.transparent,
-                      child: CustomImage(
-                        image: user.avatar,
-                        radius: 8,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              user.username,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              ' · ' + user.name,
-                              style: TextStyle(
-                                  color: Colors.white70, fontSize: 14),
-                            ),
-                          ],
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => ProfilePage(
+                          userId: user.userId,
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          user.tagline ?? "",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
-                        )
-                      ],
-                    )
-                  ],
+                      ),
+                    );
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 48,
+                        width: 48,
+                        color: Colors.transparent,
+                        child: CustomImage(
+                          image: user.avatar,
+                          radius: 8,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                user.username,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                ' · ' + user.name,
+                                style: TextStyle(
+                                    color: Colors.white70, fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            user.tagline ?? "",
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style:
+                                TextStyle(color: Colors.white70, fontSize: 14),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               );
             },
@@ -266,8 +398,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 child: TabBarView(
                   children: [
                     _searchUsersTab(),
-                    Container(),
-                    Container(),
+                    _searchClubsTab(),
+                    _searchCommunitiesTab(),
                   ],
                 ),
               ),
@@ -276,308 +408,5 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         ),
       ),
     );
-  }
-}
-
-class DataSearch extends SearchDelegate<String> {
-  List<BuiltUser> recentSearches;
-  BuiltUnifiedSearchResults allSearches;
-  BuildContext context;
-  DataSearch({this.recentSearches, this.context});
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    // Actions for App Bar
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () {
-          query = "";
-        },
-      )
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    // Leading icon on the left of the App Bar
-    return IconButton(
-      icon: AnimatedIcon(
-        icon: AnimatedIcons.menu_arrow,
-        progress: transitionAnimation,
-      ),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    // Show some result based on the selection
-    return searchResultFutureBuilder();
-  }
-
-  getAllUsers() async {
-    String username = query;
-    final service = Provider.of<DatabaseApiService>(context);
-    //allSearches = (await service.getUserbyUsername(username)).body;
-
-    allSearches = (await service.unifiedQueryRoutes(
-      searchString: username,
-      // type: "unified",
-      lastevaluatedkey: null,
-    ))
-        .body;
-    print("===================");
-    print(allSearches);
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return Container(color: Colors.blue, child: searchResultFutureBuilder());
-  }
-
-  Widget searchResultFutureBuilder() {
-    final size = MediaQuery.of(context).size;
-    // Show when someone searches for something
-    return query.isEmpty
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: size.height / 50),
-              Text(
-                "Recent Searches",
-                style: TextStyle(
-                    fontFamily: 'Lato',
-                    fontWeight: FontWeight.bold,
-                    fontSize: size.width / 20),
-              ),
-              SizedBox(height: size.height / 50),
-              Expanded(
-                child: SizedBox(
-                  height: 300.0,
-                  child: ListView.builder(
-                      itemCount: recentSearches.length,
-                      itemBuilder: (builder, index) {
-                        return ListTile(
-                          leading: CustomImage(
-                            image: recentSearches[index].avatar + "_thumb",
-                          ),
-                          title: Text(
-                            recentSearches[index].name,
-                          ),
-                          subtitle: Text(recentSearches[index].username),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (_) => ProfilePage(
-                                      userId: recentSearches[index].userId,
-                                    )));
-                          },
-                        );
-                      }),
-                ),
-              ),
-            ],
-          )
-        : FutureBuilder(
-            future: getAllUsers(),
-            builder: (context, snapshot) {
-              if (allSearches == null ||
-                  snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
-              return Container(
-                margin: EdgeInsets.fromLTRB(10, 0, 10, 30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: size.height / 50),
-                    Text(
-                      "Search Results",
-                      style: TextStyle(
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.bold,
-                          fontSize: size.width / 20),
-                    ),
-                    SizedBox(height: size.height / 50),
-                    Text(
-                      "Users",
-                      style: TextStyle(
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.w500,
-                          fontSize: size.width / 20),
-                    ),
-                    //SizedBox(height: size.height/50),
-                    allSearches.users.length == 0
-                        ? Container(
-                            child: Center(
-                                child: Text(
-                              "No users found",
-                              style: TextStyle(
-                                  fontFamily: "Lato",
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
-                            )),
-                          )
-                        : Flexible(
-                            child: Container(
-                              margin: EdgeInsets.fromLTRB(
-                                  0, size.height / 50, 0, size.height / 50),
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: allSearches.users != null
-                                      ? allSearches.users.length < 3
-                                          ? allSearches.users.length
-                                          : 3
-                                      : 0,
-                                  itemBuilder: (builder, index) {
-                                    return ListTile(
-                                      leading: allSearches
-                                                  .users[index].avatar !=
-                                              null
-                                          ? Image.network(
-                                              allSearches.users[index].avatar)
-                                          : null,
-                                      title:
-                                          /* RichText(text: TextSpan(
-                                text: allSearches.users[index].name.substring(0,query.length),
-                                style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                                children: [TextSpan(
-                                  text: allSearches.users[index].name.substring(query.length),
-                                  style: TextStyle(color: Colors.grey)
-                                )]
-                              ),),*/
-                                          allSearches.users[index].username !=
-                                                  null
-                                              ? Text(allSearches
-                                                  .users[index].username)
-                                              : null,
-                                      subtitle: allSearches
-                                                  .users[index].tagline !=
-                                              null
-                                          ? Text(
-                                              allSearches.users[index].tagline)
-                                          : null,
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                                builder: (_) => ProfilePage(
-                                                      userId: allSearches
-                                                          .users[index].userId,
-                                                    )));
-                                      },
-                                    );
-                                  }),
-                            ),
-                          ),
-                    allSearches.users.length == 0
-                        ? Container()
-                        : InkWell(
-                            onTap: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (_) => SearchAllUsers(
-                              //           users: allSearches.users,
-                              //           query: query,
-                              //         )));
-                            },
-                            child: Container(
-                                width: size.width,
-                                child: Text(
-                                  "See all users",
-                                  style: TextStyle(
-                                      fontFamily: 'Lato',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: size.width / 25,
-                                      color: Colors.redAccent),
-                                ))),
-                    SizedBox(
-                      height: size.height / 30,
-                    ),
-                    // SizedBox(height: size.height/30),
-                    Text(
-                      "Clubs",
-                      style: TextStyle(
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.w500,
-                          fontSize: size.width / 20),
-                    ),
-                    allSearches.clubs.length == 0
-                        ? Container(
-                            child: Center(
-                                child: Text(
-                              "No clubs found",
-                              style: TextStyle(
-                                  fontFamily: "Lato",
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
-                            )),
-                          )
-                        : Flexible(
-                            child: Container(
-                              margin: EdgeInsets.fromLTRB(
-                                  0, size.height / 50, 0, size.height / 50),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: allSearches.clubs.length < 3
-                                    ? allSearches.clubs.length
-                                    : 3,
-                                itemBuilder: (builder, index) {
-                                  return ListTile(
-                                    leading: allSearches
-                                                .clubs[index].clubAvatar !=
-                                            null
-                                        ? Image.network(
-                                            allSearches.clubs[index].clubAvatar)
-                                        : null,
-                                    title: allSearches
-                                                .clubs[index].clubAvatar !=
-                                            null
-                                        ? Text(
-                                            allSearches.clubs[index].clubName)
-                                        : null,
-                                    subtitle:
-                                        allSearches.clubs[index].creator != null
-                                            ? Text(allSearches
-                                                .clubs[index].creator.username)
-                                            : Text("Club"),
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => ClubDetailPage(
-                                            allSearches.clubs[index].clubId,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                    allSearches.clubs.length == 0
-                        ? Container()
-                        : InkWell(
-                            onTap: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (_) => SearchAllClubs(
-                              //           clubs: allSearches.clubs,
-                              //           query: query,
-                              //         )));
-                            },
-                            child: Container(
-                                child: Text(
-                              "See all clubs",
-                              style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: size.width / 25,
-                                  color: Colors.redAccent),
-                            ))),
-                  ],
-                ),
-              );
-            },
-          );
   }
 }
