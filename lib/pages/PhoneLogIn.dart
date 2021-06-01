@@ -38,7 +38,9 @@ class _PhoneLoginState extends State<PhoneLogin> {
                     style: TextStyle(
                         fontFamily: 'Lato',
                         fontSize: size.width / 5,
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent
+                    ),
                   ),
                 ),
                 Container(
@@ -48,7 +50,9 @@ class _PhoneLoginState extends State<PhoneLogin> {
                     style: TextStyle(
                         fontFamily: 'Lato',
                         fontSize: size.width / 5,
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent
+                    ),
                   ),
                 ),
                 Container(
@@ -60,7 +64,7 @@ class _PhoneLoginState extends State<PhoneLogin> {
                         fontFamily: 'Lato',
                         fontSize: size.width / 5,
                         fontWeight: FontWeight.bold,
-                        color: Colors.red),
+                        color: Colors.redAccent),
                   ),
                 ),
               ],
@@ -100,15 +104,29 @@ class _PhoneLoginState extends State<PhoneLogin> {
                                   hintStyle: TextStyle(
                                     fontFamily: "Lato",
                                   ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.red,
+                                      width: 2.0,
+                                    ),
+                                  ),
                                   labelText: "Phone Number for login",
                                   labelStyle: TextStyle(
                                     fontFamily: "Lato",
+                                    color: Colors.white
                                   ),
                                 ),
                                 style: TextStyle(
                                     fontFamily: "Lato",
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 2.0),
+                                    letterSpacing: 2.0,
+                                    color: Colors.white
+                                ),
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.allow(
                                       RegExp(r'[0-9]'))
@@ -128,6 +146,12 @@ class _PhoneLoginState extends State<PhoneLogin> {
                                 child: PinCodeTextField(
                                   maxLength: 6,
                                   controller: _otpController,
+                                  defaultBorderColor: Colors.white,
+                                  highlightColor: Colors.redAccent,
+                                  pinTextStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: "Lato"
+                                  ),
                                   hasError: hasError,
                                   onDone: (value) {
                                     if (value.length == 6) {

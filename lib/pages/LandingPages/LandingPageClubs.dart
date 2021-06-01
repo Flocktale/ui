@@ -91,7 +91,7 @@ class _LandingPageClubsState extends State<LandingPageClubs>
                     onTap: () =>
                         _navigateTo(ClubSection(type, category: title)),
                     child: Card(
-                      shadowColor: Colors.white,
+                   //   shadowColor: Colors.white,
                       color: Colors.black,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
