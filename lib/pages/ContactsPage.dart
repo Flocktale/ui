@@ -74,6 +74,17 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
   Future<void> _initiateAndFetchContactsFromLocalDB() async {
+    // first asking for user consent by letting the user know about contacts usage.
+    final userConsent = await InviteBox.getUserConsentForContacts(context);
+    if (userConsent != true) {
+      if (widget.newRegistration) {
+        Provider.of<UserData>(context, listen: false).newRegistration = false;
+      } else {
+        Navigator.of(context).pop();
+      }
+      return;
+    }
+
     await InviteBox.getNonSavedPhoneNumbers(context);
     final userId = Provider.of<UserData>(context, listen: false).userId;
     await FollowingDatabase.fetchList(userId, context);
@@ -444,7 +455,6 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     bool isSearching = _searchController.text.isNotEmpty;
 
     return Scaffold(

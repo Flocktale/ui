@@ -1,5 +1,6 @@
 import 'package:chopper/chopper.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:flocktale/Widgets/ClubDetailPageWidgets/inviteContacts.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/Widgets/ProfileShortView.dart';
 import 'package:flocktale/services/LocalStorage/InviteBox.dart';
@@ -23,8 +24,7 @@ class InviteScreen extends StatefulWidget {
 }
 
 class _InviteScreenState extends State<InviteScreen>
-    with TickerProviderStateMixin {
-  List<Contact> contacts = [];
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   String type;
   String _sponsorId;
   TabController _tabController;
@@ -47,13 +47,6 @@ class _InviteScreenState extends State<InviteScreen>
   bool _isInviting = false;
 
   Map<String, bool> _selectedUserIds = {};
-
-  _fetchContacts() async {
-    contacts = (await InviteBox.fetchContactsFromPhone());
-    print("1212121212121212121212121212");
-    print(contacts);
-    setState(() {});
-  }
 
   Future<void> _fetchRelationData() async {
     relationMap['data'] =
@@ -150,29 +143,6 @@ class _InviteScreenState extends State<InviteScreen>
   //   );
   // }
   //
-  // Widget contactSearchBar() {
-  //   final size = MediaQuery.of(context).size;
-  //   return Container(
-  //     height: size.height / 20,
-  //     margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-  //     child: TextField(
-  //       controller: contactSearchController,
-  //       decoration: InputDecoration(
-  //           prefixIcon: Icon(
-  //             Icons.search,
-  //             color: Colors.black,
-  //           ),
-  //           fillColor: Colors.grey[200],
-  //           hintText: 'Search friends',
-  //           filled: true,
-  //           enabledBorder: OutlineInputBorder(
-  //               borderRadius: BorderRadius.all(Radius.circular(12.0)),
-  //               borderSide: BorderSide(color: Colors.black, width: 1.0)),
-  //           focusedBorder: OutlineInputBorder(
-  //               borderSide: BorderSide(color: Colors.black, width: 2.0))),
-  //     ),
-  //   );
-  // }
 
   Widget _relationListWidget() {
     final relationUsers = (relationMap['data'] as BuiltSearchUsers)?.users;
@@ -263,108 +233,6 @@ class _InviteScreenState extends State<InviteScreen>
     );
   }
 
-  Widget contactListBuilder() {
-    return ListView.builder(
-      itemCount: contacts?.length,
-      itemBuilder: (context, index) {
-        Contact contact = contacts[index];
-
-        bool hasAvatar = (contact.avatar?.length ?? 0) > 0;
-        String name = contact.displayName ?? '';
-        String phone = (contact?.phones?.length ?? 0) != 0
-            ? contact.phones.elementAt(0).value.replaceAll(' ', '')
-            : '';
-
-        if (name.isEmpty && phone.isEmpty) return Container();
-
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  image: hasAvatar
-                      ? DecorationImage(image: MemoryImage(contact.avatar))
-                      : null,
-                  color: Colors.white,
-                ),
-                child: !hasAvatar
-                    ? Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.redAccent[200],
-                        ),
-                        child: Center(
-                          child: Text(
-                            contact.initials(),
-                            style: TextStyle(
-                              fontFamily: "Lato",
-                              color: Colors.white,
-                            ),
-                          ),
-                        ))
-                    : null,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        phone,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () => ShareApp(context).club(widget.club.clubName,
-                    forPanelist: widget.forPanelist),
-                child: Card(
-                  color: Colors.white,
-                  shadowColor: Colors.redAccent,
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      'Invite',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   Widget _inviteButton(String text, VoidCallback onTap) {
     final size = MediaQuery.of(context).size;
 
@@ -419,7 +287,10 @@ class _InviteScreenState extends State<InviteScreen>
     } else {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 20),
-        child: contactListBuilder(),
+        child: InviteContacts(
+          club: widget.club,
+          forPanelist: widget.forPanelist,
+        ),
       );
     }
   }
@@ -429,8 +300,9 @@ class _InviteScreenState extends State<InviteScreen>
     this.type = widget.forPanelist ? 'friends' : 'followers';
     this._sponsorId = Provider.of<UserData>(context, listen: false).userId;
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
+
     super.initState();
-    _fetchContacts();
+
     _fetchRelationData();
   }
 
@@ -514,4 +386,7 @@ class _InviteScreenState extends State<InviteScreen>
       ),
     ));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

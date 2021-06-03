@@ -17,9 +17,51 @@ class InviteBox {
     if (contactBox == null) contactBox = await Hive.openBox('contacts');
   }
 
-  static Future<List<String>> getNonSavedPhoneNumbers(
-      BuildContext context) async {
+  static Future<bool> getUserConsentForContacts(BuildContext context) async {
+    final contactPermission = await Permission.contacts.isGranted;
+
+    if (contactPermission == true) return true;
+
+    // show dialog box to let user know what we do with their contacts.
+    final userConsent = await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text('Allow Contacts Permission'),
+        content: Text(
+          'Flocktale will be able to use your contact list to search for your friends and others on Flocktale'
+          '\n\nFlocktale do not save your contacts on its servers '
+          'and do not share your contacts with others so that your privacy is maintained',
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final permission = await Permission.contacts.request().isGranted;
+              Navigator.of(context).pop(permission);
+            },
+            child: Text('Ok'),
+          ),
+        ],
+      ),
+    );
+
+    if (userConsent == true)
+      return true;
+    else
+      return false;
+  }
+
+  static Future<bool> getNonSavedPhoneNumbers(BuildContext context) async {
     await init();
+
     if (await Permission.contacts.request().isGranted) {
       Map<String, String> phoneToName = {};
       _contacts = await fetchContactsFromPhone();
@@ -52,11 +94,15 @@ class InviteBox {
         addContact(element.phone, element.userId, element.avatar,
             phoneToName[element.phone]);
       });
+
+      return true;
     } else {
       Fluttertoast.showToast(
           msg:
-              "Please give phone number permissions to invite people to club via contacts");
+              "Please give phone number permissions to invite people via contacts");
     }
+
+    return false;
   }
 
   static Future<List<CONTACT.Contact>> fetchContactsFromPhone() async {
