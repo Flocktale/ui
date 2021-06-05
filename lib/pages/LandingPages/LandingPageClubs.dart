@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flocktale/Models/basic_enums.dart';
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Widgets/Carousel.dart';
@@ -15,7 +17,7 @@ class LandingPageClubs extends StatefulWidget {
 
 class _LandingPageClubsState extends State<LandingPageClubs>
     with AutomaticKeepAliveClientMixin {
-  BuiltList<CategoryClubsList> _clubs;
+  List<CategoryClubsList> _clubs;
   DateTime _clubFetchedTime = DateTime.now();
 
   Future<void> _navigateTo(Widget page) async {
@@ -32,17 +34,16 @@ class _LandingPageClubsState extends State<LandingPageClubs>
 
   void _infinteClubFetching() async {
     await _fetchAllClubs(true);
-//TODO: uncomment this
-    // while (true) {
-    //   final diff = DateTime.now()
-    //       .difference(_clubFetchedTime ?? DateTime.now())
-    //       .inSeconds;
-    //   if (diff < 30) {
-    //     await Future.delayed(Duration(seconds: max(30 - diff, 10)));
-    //   } else {
-    //     await _fetchAllClubs();
-    //   }
-    // }
+    while (true) {
+      final diff = DateTime.now()
+          .difference(_clubFetchedTime ?? DateTime.now())
+          .inSeconds;
+      if (diff < 30) {
+        await Future.delayed(Duration(seconds: max(30 - diff, 10)));
+      } else {
+        await _fetchAllClubs();
+      }
+    }
   }
 
   Future _fetchAllClubs([bool initiating = false]) async {
@@ -50,7 +51,9 @@ class _LandingPageClubsState extends State<LandingPageClubs>
 
     _clubFetchedTime = DateTime.now();
 
-    _clubs = (await service.getAllClubs())?.body?.categoryClubs;
+    _clubs = (await service.getAllClubs())?.body?.categoryClubs?.toList();
+
+    _clubs = _clubs?.where((cat) => (cat?.clubs?.length ?? 0) > 0)?.toList();
 
     if (this.mounted) {
       setState(() {});
@@ -91,7 +94,7 @@ class _LandingPageClubsState extends State<LandingPageClubs>
                     onTap: () =>
                         _navigateTo(ClubSection(type, category: title)),
                     child: Card(
-                   //   shadowColor: Colors.white,
+                      //   shadowColor: Colors.white,
                       color: Colors.black,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -158,15 +161,23 @@ class _LandingPageClubsState extends State<LandingPageClubs>
       child: RefreshIndicator(
         backgroundColor: Colors.black87,
         color: Colors.redAccent,
-        onRefresh: () => _fetchAllClubs(),
+        onRefresh: () async {
+          await _fetchAllClubs();
+        },
         child: ListView(
           shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
+          physics: ScrollPhysics(),
           children: [
             FittedBox(child: IntroWidget()),
             _displayClubList,
             if (_clubs == null) _loadingWidget,
             SizedBox(height: 100),
+
+            // in order to work with refresh indicator, listview must have a scrollable length (when item consumes more height than height of screen)
+            if ((_clubs?.length ?? 0) < 4)
+              SizedBox(
+                height: (4 - (_clubs?.length ?? 0)) * 250.0,
+              ),
           ],
         ),
       ),

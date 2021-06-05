@@ -4,7 +4,6 @@ import 'package:flocktale/Widgets/createClubFAB.dart';
 import 'package:flocktale/Widgets/homePageDrawer.dart';
 import 'package:flocktale/Widgets/homePageTabBar.dart';
 import 'package:flocktale/pages/LandingPages/LandingPageClubs.dart';
-import 'package:flocktale/pages/LandingPages/LandingPageCommerceProducts.dart';
 import 'package:flocktale/pages/LandingPages/LandingPageCommunities.dart';
 import 'package:flocktale/pages/LandingPages/LandingPageNewsArticles.dart';
 import 'package:flocktale/services/DBHelper.dart';

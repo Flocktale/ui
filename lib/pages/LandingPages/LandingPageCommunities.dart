@@ -63,20 +63,17 @@ class _LandingPageCommunitiesState extends State<LandingPageCommunities>
     }
 
     return Container(
-      child: ListView(
-        shrinkWrap: true,
-        physics: ScrollPhysics(),
-        children: [
-          RefreshIndicator(
-            onRefresh: () {
-              // resetting community list
-              _communities = null;
-              _isLoading = true;
-              setState(() {});
-              _fetchCommunities();
-              return;
-            },
-            child: NotificationListener<ScrollNotification>(
+      child: RefreshIndicator(
+        backgroundColor: Colors.black87,
+        color: Colors.redAccent,
+        onRefresh: () async {
+          await _fetchCommunities();
+        },
+        child: ListView(
+          shrinkWrap: true,
+          physics: ScrollPhysics(),
+          children: [
+            NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification scrollInfo) {
                 if (scrollInfo.metrics.pixels ==
                     scrollInfo.metrics.maxScrollExtent) {
@@ -107,8 +104,14 @@ class _LandingPageCommunitiesState extends State<LandingPageCommunities>
                 ],
               ),
             ),
-          ),
-        ],
+
+            // in order to work with refresh indicator, listview must have a scrollable length (when item consumes more height than height of screen)
+            if ((_communities?.communities?.length ?? 0) < 4)
+              SizedBox(
+                height: (4 - (_communities?.communities?.length ?? 0)) * 250.0,
+              ),
+          ],
+        ),
       ),
     );
   }
