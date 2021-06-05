@@ -5,6 +5,7 @@ import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
 import 'package:flocktale/services/LocalStorage/InviteBox.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
+import 'package:flocktale/services/shareApp.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart' as CONTACT;
 import 'package:flutter/rendering.dart';
@@ -12,7 +13,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Models/contacts.dart';
 import 'package:provider/provider.dart';
-import 'package:share/share.dart';
 
 import '../Widgets/customImage.dart';
 
@@ -33,9 +33,6 @@ class _ContactsPageState extends State<ContactsPage> {
   List<CONTACT.Contact> phoneFilteredContacts = [];
 
   Map<String, bool> followStatus = new Map<String, bool>();
-
-  String text = 'Hi! Join me on FlockTale.';
-  String subject = 'Link to the app:';
 
   bool _initialFetching = true;
 
@@ -127,13 +124,6 @@ class _ContactsPageState extends State<ContactsPage> {
 
     print('milliseconds : ${DateTime.now().difference(now).inMilliseconds}');
     setState(() {});
-  }
-
-  share(BuildContext context) {
-    Share.share(
-      text,
-      subject: subject,
-    );
   }
 
   Widget _flocktaleContactListDisplay(isSearching) {
@@ -387,7 +377,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     ),
                     RaisedButton(
                       onPressed: () {
-                        share(context);
+                        ShareApp(context).app();
                       },
                       color: Colors.white,
                       child: Text('Invite',
