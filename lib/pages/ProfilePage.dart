@@ -172,66 +172,64 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       height: 200,
       color: Colors.transparent,
-      child: Expanded(
-        child: Row(
-          children: [
-            Expanded(
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back_outlined),
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                icon: Icon(Icons.arrow_back_outlined),
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
             ),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                height: 96,
-                width: 96,
-                child: CustomImage(
-                  image: _user.avatar + '_large',
-                  radius: 16,
-                ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              height: 96,
+              width: 96,
+              child: CustomImage(
+                image: _user.avatar + '_large',
+                radius: 16,
               ),
             ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.topRight,
-                child: _isMe
-                    ? InkWell(
-                        onTap: () {
-                          _navigateTo(EditProfile(user: _user));
-                        },
-                        splashColor: Colors.redAccent,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              Text(
-                                'Edit',
-                                style: TextStyle(
-                                  color: Colors.white54,
-                                  fontSize: 12,
-                                ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: _isMe
+                  ? InkWell(
+                      onTap: () {
+                        _navigateTo(EditProfile(user: _user));
+                      },
+                      splashColor: Colors.redAccent,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Edit',
+                              style: TextStyle(
+                                color: Colors.white54,
+                                fontSize: 12,
                               ),
-                              Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 32,
-                              ),
-                            ],
-                          ),
+                            ),
+                            Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                          ],
                         ),
-                      )
-                    : Container(),
-              ),
+                      ),
+                    )
+                  : Container(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -261,61 +259,59 @@ class _ProfilePageState extends State<ProfilePage> {
           tileMode: TileMode.repeated, // repeats the gradient over the canvas
         ),
       ),
-      child: Expanded(
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Positioned(
-              top: 200 / 2, // half of image container
-              left: 0,
-              right: 0,
-              bottom: 0,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned(
+            top: 200 / 2, // half of image container
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.elliptical(108, 36),
+                  topRight: Radius.elliptical(108, 36),
+                ),
+              ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.black,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.elliptical(108, 36),
                     topRight: Radius.elliptical(108, 36),
                   ),
                 ),
                 child: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 48), // half of image size
                   decoration: BoxDecoration(
-                    color: Colors.black,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.elliptical(108, 36),
                       topRight: Radius.elliptical(108, 36),
                     ),
                   ),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 48), // half of image size
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.elliptical(108, 36),
-                        topRight: Radius.elliptical(108, 36),
-                      ),
-                    ),
-                    child: profileDataColumn(),
-                  ),
+                  child: profileDataColumn(),
                 ),
               ),
             ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: _imageContainer(),
-            ),
-            Positioned(
-              bottom: 0,
-              child: MinClub((Widget page) async {
-                await Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (_) => page));
-                _fetchAllClubs();
-              }),
-            ),
-          ],
-        ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: _imageContainer(),
+          ),
+          Positioned(
+            bottom: 0,
+            child: MinClub((Widget page) async {
+              await Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => page));
+              _fetchAllClubs();
+            }),
+          ),
+        ],
       ),
     );
   }
