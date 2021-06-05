@@ -4,6 +4,7 @@ import 'package:flocktale/providers/agoraController.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/providers/webSocket.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -13,6 +14,8 @@ import 'services/chopper/database_api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   _setupHive();
   // _setupLogging();
   _configureFCM();
