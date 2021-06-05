@@ -39,6 +39,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
+  _checkBackendForUsernameAvailability(String val) async {
+    final service = Provider.of<DatabaseApiService>(context, listen: false);
+
+    UsernameAvailability resp = (await service.isThisUsernameAvailable(
+      username: val,
+    ))
+        .body;
+    if (resp?.isAvailable == true && _usernameController.text.length >= 3) {
+      setState(() {
+        usernameAvailable = true;
+      });
+    } else {
+      setState(() {
+        usernameAvailable = false;
+      });
+    }
+  }
+
   getImage() async {
     final selectedImage = await picker.getImage(source: ImageSource.gallery);
     if (selectedImage != null) {
@@ -243,20 +261,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             TextFormField(
                               controller: _usernameController,
                               style: TextStyle(color: Colors.white),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[a-zA-Z0-9_]')),
+                              ],
                               decoration: InputDecoration(
                                   labelText: 'USER NAME ',
                                   labelStyle: TextStyle(
                                       fontFamily: 'Lato',
                                       fontWeight: FontWeight.bold,
                                       color: Colors.grey[400]),
-                                  helperText: _usernameController.text.length >
+                                  helperText: _usernameController.text.length >=
                                           3
                                       ? usernameAvailable
                                           ? "Username is available"
                                           : "Username is not available"
                                       : "Allowed Characters: a-z 0-9 _ (Min length: 3)",
                                   helperStyle: !usernameAvailable ||
-                                          _usernameController.text.length <= 3
+                                          _usernameController.text.length < 3
                                       ? TextStyle(
                                           fontFamily: "Lato", color: Colors.red)
                                       : TextStyle(
@@ -278,56 +300,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   MaxLengthEnforcement.enforced,
                               maxLength: 25,
                               onChanged: (val) async {
-                                if (val.isEmpty) return;
+                                if (val.isEmpty || val.length < 3) return;
                                 val = val.toLowerCase();
 
-                                String newVal = '';
-
-                                for (int i = 0; i < val.length; i++) {
-                                  if (RegExp(r'[a-zA-Z0-9_]')
-                                          .hasMatch(val[i]) ==
-                                      true) {
-                                    newVal += val[i];
-                                  }
-                                }
-
-                                val = newVal;
-
-                                _usernameController.text = val;
-                                _usernameController.selection =
-                                    TextSelection.fromPosition(TextPosition(
-                                        offset:
-                                            _usernameController.text.length));
-
-                                if (val.length < 4) {
-                                  usernameAvailable = false;
-                                  return;
-                                }
-
-                                final service = Provider.of<DatabaseApiService>(
-                                    context,
-                                    listen: false);
-
-                                UsernameAvailability resp =
-                                    (await service.isThisUsernameAvailable(
-                                  username: val,
-                                ))
-                                        .body;
-                                if (resp?.isAvailable == true &&
-                                    _usernameController.text.length > 3) {
-                                  setState(() {
-                                    usernameAvailable = true;
-                                  });
-                                } else {
-                                  setState(() {
-                                    usernameAvailable = false;
-                                  });
-                                }
+                                await _checkBackendForUsernameAvailability(val);
                               },
                               validator: (val) {
                                 if (val.isEmpty)
                                   return 'Please fill this field';
-                                if (val.length <= 3)
+                                if (val.length < 3)
                                   return 'Minimum length should be 3';
 
                                 return null;
