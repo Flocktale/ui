@@ -104,7 +104,6 @@ class AuthUser {
       // and then we get the CognitoUserSession.
       return true;
     } on CognitoClientException catch (e) {
-      Fluttertoast.showToast(msg: e.message, gravity: ToastGravity.CENTER);
       print('error');
       print(e);
       return e.code;
