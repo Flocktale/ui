@@ -1,4 +1,5 @@
 import 'package:flocktale/Widgets/customImage.dart';
+import 'package:flocktale/Widgets/notificationBellButton.dart';
 import 'package:flocktale/pages/NotificationPage.dart';
 import 'package:flocktale/pages/SearchPages/SearchPage.dart';
 import 'package:flocktale/providers/userData.dart';
@@ -7,7 +8,7 @@ import 'package:provider/provider.dart';
 
 class HomePageTopSection extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
-  final Function navigateTo;
+  final Function(Widget) navigateTo;
 
   const HomePageTopSection({
     Key key,
@@ -65,17 +66,7 @@ class HomePageTopSection extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    if (navigateTo != null) {
-                      navigateTo(NotificationPage());
-                    }
-                  },
-                  icon: Icon(
-                    Icons.notifications_none_outlined,
-                    color: Colors.white,
-                  ),
-                ),
+                NotificationBellButton(navigateTo: this.navigateTo),
               ],
             ),
           ),

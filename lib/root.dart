@@ -3,6 +3,7 @@ import 'package:flocktale/Widgets/denyConcurrentUse.dart';
 import 'package:flocktale/Widgets/imageDialogLayout.dart';
 import 'package:flocktale/pages/ContactsPage.dart';
 import 'package:flocktale/providers/agoraController.dart';
+import 'package:flocktale/services/configureFCM.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/Authentication/signUp.dart';
 import 'package:flocktale/pages/HomePage.dart';
@@ -12,7 +13,12 @@ import 'package:flocktale/providers/webSocket.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
-class RootPage extends StatelessWidget {
+class RootPage extends StatefulWidget {
+  @override
+  _RootPageState createState() => _RootPageState();
+}
+
+class _RootPageState extends State<RootPage> {
   Future<bool> onWillPop(context) async {
     final currentClub =
         Provider.of<AgoraController>(context, listen: false)?.club;
@@ -80,6 +86,15 @@ class RootPage extends StatelessWidget {
       return true;
 
     return false;
+  }
+
+  @override
+  void initState() {
+    AppConstants.rootContext = context;
+    // configuring fcm notifications
+    configureFCM();
+
+    super.initState();
   }
 
   @override

@@ -1,6 +1,6 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flocktale/initiation.dart';
 import 'package:flocktale/providers/agoraController.dart';
+import 'package:flocktale/providers/notificationProvider.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/providers/webSocket.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,6 @@ void main() async {
 
   _setupHive();
   // _setupLogging();
-  _configureFCM();
   runApp(Phoenix(child: MyApp()));
 }
 
@@ -32,27 +31,6 @@ void _setupLogging() {
   Logger.root.onRecord.listen((rec) {
     print('${rec.level.name}: ${rec.time}: ${rec.message}');
   });
-}
-
-Future onBackgroundMessageHandler(Map<String, dynamic> message) async {
-  print('message in bgHandler: $message');
-}
-
-_configureFCM() async {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  _firebaseMessaging.configure(
-    onBackgroundMessage: onBackgroundMessageHandler,
-    onMessage: (Map<String, dynamic> message) async {
-      print('hola');
-      print("onMessage: $message");
-    },
-    onLaunch: (Map<String, dynamic> message) async {
-      print("onLaunch: $message");
-    },
-    onResume: (Map<String, dynamic> message) async {
-      print("onResume: $message");
-    },
-  );
 }
 
 class MyApp extends StatelessWidget {
@@ -70,6 +48,10 @@ class MyApp extends StatelessWidget {
           create: (_) => AgoraController().create(),
           dispose: (context, AgoraController agoraController) =>
               agoraController.dispose(),
+        ),
+
+        ChangeNotifierProvider<NotificationProvider>(
+          create: (_) => NotificationProvider(),
         ),
 
 //since we are using DatabaseApiService in another provider, it should be defined after that.
