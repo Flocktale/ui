@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:contacts_service/contacts_service.dart' as CONTACT;
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/contacts.dart';
+import 'package:flocktale/providers/userData.dart';
 import 'package:flocktale/services/chopper/database_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -62,6 +63,9 @@ class InviteBox {
   static Future<bool> getNonSavedPhoneNumbers(BuildContext context) async {
     await init();
 
+    final myPhoneNumber =
+        Provider.of<UserData>(context, listen: false).user.phone;
+
     if (await Permission.contacts.request().isGranted) {
       Map<String, String> phoneToName = {};
       _contacts = await fetchContactsFromPhone();
@@ -74,6 +78,10 @@ class InviteBox {
 
           if (phoneNo[0] != '+') return;
           phoneNo = phoneNo.replaceAll(' ', '');
+
+          // removing my own phone number, if present in contact list
+          if (phoneNo == myPhoneNumber || myPhoneNumber.substring(3) == phoneNo)
+            return;
 
           if (contactBox.get(phoneNo) == null) {
             phoneNumbers.add(phoneNo);
