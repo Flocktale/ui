@@ -91,10 +91,8 @@ class UserData with ChangeNotifier {
       // user hasn't signed up yet. so sign up the user
       final signUpResponse = await _authUser.signUpWithCognito(phone);
       return signUpResponse;
-    } else if (response == false) {
-      Fluttertoast.showToast(msg: 'Unknown error, please contact the support');
-      return false;
     } else {
+      Fluttertoast.showToast(msg: 'Unknown error, please contact the support');
       return false;
     }
   }

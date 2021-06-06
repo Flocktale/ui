@@ -27,10 +27,10 @@ class _DenyConcurrentUseState extends State<DenyConcurrentUse> {
     final user = Provider.of<UserData>(context, listen: false).user;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: double.infinity,
-        color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -49,7 +49,7 @@ class _DenyConcurrentUseState extends State<DenyConcurrentUse> {
                 fontSize: 24,
                 fontFamily: 'Lato',
                 fontWeight: FontWeight.bold,
-                color: Color(0xfff74040),
+                color: Colors.white,
               ),
             ),
             Text(
@@ -63,12 +63,14 @@ class _DenyConcurrentUseState extends State<DenyConcurrentUse> {
             ),
             SizedBox(height: 12),
             Text(
-              'Looks like another device is currently using your account, please close/logout Flocktale from that device to use your account on this device.',
+              'Looks like another device is currently using your account, '
+              'please close/logout Flocktale from that device to use your account on this device.'
+              '\n\nIf that is not the case then please refresh or wait for 10 mins.',
               style: TextStyle(
                 fontSize: 20,
                 fontFamily: 'Lato',
                 fontWeight: FontWeight.normal,
-                color: Color(0xfff74040),
+                color: Colors.white,
               ),
             ),
             SizedBox(height: 16),
@@ -83,15 +85,23 @@ class _DenyConcurrentUseState extends State<DenyConcurrentUse> {
                 ),
               )
             else
-              Container(
-                height: 60,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.restore_rounded,
-                    size: 50,
+              Column(
+                children: [
+                  InkWell(
+                    child: Icon(
+                      Icons.restore_rounded,
+                      size: 50,
+                      color: Colors.redAccent,
+                    ),
+                    onTap: () => _refresh(),
                   ),
-                  onPressed: () => _refresh(),
-                ),
+                  Text(
+                    'Refresh',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
           ],
         ),

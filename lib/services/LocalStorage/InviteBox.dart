@@ -30,8 +30,8 @@ class InviteBox {
         title: Text('Allow Contacts Permission'),
         content: Text(
           'Flocktale will be able to use your contact list to search for your friends and others on Flocktale'
-          '\n\nFlocktale do not save your contacts on its servers '
-          'and do not share your contacts with others so that your privacy is maintained',
+          '\n\nFlocktale does not save your contacts on its servers '
+          'and does not share your contacts with others so that your privacy is maintained',
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 20),

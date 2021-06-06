@@ -68,6 +68,8 @@ dependencies:
   flushbar: ^1.10.4
   package_info: ^0.4.3+2
 
+  sms_autofill: ^2.0.0
+
   agora_handler:
     path: ../agora_handler
 
