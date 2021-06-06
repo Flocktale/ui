@@ -41,7 +41,11 @@ class _LandingPageClubsState extends State<LandingPageClubs>
       if (diff < 30) {
         await Future.delayed(Duration(seconds: max(30 - diff, 10)));
       } else {
-        await _fetchAllClubs();
+        if (this.mounted) {
+          await _fetchAllClubs();
+        } else {
+          await Future.delayed(Duration(seconds: 10));
+        }
       }
     }
   }

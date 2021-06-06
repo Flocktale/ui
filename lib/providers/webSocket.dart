@@ -41,6 +41,7 @@ class MySocket with ChangeNotifier {
 
   Future<void> closeConnection() async {
     print('closing websocket directly');
+
     _isSocketClosedOnPurpose = true;
 
     await this.channel?.close(1000, 'App closed');
@@ -111,7 +112,7 @@ class MySocket with ChangeNotifier {
     } catch (e) {
       print("Error! can not connect WS connectWs " + e.toString());
 
-      Fluttertoast.showToast(msg: 'Please check your internet connection');
+      Fluttertoast.showToast(msg: 'Trying to connect to servers');
 
       await Future.delayed(Duration(
         seconds: min(2 * retries, 15),
@@ -127,7 +128,7 @@ class MySocket with ChangeNotifier {
       await Future.delayed(Duration(seconds: 2));
     }
 
-    await init(userId);
+    await init(userId, reconnect: true);
 
     if (_inTheClub) {
       joinClub(_clubId);
