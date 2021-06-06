@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-class CreateClubButton extends StatelessWidget {
+class CreateFABButton extends StatelessWidget {
   final Function onTap;
-  CreateClubButton({this.onTap});
+  final String title;
+  CreateFABButton({this.title, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class CreateClubButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("Create Club",
+              Text(title,
                   style: TextStyle(
                     fontFamily: "Lato",
                     color: Colors.white,

@@ -1,5 +1,5 @@
 import 'package:flocktale/Models/built_post.dart';
-import 'package:flocktale/Widgets/createClubButton.dart';
+import 'package:flocktale/Widgets/CreateFABButton.dart';
 import 'package:flocktale/Widgets/summaryClubCard.dart';
 import 'package:flocktale/pages/ClubDetailPages/ClubDetail.dart';
 import 'package:flocktale/providers/userData.dart';
@@ -139,7 +139,7 @@ class _NewsPageState extends State<NewsPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
-        floatingActionButton: CreateClubButton(
+        floatingActionButton: CreateFABButton(
           onTap: () => _createClub(),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

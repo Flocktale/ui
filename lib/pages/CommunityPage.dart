@@ -1,7 +1,7 @@
 import 'package:flocktale/Models/built_post.dart';
 import 'package:flocktale/Models/enums/communityUserType.dart';
 import 'package:flocktale/Widgets/CommunityPageTopSection.dart';
-import 'package:flocktale/Widgets/createClubButton.dart';
+import 'package:flocktale/Widgets/CreateFABButton.dart';
 import 'package:flocktale/Widgets/summaryClubCard.dart';
 import 'package:flocktale/pages/NewClub.dart';
 import 'package:flocktale/providers/userData.dart';
@@ -181,7 +181,7 @@ class _CommunityPageState extends State<CommunityPage>
         backgroundColor: Colors.black,
         floatingActionButton: _isOwner == false
             ? Container()
-            : CreateClubButton(
+            : CreateFABButton(
                 onTap: () {
                   Navigator.of(context)
                       .push(MaterialPageRoute(

@@ -1,4 +1,5 @@
 import 'package:flocktale/Authentication/logOut.dart';
+import 'package:flocktale/Models/appConstants.dart';
 import 'package:flocktale/Widgets/customImage.dart';
 import 'package:flocktale/pages/ContactsPage.dart';
 import 'package:flocktale/pages/ProfilePage.dart';
@@ -180,10 +181,7 @@ class HomePageDrawer extends StatelessWidget {
                   title: "Create Community",
                   suffixIcon: Icons.add,
                   onTap: () {
-                    try {
-                      launch(
-                          'https://docs.google.com/forms/d/e/1FAIpQLSfRrRTaSJ2_1n3cCSShRYpDmd4FaJqdm50s3wTR69PMHqCHcw/viewform');
-                    } catch (e) {}
+                    AppConstants.launchCreateCommunityForm();
                   },
                 ),
                 _drawerButtons(

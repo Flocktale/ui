@@ -1,6 +1,6 @@
 import 'package:flocktale/Widgets/HomePageTopSection.dart';
 import 'package:flocktale/Widgets/MinClub.dart';
-import 'package:flocktale/Widgets/createClubFAB.dart';
+import 'package:flocktale/Widgets/HomeFAB.dart';
 import 'package:flocktale/Widgets/homePageDrawer.dart';
 import 'package:flocktale/Widgets/homePageTabBar.dart';
 import 'package:flocktale/pages/LandingPages/LandingPageClubs.dart';
@@ -8,6 +8,7 @@ import 'package:flocktale/pages/LandingPages/LandingPageCommunities.dart';
 import 'package:flocktale/pages/LandingPages/LandingPageNewsArticles.dart';
 import 'package:flocktale/services/DBHelper.dart';
 import 'package:flocktale/services/LocalStorage/FollowingDatabase.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flocktale/providers/userData.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +50,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.black,
-          floatingActionButton: CreateClubHomeFAB(this._tabController),
+          floatingActionButton: HomeFAB(this._tabController),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           drawer: HomePageDrawer(),
